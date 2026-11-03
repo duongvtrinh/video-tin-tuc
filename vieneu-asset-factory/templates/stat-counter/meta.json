@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "id": "stat-counter",
+  "name": "Số liệu lớn / Stat",
+  "version": "1.9.0",
+  "mode": "overlay",
+  "background": "transparent",
+  "category": "stat",
+  "description": "Một con số nổi bật kèm đơn vị, nhãn và chú thích (dân số, năm, phần trăm, quy mô quân đội…). Sửa thẩm mỹ QA 30/10/2026 (1.1.0): thẻ giới hạn 528px (720−2×96) căn giữa thay cho tấm tràn mép, bo góc 4px→8px, cỡ số 19.6vmin→15.0vmin để số dài vẫn thở trong thẻ, hàng số+đơn vị cho phép xuống dòng thay vì tràn thẻ; lưu ý: value quá 8 ký tự ở 9:16 vẫn tràn — plan phải rút gọn (ví dụ '1.010 tỷ' thay cho số thập phân dài). Nâng cấp TVH 30/10/2026 (1.2.0): thêm vạch dọc mã màu mép trái thẻ qua input tone (volume=trắng cho số lượng, decline=đỏ cho mức giảm, money=vàng cho tiền/doanh thu; mặc định gold giữ nguyên look cũ, không thêm vạch); thêm input lead tùy chọn là dòng dẫn nghiêng trắng phía trên số (≤40 ký tự vừa một dòng, dài hơn tự xuống dòng); SFX gợi ý heavy_thud_slam chỉnh 0.75→0.35 theo luật SFX nặng (render_draft vốn đã giới hạn SFX nặng ở 0.4 nên âm thanh thực tế không đổi). Sửa 31/10/2026 (lệnh CEO, 1.5.0): bỏ vạch trái theo tone; số luôn vàng; vạch trên đổi màu theo tone (decline → đỏ, còn lại → vàng). Bổ sung cùng ngày (1.6.0): decline số đỏ cùng màu vạch trên đỏ; các tone còn lại số vàng + vạch trên vàng. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "whenToUse": [
+    "Có một con số then chốt cần người xem nhớ",
+    "So sánh quy mô, tỷ lệ, thời gian"
+  ],
+  "notFor": [
+    "Câu không có số liệu",
+    "Nhiều hơn một con số trong cùng câu"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "inputs": {
+    "value": {
+      "type": "string",
+      "required": true,
+      "maxLength": 10
+    },
+    "unit": {
+      "type": "string",
+      "required": false,
+      "maxLength": 12
+    },
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 40
+    },
+    "sublabel": {
+      "type": "string",
+      "required": false,
+      "maxLength": 70
+    },
+    "tone": {
+      "type": "enum",
+      "values": [
+        "gold",
+        "volume",
+        "decline",
+        "money"
+      ],
+      "default": "gold"
+    },
+    "lead": {
+      "type": "string",
+      "required": false,
+      "maxLength": 70
+    },
+    "accent": {
+      "type": "enum",
+      "default": "gold"
+    },
+    "position": {
+      "type": "enum",
+      "default": "center"
+    },
+    "animation": {
+      "type": "enum",
+      "default": "pop"
+    }
+  },
+  "sfx": {
+    "id": "heavy_thud_slam",
+    "offsetSec": 0,
+    "volume": 0.35
+  },
+  "exampleInputs": {
+    "value": "100.000",
+    "unit": "quân",
+    "label": "Quân Nguyên xâm lược",
+    "sublabel": "Năm 1288"
+  },
+  "performance": {
+    "maxDomNodes": 24,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "tags": [
+    "số liệu",
+    "thống kê",
+    "quy mô"
+  ],
+  "themes": [
+    "general",
+    "economy",
+    "sports",
+    "war"
+  ],
+  "status": "active",
+  "capability": [
+    "số liệu",
+    "thống kê"
+  ],
+  "hidesSubs": true
+}

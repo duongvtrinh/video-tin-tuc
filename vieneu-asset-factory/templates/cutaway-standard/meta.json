@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "cutaway-standard",
+  "name": "B-roll toàn khung",
+  "version": "1.6.0",
+  "mode": "cutaway",
+  "background": "opaque",
+  "category": "cutaway",
+  "description": "Thay media nền bằng ảnh/video B-roll trong một khoảng ngắn, sau đó trở lại đúng media nền. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chú thích chuyển từ bottom:28% về bottom:20% tối 31/10/2026 (lệnh CEO: đáy chữ cách đáy khung đúng khoảng cách phụ đề). Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8).",
+  "whenToUse": [
+    "Có hình ảnh minh họa cụ thể cho lời đọc",
+    "Cần đổi nhịp hình ảnh trong một đoạn dài"
+  ],
+  "notFor": [
+    "Không có media phụ phù hợp",
+    "Chủ thể chính cần được giữ liên tục trên màn hình"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "safeZone": {
+    "x": 0,
+    "y": 0,
+    "width": 1,
+    "height": 1,
+    "avoidSubtitleBottomPercent": 24,
+    "avoidTopUiPercent": 10
+  },
+  "inputs": {
+    "text": {
+      "type": "string",
+      "required": false,
+      "maxLength": 80
+    }
+  },
+  "performance": {
+    "maxDomNodes": 12,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "tags": [
+    "cutaway",
+    "b-roll",
+    "video",
+    "image"
+  ],
+  "sfx": {
+    "id": "whoosh_fast",
+    "offsetSec": 0,
+    "volume": 0.5
+  },
+  "exampleInputs": {
+    "text": "Sông Bạch Đằng"
+  },
+  "themes": [
+    "general"
+  ],
+  "status": "active",
+  "capability": [
+    "cutaway",
+    "minh họa footage"
+  ],
+  "hidesSubs": true
+}

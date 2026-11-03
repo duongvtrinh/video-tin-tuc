@@ -1,0 +1,11 @@
+# Môi trường và dữ liệu nặng — không đưa lên GitHub
+.venv/
+__pycache__/
+*.pyc
+projects/
+*.wav
+*.mp4
+*.zip
+*.log
+.DS_Store
+tests/output/

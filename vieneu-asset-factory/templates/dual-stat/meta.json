@@ -1,0 +1,85 @@
+{
+  "background": "transparent",
+  "capability": [
+    "số liệu",
+    "đối chiếu"
+  ],
+  "category": "stat",
+  "description": "Hai con số đối chiếu trong một thẻ (tăng vs giảm, thiệt hại vs hưởng lợi, kế hoạch vs thực tế). Mẫu mới QA 30/10/2026: beat hai số trước đây phải nhét gượng vào stat-counter (số chính + sublabel, ví dụ TOPIC-045 '215 MÃ GIẢM / CHỈ 97 MÃ TĂNG'), nay có mẫu riêng với vạch chia và số thứ hai màu trắng. Thẻ 528px (720−2×96) căn giữa như stat-counter 1.1.0. Mỗi value nên ≤5 ký tự ở 9:16 để không tràn nửa thẻ. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "exampleInputs": {
+    "labelA": "MÃ GIẢM",
+    "labelB": "MÃ TĂNG",
+    "sublabel": "Phiên 29/10",
+    "valueA": "215",
+    "valueB": "97"
+  },
+  "id": "dual-stat",
+  "inputs": {
+    "labelA": {
+      "maxLength": 24,
+      "required": true,
+      "type": "string"
+    },
+    "labelB": {
+      "maxLength": 24,
+      "required": true,
+      "type": "string"
+    },
+    "sublabel": {
+      "maxLength": 70,
+      "required": false,
+      "type": "string"
+    },
+    "valueA": {
+      "maxLength": 10,
+      "required": true,
+      "type": "string"
+    },
+    "valueB": {
+      "maxLength": 10,
+      "required": true,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Hai số đối chiếu / Dual stat",
+  "notFor": [
+    "Beat chỉ có một con số (dùng stat-counter)",
+    "Nhiều hơn hai con số trong cùng beat",
+    "Câu không có số liệu",
+    "Text dài giải thích (dùng section-title hoặc quote-card)"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "heavy_thud_slam",
+    "offsetSec": 0,
+    "volume": 0.35
+  },
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "tags": [
+    "số liệu",
+    "đối chiếu",
+    "thống kê"
+  ],
+  "themes": [
+    "general",
+    "economy"
+  ],
+  "version": "1.5.0",
+  "whenToUse": [
+    "Beat đối chiếu đúng hai con số (tăng vs giảm, thiệt hại vs hưởng lợi, kế hoạch vs thực tế)",
+    "Cần người xem nhớ cả hai số cùng lúc, không chỉ một số chính"
+  ],
+  "hidesSubs": true
+}

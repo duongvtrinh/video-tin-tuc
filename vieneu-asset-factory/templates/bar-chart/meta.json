@@ -1,0 +1,163 @@
+{
+  "background": "transparent",
+  "capability": [
+    "số liệu",
+    "so sánh",
+    "biểu đồ"
+  ],
+  "category": "stat",
+  "description": "Biểu đồ cột so sánh theo mẫu kênh TVH (30/10/2026, video AI Trung Quốc): tiêu đề + tối đa 4 cột, cột đỏ cho mức giảm, xám cho điều chỉnh nhẹ, vàng cho tiền, trắng cho số lượng. Cách dùng: w là chiều cao cột tính theo phần trăm so với cột cao nhất (cột cao nhất = 100, các cột khác = giá trị/cột cao nhất × 100, Production tự chuẩn hoá trước khi ghi plan). Cột 1-2 bắt buộc, cột 3-4 tùy chọn (cột trống tự co về 0 và giữ nguyên vị trí slot nên các cột còn lại không lệch; nhãn trống tự ẩn). Nhãn ≤12 ký tự, giá trị nên ≤8 ký tự cho một dòng (dài hơn tự xuống dòng và có thể chạm tiêu đề khi cột cao nhất). Cột render ở 75% chiều cao vùng vẽ để chừa chỗ cho giá trị phía trên. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "exampleInputs": {
+    "foot": "Một bên trượt dài · một bên điều chỉnh nhẹ",
+    "label1": "STAR 50",
+    "label2": "CSI 300",
+    "label3": "Nasdaq (Mỹ)",
+    "label4": "",
+    "title": "MỨC GIẢM SO VỚI ĐỈNH",
+    "tone1": "decline",
+    "tone2": "decline",
+    "tone3": "mild",
+    "tone4": "money",
+    "value1": "-40%",
+    "value2": "-20%",
+    "value3": "-6%",
+    "value4": "",
+    "w1": "100",
+    "w2": "50",
+    "w3": "15",
+    "w4": ""
+  },
+  "id": "bar-chart",
+  "inputs": {
+    "foot": {
+      "maxLength": 60,
+      "required": false,
+      "type": "string"
+    },
+    "label1": {
+      "maxLength": 16,
+      "required": true,
+      "type": "string"
+    },
+    "label2": {
+      "maxLength": 16,
+      "required": true,
+      "type": "string"
+    },
+    "label3": {
+      "maxLength": 16,
+      "required": false,
+      "type": "string"
+    },
+    "label4": {
+      "maxLength": 16,
+      "required": false,
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 40,
+      "required": true,
+      "type": "string"
+    },
+    "tone1": {
+      "default": "money",
+      "type": "enum"
+    },
+    "tone2": {
+      "default": "money",
+      "type": "enum"
+    },
+    "tone3": {
+      "default": "money",
+      "type": "enum"
+    },
+    "tone4": {
+      "default": "money",
+      "type": "enum"
+    },
+    "value1": {
+      "maxLength": 14,
+      "required": true,
+      "type": "string"
+    },
+    "value2": {
+      "maxLength": 14,
+      "required": true,
+      "type": "string"
+    },
+    "value3": {
+      "maxLength": 14,
+      "required": false,
+      "type": "string"
+    },
+    "value4": {
+      "maxLength": 14,
+      "required": false,
+      "type": "string"
+    },
+    "w1": {
+      "maxLength": 3,
+      "required": true,
+      "type": "string"
+    },
+    "w2": {
+      "maxLength": 3,
+      "required": true,
+      "type": "string"
+    },
+    "w3": {
+      "maxLength": 3,
+      "required": false,
+      "type": "string"
+    },
+    "w4": {
+      "maxLength": 3,
+      "required": false,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Biểu đồ cột / Bar chart",
+  "notFor": [
+    "Chỉ một con số (dùng stat-counter)",
+    "Hai số đối chiếu (dùng dual-stat)",
+    "Quá 4 cột (chia thành nhiều cảnh)"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "center",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "heavy_thud_slam",
+    "offsetSec": 0,
+    "volume": 0.35
+  },
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "tags": [
+    "biểu đồ",
+    "so sánh",
+    "số liệu"
+  ],
+  "themes": [
+    "general",
+    "economy"
+  ],
+  "version": "1.5.0",
+  "whenToUse": [
+    "So sánh mức tăng/giảm của 2-4 đối tượng (chỉ số, thị trường, doanh thu)",
+    "Cần người xem thấy chênh lệch bằng mắt, không chỉ đọc số"
+  ],
+  "hidesSubs": true
+}

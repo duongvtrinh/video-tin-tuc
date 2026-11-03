@@ -1,0 +1,73 @@
+{
+  "accent": {
+    "default": "gold",
+    "type": "enum"
+  },
+  "animation": {
+    "default": "none",
+    "type": "enum"
+  },
+  "background": "transparent",
+  "capability": [
+    "clip",
+    "bình luận",
+    "tranh cãi",
+    "tiêu đề"
+  ],
+  "category": "clip",
+  "description": "Tiêu đề + khối tóm tắt cho video clip gây tranh cãi kiểu dựng lại: tiêu đề vàng viền đen ở dưới khung, khối tóm tắt chữ trắng trên nền hồng. Render qua Chrome để giữ viền chữ; dùng kèm thuyết minh bình luận và nhạc nền. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px. Đổi 31/10/2026 (lệnh CEO): hidesSubs false -> true, về logic ẩn phụ đề chung như mọi template; giữ thiết kế caption sát đáy 3% (ngoại lệ riêng trong render_draft và preview engine).",
+  "exampleInputs": {
+    "summary": "Cô gái tung tiền, tát liên tiếp vào mặt chàng trai trước đám đông. Theo clip, lý do là anh này cùng lúc hẹn hò với bảy người.",
+    "title": "BẮT QUẢ TANG GIỮA PHỐ"
+  },
+  "hidesSubs": true,
+  "id": "clip-caption",
+  "inputs": {
+    "summary": {
+      "maxLength": 200,
+      "required": true,
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 40,
+      "required": true,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Tiêu đề clip tranh cãi",
+  "notFor": [
+    "Tiêu đề dài quá 40 ký tự",
+    "Tóm tắt dài quá 200 ký tự",
+    "Che mất credit/watermark gốc của clip"
+  ],
+  "performance": {
+    "maxDomNodes": 10,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "bottom",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": null,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16"
+  ],
+  "tags": [
+    "clip",
+    "tranh cãi",
+    "bình luận",
+    "reel"
+  ],
+  "themes": [
+    "general"
+  ],
+  "version": "1.6.0",
+  "whenToUse": [
+    "Dựng lại clip gây tranh cãi: thêm tiêu đề vàng + khối tóm tắt hồng ở cuối khung, giữ nguyên credit gốc",
+    "Cần lớp chữ cố định xuyên suốt clip thay vì phụ đề karaoke"
+  ]
+}

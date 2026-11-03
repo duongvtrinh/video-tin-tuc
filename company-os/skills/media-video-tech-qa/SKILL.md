@@ -1,0 +1,153 @@
+# QA kỹ thuật và nâng cấp code tạo video
+
+## Đánh giá thành phẩm
+
+- Xem toàn bộ video ít nhất một lần từ đầu đến cuối trước khi chấm, và xem lại lần hai chỉ để chấm vẻ đẹp và khả năng giữ người xem.
+
+- Chấm hình ảnh theo độ nét, bố cục và tính nhất quán giữa các cảnh.
+
+- Chấm âm thanh theo độ rõ của giọng đọc, nhạc nền và mức âm lượng.
+
+- Chấm nhịp và phụ đề theo tốc độ nói, độ khớp và khả năng đọc nhanh.
+
+## Tiêu chí đẹp và giữ người xem — bắt buộc, không chỉ "không lỗi kỹ thuật" (nâng cấp 2026-10-26)
+
+Video chỉ được duyệt khi vừa sạch lỗi kỹ thuật, vừa đẹp, vừa giữ được người xem. Video sạch lỗi nhưng xấu hoặc buồn tẻ vẫn phải trả lại, ghi rõ sửa gì.
+
+### Đẹp: xem video như một người xem lần đầu
+- Mở đầu 3 giây đầu phải có hình ảnh mạnh, không phải card chữ trơn, không phải cảnh tĩnh kéo dài.
+- Mỗi cảnh có một tiêu điểm thị giác rõ ràng, bố cục không rối, chữ không chen nhau, màu chữ tương phản tốt với nền, phong cách màu và font nhất quán xuyên suốt video.
+- Hình ảnh các cảnh phải đa dạng, không lặp cùng một kiểu template, cùng một góc, cùng một tông màu nhàm chán ở 3 cảnh liên tiếp.
+- Motion mượt, không giật, không cắt chữ ở mép (lề an toàn 96px trái/phải, 140px trên ở khung 720x1280), không có khung đen, không có cảnh mờ hoặc vỡ hình.
+- Phụ đề ngắn, đọc kịp trong thời lượng cảnh, không che mất hình ảnh chính, không tràn mép.
+
+### Giữ người xem: chấm theo từng mốc thời gian, không chấm chung chung
+- Hook 0-3 giây: phải có xung đột, câu hỏi hoặc con số gây tò mò, và phải trả lời được ở cuối video. Hook chung chung kiểu "hôm nay chúng ta cùng tìm hiểu" là không đạt.
+- Mỗi 3-5 giây phải có một thay đổi: thông tin mới, hình ảnh mới, hoặc chuyển cảnh có lý do. Cảnh tĩnh, giọng đều đều, không có điểm nhấn trong hơn 5 giây là điểm rơi người xem.
+- Giữa video (khoảng 50%) phải có một lần "móc" lại: một câu hỏi mới, một diễn biến mới, hoặc một con số bất ngờ, để người xem không rời đi.
+- Kết video phải có kết luận rõ ràng và một câu chốt đáng nhớ, không kết lửng, không lặp lại mở đầu.
+- Khi trả lại, QA phải ghi rõ từng điểm rơi theo mốc thời gian, ví dụ: "12s: người xem rời vì cảnh tĩnh 6s không có thông tin mới — cần đổi hình và thêm con số", không ghi chung "video chưa hay".
+
+### Nhịp 2 tốc độ, khoảng lặng nhấn và bookend — bổ sung 30/10/2026 (video tham chiếu CEO gửi)
+- Nhịp 2 tốc độ, bổ sung luật "mỗi 3-5 giây một thay đổi", không thay: shot bằng chứng có chuyển động thật (phát biểu, hành động thật như nạp tên lửa, vượt sông) dài 7-14 giây mà thông tin vẫn tiến thì KHÔNG tính là điểm rơi. Điểm rơi là đoạn dài không có thông tin mới hoặc hình gần như đứng yên — đo trong từng part như luật motion, không đo qua mốc cắt.
+- Khoảng lặng ngắn trước câu kết luận (dưới ngưỡng lặng lỗi 1 giây) là kỹ thuật nhấn, không tính là điểm rơi hay lỗi lặng. Ngưỡng lặng lỗi vẫn giữ: đoạn lặng từ 1 giây trở lên không có lý do mới là lỗi.
+- Bookend (mở và đóng bằng cùng một hình ảnh/footage) là điểm cộng cấu trúc, không bắt buộc; khi video có bookend thì ghi nhận trong verdict, không trừ điểm vì "lặp hình" — đó là chủ đích, khác với lặp hình do thiếu tư liệu.
+
+### Cách chấm
+- Duyệt chỉ khi cả 3 cửa đều qua: (1) kỹ thuật sạch, (2) đẹp, (3) giữ người xem.
+- Trả lại khi bất kỳ cửa nào rớt, kèm danh sách lỗi cụ thể theo mốc thời gian và cách sửa cho từng lỗi.
+- Xem thử không có tiếng: nếu tắt tiếng mà vẫn hiểu được ý chính qua hình và chữ thì video mới đạt về mặt hình ảnh.
+
+### Cách kiểm tra motion — áp dụng cho video nộp từ 27/10/2026 trở đi (sửa lag/giật trong bin/render_draft.py, CEO duyệt)
+- Motion cũ dùng biến tăng dần (zoom+0,0005/khung) bị reset ở mỗi khung đầu vào khi d=1 với ảnh lặp, nên cảnh zoom gần như đứng yên; pan cũ chỉ đi tổng 34px trên khung 720 và cắt theo pixel nguyên ở ảnh 2x nên nhảy từng bậc. Motion mới tính từ vị trí tuyệt đối on/frames cho mọi kiểu, cộng easing smoothstep s=t*t*(3-2*t), ảnh nguồn phóng 4x trước khi zoompan, zoom tối đa vẫn 1,05, lề an toàn 96px/140px và fps 30 không đổi.
+- Khi chấm video mới, QA không chỉ xem mắt mà còn trích khung liên tiếp và đo độ đổi khung: một cảnh motion tốt phải có hầu hết các khung đều đổi nhẹ, không có chuỗi dài khung gần như đứng yên xen kẽ cú nhảy. Chuỗi khung gần như đứng yên kéo dài (ví dụ hàng chục khung liên tiếp) trong một part là lỗi motion, phải trả lại để render lại bằng motion mới, kèm mốc thời gian của chuỗi đó. Ngược lại, một cú đổi khung lớn duy nhất ở mốc cắt cảnh hoặc đổi template không phải là motion tốt — phải đo trong từng part, không đo qua mốc cắt.
+- Blur-fill 3:4 là thiết kế đúng, không phải lỗi (luật CEO 1/11/2026): part dùng ảnh ngang/vuông hoặc video ngang sẽ có 2 dải nền mờ trên/dưới (160px mỗi bên ở 720x1280) + cửa sổ nét 3:4 (720x960) ở giữa — không tính là khung đen, không tính là cảnh mờ/vỡ hình, không tính là cắt sai tỉ lệ. Motion vẫn đo trong cửa sổ nét (phần nền mờ đứng yên là đúng thiết kế, không tính là chuỗi khung đứng yên). Ảnh đúng 9:16 vẫn full khung, không có dải mờ.
+- Đánh đổi đã biết: motion mới render chậm gấp khoảng 2 lần, nên video dài vài phút sẽ render lâu hơn trước — thời gian render lâu hơn không phải lỗi, chỉ cần file cuối đạt chuẩn motion.
+- Các video đã duyệt bằng motion cũ vẫn giữ trạng thái Duyệt, trừ khi CEO yêu cầu làm lại theo motion mới.
+
+### Cửa thời lượng — lệnh tự quyết của CEO tối 29/10/2026 thay thế chuẩn 180-300s ngày 27/10 (cập nhật ca học hỏi 30/10/2026, chỉ ghi nhận lệnh CEO đã chốt)
+- Đề xuất video **2-3 phút**; video dài hơn vẫn chấp nhận khi nội dung đã kiểm chứng, Production tự quyết và KHÔNG hỏi lại CEO về cắt hay ngoại lệ. Chuẩn cũ 180-300 giây và cơ chế "ngoại lệ độ dài chỉ khi CEO cho phép rõ ràng từng video" đã bị thay thế — QA không còn trả lại video chỉ vì ngắn hơn 180s hay dài hơn 300s. Bằng chứng áp dụng 29-30/10/2026: đã duyệt TOPIC-039 144,1 giây, TOPIC-029 151,1 giây, TOPIC-041 164,9 giây (dưới 180s) và TOPIC-048 255,3 giây, TOPIC-056 259,6 giây, TOPIC-069 239,2 giây (trên 2-3 phút); các verdict đều phải ghi chú lại rằng chuẩn cũ đã bị thay thế, nên mục này được viết lại để khỏi lặp ghi chú đó.
+- Thời lượng đo bằng thời lượng thật của file MP4 cuối (và đối chiếu với tổng thời lượng thật trong tts.json, không đoán từ số từ). Mở rộng hợp lệ là các góc đã kiểm chứng (bối cảnh, so sánh, mốc thời gian, điểm mạnh/yếu, điều cần theo dõi tiếp, câu hỏi khán giả), không bịa số liệu, tên, ngày tháng, không lặp ý, không giảm tốc độ TTS dưới 1.0 để kéo thời gian. QA kiểm tra các góc mở rộng như kiểm tra nội dung chính, không chỉ kiểm tra tổng thời lượng.
+- Số từ chỉ là hướng dẫn lập kế hoạch (tốc độ đo được 4,16 từ/giây ở Chợ nổi v2 nhưng chỉ 3,85 từ/giây ở Án mạng karaoke; khoảng 500 từ cho 120 giây, khoảng 750 từ cho 180 giây ở tốc độ 4,16), còn chuẩn quyết định vẫn là thời lượng thật sau khi chạy TTS và trong file MP4 cuối.
+- Ngoại lệ duy nhất còn giữ nguyên nghĩa là clip test kỹ thuật ghi rõ là test pipeline, không nộp như video bàn giao (ví dụ test001 4,04 giây, textdensity001 12,5 giây) — các clip đó không áp dụng mục tiêu 2-3 phút và không được ghi vào Sheet như video bàn giao.
+- Lệnh trực tiếp của CEO kèm số giây riêng (ví dụ video Ukraine 455 giây ngày 29/10/2026) vẫn ghi rõ số giây và lý do trong verdict/bàn giao; nhưng đó là lệnh riêng, không phải cơ chế xin ngoại lệ chung nữa.
+- Quy tắc này không thu hồi các video đã duyệt trước 27/10/2026 (TOPIC-004 v2 37,29 giây, Hormuz v3 68,71 giây, Chợ nổi v2 55,53 giây) — các video đó vẫn giữ trạng thái Duyệt, trừ khi CEO yêu cầu làm lại theo chuẩn mới.
+
+### Quy tắc mật độ chữ — áp dụng cho video nộp từ 27/10/2026 trở đi (upstream Asset Factory commit c9222959, docs/TEXT_DENSITY_RULES.md)
+- Mặc định một part không gắn template chữ. Chỉ gắn template khi part đó là một beat nhấn mạnh theo §1 của tài liệu (con số then chốt, mốc thời gian/sự kiện, trích dẫn, luận điểm, đối đầu, tỉ số, mở chương, câu hỏi mở đầu, từ khóa, thăm dò, nguồn). Part miêu tả, khoảng thở, liệt kê thì không gắn chữ. Chữ template phải lấy từ kịch bản, sublabel chỉ điền khi có ý nghĩa thật (số, %, ngày, địa danh), không thì để trống.
+- Lý do kỹ thuật, đã kiểm chứng trong bin/karaoke.py: part có template chữ thật sẽ bị ẩn phụ đề (subsHidden, lines=[]), không còn ngoại lệ nào (từ 31/10/2026 story-title và clip-caption đã về hidesSubs: true). Vì vậy phụ đề trở lại ở các part không template là đúng thiết kế mới, không phải lỗi. Ngược lại, karaoke lines=0 ở gần như toàn bộ video là dấu hiệu staging sai, không còn được coi là "template mang chữ" như trước nữa.
+- Khi chấm video mới, QA kiểm tra thêm 3 điểm theo §5 của tài liệu: (1) đếm tỷ lệ part có templateId trên tổng số part — gần 100% là staging sai, phải trả lại để gỡ template khỏi các part miêu tả/khoảng thở; (2) đối chiếu mỗi template đã gắn với một beat ở §1 và không phạm notFor trong meta.json của nó; (3) soi chữ — mọi text/label đều có trong kịch bản, không bịa, không chung chung.
+- Part không có template không phải là "thiếu chữ": ảnh/video nền và phụ đề karaoke chính là nội dung của part đó. Kiểm tra tắt tiếng cho video mới vì vậy dựa vào hình + phụ đề karaoke + chữ template ở các beat nhấn mạnh, chứ không còn chỉ dựa vào chữ template.
+- Quy tắc này không thu hồi các video đã duyệt trước 27/10/2026 (TOPIC-004 v2, Hormuz v3, Chợ nổi v2, Án mạng karaoke) — các video đó vẫn giữ trạng thái Duyệt, trừ khi CEO yêu cầu làm lại theo quy tắc mới. Các video đó trước đây có karaoke lines=0 ở toàn bộ part vì gắn template ở gần như 100% part, đúng là vi phạm quy tắc mới, nhưng không tự động bị thu hồi.
+
+## Ra quyết định QA
+
+- Đọc kết quả preflight trước khi chấm (sửa 29/10/2026, code-fix): thiếu ảnh scene nay là LỖI preflight (exit 1), không còn là cảnh báo, vì render sẽ ra clip nền đen lặng lẽ cho scene đó; cảnh báo thời lượng của preflight (dưới 180s / trên 300s) từ ca 30/10/2026 chỉ còn là ghi chú thông tin theo lệnh tự quyết CEO tối 29/10 (xem cửa thời lượng ở trên), không còn là ngoại lệ cần CEO cho phép; video 0 SFX và part có template mà plan chưa copy SFX gợi ý cũng được preflight cảnh báo. Lỗi preflight hoặc cảnh báo bị bỏ qua mà vẫn nộp là lỗi quy trình — không duyệt video khi preflight còn lỗi.
+- Duyệt video khi không còn lỗi làm giảm trải nghiệm người xem.
+
+### Cửa kiểm tra HỒ SƠ bàn giao — áp dụng cho video nộp từ 29/10/2026 trở đi (quy tắc CEO 29/10/2026, code-fix)
+
+Đây là cửa kiểm HỒ SƠ, không phải cửa ngữ nghĩa: QA không chấm ảnh có đúng ý kịch bản hay không (xem ghi chú cuối mục này), nhưng bàn giao thiếu hồ sơ thì trả lại để Production bổ sung, không duyệt im lặng.
+
+- **SFX:** video bàn giao mà có 0 SFX trong plan thì TRẢ LẠI (luật SFX: SFX theo đúng meta từng part có template + đủ 3 beat hook/móc lại/kết luận; khung 3-7 cũ không còn là mức chặn — ca học hỏi 31/10/2026: QA đã duyệt SFX 8-10 theo meta ở 25 dòng verdict cho 24 video 30-31/10/2026, verdict 071 ghi rõ lý do "1 SFX/template"; chỉ TRẢ LẠI khi 0 SFX, thiếu SFX ở beat bắt buộc, hoặc SFX không theo meta mà không có lý do). Bàn giao phải ghi số SFX và danh sách SFX theo beat; không ghi thì trả lại để bổ sung.
+- **KARAOKE-WARN:** bàn giao còn `KARAOKE-WARN` (từ dài hơn 2 giây, dòng trùng mốc) thì TRẢ LẠI để sửa gốc ở khâu căn chữ. Chỉ khi QA xét thấy WARN đó không ảnh hưởng trải nghiệm người xem thì mới được duyệt kèm lý do chấp nhận ghi rõ trong verdict — không duyệt im lặng khi còn WARN.
+  - Bài kiểm tra chấp nhận WARN token số — bằng chứng lặp 29/10/2026 (TOPIC-037 + TOPIC-036): WARN là HỢP LỆ khi phần nở gắn đúng chính token số và highlight soi khung rơi đúng token đó, các từ xung quanh nhịp bình thường — TOPIC-037 v2 '25.361' 2,11s, '2026' 2,21s (khung 52,5s/57,5s/61,5s); TOPIC-036 newlaw2 '142,7' 2,09s (khung 18s), '139,5' 2,32s (khung 66s); ghi rõ lý do chấp nhận trong verdict như hai verdict này đã làm. Ngược lại, WARN là LỖI CĂN phải TRẢ LẠI khi phần nở gắn vào từ trước token số — TOPIC-037 v1 scene3-part-1 (51,67-60,24s): 'chỉ' 2,11s, 'xăng' 3,80s, token số chỉ 0,12-0,14s; đã sửa gốc ở `bin/karaoke.py` 29/10/2026, không chấp nhận vá tay `.ass`. Dòng trùng mốc thì luôn là lỗi, không có ngoại lệ token số.
+- **RENDER-REPORT (đợt D8, 01/11/2026):** trước khi duyệt, QA phải đọc file `export/<pid>_render_report.txt` mà `bin/render_draft.py` ghi cạnh MP4 (từ đợt B1). Chữ DRAFT-OK không có nghĩa là sạch: file này mới cho biết render có fallback lặng nào không (ảnh thiếu thành nền đen, video hỏng rơi về ảnh, template lỗi mất chữ, thiếu SFX/BGM, karaoke regen). Báo cáo ghi "không có fallback" thì qua; có sự kiện fallback mà bàn giao không giải thích thì TRẢ LẠI để Production giải thích hoặc sửa — không duyệt im lặng khi còn fallback chưa rõ.
+- **ĐỊNH DẠNG PIXEL — cửa kỹ thuật (ca học hỏi 02/11/2026):** trước khi duyệt, QA chạy `ffprobe` lên file MP4 cuối và kiểm tra video stream phải là `yuv420p` (4:2:0). File `yuv444p`/`yuvj444p` (4:4:4) thì TRẢ LẠI để render lại bằng `bin/render_draft.py` hiện tại (đã ép `-pix_fmt yuv420p` ở cả 5 điểm encode từ đợt sửa 01/11/2026) — không duyệt file 4:4:4 dù nó phát tốt trên máy tính hay trên Drive, vì bộ giải mã phần cứng điện thoại thường chỉ hỗ trợ tới 4:2:0. Bằng chứng lặp 2 video, đều đã QA duyệt + bàn giao Drive trước khi phát hiện: TOPIC-105 — CEO xem trên điện thoại 01/11/2026 chỉ có tiếng, màn hình đen, ffprobe xác nhận H.264 High 4:4:4 `yuvj444p`; TOPIC-106 — cùng 4:4:4 do cùng nguyên nhân (render cũ không ép `-pix_fmt`, ffmpeg tự chọn 4:4:4), file trên đĩa vẫn là `yuvj444p`. Kiểm chứng sau sửa: TOPIC-114 render sau đợt sửa cho `yuvj420p`, đúng chuẩn.
+- **Nguồn/giấy phép media (logic mới 29/10/2026):** plan phải ghi đủ cho MỖI media theo loại của nó: ảnh tự do trực tiếp thì nguồn + link trang file + giấy phép đã kiểm chứng (+ tác giả nếu giấy phép yêu cầu); ảnh báo/mạng xã hội không logo/watermark/chữ dùng trực tiếp thì nguồn + link + ghi chú "dùng trực tiếp theo quyết định CEO 29/10/2026"; ảnh gốc đã xóa chữ/watermark bằng AI thì URL ảnh gốc + ghi chú "ảnh gốc đã xóa chữ/watermark bằng AI, vẫn là ảnh gốc"; ảnh AI từ prompt thì prompt + ghi chú "AI từ prompt". Video thêm thời lượng so với voice part. Thiếu trường nào thì trả lại để Production bổ sung — QA kiểm đủ trường, không kiểm lại việc Production chọn ảnh nào thay Production.
+- **Prompt tiếng Việt:** prompt ảnh/video MỚI (từ 28/10/2026) phải bằng tiếng Việt và bám kịch bản, có đủ tóm tắt kịch bản + prompt chi tiết trong plan. Prompt mới không phải tiếng Việt thì trả lại để viết lại; prompt tiếng Anh của video đã duyệt trước 28/10/2026 giữ nguyên, không truy hồi.
+- **Ảnh đã crop về 9:16:** phải giữ đúng chủ thể chính, không cắt đầu/cắt người; crop làm mất chủ thể thì TRẢ LẠI để cắt lại.
+- **Minh họa chung chung phải ghi rõ:** ảnh AI từ prompt hoặc ảnh/video minh họa chung chung (nhất là nhân vật thiếu thông tin, phiên tòa đang diễn ra) mà bàn giao không ghi rõ là minh họa, không phải tư liệu thật/chân dung thật, thì TRẢ LẠI để ghi rõ. QA kiểm câu ghi rõ có mặt trong bàn giao hay không, không phán xét ảnh có giống người thật hay không; với ảnh gốc đã xóa chữ/watermark, thiếu URL ảnh gốc thì TRẢ LẠI để bổ sung.
+- **Chữ đọc được trên ảnh AI — SIẾT từ 03/11/2026 (cải tiến prompt; video đã duyệt giữ nguyên, không truy hồi):** biển/bảng có chữ đọc được — kể cả chung chung KHÔNG tên người, KHÔNG tên địa danh, KHÔNG con số, KHÔNG tuyên bố sự thật về câu chuyện — mà là chủ thể hoặc điểm nhấn của khung hình, hoặc chữ bị vẽ nhòe/sai thành ký tự vô nghĩa, thì TRẢ LẠI để Production tạo lại hoặc đổi góc thành nền mờ; không còn giữ chỉ với ghi chú. Chỉ còn lớp ghi chú khi chữ chỉ là nền mờ thật sự, không đọc được, không phải chủ thể. Tiền lệ giữ kèm ghi chú (TOPIC-107 S10P2 biển phòng "PHÒNG ĐÀO TẠO GIÁO VIÊN NGƯỜI LỚN"; TOPIC-106 S6 bảng treo tường "KẾ HOẠCH CÔNG TÁC 2024"; TOPIC-114 S2/S11 biển shop "CAO PHÊ", "PHỞ 24", "SỬA XE", "TẠP HÓA") là luật trước 03/11, không áp cho video mới. Ranh giới cũ vẫn giữ — LỖI phải sửa khi biển/bảng mang tên cơ quan/tổ chức thật hoặc ám chỉ một sự thật của câu chuyện: tiền lệ TOPIC-105 S7 biển "BỘ Y TẾ" đã bị Production tự bắt và tạo lại trước render cuối vì nó ám chỉ cuộc họp ở Bộ trong khi kịch bản chỉ nói họp chung chung; lớp tài liệu bịa kiểu 079 vẫn là lỗi, không thuộc lớp ghi chú này.
+- **Bối cảnh địa lý trong khung hình — lưu ý không chặn (bài học video tham chiếu 30/10/2026):** khi soi khung, nếu thấy dấu hiệu bối cảnh nước ngoài rõ rệt lạc với câu chuyện (tiền lệ: đoạn phố mùa đông trông như phố châu Á trong video về châu Âu) thì ghi LƯU Ý KHÔNG CHẶN trong verdict, theo đúng tiền lệ TOPIC-032/033 (lưu ý không chặn về stock nước ngoài). Không tự áp thành cửa TRẢ LẠI — cửa ngữ nghĩa vẫn thuộc Production cho đến khi CEO quyết chuyển sang QA (xem ngay dưới đây).
+- **KHÔNG có cửa ngữ nghĩa image-vs-script ở QA (quyết định CEO 28/10/2026, giữ nguyên):** QA không chấm ảnh/video có đúng ý nghĩa kịch bản hay không, không chấm nguồn/giấy phép thay cho bước soi trực quan của Production — các việc đó vẫn chỉ ở phía Production (skill Production: tìm media bằng từ khóa tiếng Việt khớp kịch bản, soi trực quan, tự loại ứng viên lệch). Nếu QA thấy cần thêm cửa ngữ nghĩa này thì chỉ ghi ĐỀ XUẤT vào báo cáo/bàn giao để CEO quyết, tuyệt đối không tự áp dụng thành cửa kiểm.
+- **Duyệt lại độc lập (quy tắc CEO 30/10/2026):** Sản xuất và QA là hai bộ phận độc lập — QA không duyệt theo kết luận tự đánh giá của Sản xuất mà kiểm tra lại độc lập từ file MP4, plan và khung hình thật. Phát hiện sót trong phạm vi các cửa của QA thì TRẢ LẠI ngay kèm mốc giây và cách sửa cụ thể, không duyệt im lặng, không để lọt sang video sau. Áp dụng cho bằng chứng dàn đoạn trong bàn giao (luật dàn đoạn 30/10/2026 của Sản xuất): QA đối chiếu bàn giao với khung hình thật — bàn giao thiếu bằng chứng dàn đoạn, hoặc khung hình cho thấy một nền chung chung gánh nhiều part khác ý, hoặc nhân vật có tên dùng hình chung chung mà không ghi cờ phương án cuối, hoặc ảnh AI trình bày như ảnh thật, thì TRẢ LẠI để sửa/ghi rõ. Giới hạn: việc này vẫn trong cửa hồ sơ và cửa khung hình — QA thi hành các luật dàn đoạn đã ghi thành văn bản, không tự mở cửa ngữ nghĩa mới (không chấm "b-roll này có đủ hay không" theo cảm quan); nếu QA thấy cần cửa đó thì ghi ĐỀ XUẤT để CEO quyết như quy tắc trên.
+- **SỐ ĐO KHÁC NHAU DO CÁCH LẤY MẪU — không đo lại/render lại để khớp số (ca học hỏi 03/11/2026):** khi số đo của Production và QA khác nhau nhưng cùng kết luận PASS (cùng phía của ngưỡng), ghi cả hai số + cách đo của mỗi bên + kết luận chung trong verdict, không yêu cầu đo lại hay render lại chỉ để hai số khớp nhau. Bằng chứng lặp 3 video ngày 03/11/2026: TOPIC-152 — motion QA 0,5s (cách +0,25s) vs Production 0s, phát âm QA đo 0,44s vs Production ~0,9s (cửa sổ rộng hơn); TOPIC-173 — motion QA 2,5/1,0/3,0s vs Production 0,5/0,5/0,5s, móc lại QA 116,03s (50,6%) vs Production 116,63s (50,9%); TOPIC-155 — motion QA 0,0/0,0/0,5s vs Production 0,5/0,0/0,0s, khoảng ngắt sau 'fast-track' QA 0,40s vs Production 0,30s (cả hai trong dải tiền lệ 114: 0,00-0,46s). Tiền lệ ghi cả hai số đã hình thành trong chính verdict 155 ('tiền lệ 152/173'), nay ghi thành luật để khỏi đo lại ở video sau. Ngoại lệ: khác nhau mà đổi phía ngưỡng (một bên PASS, một bên FAIL) thì vẫn xử lý như lỗi thật, không áp luật này.
+
+- Trả lại video kèm danh sách lỗi cụ thể và cách sửa cho từng lỗi.
+
+- Ghi kết quả QA vào tab 01_Tasks và không duyệt bằng cảm tính.
+
+## Vòng lặp QA - Drive - Sản xuất (quy định 2026-10-26, thay quy tắc chỉ gặp nhau ở Sheet)
+
+- Các bộ phận tương tác qua chat, Sheet chỉ là nơi ghi kết quả, không phải kênh duy nhất.
+- Video đạt yêu cầu: QA duyệt, rồi QA tự thực hiện bước bàn giao (xem mục Bàn giao Drive + Sheet dưới đây). QA không tự đăng lên nền tảng; việc đăng lên nền tảng do người dùng hoặc công ty kinh doanh khác thực hiện. Không cần kết nối Facebook.
+- Video không đạt yêu cầu: QA tự chat trực tiếp với bộ phận Sản xuất trong chat của Sản xuất, ghi rõ từng lỗi cần sửa và cách sửa cho từng lỗi, không chỉ ghi vào Sheet rồi chờ. Sản xuất sửa lại cho đạt yêu cầu rồi nộp lại cho QA đánh giá lại.
+
+## Bàn giao Drive + Sheet (QA nhận từ phòng Đăng tải - Phân tích đã giải thể, 2026-10-26)
+
+- Chỉ bàn giao video đã được QA duyệt, không phải bản nháp và không phải video bị trả lại.
+- Sau khi duyệt: upload file video đã duyệt lên thư mục Google Drive công khai đã xác nhận, rồi cập nhật link vào Sheet ngay sau khi upload.
+- Quy định mới 29/10/2026 (lệnh CEO, bãi bỏ cách làm chờ pipeline): QA tải lên NGAY trong cùng lượt duyệt, không chờ ca pipeline — pipeline chỉ làm lưới bắt sót cho video nào lỡ chưa có link. Cách làm cũ "duyệt xong để pipeline lo" (tiền lệ TOPIC-032/033/037 tối 29/10, gây tồn đọng video duyệt mà chưa lên Drive) không còn áp dụng.
+- Ghi link vào tab 08_Publish_Tracking (cột Link video, một dòng cho một video) và ghi kết quả duyệt vào tab 01_Tasks, không xóa dữ liệu Sheet cũ để công ty kinh doanh khác vẫn đọc được.
+- Không tự tạo thư mục công khai và không tự chia sẻ công khai khi chưa được xác nhận thư mục và quyền truy cập; nếu thư mục chưa xác nhận thì dừng ở bước duyệt, ghi rõ "chờ xác nhận thư mục Drive", không bịa link Drive.
+- Không đăng lên nền tảng, không gắn sản phẩm affiliate, không ghi số liệu views/follow/doanh thu — những việc đó thuộc công ty kinh doanh khác.
+- Bàn giao Drive là bàn giao sản phẩm cho công ty khác dùng, không phải kinh doanh.
+
+## Nâng cấp code
+
+- Ghi lỗi lặp lại thành một vấn đề kỹ thuật trước khi sửa code.
+
+- Sửa code trong repo đúng là Muse App, VieNeu TTS hoặc Asset Factory.
+
+- Chạy test lại với một video mẫu sau mỗi lần sửa và ghi kết quả test.
+
+- Không deploy production và không mua dịch vụ khi chưa có quyết định của CEO.
+
+### Sửa template thì phải đề xuất cập nhật repo — quy tắc CEO 27/10/2026, để tái sử dụng cho các tài khoản Muse khác
+
+- Kích hoạt: bất kỳ lần nào QA sửa template, hoặc QA yêu cầu Sản xuất sửa template do lỗi template gây ra (không chỉ vá một video). Sửa template mà không đề xuất cập nhật repo là chưa xong việc, dù video đó đã được duyệt.
+- Đề xuất phải đi cùng bản đánh giá QA / bàn giao sửa lỗi, không để lại sau: template nào, file nào đổi (`templates/<id>/template.html`, `style.css`, `meta.json`), version tăng bao nhiêu (sửa lỗi thì tăng patch, đổi hành vi thì tăng minor), nguyên nhân QA kèm mốc thời gian và bằng chứng trước/sau, kết quả render thử qua `renderTemplate` và đánh giá lại toàn bộ video sau sửa.
+- Cập nhật repo có hai bước, không gộp: (1) cập nhật file repo local (`~/workspace/vieneu-asset-factory/templates/`), vì app đọc đúng thư mục này nên sửa repo là app tự dùng bản mới, không cần đồng bộ bản sao; (2) đẩy lên GitHub / chia sẻ cho tài khoản Muse khác thì cần quyết định riêng của CEO, vì repo local hiện không phải working tree git và push là cam kết bên ngoài không đảo ngược được. Không tự push.
+- Tài khoản Muse khác tái sử dụng bằng cách lấy đúng thư mục `templates/` từ repo (clone sau khi push, hoặc copy thư mục template đã cập nhật), không lấy bằng cách copy file video, project riêng hay database của app — những thứ đó không mang theo template.
+- Nếu một sửa chỉ đúng cho một video mà không đúng cho template chung, QA phải ghi rõ "không áp dụng repo" trong đề xuất, để lần sau không ai nhầm bản vá riêng của một video thành template chuẩn.
+- Ghi đề xuất này vào bản đánh giá QA, vào `qa-checklist.md` và ghi chú Sheet nơi có liên quan, để lần sau tra được template nào đã được đề xuất cập nhật repo, khi nào, và đã push hay mới chỉ cập nhật local.
+
+### Chấm điểm thẩm mỹ template — quy trình QA sáng tạo, áp dụng từ 30/10/2026 (quyền sáng tạo CEO cấp 30/10/2026)
+
+- QA không chỉ chấm video theo barem kỹ thuật có sẵn mà còn chấm thẩm mỹ của chính template, trên khung hình thật — không đánh giá template trên lý thuyết, không chấm bằng mô tả miệng. Mỗi lần chấm: lấy startSec từng part có template từ `tts.json` của project, dùng ffmpeg trích khung giữa part (template đã hiện đủ, ví dụ hook 5s, stat-counter, móc lại, kết luận), lưu vào `~/workspace/company-os/template-audit/` với tên ghi rõ video + template + mốc giây, rồi chấm trên khung đó.
+- Barem sáng tạo, chấm từng tiêu chí 0–10 rồi cộng trung bình thành điểm tổng cho từng template (không thay barem kỹ thuật 3 cửa, chỉ cộng thêm cửa thẩm mỹ này): (1) màu sắc — tương phản chữ/nền trên cả nền ảnh sáng và nền tối, hài hòa bảng màu, không chìm vào nền động; (2) cỡ chữ — đọc được ở 720x1280 trên điện thoại, không quá to gây choán, không quá nhỏ; (3) font chữ — nhất quán trong cùng một video, đúng mood tin tức, hỗ trợ tiếng Việt có dấu đầy đủ, không lỗi glyph, không trộn serif/sans vô cớ; (4) khoảng cách dòng — line-height đủ thở cho label 2 dòng, không dính dòng; (5) padding — khoảng thở quanh chữ, không dính mép panel; (6) màu nền/độ mờ nền — đủ tách chữ khỏi ảnh nền động mà không thành khối đen thô, không che mất ảnh đẹp; (7) lỗi cắt chữ/xuống dòng — từ dài, số dài, label 2 dòng có bị cắt hay tràn không; (8) lề an toàn 96px/140px — chữ (không tính panel tràn mép vốn là thiết kế) có đọc đủ không; (9) nhất quán giữa các template trong cùng một video.
+- Màu template đối chiếu bảng màu chuẩn 31/10/2026 (`~/workspace/company-os/template-palette-20261031/PALETTE.md`): vàng `#FBBF24`, đỏ `#EF4444`, cyan `#22D3EE`, xanh lá `#22C55E`, hồng `#F472B6`, nền tối mực `#080A10`, chữ 3 nấc trắng — màu lạ ngoài bảng là lỗi cần TRẢ LẠI, trừ 3 ngoại lệ thiết kế (versus-split 2 phe, comment-frame thẻ trắng, tactical-banner maroon).
+- Cỡ chữ template đối chiếu thang chuẩn 31/10/2026 (`~/workspace/company-os/template-type-scale-20261031/TYPE.md`): preferred vmin chỉ các nấc 2.5/2.8/3.4/3.9/4.3/5.0/6.5/8.5/11.0/15.0/23.1 — cỡ ngoài thang là lỗi cần TRẢ LẠI, trừ ngoại lệ đã ghi (source-footer px, versus ngang 7.5vmin, cỡ em tương đối).
+- Ngưỡng: TRẢ LẠI khi template lỗi thật — cắt chữ, tràn thẻ, tương phản kém đến mức chữ chìm vào nền (ví dụ chữ trắng chồng lên chữ số nền mà màn phủ không tách nổi), font lỗi dấu tiếng Việt. CHẤP NHẬN KÈM GHI CHÚ khi panel tràn mép nhưng chữ đọc đủ không cắt ký tự (tiền lệ 034/035/040: panel tràn mép là thiết kế template, không phải lỗi chữ) hoặc lề chữ thiếu vài px nhưng chữ đọc đủ. Mọi điểm trừ phải gắn với một khung hình minh chứng cụ thể, ghi rõ mốc giây.
+- Khi template chưa hợp lý, QA được quyền sáng tạo sửa tận gốc cùng Production (CEO cấp quyền 30/10/2026): sửa `style.css`/`template.html`/`meta.json`, tăng version đúng quy tắc (sửa lỗi tăng patch, đổi hành vi tăng minor), sao lưu bản gốc vào `~/workspace/company-os/template-audit/backup-<ngày>/` trước khi sửa, giữ tương thích ngược (không đổi tên templateId đang dùng, không đổi SFX gợi ý trong meta trừ khi có lý do ghi rõ, không làm vỡ plan cũ; template mới chỉ thêm, không thay id cũ). Nếu một beat hay dùng hiện phải dùng template gượng ép (ví dụ beat hai số phải nhét vào stat-counter qua sublabel), thì thêm template mới đủ html/css/meta, version 1.0.0, ghi rõ beat nào dùng và notFor nào. Trước khi áp sửa lên template live, kiểm tra không có render nào đang chạy (tiến trình render_draft, log render của project đang dựng); nếu có render đang chạy hoặc sắp chạy thì chỉ chuẩn bị patch staged + ảnh trước/sau từ render thử riêng, báo rõ là chưa áp live vì chờ render, đừng sửa giữa lúc render.
+- Chứng minh bằng render thử sau mỗi sửa: render template đã sửa qua `bin/render_template.py` (hoặc project thử nhỏ 1–2 part), trích khung sau sửa, đặt cạnh khung trước sửa để thấy cải thiện thật; kiểm tra lại chữ không cắt, không tràn, đọc rõ trên cả nền sáng và nền tối, lề đạt. Lưu ý đường render thử WeasyPrint không có font Be Vietnam Pro cài sẵn nên dùng font fallback có metrics rộng hơn — label dài có thể xuống dòng trong ảnh thử nhưng vẫn vừa một dòng ở đường render live dùng đúng font; chỉ tin kết luận hình học (rộng thẻ, vừa số, cân dòng), không kết luận lỗi tràn chỉ từ ảnh thử.
+- Tiền lệ 30/10/2026 (đợt chấm đầu tiên, khung thật từ TOPIC-041/042 v2/043/045): section-title 1.2.0→1.3.0, typewriter-reveal 1.0.0→1.1.0, stat-counter 1.0.0→1.1.0, date-stamp 1.0.0→1.1.0, thêm mới dual-stat 1.0.0 cho beat hai số đối chiếu; cập nhật local đã áp, KHÔNG push GitHub (cần quyết định riêng của CEO). Chi tiết điểm số và ảnh trước/sau xem `~/workspace/company-os/template-audit/`.
+- Tiền lệ 30/10/2026 (đợt nâng cấp TVH, lệnh CEO trừ watermark): stat-counter 1.1.0→1.2.0 (vạch dọc mã màu theo tone + lead dòng dẫn; plan cũ không tone/lead giữ nguyên look cũ đã kiểm chứng hồi quy); thêm mới section-header 1.0.0, section-caption 1.0.0, timeline-horizontal 1.0.0, bar-chart 1.0.0, keyword-strip 1.0.0, info-note 1.0.0; count-up KHÔNG ship vì Chrome headless không khởi động được trong môi trường này (lỗi chính sách Hatch WebGL domain) nên chưa kiểm chứng được chuỗi frame đếm — prototype lưu ở `~/workspace/company-os/template-upgrade-tvh/count-up-prototype/`. Hai bài học kỹ thuật: (1) WeasyPrint không hỗ trợ `:has` (bản này) nên bar-chart không dùng `:has` để ẩn cột trống mà giữ nguyên slot; (2) flex lồng nhau + chiều cao % làm WeasyPrint vẽ cột bar-chart tràn ngang khỏi thẻ — đã sửa bằng định vị tuyệt đối trong cột. Lưu ý còn tồn tại: section-header ở vị trí top hiện render y=38px (dưới lề trên 140px) vì render_draft căn top = 3%H — sửa vị trí thuộc quyết định riêng của CEO, không tự sửa render_draft. Frame kiểm chứng xem `~/workspace/company-os/template-upgrade-tvh/frames-after/` và báo cáo `~/workspace/company-os/template-upgrade-tvh/REPORT-20261030.md`.
+- Tiền lệ 30/10/2026 (video tham chiếu CEO gửi, cấu trúc thẻ mục số thứ tự): khi video dùng section-header đánh số #1/#2/#3 mở từng luận điểm, chấm nhất quán trong cửa thẩm mỹ — cùng kiểu thẻ, số thứ tự đúng thứ tự, mỗi thẻ mở một luận điểm riêng; thẻ mục không cần SFX lớn riêng, SFX gợi ý của template là đủ, không trừ điểm vì "thẻ không có tiếng boom" (đo thật video tham chiếu không có spike âm lượng tại các thẻ mục).
+
+## Học từ lỗi lặp lại
+
+- Ưu tiên sửa lỗi ảnh hưởng nhiều video nhất thay vì sửa lỗi chỉ xuất hiện một lần.
+
+- Không phân tích views/follow/doanh thu — việc đó thuộc công ty kinh doanh khác.
+
+## Available connectors
+
+- [Google Sheets](/opt/hatch/connectors/google_sheets/CONNECTOR.md) for ghi kết quả QA vào tab 01_Tasks.
+
+- [GitHub](/opt/hatch/connectors/github/CONNECTOR.md) for đọc và làm việc với repo kỹ thuật.
+
+- Use `muse.connector_search` to find other connectors and `muse.skill_search` to find related skills.
+
+- If nothing here fits, look on the web for a maintained API or MCP server and set it up with [Custom Connectors and MCPs](/opt/muse/skills/custom-connector-setup/SKILL.md), or build a custom connector.

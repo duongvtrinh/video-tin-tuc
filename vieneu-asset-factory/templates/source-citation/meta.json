@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "id": "source-citation",
+  "name": "Trích nguồn tư liệu / Source",
+  "version": "1.5.0",
+  "mode": "overlay",
+  "background": "transparent",
+  "category": "quote",
+  "description": "Thẻ trích nguồn tư liệu cổ: khung viền đôi trang trọng, tên nguồn lớn kèm loại nguồn và chi tiết. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "whenToUse": [
+    "Trích dẫn chính sử, văn bia, thần phả, hồi ký",
+    "Cần tăng độ tin cậy cho thông tin lịch sử"
+  ],
+  "notFor": [
+    "Trích lời nhân vật (dùng quote-card)",
+    "Nguồn không xác định rõ"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "safeZone": {
+    "x": 0.06,
+    "y": 0.12,
+    "width": 0.88,
+    "height": 0.64,
+    "avoidSubtitleBottomPercent": 24,
+    "avoidTopUiPercent": 10
+  },
+  "inputs": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "maxLength": 60
+    },
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 24
+    },
+    "sublabel": {
+      "type": "string",
+      "required": false,
+      "maxLength": 80
+    },
+    "accent": {
+      "type": "enum",
+      "default": "gold"
+    },
+    "position": {
+      "type": "enum",
+      "default": "bottom"
+    },
+    "animation": {
+      "type": "enum",
+      "default": "fade"
+    }
+  },
+  "themes": [
+    "general",
+    "history"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "sfx": {
+    "id": "paper_rip",
+    "offsetSec": 0,
+    "volume": 0.6
+  },
+  "exampleInputs": {
+    "text": "Đại Việt sử ký toàn thư",
+    "label": "CHÍNH SỬ",
+    "sublabel": "Quyển V — Kỷ nhà Trần"
+  },
+  "status": "active",
+  "hidesSubs": true
+}

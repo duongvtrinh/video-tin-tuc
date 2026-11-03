@@ -1,0 +1,63 @@
+{
+  "background": "transparent",
+  "capability": [
+    "caption",
+    "kết đoạn"
+  ],
+  "category": "stat",
+  "description": "Thanh caption chốt một đoạn theo mẫu kênh TVH (30/10/2026): thanh ngang xám đậm + đoạn đầu màu đỏ + dòng chữ trắng. Đặt ở cuối đoạn trước khi chuyển cảnh. LƯU Ý VỊ TRÍ: render_draft hiện tại luôn căn giữa ngang overlay, nên thanh này hiện render ở phía dưới căn giữa, chưa bám góc trái đúng kiểu TVH; muốn bám góc trái cần mở rộng position trong render_draft (quyết định riêng của CEO). Karaoke bị ẩn trên part có template nên thanh này không đụng phụ đề. Text nên ≤28 ký tự cho một dòng, dài hơn tự xuống 2 dòng. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "exampleInputs": {
+    "text": "Căng thẳng biên giới thành tổn thất kinh tế"
+  },
+  "id": "section-caption",
+  "inputs": {
+    "text": {
+      "maxLength": 70,
+      "required": true,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Caption kết đoạn / Section caption",
+  "notFor": [
+    "Câu dài giải thích (dùng section-title hoặc quote-card)",
+    "Chữ nguồn (dùng source-footer-safe)"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "bottom",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "whoosh_fast",
+    "offsetSec": 0,
+    "volume": 0.6
+  },
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "tags": [
+    "caption",
+    "kết đoạn",
+    "chốt ý"
+  ],
+  "themes": [
+    "general",
+    "economy"
+  ],
+  "version": "1.5.0",
+  "whenToUse": [
+    "Chốt một đoạn bằng một câu kết luận ngắn trước khi chuyển cảnh",
+    "Tóm tắt hệ quả của cụm số liệu vừa nêu"
+  ],
+  "hidesSubs": true
+}

@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "tactical-banner",
+  "name": "Dải báo động chiến thuật / Alert",
+  "version": "1.4.0",
+  "mode": "overlay",
+  "background": "transparent",
+  "category": "alert",
+  "description": "Dải cảnh báo chiến thuật toàn chiều rộng: nền đỏ tối, viền hazard nhấp nháy, chữ lệnh uppercase. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "whenToUse": [
+    "Tình huống khẩn cấp, bước ngoặt trận đánh",
+    "Lệnh tác chiến, cảnh báo"
+  ],
+  "notFor": [
+    "Thông tin thường nhật",
+    "Đã dùng alert-flash ở cảnh kề trước"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "safeZone": {
+    "x": 0.06,
+    "y": 0.12,
+    "width": 0.88,
+    "height": 0.64,
+    "avoidSubtitleBottomPercent": 24,
+    "avoidTopUiPercent": 10
+  },
+  "inputs": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "maxLength": 80
+    },
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 24
+    },
+    "accent": {
+      "type": "enum",
+      "default": "red"
+    },
+    "position": {
+      "type": "enum",
+      "default": "bottom"
+    },
+    "animation": {
+      "type": "enum",
+      "default": "fade"
+    }
+  },
+  "themes": [
+    "general",
+    "war"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "sfx": {
+    "id": "radar_glitch",
+    "offsetSec": 0,
+    "volume": 0.7
+  },
+  "exampleInputs": {
+    "text": "ĐỊCH TẤN CÔNG CÁNH TRÁI",
+    "label": "KHẨN"
+  },
+  "status": "active",
+  "hidesSubs": true
+}

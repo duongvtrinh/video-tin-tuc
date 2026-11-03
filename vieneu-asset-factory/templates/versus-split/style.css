@@ -1,0 +1,32 @@
+/* BROLL VERSUS - 16:9 LANDSCAPE */
+.broll-versus{position:absolute;inset:0;display:flex;box-sizing:border-box;background:#06080d;overflow:hidden}
+.broll-versus-side{flex:1;display:flex;align-items:center;justify-content:center;min-width:0;padding:0 9%;box-sizing:border-box;text-align:center}
+.broll-versus-a{background:linear-gradient(135deg,#1b2a4a,#0b1224)}
+.broll-versus-b{background:linear-gradient(225deg,#4a1b1b,#240b0b)}
+.broll-versus-side strong{display:block;max-width:100%;font:900 clamp(24px,7.5vmin,68px)/1.15 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;overflow-wrap:break-word;word-break:break-word;text-shadow:0 4px 16px rgba(0,0,0,.6)}
+.broll-versus-vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:2.6em;height:2.6em;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--broll-accent,#fbbf24);color:#10131a;font:900 clamp(20px,6.5vmin,56px)/1 'Anton',Arial,sans-serif;box-shadow:0 0 0 .16em #06080d,0 8px 28px rgba(0,0,0,.6);z-index:2}
+.broll-versus-sub{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);max-width:88%;padding:.45em 1.1em;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.18);border-radius:4px;font:700 clamp(13px,3.4vmin,26px)/1.3 'Anton',Arial,sans-serif;color:#fff;text-align:center;z-index:3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.broll-versus-sub:empty{display:none}
+
+/* BROLL VERSUS - 9:16 PORTRAIT */
+@media (orientation:portrait),(max-aspect-ratio:1/1){
+.broll-versus{flex-direction:column}
+.broll-versus-side{padding:10% 8%}
+.broll-versus-a{background:linear-gradient(180deg,#1b2a4a,#0b1224)}
+.broll-versus-b{background:linear-gradient(0deg,#4a1b1b,#240b0b)}
+.broll-versus-side strong{font-size:clamp(22px,11.0vmin,60px)}
+.broll-versus-vs{font-size:clamp(18px,8.5vmin,48px)}
+.broll-versus-sub{bottom:4%;font-size:clamp(13px,5.0vmin,22px)}
+}
+
+/* BROLL VERSUS - 9:16 PORTRAIT qua class body (đường render video dùng
+   WeasyPrint/Chrome chụp trang tĩnh không đánh giá @media orientation
+   nên cần class tường minh; giữ @media cho trình duyệt/preview). Host
+   render chèn class portrait/landscape vào <body> theo W,H. */
+body.portrait .broll-versus{flex-direction:column}
+body.portrait .broll-versus-side{padding:10% 8%}
+body.portrait .broll-versus-a{background:linear-gradient(180deg,#1b2a4a,#0b1224)}
+body.portrait .broll-versus-b{background:linear-gradient(0deg,#4a1b1b,#240b0b)}
+body.portrait .broll-versus-side strong{font-size:clamp(22px,11.0vmin,60px)}
+body.portrait .broll-versus-vs{font-size:clamp(18px,8.5vmin,48px)}
+body.portrait .broll-versus-sub{bottom:4%;font-size:clamp(13px,5.0vmin,22px)}

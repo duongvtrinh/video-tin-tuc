@@ -1,0 +1,23 @@
+# state + dữ liệu + bí mật — không bao giờ vào git
+.venv/
+__pycache__/
+node_modules/
+dist/
+build/
+*.mp4
+*.wav
+*.mp3
+*.env*
+*credentials*
+*secret*
+projects/
+bgm/
+backup/
+quarantine/
+*-work/
+*-media/
+*-build/
+*-check/
+frames*/
+*.zip
+*.log

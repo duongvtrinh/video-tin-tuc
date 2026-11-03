@@ -1,0 +1,111 @@
+{
+  "accent": {
+    "default": "gold",
+    "type": "enum"
+  },
+  "animation": {
+    "default": "none",
+    "type": "enum"
+  },
+  "background": "transparent",
+  "capability": [
+    "bình luận",
+    "tâm sự",
+    "mạng xã hội",
+    "kể chuyện"
+  ],
+  "category": "social",
+  "description": "Khung kể chuyện bằng bình luận mạng xã hội kiểu reel tâm sự: thẻ bình luận trắng giữa khung trên nền ảnh tối, kèm khung thương hiệu trên (nguồn + logo) và dưới (logo + tiêu đề lớn) xuyên suốt. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Thẻ bình luận chuyển từ giữa khung về bottom tối 31/10/2026 (lệnh CEO: đáy thẻ cách đáy khung đúng khoảng cách phụ đề; khung thương hiệu trên/dưới giữ nguyên). Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "exampleInputs": {
+    "avatar": "A",
+    "brand": "CHUYỆN KINH TẾ",
+    "comments": "340",
+    "likes": "1,2K",
+    "source": "Nguồn: Người dùng mạng xã hội",
+    "text": "Vàng giảm thế này, người mua đỉnh hồi tháng 1 giờ chỉ biết ngồi nhìn bảng giá mà thở dài.",
+    "title": "DÂN MẠNG BÀN GÌ KHI VÀNG ĐỎ SÀN?",
+    "user": "Người dùng mạng xã hội"
+  },
+  "id": "comment-frame",
+  "inputs": {
+    "avatar": {
+      "maxLength": 2,
+      "required": false,
+      "type": "string"
+    },
+    "brand": {
+      "maxLength": 20,
+      "required": true,
+      "type": "string"
+    },
+    "comments": {
+      "maxLength": 20,
+      "required": false,
+      "type": "string"
+    },
+    "likes": {
+      "maxLength": 20,
+      "required": false,
+      "type": "string"
+    },
+    "source": {
+      "maxLength": 40,
+      "required": false,
+      "type": "string"
+    },
+    "text": {
+      "maxLength": 300,
+      "required": true,
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 70,
+      "required": true,
+      "type": "string"
+    },
+    "user": {
+      "maxLength": 30,
+      "required": true,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Khung bình luận tâm sự",
+  "notFor": [
+    "Bình luận dài quá 300 ký tự",
+    "Nội dung chưa kiểm chứng hoặc nhạy cảm",
+    "Gán lời giả cho người thật cụ thể"
+  ],
+  "performance": {
+    "maxDomNodes": 20,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "bottom",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": null,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16"
+  ],
+  "tags": [
+    "bình luận",
+    "tâm sự",
+    "mạng xã hội",
+    "reel",
+    "trending"
+  ],
+  "themes": [
+    "general",
+    "economy"
+  ],
+  "version": "1.6.0",
+  "whenToUse": [
+    "Video kể chuyện bằng bình luận mạng xã hội, mỗi thẻ hiển thị lâu và được đọc thành tiếng",
+    "Cần khung thương hiệu trên/dưới xuyên suốt kiểu reel tâm sự"
+  ],
+  "hidesSubs": true
+}

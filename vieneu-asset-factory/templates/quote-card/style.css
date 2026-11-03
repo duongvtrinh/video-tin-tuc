@@ -1,0 +1,7 @@
+.broll-quote{display:flex;flex-direction:column;gap:.6em;max-width:86%;padding:1em 1.4em 1em 1.6em;border-radius:4px;background:rgba(8,10,16,.78);border-left:.2em solid var(--broll-accent);box-shadow:0 10px 36px rgba(0,0,0,.45)}
+.broll-quote-text{margin:0;font:700 italic clamp(20px,6.5vmin,46px)/1.3 'Anton',Arial,sans-serif;color:#fff;overflow-wrap:anywhere}
+.broll-quote-text::before{content:"“";color:var(--broll-accent);font:900 1.6em/0 'Anton',Arial,sans-serif;margin-right:.12em;vertical-align:-.28em}
+.broll-quote-by{font:800 clamp(13px,3.4vmin,24px)/1.2 'Anton',Arial,sans-serif;color:var(--broll-accent);letter-spacing:.08em;text-transform:uppercase}
+.broll-quote-by::before{content:"— "}
+.broll-quote-by:empty{display:none}
+.broll-quote-text:empty{display:none}

@@ -1,0 +1,64 @@
+{
+  "background": "transparent",
+  "capability": [
+    "chú thích",
+    "thông tin"
+  ],
+  "category": "source",
+  "description": "Thẻ chú thích nhỏ góc dưới theo mẫu kênh TVH (30/10/2026, video AI): tên vàng + dòng thông tin phụ trắng (ví dụ tên công ty + thông tin IPO). Đã kiểm tra source-footer-safe — template đó chuyên ghi NGUỒN (label + dòng nguồn, kiểm tra nguồn trong QA), không dùng cho thông tin thực thể; tách riêng info-note để không lẫn nguồn với thông tin. Tên nên ≤20 ký tự cho một dòng, thông tin nên ≤60 ký tự. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "exampleInputs": {
+    "info": "IPO tại Thượng Hải · tháng 8/2026",
+    "name": "CÔNG TY CÔNG NGHỆ A"
+  },
+  "id": "info-note",
+  "inputs": {
+    "info": {
+      "maxLength": 70,
+      "required": true,
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 30,
+      "required": true,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Thẻ chú thích nhỏ / Info note",
+  "notFor": [
+    "Ghi nguồn (dùng source-footer-safe)",
+    "Thông tin dài giải thích (dùng quote-card hoặc section-title)"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "bottom",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "tags": [
+    "chú thích",
+    "thông tin",
+    "thực thể"
+  ],
+  "themes": [
+    "general",
+    "economy"
+  ],
+  "version": "1.4.0",
+  "whenToUse": [
+    "Giới thiệu nhanh một thực thể khi nhắc tên lần đầu (công ty, tổ chức, nhân vật) kèm một dòng thông tin phụ",
+    "Chú thích nhỏ không đáng một thẻ số liệu riêng"
+  ],
+  "hidesSubs": true
+}

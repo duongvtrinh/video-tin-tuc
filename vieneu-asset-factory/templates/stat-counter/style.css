@@ -1,0 +1,11 @@
+.broll-stat{display:flex;flex-direction:column;align-items:center;gap:.25em;padding:.7em 1.3em .8em;border-radius:8px;background:rgba(8,10,16,.82);border-top:.14em solid var(--broll-accent);text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);box-sizing:border-box;width:100%;max-width:528px}
+.broll-stat-row{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;max-width:100%}
+.broll-stat-value{font:900 clamp(54px,15.0vmin,140px)/1 'Anton',Arial,sans-serif;color:var(--broll-accent);text-shadow:0 4px 18px rgba(0,0,0,.6)}
+.broll-stat-unit{font:800 clamp(20px,5.0vmin,48px)/1 'Anton',Arial,sans-serif;color:#fff;margin-left:.25em}
+.broll-stat-label{font:800 clamp(18px,5.0vmin,40px)/1.2 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.04em}
+.broll-stat-sub{font:600 clamp(13px,3.4vmin,26px)/1.25 'Anton',Arial,sans-serif;color:#cbd5e1}
+.broll-stat-value:empty,.broll-stat-unit:empty,.broll-stat-label:empty,.broll-stat-sub:empty,.broll-stat-lead:empty{display:none}
+.broll-stat-lead{font:italic 600 clamp(14px,3.4vmin,28px)/1.3 'Anton',Arial,sans-serif;color:#fff;overflow-wrap:break-word;max-width:100%}
+/* FIX 31/10/2026 (lệnh CEO): bỏ vạch trái theo tone; vạch trên đổi màu theo tone (decline → đỏ, còn lại → vàng) để hai vạch không xung đột; bổ sung cùng ngày: decline số đỏ cùng màu vạch trên */
+.broll-stat-tone-decline{border-top-color:#ef4444}
+.broll-stat-tone-decline .broll-stat-value{color:#ef4444}

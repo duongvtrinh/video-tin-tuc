@@ -1,0 +1,18 @@
+.broll-timeline-h{display:flex;flex-direction:column;gap:.55em;max-width:528px;padding:.8em 1em .9em;border-radius:8px;background:rgba(8,10,16,.86);box-shadow:0 10px 34px rgba(0,0,0,.55);box-sizing:border-box}
+.broll-timeline-h-label{font:800 clamp(12px,2.8vmin,20px)/1.2 'Anton',Arial,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--broll-accent)}
+.broll-timeline-h-track{list-style:none;margin:0;padding:1.1em 0 0;position:relative;display:flex;gap:.5em}
+.broll-timeline-h-track::before{content:"";position:absolute;top:.72em;left:0;right:0;height:2px;background:rgba(251,191,36,.45)}
+.broll-timeline-h .broll-item{flex:1;position:relative;padding-top:1em;text-align:center;font:600 clamp(11px,2.5vmin,19px)/1.3 'Anton',Arial,sans-serif;color:#fff;overflow-wrap:break-word;min-width:0}
+.broll-timeline-h .broll-item::before{content:"";position:absolute;top:-.7em;left:50%;transform:translateX(-50%);width:.7em;height:.7em;border-radius:50%;background:var(--dot,#fbbf24);box-shadow:0 0 10px var(--dot,#fbbf24)}
+.broll-timeline-h .broll-item:nth-child(1){--dot:#ef4444}
+.broll-timeline-h .broll-item:nth-child(2){--dot:#fbbf24}
+.broll-timeline-h .broll-item:nth-child(3){--dot:#22c55e}
+.broll-timeline-h .broll-item:nth-child(4){--dot:#22d3ee}
+.broll-timeline-h .broll-item:nth-child(5){--dot:#fff}
+.broll-timeline-h-label:empty{display:none}
+
+/* NO-ANIM 31/10/2026: CSS animation removed per CEO decision - video render is static-only */
+
+
+
+.broll-timeline-h-track::before{transform-origin:left center;}

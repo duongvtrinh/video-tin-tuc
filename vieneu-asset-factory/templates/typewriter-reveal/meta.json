@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "id": "typewriter-reveal",
+  "name": "Gõ máy chữ / Typewriter Reveal",
+  "version": "1.8.0",
+  "mode": "overlay",
+  "background": "transparent",
+  "category": "keyword",
+  "description": "Hiệu ứng gõ từng ký tự với con trỏ nhấp nháy, phù hợp tài liệu điều tra, hồ sơ mật, trích yếu hoặc câu nói kịch tính. Sửa thẩm mỹ QA 30/10/2026 (1.1.0): font Playfair serif→Be Vietnam Pro 800, thống nhất hệ sans toàn video và nét chữ dày hơn trên nền động nhiều chữ số; màn phủ 0.58→0.70, blur 2px→3px, thêm lớp shadow viền chữ để tách chữ khỏi nền bảng số (bằng chứng khung hook TOPIC-045 5s: chữ trắng cũ chồng lên chữ số nền). Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Bỏ con trỏ gõ chữ 31/10/2026 (lệnh CEO): con trỏ không nhấp nháy được trong render tĩnh nên chỉ còn là vạch đứng thừa sau chữ (thậm chí rớt xuống dòng riêng khi chữ dài), gây hiểu lầm; gỡ hẳn phần tử con trỏ và CSS của nó. Chuyển khối chữ từ giữa khung về bottom tối 31/10/2026 (lệnh CEO: đáy khối cách đáy khung 256px ở 9:16). Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "whenToUse": [
+    "Trích xuất hồ sơ, tài liệu giải mật, chỉ dụ hoặc văn kiện",
+    "Ghi chú tình báo, dòng suy ngẫm, mật mã hoặc câu hỏi điều tra",
+    "Tạo nhịp gõ chữ kịch tính, hé lộ dần thông điệp"
+  ],
+  "notFor": [
+    "Các câu dài quá 80 ký tự",
+    "Đoạn có nhiều số liệu cần đọc nhanh",
+    "Cảnh có chủ thể ở vị trí overlay che khuất"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "safeZone": {
+    "x": 0.08,
+    "y": 0.12,
+    "width": 0.84,
+    "height": 0.64,
+    "avoidSubtitleBottomPercent": 24,
+    "avoidTopUiPercent": 10
+  },
+  "inputs": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "maxLength": 80
+    },
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 30
+    },
+    "sublabel": {
+      "type": "string",
+      "required": false,
+      "maxLength": 60
+    },
+    "accent": {
+      "type": "enum",
+      "default": "cyan",
+      "values": [
+        "cyan",
+        "gold",
+        "red",
+        "green",
+        "violet",
+        "white",
+        "orange",
+        "pink"
+      ]
+    },
+    "position": {
+      "type": "enum",
+      "default": "center",
+      "values": [
+        "top",
+        "center",
+        "bottom",
+        "left",
+        "right"
+      ]
+    },
+    "animation": {
+      "type": "enum",
+      "default": "typewriter",
+      "values": [
+        "typewriter",
+        "fade",
+        "slide-up",
+        "slide-left",
+        "slide-right",
+        "pop",
+        "wipe",
+        "none"
+      ]
+    }
+  },
+  "performance": {
+    "maxDomNodes": 16,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "tags": [
+    "typewriter",
+    "gõ chữ",
+    "hồ sơ",
+    "tài liệu",
+    "overlay",
+    "kịch tính"
+  ],
+  "sfx": {
+    "id": "typing_fast",
+    "offsetSec": 0.0,
+    "volume": 0.75
+  },
+  "exampleInputs": {
+    "label": "TÀI LIỆU GIẢI MẬT",
+    "text": "Kế hoạch tác chiến đã được phê duyệt",
+    "sublabel": "Hồ sơ lưu trữ số 1471"
+  },
+  "themes": [
+    "general",
+    "history"
+  ],
+  "status": "active",
+  "capability": [
+    "hé lộ",
+    "tài liệu"
+  ],
+  "hidesSubs": true
+}

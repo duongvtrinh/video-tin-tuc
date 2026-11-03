@@ -1,0 +1,4 @@
+.broll-story-title{position:absolute;top:auto;bottom:3%;left:0;right:0;text-align:center;font-family:'Anton',sans-serif;box-sizing:border-box;padding:4% 4% 0 4%}
+.st-line1{display:block;color:#fbbf24;font-weight:900;text-transform:uppercase;font-size:6.5vmin;line-height:1.2;text-align:center}
+.st-line2{display:block;color:#ef4444;font-weight:900;text-transform:uppercase;font-size:6.5vmin;line-height:1.2;text-align:center;-webkit-text-stroke:2px #fff}
+.st-line1:empty,.st-line2:empty{display:none!important}

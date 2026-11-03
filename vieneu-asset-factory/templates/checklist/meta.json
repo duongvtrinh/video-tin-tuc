@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "id": "checklist",
+  "name": "Danh sách ý chính / Checklist",
+  "version": "1.4.0",
+  "mode": "overlay",
+  "background": "transparent",
+  "category": "list",
+  "description": "Tiêu đề kèm 2–5 ý ngắn, mỗi ý một dòng có dấu tích. Sửa sau QA Chợ nổi 26/10/2026: chữ items phải luôn trắng trên banner tối (CSS .broll-check-list và .broll-item đều đặt color #fff), và đường render tĩnh render_template.py phải chuyển items thành <li class=\"broll-item\"> như đường animation, nếu không chữ rơi về đen mặc định và chìm trên banner tối. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi.",
+  "whenToUse": [
+    "Liệt kê nguyên nhân, kết quả, điều kiện",
+    "Tóm tắt ý chính sau một đoạn dài"
+  ],
+  "notFor": [
+    "Một ý duy nhất",
+    "Ý quá dài (hơn 60 ký tự mỗi dòng)"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "inputs": {
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 40
+    },
+    "items": {
+      "type": "string",
+      "required": true,
+      "maxItems": 5,
+      "maxLength": 56
+    },
+    "accent": {
+      "type": "enum",
+      "default": "gold"
+    },
+    "position": {
+      "type": "enum",
+      "default": "left"
+    },
+    "animation": {
+      "type": "enum",
+      "default": "stagger"
+    }
+  },
+  "sfx": {
+    "id": "whoosh_fast",
+    "offsetSec": 0,
+    "volume": 0.7
+  },
+  "exampleInputs": {
+    "label": "Nguyên nhân thắng lợi",
+    "items": "Vua tôi đồng lòng\nChiến thuật vườn không nhà trống\nĐịa thế sông Bạch Đằng"
+  },
+  "performance": {
+    "maxDomNodes": 24,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "tags": [
+    "danh sách",
+    "ý chính"
+  ],
+  "themes": [
+    "general",
+    "economy"
+  ],
+  "status": "active",
+  "capability": [
+    "danh sách",
+    "liệt kê ý"
+  ],
+  "hidesSubs": true
+}

@@ -1,0 +1,7 @@
+.broll-social{width:86%;max-width:620px;padding:1em 1.2em;border-radius:4px;background:rgba(8,10,16,.94);border:1px solid rgba(255,255,255,.14);overflow:hidden}
+.broll-social-avatar{float:left;width:2.6em;height:2.6em;border-radius:50%;background:var(--broll-accent,#22d3ee);color:#080a10;font:900 1.5em/2.6em var(--vst-font-family,'Anton',sans-serif);text-align:center;overflow:hidden;white-space:nowrap;margin-right:.8em}
+.broll-social-user{font:800 clamp(14px,3.9vmin,26px)/1.4 var(--vst-font-family,'Anton',sans-serif);color:#fff}
+.broll-social-platform{font:600 clamp(11px,2.8vmin,20px)/1.4 var(--vst-font-family,'Anton',sans-serif);color:var(--broll-accent,#22d3ee);margin-left:.6em}
+.broll-social-text{display:block;margin:.4em 0;font:400 clamp(15px,4.3vmin,30px)/1.5 var(--vst-font-family,'Anton',sans-serif);color:#fff}
+.broll-social-likes{display:block;margin-top:.3em;font:700 clamp(12px,3.4vmin,22px)/1.4 var(--vst-font-family,'Anton',sans-serif);color:#f472b6}
+.broll-social *:empty{display:none}

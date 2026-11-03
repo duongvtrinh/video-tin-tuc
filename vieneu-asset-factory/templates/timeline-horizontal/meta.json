@@ -1,0 +1,76 @@
+{
+  "background": "transparent",
+  "capability": [
+    "timeline",
+    "mốc thời gian"
+  ],
+  "category": "list",
+  "description": "Trục thời gian NGANG theo mẫu kênh TVH (30/10/2026, video Phú Quốc): các mốc nối nhau bằng đường ngang, mỗi mốc một nút tròn màu (đỏ, vàng, xanh lá, xanh dương, trắng theo thứ tự) + ngày và nhãn ngắn. Khác timeline-strip dọc hiện có (không đổi hành vi của nó; CSS viết mới vì bố cục khác hẳn). Ở 9:16, 4 mốc là thực tế; 5 mốc chỉ khi nhãn rất ngắn (≤8 ký tự). Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "exampleInputs": {
+    "items": [
+      "Tháng 1 — Khởi công",
+      "Tháng 6 — Thi công",
+      "Tháng 10 — Khai thác",
+      "2027 — Vận hành"
+    ],
+    "label": "TIẾN ĐỘ DỰ ÁN"
+  },
+  "id": "timeline-horizontal",
+  "inputs": {
+    "items": {
+      "maxItems": 5,
+      "required": true,
+      "type": "string"
+    },
+    "label": {
+      "maxLength": 40,
+      "required": false,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Trục thời gian ngang / Timeline horizontal",
+  "notFor": [
+    "Chỉ có 1 mốc (dùng date-stamp)",
+    "Quá 5 mốc (chia thành nhiều cảnh)",
+    "Diễn biến dài nhiều năm cần liệt kê dọc (dùng timeline-strip)"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "center",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "whoosh_fast",
+    "offsetSec": 0,
+    "volume": 0.6
+  },
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "tags": [
+    "timeline",
+    "mốc thời gian",
+    "diễn biến"
+  ],
+  "themes": [
+    "general",
+    "history",
+    "economy"
+  ],
+  "version": "1.5.0",
+  "whenToUse": [
+    "Diễn biến theo thời gian với 2-5 mốc ngắn (tiến độ dự án, lộ trình, lịch trình)",
+    "Cần người xem thấy trình tự ngang thay vì liệt kê dọc"
+  ],
+  "hidesSubs": true
+}

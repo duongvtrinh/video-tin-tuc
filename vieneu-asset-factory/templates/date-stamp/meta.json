@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "date-stamp",
+  "name": "Mốc thời gian / Date stamp",
+  "version": "1.6.0",
+  "mode": "overlay",
+  "background": "transparent",
+  "category": "stat",
+  "description": "Năm hoặc ngày tháng lớn kèm mô tả ngắn, như con dấu thời gian. Sửa thẩm mỹ QA 30/10/2026 (1.1.0): thẻ giới hạn 528px (720−2×96) thay cho tấm tràn mép, bo góc 4px→8px, nội dung vẫn căn trái trong thẻ. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "whenToUse": [
+    "Chuyển mốc thời gian trong câu chuyện",
+    "Nhấn mạnh năm của một sự kiện"
+  ],
+  "notFor": [
+    "Không có mốc thời gian cụ thể"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "inputs": {
+    "value": {
+      "type": "string",
+      "required": true,
+      "maxLength": 14
+    },
+    "text": {
+      "type": "string",
+      "required": false,
+      "maxLength": 60
+    },
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 24
+    },
+    "accent": {
+      "type": "enum",
+      "default": "gold"
+    },
+    "position": {
+      "type": "enum",
+      "default": "left"
+    },
+    "animation": {
+      "type": "enum",
+      "default": "pop"
+    }
+  },
+  "sfx": {
+    "id": "heavy_thud_slam",
+    "offsetSec": 0,
+    "volume": 0.4
+  },
+  "exampleInputs": {
+    "label": "",
+    "value": "1288",
+    "text": "Đại thắng Bạch Đằng"
+  },
+  "performance": {
+    "maxDomNodes": 24,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "tags": [
+    "năm",
+    "mốc thời gian"
+  ],
+  "themes": [
+    "general",
+    "history"
+  ],
+  "status": "active",
+  "capability": [
+    "mốc thời gian",
+    "niên đại"
+  ],
+  "hidesSubs": true
+}

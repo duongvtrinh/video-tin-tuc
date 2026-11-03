@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "quote-card",
+  "name": "Trích dẫn / Quote",
+  "version": "1.5.0",
+  "mode": "overlay",
+  "background": "transparent",
+  "category": "quote",
+  "description": "Một câu trích dẫn hoặc lời nói nổi tiếng, có thể nhấn từ khóa bằng **từ khóa** và ghi tên tác giả. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "whenToUse": [
+    "Trích lời nhân vật, văn bản, hịch, thơ",
+    "Một câu nói mang tính biểu tượng"
+  ],
+  "notFor": [
+    "Đoạn dài hơn hai câu",
+    "Không rõ nguồn trích dẫn"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "inputs": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "maxLength": 140
+    },
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 40
+    },
+    "accent": {
+      "type": "enum",
+      "default": "gold"
+    },
+    "position": {
+      "type": "enum",
+      "default": "center"
+    },
+    "animation": {
+      "type": "enum",
+      "default": "fade"
+    }
+  },
+  "sfx": null,
+  "exampleInputs": {
+    "text": "Dù phải **đốt cháy** cả dãy Trường Sơn cũng phải giành cho được độc lập",
+    "label": "Hồ Chí Minh"
+  },
+  "performance": {
+    "maxDomNodes": 24,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "tags": [
+    "trích dẫn",
+    "câu nói"
+  ],
+  "themes": [
+    "general",
+    "history"
+  ],
+  "status": "active",
+  "capability": [
+    "trích dẫn",
+    "lời nhân vật"
+  ],
+  "hidesSubs": true
+}

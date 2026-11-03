@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "description": "Registry chủ đề (theme) cho B-roll templates. Mỗi template khai báo `themes: [...]` trong meta.json. Template thuộc nhiều theme được; theme 'general' dùng được cho mọi video. File này được loader bỏ qua (bắt đầu bằng '_').",
+  "themes": [
+    {
+      "id": "general",
+      "name": "Tổng hợp",
+      "description": "Template trung tính, dùng được cho mọi chủ đề video.",
+      "defaultAccent": "gold"
+    },
+    {
+      "id": "history",
+      "name": "Lịch sử",
+      "description": "Ngôn ngữ thị giác trang trọng, cổ điển: niên đại, tư liệu, bản đồ hành quân, trích nguồn sử liệu. Accent gợi ý: gold.",
+      "defaultAccent": "gold"
+    },
+    {
+      "id": "war",
+      "name": "Chiến tranh",
+      "description": "Ngôn ngữ thị giác khẩn trương, uy lực: báo động chiến thuật, số liệu tổn thất, đối đầu. Accent gợi ý: red.",
+      "defaultAccent": "red"
+    },
+    {
+      "id": "sports",
+      "name": "Thể thao",
+      "description": "Ngôn ngữ thị giác tốc độ, bùng nổ: tỷ số, bảng xếp hạng, đối đầu. Accent gợi ý: cyan.",
+      "defaultAccent": "cyan"
+    },
+    {
+      "id": "economy",
+      "name": "Kinh tế",
+      "description": "Ngôn ngữ thị giác dữ liệu, sạch sẽ: chỉ báo xu hướng, số liệu, dòng tin thị trường. Accent gợi ý: green.",
+      "defaultAccent": "green"
+    }
+  ]
+}

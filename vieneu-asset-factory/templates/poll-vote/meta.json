@@ -1,0 +1,91 @@
+{
+  "accent": {
+    "default": "cyan",
+    "type": "enum"
+  },
+  "animation": {
+    "default": "fade",
+    "type": "enum"
+  },
+  "background": "transparent",
+  "capability": [
+    "thăm dò",
+    "bình chọn",
+    "trending"
+  ],
+  "category": "interactive",
+  "description": "Thăm dò ý kiến 2 phương án với thanh % trực quan. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "exampleInputs": {
+    "opt1": "Đồng ý",
+    "opt2": "Không đồng ý",
+    "pct1": "68%",
+    "pct2": "32%",
+    "question": "Có nên cấm xe xăng trong nội đô?"
+  },
+  "id": "poll-vote",
+  "inputs": {
+    "opt1": {
+      "maxLength": 30,
+      "required": true,
+      "type": "string"
+    },
+    "opt2": {
+      "maxLength": 30,
+      "required": true,
+      "type": "string"
+    },
+    "pct1": {
+      "maxLength": 5,
+      "required": true,
+      "type": "string"
+    },
+    "pct2": {
+      "maxLength": 5,
+      "required": true,
+      "type": "string"
+    },
+    "question": {
+      "maxLength": 80,
+      "required": true,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Thăm dò ý kiến",
+  "notFor": [
+    "Quá 2 phương án",
+    "Không có số liệu %"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "center",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": null,
+  "status": "active",
+  "supportedAspectRatios": [
+    "16:9",
+    "9:16",
+    "1:1"
+  ],
+  "tags": [
+    "thăm dò",
+    "bình chọn",
+    "trending",
+    "ý kiến"
+  ],
+  "themes": [
+    "general"
+  ],
+  "version": "1.5.0",
+  "whenToUse": [
+    "Kết quả khảo sát, thăm dò dư luận",
+    "So sánh 2 luồng ý kiến"
+  ],
+  "hidesSubs": true
+}

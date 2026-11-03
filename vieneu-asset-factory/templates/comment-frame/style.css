@@ -1,0 +1,15 @@
+.broll-comment-frame{position:absolute;inset:0;background:rgba(0,0,0,0.28);font-family:'Anton',sans-serif;box-sizing:border-box}
+.cf-top{position:absolute;top:0;left:0;right:0;padding:3.5% 4% 0 4%}
+.cf-source{float:left;color:#fff;font-size:3.4vmin;text-shadow:1px 1px 2px #000}
+.cf-brand{float:right;background:#0f2030;color:#fff;font-weight:900;font-size:3.4vmin;padding:1.2% 2.5%;border-radius:6px}
+.cf-card{position:absolute;left:6%;right:6%;top:auto;bottom:20%;background:#fff;border-radius:6px;padding:4% 4% 3% 4%;box-sizing:border-box}
+.cf-head{margin-bottom:2.5%}
+.cf-avatar{display:inline-block;width:9vmin;height:9vmin;line-height:9vmin;text-align:center;border-radius:50%;background:#fbbf24;color:#fff;font-weight:900;font-size:4.3vmin;margin-right:2.5%}
+.cf-user{display:inline-block;color:#111;font-weight:700;font-size:3.9vmin;vertical-align:middle}
+.cf-text{color:#111;font-size:4.3vmin;line-height:1.55}
+.cf-actions{margin-top:3%;color:#666;font-size:3.4vmin}
+.cf-actions span{margin-right:5%}
+.cf-bottom{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.72);padding:3% 5% 4% 5%;box-sizing:border-box}
+.cf-bottom-brand{color:#fff;font-weight:900;font-size:3.4vmin;margin-bottom:1%}
+.cf-title{color:#fff;font-weight:900;text-transform:uppercase;font-size:6.5vmin;line-height:1.2}
+.cf-source:empty,.cf-brand:empty,.cf-bottom-brand:empty,.cf-title:empty,.cf-user:empty,.cf-text:empty{display:none!important}

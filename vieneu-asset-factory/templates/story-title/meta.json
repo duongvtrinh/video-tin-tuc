@@ -1,0 +1,73 @@
+{
+  "accent": {
+    "default": "gold",
+    "type": "enum"
+  },
+  "animation": {
+    "default": "none",
+    "type": "enum"
+  },
+  "background": "transparent",
+  "capability": [
+    "kể chuyện",
+    "minh họa",
+    "truyện tranh",
+    "tiêu đề"
+  ],
+  "category": "story",
+  "description": "Tiêu đề cố định phía trên cho video kể chuyện bằng ảnh minh họa truyện tranh: dòng 1 vàng, dòng 2 đỏ viền trắng, chữ in hoa đậm. Dùng kèm ảnh nền phong cách người que + phụ đề karaoke có sẵn của factory (chữ trắng, từ đang đọc tô vàng). Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Đổi 31/10/2026 (lệnh CEO): hidesSubs false -> true, về logic ẩn phụ đề chung như mọi template; thẻ về bottom chung (đáy 1024) thay cho sát đáy 3%.",
+  "exampleInputs": {
+    "line1": "CHUYỆN KỂ HÔM NAY",
+    "line2": "TỈ LỆ GÂY BẤT NGỜ"
+  },
+  "hidesSubs": true,
+  "id": "story-title",
+  "inputs": {
+    "line1": {
+      "maxLength": 40,
+      "required": true,
+      "type": "string"
+    },
+    "line2": {
+      "maxLength": 40,
+      "required": true,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Tiêu đề truyện kể",
+  "notFor": [
+    "Tiêu đề dài quá 40 ký tự mỗi dòng",
+    "Nền quá rối khiến dòng đỏ khó đọc ở bản render tĩnh"
+  ],
+  "performance": {
+    "maxDomNodes": 10,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "bottom",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": null,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16"
+  ],
+  "tags": [
+    "kể chuyện",
+    "truyện tranh",
+    "tiêu đề",
+    "minh họa",
+    "reel"
+  ],
+  "themes": [
+    "general"
+  ],
+  "version": "1.6.0",
+  "whenToUse": [
+    "Video kể chuyện/bình luận xã hội bằng chuỗi ảnh minh họa truyện tranh, mỗi ảnh theo một câu thuyết minh",
+    "Cần tiêu đề 2 dòng cố định phía trên xuyên suốt video"
+  ]
+}

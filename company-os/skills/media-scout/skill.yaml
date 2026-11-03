@@ -1,0 +1,5 @@
+name: "media-scout"
+title: "Quét trend làm video"
+description: "Quét báo, group và tìm kiếm để ghi chủ đề hot kèm nguồn vào Google Sheet."
+category: "Work and knowledge"
+include_in_prompt: false

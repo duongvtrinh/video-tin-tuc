@@ -1,0 +1,65 @@
+{
+  "background": "transparent",
+  "capability": [
+    "preview vấn đề",
+    "banner đỏ"
+  ],
+  "category": "banner",
+  "description": "Banner đỏ preview nội dung chính cho beat giới thiệu sơ bộ sau hook (luật CEO 31/10/2026, đúng khung thật reel tham chiếu 0-8s: dải đỏ đáy khung, chữ trắng in đậm căn trái, nguyên câu vấn đề). Render tĩnh, không animation. Vị trí đáy khung nên phụ đề karaoke trên part này bị ẩn (meta đặt hidesSubs: true). Thiết kế đặc thù từ 31/10/2026 (lệnh CEO): khối nền phủ kín chiều ngang, sát đáy khung và 2 bên (không nâng lên khoảng cách phụ đề như thẻ thường), nền gradient đỏ -> trong suốt, không shadow viền, chiều cao tối thiểu 30% khung, padding-top 50px giữa khối nền và nội dung. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8).",
+  "exampleInputs": {
+    "text": "Huy động 1 vạn nhân công làm việc ngày đêm, để thi công tuyến đường sắt 350km/h Bến Thành - Cần Giờ, VinSpeed muốn thế giới phải trầm trồ với Việt Nam"
+  },
+  "id": "preview-banner",
+  "inputs": {
+    "position": {
+      "default": "bottom",
+      "type": "enum"
+    },
+    "text": {
+      "maxLength": 160,
+      "required": true,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Banner preview / Preview Banner",
+  "notFor": [
+    "Liệt kê nhiều ý (mỗi beat phân tích dùng keyword-block riêng)",
+    "Câu quá dài quá 160 ký tự"
+  ],
+  "performance": {
+    "maxDomNodes": 8,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "whoosh_fast",
+    "offsetSec": 0,
+    "volume": 0.6
+  },
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "tags": [
+    "preview",
+    "vấn đề",
+    "banner"
+  ],
+  "themes": [
+    "general"
+  ],
+  "version": "1.2.0",
+  "whenToUse": [
+    "Beat preview sau hook: nêu vấn đề + nội dung chính trước khi đi sâu"
+  ],
+  "position": {
+    "default": "bottom",
+    "type": "enum"
+  },
+  "hidesSubs": true
+}

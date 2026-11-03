@@ -1,0 +1,7 @@
+.broll-pro{position:relative;max-width:88%;padding:.4em .9em .4em 1.6em;border-radius:4px;background:linear-gradient(90deg,rgba(8,10,16,.82),rgba(8,10,16,.35))}
+.broll-pro-bar{position:absolute;left:.4em;top:.4em;bottom:.4em;width:.5em;border-radius:4px;background:var(--broll-accent)}
+.broll-pro-body{display:block}.broll-pro-body>*{display:block}
+.broll-pro-label{font:800 clamp(12px,2.8vmin,22px)/1.2 'Anton',Arial,sans-serif;color:var(--broll-accent);letter-spacing:.1em;text-transform:uppercase}
+.broll-pro-text{font:900 clamp(20px,6.5vmin,48px)/1.1 'Anton',Arial,sans-serif;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.7);overflow-wrap:anywhere}
+.broll-pro-sub{font:600 clamp(13px,3.4vmin,28px)/1.25 'Anton',Arial,sans-serif;color:#fff}
+.broll-pro-label:empty,.broll-pro-sub:empty{display:none}

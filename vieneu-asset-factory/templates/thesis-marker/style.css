@@ -1,0 +1,8 @@
+.broll-thesis-marker{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;padding:12% 8% 24%;text-align:center;background:radial-gradient(ellipse at center,rgba(8,10,16,.98),rgba(8,10,16,.97));color:#fff;pointer-events:none}
+.broll-thesis-marker .broll-thesis-badge{display:inline-flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:6px 20px;margin-bottom:18px}
+.broll-thesis-marker .broll-thesis-value{font:900 clamp(24px,8.5vmin,56px)/1 'Anton',sans-serif;color:var(--broll-accent,#fbbf24);letter-spacing:.02em}
+.broll-thesis-marker .broll-thesis-label{font:700 clamp(11px,2.5vmin,18px)/1.2 'Anton',sans-serif;text-transform:uppercase;letter-spacing:.18em;color:#94a3b8}
+.broll-thesis-marker .broll-thesis-divider{width:60px;height:3px;background:var(--broll-accent,#fbbf24);border-radius:2px;margin:0 auto 20px}
+.broll-thesis-marker .broll-thesis-text{margin:0;font:900 clamp(28px,8.5vmin,76px)/1.15 'Anton',sans-serif;color:#fff;text-shadow:0 4px 20px rgba(0,0,0,.6);letter-spacing:-.01em;overflow-wrap:anywhere}
+.broll-thesis-marker .broll-thesis-sublabel{margin:16px 0 0;font:500 clamp(14px,3.4vmin,24px)/1.4 'Anton',sans-serif;color:#cbd5e1;max-width:750px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.broll-thesis-marker *:empty{display:none}

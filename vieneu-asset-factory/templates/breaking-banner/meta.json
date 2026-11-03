@@ -1,0 +1,72 @@
+{
+  "accent": {
+    "default": "red",
+    "type": "enum"
+  },
+  "animation": {
+    "default": "flash",
+    "type": "enum"
+  },
+  "background": "transparent",
+  "capability": [
+    "tin nóng",
+    "khẩn cấp"
+  ],
+  "category": "alert",
+  "description": "Banner TIN NÓNG toàn chiều rộng màn hình, viền đỏ nhấp nháy. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuyển về bottom tối 31/10/2026 (lệnh CEO: trừ thesis-marker và versus-split, mọi template đều về bottom, đáy thẻ cách đáy khung đúng khoảng cách phụ đề). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "exampleInputs": {
+    "label": "TIN NÓNG",
+    "text": "Nga tuyên bố ngừng bắn đơn phương 72 giờ"
+  },
+  "id": "breaking-banner",
+  "inputs": {
+    "label": {
+      "default": "TIN NÓNG",
+      "maxLength": 20,
+      "type": "string"
+    },
+    "text": {
+      "maxLength": 90,
+      "required": true,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Banner tin nóng",
+  "notFor": [
+    "Tin không khẩn cấp",
+    "Text quá dài"
+  ],
+  "performance": {
+    "maxDomNodes": 12,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "bottom",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": "whoosh_fast",
+  "status": "active",
+  "supportedAspectRatios": [
+    "16:9",
+    "9:16",
+    "1:1"
+  ],
+  "tags": [
+    "tin nóng",
+    "breaking",
+    "khẩn"
+  ],
+  "themes": [
+    "general",
+    "war"
+  ],
+  "version": "1.5.0",
+  "whenToUse": [
+    "Tin vừa xảy ra, cần gây chú ý ngay",
+    "Tuyên bố khẩn cấp"
+  ],
+  "hidesSubs": true
+}

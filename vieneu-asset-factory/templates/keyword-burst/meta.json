@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "keyword-burst",
+  "name": "Từ khóa lớn / Keyword burst",
+  "version": "1.3.0",
+  "mode": "overlay",
+  "background": "transparent",
+  "category": "keyword",
+  "description": "Một từ hoặc cụm từ cực lớn giữa màn hình để chốt ý (có thể nhấn **từ khóa**). Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8).",
+  "whenToUse": [
+    "Chốt ý bằng một từ/cụm từ",
+    "Nhịp nhấn mạnh trong câu kể nhanh"
+  ],
+  "notFor": [
+    "Câu dài",
+    "Nhiều hơn 4 từ"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "inputs": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "maxLength": 36
+    },
+    "sublabel": {
+      "type": "string",
+      "required": false,
+      "maxLength": 50
+    },
+    "accent": {
+      "type": "enum",
+      "default": "gold"
+    },
+    "position": {
+      "type": "enum",
+      "default": "center"
+    },
+    "animation": {
+      "type": "enum",
+      "default": "pop"
+    }
+  },
+  "sfx": {
+    "id": "punch_impact",
+    "offsetSec": 0,
+    "volume": 0.8
+  },
+  "exampleInputs": {
+    "text": "Một **trận quyết chiến**",
+    "sublabel": "1288"
+  },
+  "performance": {
+    "maxDomNodes": 24,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "tags": [
+    "từ khóa",
+    "nhấn mạnh"
+  ],
+  "themes": [
+    "general",
+    "sports"
+  ],
+  "status": "active",
+  "capability": [
+    "từ khóa",
+    "nhấn mạnh"
+  ],
+  "hidesSubs": true
+}

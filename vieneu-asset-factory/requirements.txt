@@ -1,0 +1,9 @@
+# venv của factory (xem BOOTSTRAP §3). KHÔNG bao gồm những thứ chạy bằng
+# venv TTS: tts_batch.py và normalize_chunks.py (cần sea-g2p/vieneu_utils
+# nằm trong venv TTS, xem _tts_dir() trong tts_batch.py).
+Pillow==13.0.0           # render_draft, render_template, render_scene_card, thumbnail, square_crop
+numpy==2.5.4            # karaoke, render_template
+weasyprint==70.0        # render_template (render tĩnh template -> PNG)
+underthesea==9.5.0      # lib/vi_sub (tách từ tiếng Việt cho karaoke)
+websocket-client==1.9.2 # chỉ render_template_anim.py (đường Chrome đã nghỉ hưu, không dùng cho render mới)
+# Hệ thống (không nằm trong pip): ffmpeg, font Anton (templates dùng Anton).

@@ -1,0 +1,69 @@
+{
+  "background": "transparent",
+  "capability": [
+    "số liệu",
+    "tiêu đề"
+  ],
+  "category": "stat",
+  "description": "Tiêu đề mở đầu một cụm số liệu theo mẫu kênh TVH (30/10/2026): chữ vàng in hoa đậm + vạch dọc vàng mép trái + dòng phụ trắng nhỏ ghi nguồn/kỳ. Khác section-title fullscreen: đây là thẻ overlay nhỏ, không nền kín. LƯU Ý VỊ TRÍ: từ tối 31/10/2026 thẻ này render ở bottom (đáy cách đáy khung đúng khoảng cách phụ đề) theo lệnh CEO; vẫn chưa bám góc trái đúng kiểu TVH, muốn bám góc trái cần mở rộng position trong render_draft (quyết định riêng của CEO). Title nên ≤22 ký tự cho một dòng, dài hơn tự xuống 2 dòng; subline ≤50 ký tự. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuyển về bottom tối 31/10/2026 (lệnh CEO: trừ thesis-marker và versus-split, mọi template đều về bottom, đáy thẻ cách đáy khung đúng khoảng cách phụ đề). Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "exampleInputs": {
+    "subline": "9 tháng đầu năm, theo Cục Du lịch Quốc gia",
+    "title": "KHÁCH QUỐC TẾ ĐẾN VIỆT NAM"
+  },
+  "id": "section-header",
+  "inputs": {
+    "subline": {
+      "maxLength": 70,
+      "required": false,
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 40,
+      "required": true,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Tiêu đề cụm số liệu / Section header",
+  "notFor": [
+    "Tiêu đề toàn cảnh (dùng section-title)",
+    "Beat chỉ có một con số (dùng stat-counter)"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "bottom",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "whoosh_fast",
+    "offsetSec": 0,
+    "volume": 0.6
+  },
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "tags": [
+    "tiêu đề",
+    "số liệu",
+    "cụm số"
+  ],
+  "themes": [
+    "general",
+    "economy"
+  ],
+  "version": "1.6.0",
+  "whenToUse": [
+    "Mở đầu một cụm số liệu trước khi thả các con số",
+    "Chuyển sang một nhóm số liệu mới trong cùng video"
+  ],
+  "hidesSubs": true
+}

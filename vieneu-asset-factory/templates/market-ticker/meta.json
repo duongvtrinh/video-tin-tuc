@@ -1,0 +1,149 @@
+{
+  "accent": {
+    "default": "green",
+    "type": "enum"
+  },
+  "animation": {
+    "default": "fade",
+    "type": "enum"
+  },
+  "background": "transparent",
+  "capability": [
+    "chỉ số thị trường",
+    "chứng khoán",
+    "tiền tệ"
+  ],
+  "category": "stat",
+  "description": "Bảng 2-3 chỉ số thị trường (chứng khoán, tiền tệ, giá vàng/dầu) với mức tăng/giảm màu xanh/đỏ. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "exampleInputs": {
+    "change1": "+2,3%",
+    "change2": "-0,8%",
+    "change3": "+1,1%",
+    "dir1": "up",
+    "dir2": "down",
+    "dir3": "up",
+    "label": "CHỨNG KHOÁN HÔM NAY",
+    "name1": "VN-Index",
+    "name2": "HNX-Index",
+    "name3": "UPCoM",
+    "value1": "1.245",
+    "value2": "238",
+    "value3": "92"
+  },
+  "id": "market-ticker",
+  "inputs": {
+    "change1": {
+      "maxLength": 10,
+      "required": true,
+      "type": "string"
+    },
+    "change2": {
+      "maxLength": 10,
+      "required": false,
+      "type": "string"
+    },
+    "change3": {
+      "maxLength": 10,
+      "required": false,
+      "type": "string"
+    },
+    "dir1": {
+      "default": "up",
+      "enum": [
+        "up",
+        "down"
+      ],
+      "type": "enum"
+    },
+    "dir2": {
+      "default": "up",
+      "enum": [
+        "up",
+        "down"
+      ],
+      "type": "enum"
+    },
+    "dir3": {
+      "default": "up",
+      "enum": [
+        "up",
+        "down"
+      ],
+      "type": "enum"
+    },
+    "label": {
+      "maxLength": 40,
+      "required": true,
+      "type": "string"
+    },
+    "name1": {
+      "maxLength": 20,
+      "required": true,
+      "type": "string"
+    },
+    "name2": {
+      "maxLength": 20,
+      "required": false,
+      "type": "string"
+    },
+    "name3": {
+      "maxLength": 20,
+      "required": false,
+      "type": "string"
+    },
+    "value1": {
+      "maxLength": 14,
+      "required": true,
+      "type": "string"
+    },
+    "value2": {
+      "maxLength": 14,
+      "required": false,
+      "type": "string"
+    },
+    "value3": {
+      "maxLength": 14,
+      "required": false,
+      "type": "string"
+    }
+  },
+  "mode": "overlay",
+  "name": "Bảng thị trường",
+  "notFor": [
+    "Quá 3 chỉ số",
+    "Số liệu không chắc chắn"
+  ],
+  "performance": {
+    "maxDomNodes": 30,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "position": {
+    "default": "center",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": null,
+  "status": "active",
+  "supportedAspectRatios": [
+    "16:9",
+    "9:16",
+    "1:1"
+  ],
+  "tags": [
+    "chứng khoán",
+    "thị trường",
+    "tài chính",
+    "giá"
+  ],
+  "themes": [
+    "general",
+    "economy"
+  ],
+  "version": "1.5.0",
+  "whenToUse": [
+    "Chỉ số VN-Index, HNX, giá vàng, dầu, tỷ giá",
+    "So sánh tăng/giảm trong ngày"
+  ],
+  "hidesSubs": true
+}

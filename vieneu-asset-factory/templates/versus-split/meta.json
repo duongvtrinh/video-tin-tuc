@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "id": "versus-split",
+  "name": "Đối đầu / Versus",
+  "version": "1.5.0",
+  "mode": "fullscreen",
+  "background": "opaque",
+  "category": "transition",
+  "description": "Màn hình chia đôi hai phe/hai khái niệm với chữ VS ở giữa. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "whenToUse": [
+    "So sánh hai bên giao tranh",
+    "Đối lập hai quan điểm hoặc hai lựa chọn"
+  ],
+  "notFor": [
+    "Chỉ có một đối tượng",
+    "Câu không mang tính so sánh"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "inputs": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "maxLength": 30
+    },
+    "label": {
+      "type": "string",
+      "required": true,
+      "maxLength": 30
+    },
+    "sublabel": {
+      "type": "string",
+      "required": false,
+      "maxLength": 60
+    },
+    "accent": {
+      "type": "enum",
+      "default": "gold"
+    },
+    "position": {
+      "type": "enum",
+      "default": "center"
+    },
+    "animation": {
+      "type": "enum",
+      "default": "wipe"
+    }
+  },
+  "sfx": {
+    "id": "boom_sub_impact",
+    "offsetSec": 0,
+    "volume": 0.4
+  },
+  "exampleInputs": {
+    "text": "Đại Việt",
+    "label": "Nguyên Mông",
+    "sublabel": "Bạch Đằng, 1288"
+  },
+  "performance": {
+    "maxDomNodes": 24,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "tags": [
+    "versus",
+    "so sánh"
+  ],
+  "themes": [
+    "general",
+    "sports",
+    "war"
+  ],
+  "status": "active",
+  "capability": [
+    "đối lập",
+    "so sánh"
+  ],
+  "hidesSubs": true
+}

@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+@import "tailwindcss-safe-area";
+
+@theme {
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-base: 16px;
+  --text-base--line-height: 24px;
+  --text-lg: 18px;
+  --text-lg--line-height: 28px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+  --text-3xl: 30px;
+  --text-3xl--line-height: 36px;
+  --font-sans: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #12100e;
+  --surface: #1c1917;
+  --surface2: #26221e;
+  --text: #f5efe6;
+  --dim: #a89f91;
+  --border: #3a342c;
+  --accent: #f5a623;
+  --accent-text: #1a1408;
+  --ok: #2dd4bf;
+  --bad: #f87171;
+  --warn: #fbbf24;
+  --radius: 10px;
+  --space-surface: var(--surface);
+  --space-surface-alt: var(--surface2);
+  --space-muted: var(--dim);
+  --space-border: var(--border);
+  --space-accent: var(--accent);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg: #efe9df;
+    --surface: #faf6ee;
+    --surface2: #f1e9da;
+    --text: #221c14;
+    --dim: #6f6353;
+    --border: #d8cdb8;
+    --accent: #b97a0e;
+    --accent-text: #fff8ec;
+    --ok: #0f766e;
+    --bad: #b91c1c;
+    --warn: #92400e;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Sân khấu Preview HTML: engine render của nhà máy (lib/render-engine.js)
+   vẽ theo hình học px tuyệt đối — ảnh nền trước của cửa sổ 3:4 rộng
+   960px đặt ở left:-120px trong cửa sổ 720px để pan/zoom luôn phủ kín.
+   Preflight của Tailwind ép img/video max-width:100% theo khung chứa,
+   bóp ảnh đó còn 720px: cửa sổ hở ~120px bên phải (lộ nền blur vào
+   trong cửa sổ) và zoom out trông như thu nhỏ cả lớp 3:4 vì hộp ảnh bị
+   bóp co lại. Trong sân khấu này media của engine không chịu trần
+   max-width của app; engine tự cắt bằng overflow:hidden của cửa sổ. */
+.vieneu-stage img,
+.vieneu-stage video {
+  max-width: none;
+}

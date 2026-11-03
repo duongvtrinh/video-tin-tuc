@@ -1,0 +1,92 @@
+# Từ điển từ ghép / cụm cố định bổ sung cho underthesea (mỗi dòng một cụm, dòng bắt đầu bằng # là chú thích).
+# Các âm tiết trong một cụm được coi là đọc liền nhau nên phụ đề sẽ KHÔNG bị cắt ở giữa cụm.
+# Có thể thêm cụm riêng của bạn vào file data/vi_compounds.txt (cùng định dạng) mà không cần sửa file này.
+
+# Công nghệ
+trí tuệ nhân tạo
+học máy
+học sâu
+máy học
+dữ liệu lớn
+cơ sở dữ liệu
+công nghệ thông tin
+an toàn thông tin
+bảo mật thông tin
+điện toán đám mây
+mã nguồn mở
+hệ điều hành
+phần mềm
+phần cứng
+trí tuệ
+nhân tạo
+mạng xã hội
+mạng máy tính
+điện thoại thông minh
+thiết bị di động
+chuyển đổi số
+thương mại điện tử
+thực tế ảo
+thực tế tăng cường
+xử lý ngôn ngữ tự nhiên
+nhận dạng giọng nói
+tổng hợp giọng nói
+phụ đề
+lồng tiếng
+
+# Kinh tế - xã hội
+thị trường chứng khoán
+thị trường
+doanh nghiệp
+ngân hàng
+ngân sách
+lạm phát
+tăng trưởng kinh tế
+phát triển bền vững
+biến đổi khí hậu
+môi trường
+năng lượng tái tạo
+giáo dục đại học
+đại học quốc gia
+học sinh
+sinh viên
+giáo viên
+bệnh viện
+sức khỏe
+chính phủ
+quốc hội
+nhà nước
+pháp luật
+
+# Địa danh, tổ chức
+Việt Nam
+Hà Nội
+Hồ Chí Minh
+Thành phố Hồ Chí Minh
+Đà Nẵng
+Hải Phòng
+Cần Thơ
+Hoa Kỳ
+Trung Quốc
+Nhật Bản
+Hàn Quốc
+Ấn Độ
+Liên Hợp Quốc
+Liên minh châu Âu
+Đông Nam Á
+Thái Bình Dương
+
+# Chính trị, báo chí, sự kiện
+đảng Cộng hòa
+đảng Dân chủ
+Tổng thống
+phóng viên
+bầu cử
+bỏ phiếu
+bầu cử giữa kỳ
+chiêu trò
+phần thưởng
+vượt bậc
+trở về
+quay về
+đi về
+bước vào

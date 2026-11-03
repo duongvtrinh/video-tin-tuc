@@ -1,0 +1,7 @@
+.broll-section-title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;box-sizing:border-box;padding:8% 10% 256px;background:radial-gradient(circle at center,rgba(8,10,16,0.35),rgba(8,10,16,0.45));pointer-events:none;}
+.broll-section-title-label{display:inline-block;background:var(--broll-accent,#ef4444);color:#fff;font:900 clamp(24px,8.5vmin,56px)/1 'Anton',sans-serif;padding:8px 24px;margin-bottom:16px;transform:rotate(-3deg);text-shadow:2px 2px 0 #000;box-shadow:0 10px 25px rgba(0,0,0,0.65);}
+.broll-section-title-text{margin:0;background:rgba(239,68,68,0.95);color:#fff;font:900 clamp(28px,8.5vmin,56px)/1.28 'Anton',sans-serif;line-height:1.28;text-transform:uppercase;text-align:center;text-wrap:balance;padding:14px 32px;border-radius:4px;transform:rotate(-1.5deg);-webkit-text-stroke:1px #000;text-shadow:2px 3px 0 #000;box-shadow:0 14px 32px rgba(0,0,0,0.78);}
+.broll-section-title-label:empty,.broll-section-title-text:empty{display:none!important}
+
+
+

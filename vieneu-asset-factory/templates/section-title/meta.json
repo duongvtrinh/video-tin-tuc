@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "section-title",
+  "name": "Tiêu đề phần toàn khung",
+  "version": "1.8.0",
+  "mode": "fullscreen",
+  "background": "opaque",
+  "category": "title",
+  "description": "Khung tiêu đề chuyển phần. Sửa sau QA Chợ nổi 26/10/2026: lớp phủ tối cũ 92-98% che ảnh gốc thành thẻ tối gần như đen (độ sáng khung 34-45 so với ảnh gốc 95-138); nay lớp phủ giảm xuống 35-45% (dưới 50%) để ảnh gốc vẫn hiện rõ, chữ vẫn đọc được nhờ nền đỏ của tiêu đề. Quy tắc: KHÔNG dùng template phủ tối toàn màn hình trên cảnh ảnh đẹp — trên cảnh ảnh đẹp, ưu tiên lower-third/headline trên ảnh, section-title chỉ dùng khi cần ngắt mạch có chủ đích và ảnh vẫn phải thấy được qua lớp phủ dưới 50%. Sửa thẩm mỹ QA 30/10/2026 (1.3.0): lề container 6%→10% để chữ không chạm lề 96px khi tiêu đề dài, line-height 1.15→1.28, text-stroke 1.5px→1px, shadow 3px 4px→2px 3px cho dấu tiếng Việt nét hơn, thêm text-wrap:balance chống từ lẻ một dòng. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuyển nội dung từ giữa khung về bottom tối 31/10/2026 (lệnh CEO: đáy khối cách đáy khung 256px ở 9:16). Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "whenToUse": [
+    "Mở đầu một chương hoặc phần mới, khi ảnh nền vẫn phải thấy được qua lớp phủ dưới 50%",
+    "Cần nhấn một tuyên bố rất ngắn bằng một nhịp toàn khung, không che kín ảnh"
+  ],
+  "notFor": [
+    "Mọi phân cảnh thông thường",
+    "Đoạn đang cần quan sát hành động",
+    "Nhiều dòng giải thích hoặc số liệu",
+    "Cảnh ảnh đẹp cần giữ nguyên ảnh gốc — dùng lower-third/headline thay vì phủ tối toàn khung"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "safeZone": {
+    "x": 0.1,
+    "y": 0.15,
+    "width": 0.8,
+    "height": 0.62,
+    "avoidSubtitleBottomPercent": 20,
+    "avoidTopUiPercent": 10
+  },
+  "inputs": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "maxLength": 72
+    },
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 24
+    }
+  },
+  "performance": {
+    "maxDomNodes": 14,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "tags": [
+    "section",
+    "title",
+    "fullscreen"
+  ],
+  "sfx": {
+    "id": "cinematic_riser",
+    "offsetSec": -0.2,
+    "volume": 0.6
+  },
+  "exampleInputs": {
+    "label": "Chương 1",
+    "text": "Cuộc xâm lược lần ba"
+  },
+  "themes": [
+    "general"
+  ],
+  "status": "active",
+  "capability": [
+    "tiêu đề chương",
+    "chuyển đoạn"
+  ],
+  "hidesSubs": true
+}

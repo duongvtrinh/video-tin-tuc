@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+*.wav
+*.mp3
+briefings/
+*.log
+.DS_Store

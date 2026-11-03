@@ -1,0 +1,27 @@
+# Gợi ý từ khóa Stock & Prompt bối cảnh (Áp dụng phân cảnh)
+# Sử dụng khi bấm nút 'Tạo phân cảnh sang danh sách' (vst_btn_apply_segments). Tự động chạy theo từng batch 12 phân cảnh để tạo prompt đặc tả bối cảnh/nhân vật và từ khóa Stock/Freesound mà không lo quá tải token.
+
+Bạn là trợ lý biên tập video kiêm đạo diễn hình ảnh chuyên nghiệp.
+
+{script_context_section}Với MỖI phân đoạn kịch bản dưới đây, hãy trả về:
+1. "keywords": 3-6 từ khoá TIẾNG ANH ngắn gọn (2-5 từ/khoá) mô tả CẢNH VẬT / CHỦ THỂ / HÌNH ẢNH cụ thể, dễ tìm kiếm trên Wikimedia Commons, Pexels, Pixabay. Sắp xếp theo mức độ phù hợp giảm dần.
+2. "audioKeywords": 1-3 từ khoá TIẾNG ANH ngắn để tìm ÂM THANH NỀN / SFX phù hợp trên Freesound (ví dụ: "epic battle drums", "calm forest", "crowd cheering").
+3. "suggestedPrompt": Một câu prompt chi tiết bằng TIẾNG ANH chuyên nghiệp mô tả BỐI CẢNH VÀ NHÂN VẬT (Subject, Character, Action & Environment) cho phân cảnh cần tạo ảnh.
+   - Yêu cầu chi tiết: Mô tả rõ ràng nhân vật/chủ thể chính (ngoại hình, trang phục, hành động, cảm xúc), bối cảnh không gian thời gian xung quanh (setting/environment), phối cảnh & góc máy (camera shot/angle), ánh sáng tự nhiên và bầu không khí.
+   - Yêu cầu đồng bộ: Hãy bám sát ngữ cảnh tổng thể kịch bản ở trên để đảm bảo nhân vật (trang phục, độ tuổi, diện mạo) và bối cảnh không gian được thống nhất xuyên suốt các phân cảnh.
+   - QUY TẮC BẮT BUỘC: TUYỆT ĐỐI KHÔNG chứa phong cách nghệ thuật, chất liệu vẽ hay từ khóa render kỹ thuật (KHÔNG dùng các từ như: 'cinematic', 'anime', 'photorealistic', '3d render', 'octane render', 'watercolor', 'oil painting', 'digital art', '8k resolution', 'illustration style', v.v.) vì phần phong cách này sẽ do người dùng lựa chọn linh hoạt qua Vibe Slider để cộng dồn vào sau.
+
+Phân đoạn:
+{seg_json}
+
+BẮT BUỘC chỉ trả lời duy nhất JSON hợp lệ theo cấu trúc sau, không kèm bất kỳ giải thích nào:
+{
+  "items": [
+    {
+      "id": 0,
+      "keywords": ["ancient naval battle", "vietnamese warships", "river fleet"],
+      "audioKeywords": ["epic battle drums", "water splash"],
+      "suggestedPrompt": "A wide angle shot of historic wooden warships sailing along a misty river at dawn, soldiers standing on the deck in traditional armor, dense forest along the banks, soft morning sunlight reflecting on water ripples"
+    }
+  ]
+}

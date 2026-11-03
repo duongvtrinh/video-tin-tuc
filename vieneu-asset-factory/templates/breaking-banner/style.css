@@ -1,0 +1,4 @@
+.broll-breaking{width:94%;max-width:1100px;padding:.7em 1.1em;border-radius:4px;background:#7f1d1d;border:2px solid var(--broll-accent,#ef4444);text-align:left}
+.broll-breaking-tag{display:inline-block;font:900 clamp(14px,4.3vmin,30px)/1 var(--vst-font-family,'Anton',sans-serif);color:#fff;background:var(--broll-accent,#ef4444);border-radius:4px;padding:.45em .7em;text-transform:uppercase;letter-spacing:.06em;margin-right:.7em;vertical-align:middle}
+.broll-breaking-text{display:inline;font:800 clamp(17px,5.0vmin,42px)/1.25 var(--vst-font-family,'Anton',sans-serif);color:#fff;vertical-align:middle}
+.broll-breaking *:empty{display:none}

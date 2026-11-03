@@ -1,0 +1,5 @@
+name: "media-coo"
+title: "Điều phối công ty media một người"
+description: "Phân việc, theo dõi pipeline video và leo thang quyết định lên CEO qua Google Sheet."
+category: "Work and knowledge"
+include_in_prompt: false

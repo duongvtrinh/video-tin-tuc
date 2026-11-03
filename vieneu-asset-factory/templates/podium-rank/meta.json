@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "podium-rank",
+  "name": "Bảng xếp hạng / Ranking",
+  "version": "1.5.0",
+  "mode": "overlay",
+  "background": "transparent",
+  "category": "list",
+  "description": "Bảng xếp hạng tự đánh số: hạng 1 nổi bật, các hạng sau xếp hàng gọn gàng. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "whenToUse": [
+    "Bảng xếp hạng, top thành tích, kết quả nhiều vận động viên/đội",
+    "Liệt kê có thứ tự ưu tiên"
+  ],
+  "notFor": [
+    "Chỉ 2 đối thủ (dùng scoreboard hoặc versus-split)",
+    "Danh sách không cần thứ hạng (dùng checklist)"
+  ],
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "safeZone": {
+    "x": 0.06,
+    "y": 0.12,
+    "width": 0.88,
+    "height": 0.64,
+    "avoidSubtitleBottomPercent": 24,
+    "avoidTopUiPercent": 10
+  },
+  "inputs": {
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 40
+    },
+    "items": {
+      "type": "string",
+      "required": true,
+      "maxItems": 5
+    },
+    "accent": {
+      "type": "enum",
+      "default": "cyan"
+    },
+    "position": {
+      "type": "enum",
+      "default": "right"
+    },
+    "animation": {
+      "type": "enum",
+      "default": "stagger"
+    }
+  },
+  "themes": [
+    "general",
+    "sports"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesFilters": false,
+    "usesExternalAssets": false
+  },
+  "sfx": {
+    "id": "cinematic_riser",
+    "offsetSec": 0,
+    "volume": 0.6
+  },
+  "exampleInputs": {
+    "label": "VUA PHÁ LƯỚI",
+    "items": [
+      "Nguyễn Văn A — 12 bàn",
+      "Trần Văn B — 10 bàn",
+      "Lê Văn C — 9 bàn"
+    ]
+  },
+  "status": "active",
+  "hidesSubs": true
+}

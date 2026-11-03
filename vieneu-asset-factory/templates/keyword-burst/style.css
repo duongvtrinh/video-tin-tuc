@@ -1,0 +1,5 @@
+.broll-keyword-burst{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;box-sizing:border-box;pointer-events:none;padding:10% 6% 22%}
+.broll-keyword-burst-tag{background:var(--broll-accent,#ef4444);color:#fff;font:900 clamp(30px,8.5vmin,50px)/1.2 'Anton',sans-serif;padding:10px 30px;border-radius:4px;-webkit-text-stroke:1.5px #000;text-shadow:2px 3px 0 #000;box-shadow:0 8px 24px rgba(0,0,0,.65);clip-path:polygon(2% 4%,98% 1%,100% 94%,1% 98%);text-transform:uppercase;box-sizing:border-box}
+.broll-keyword-burst-main{transform:rotate(-2deg);}
+.broll-keyword-burst-sub{transform:rotate(1.5deg);}
+.broll-keyword-burst-tag:empty{display:none!important}

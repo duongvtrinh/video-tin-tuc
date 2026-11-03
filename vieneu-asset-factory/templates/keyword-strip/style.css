@@ -1,0 +1,5 @@
+.broll-keyword-strip{display:flex;flex-direction:column;gap:.5em;max-width:528px;padding:.8em 1em .9em;border-radius:8px;box-sizing:border-box}
+.broll-keyword-strip-head{font:italic 600 clamp(13px,3.4vmin,26px)/1.3 'Anton',Arial,sans-serif;color:#fff;overflow-wrap:break-word}
+.broll-keyword-strip-row{display:flex;gap:.5em}
+.broll-keyword-strip-box{flex:1;font:800 clamp(13px,3.9vmin,28px)/1.25 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;text-align:center;padding:.45em .3em;border:1px solid rgba(251,191,36,.55);border-radius:4px;background:rgba(8,10,16,.8);overflow-wrap:break-word;min-width:0}
+.broll-keyword-strip-head:empty,.broll-keyword-strip-box:empty{display:none}
