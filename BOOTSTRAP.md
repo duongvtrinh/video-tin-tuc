@@ -60,6 +60,12 @@ Muse GitHub App, KHÔNG BAO GIỜ chuyển repo sang public.
   (luật quét nguồn công khai), `media-coo` (phối hợp qua Sheet).
 - Các luật đã chốt nằm trong skill, không nằm trong MEMORY của Muse cũ
   — đó là lý do dựng lại được mà không cần bộ nhớ cũ.
+- Bắt buộc đọc `company-os/media-search/LOGIC.md`, đặc biệt bài học
+  TOPIC-219 04/11/2026: tìm ảnh thật từ bài báo về đúng vụ việc / bài
+  đăng công khai trước, AI generic chỉ là fallback khi đã thử nhiều
+  từ khóa mà không có ứng viên phù hợp, card chữ không thay thế ảnh.
+  Tài khoản Muse mới clone repo về mà bỏ qua mục này sẽ lặp lại đúng
+  sai sót TOPIC-219 (toàn ảnh AI / card chữ dù bài gốc đã có ảnh thật).
 
 ## 5. Google Sheet (dữ liệu vận hành, không phải code)
 
@@ -136,6 +142,16 @@ app.db không chuyển qua git nên app mới mở ra danh sách project trống
 - 5 chat nhân viên (Scout-Báo, Scout-Group, Scoring, Sản xuất, Kỹ thuật
   QA — 2 chat Scout dùng chung skill media-scout) + chat COO, phối hợp
   qua Sheet.
+- Quy tắc điều phối từ Chat chính (lệnh CEO 04/11/2026, sau vụ trùng
+  TOPIC-219): Chat chính là kênh CEO giao nhiệm vụ trực tiếp; agent ở
+  chat chính là điều phối viên, tự động điều phối nhiệm vụ đến đúng
+  phòng liên quan, theo dõi, tổng hợp kết quả và báo cáo lại cho CEO
+  ở chat chính. Một nhiệm vụ = một chủ sở hữu duy nhất, khóa bằng
+  dòng Assigned / *-DRAFT trong 01_Tasks trước khi làm; cấm chạy song
+  song cùng nhiệm vụ ở chat chính và phòng ban. Phòng ban chỉ làm
+  nhiệm vụ khi được giao cụ thể từ chat chính (hoặc từ lịch bot đã
+  được CEO duyệt, hoặc từ COO trong ca bot-pipeline), không tự phát
+  sinh nhiệm vụ sản xuất mới chỉ vì đọc Sheet hay lịch sử fork.
 
 ## 9. Kiểm chứng cuối ("dựng xong" khi nào)
 

@@ -160,6 +160,14 @@
 - Áp dụng 28/10/2026 cho Vinspeed: plan cũ 0 SFX được bổ sung 7 SFX theo đúng meta template của 7 part có template (hook typing_fast, 4 stat-counter thud 0,35, 2 section-title riser), rồi render lại, cập nhật md5 mới vào Sheet, bản cũ lưu riêng.
 - Token nở 1:N là một cụm highlight duy nhất (quy tắc CEO tối 30/10/2026, đã có trong code từ bản sửa tail-gap cùng ngày): một token viết như `2027-2030` hay từ viết tắt như `GDP` sáng suốt toàn bộ phần nở của nó, không tách nhỏ theo từng từ đọc, kể cả khi đứng cuối câu. Kiểm chứng bằng unit test align_words: token cuối `2027-2030.` nhận span trọn 14 từ đọc, không rơi về fallback 1-1.
 
+## Cửa chặn tìm ảnh thật — bài học TOPIC-219, 04/11/2026 (lệnh CEO, đọc trước mục Tìm ảnh/video)
+
+- Sai sót: hai video TOPIC-219 đều không có ảnh thật — bản A 8 ảnh AI generic, bản B chỉ card chữ — vì đội sản xuất không quét bài báo gốc, không thử từ khóa, không soi ứng viên, mà nhảy thẳng sang AI/card. Trong khi bài Tuổi Trẻ 4/11 về đúng vụ việc đã có ảnh thật các bị cáo tại phiên tòa (Ảnh: GIANG LONG, không logo/watermark).
+- Từ nay, trước render, Production BẮT BUỘC xuất nhật ký tìm ảnh cho từng cảnh: từ khóa tiếng Việt đã thử, ứng viên tìm được (link + nguồn), phân loại, lý do loại. Thiếu nhật ký này thì cảnh đó chưa đủ điều kiện render — dừng, không render.
+- Chỉ khi đã thử hết mà hoàn toàn không có ứng viên phù hợp mới được tạo AI từ prompt, và phải ghi rõ "AI từ prompt, không có ảnh tham chiếu, đã thử các từ khóa: ..." — cấm ghi chung chung "AI generic".
+- Card chữ KHÔNG thay thế ảnh. Scene chỉ có nền tối + card chữ là scene thiếu ảnh, không được gọi là "đã có ảnh".
+- Xem logic đầy đủ tại `company-os/media-search/LOGIC.md`, mục "Bài học bắt buộc TOPIC-219 — 04/11/2026".
+
 ## Tìm ảnh/video: từ khóa tiếng Việt khớp kịch bản, ảnh tự do dùng thẳng, ảnh có chữ/watermark xử lý bằng AI (logic CEO 29/10/2026, thay thế hoàn toàn logic Wikipedia > Stock > AI ngày 28/10/2026; bổ sung phân nhánh theo chủ đề 30/10/2026)
 
 - Logic cũ (thứ tự Wikipedia > Stock > AI, script `search_media.py`, chấm điểm 0-100, bảng khái niệm Anh) đã bị loại bỏ hẳn, không chạy cho video mới. Tài liệu đầy đủ tại `~/workspace/company-os/media-search/LOGIC.md`.

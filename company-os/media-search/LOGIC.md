@@ -1,5 +1,19 @@
 # Logic tìm ảnh/video — từ khóa tiếng Việt khớp kịch bản, ảnh tự do dùng thẳng, ảnh có chữ/watermark xử lý bằng AI giữ nguyên ảnh gốc
 
+## Bài học bắt buộc TOPIC-219 — 04/11/2026 (lệnh CEO, áp dụng cho mọi tài khoản Muse clone repo này)
+
+Sai sót đã xảy ra, không được lặp lại: hai video TOPIC-219 (vụ VKS đề nghị tù chung thân cho Mr Pips và Mr Hunter, sáng 4/11/2026) đều không có ảnh thật. Bản A dùng 8 ảnh AI generic minh họa phòng xử án. Bản B chỉ dùng card chữ, không có ảnh nào. Cả hai đội sản xuất đều không quét bài báo gốc, không thử từ khóa, không soi ứng viên, mà nhảy thẳng sang AI/card.
+
+Thực tế kiểm chứng sau đó: bài Tuổi Trẻ 4/11 về đúng vụ việc đã có ảnh thật các bị cáo tại phiên tòa (Ảnh: GIANG LONG, không logo/watermark/chữ) — đủ điều kiện dùng thẳng kèm ghi nguồn theo quyết định chịu rủi ro của CEO 29/10/2026. Sai sót không phải vì không có ảnh thật, mà vì không tìm.
+
+Từ nay, tìm ảnh thật là cửa CHẶN trước render, không phải khuyến nghị:
+
+1. Trước khi tạo bất kỳ ảnh nào, phải tìm ảnh thật cho từng cảnh bằng từ khóa TIẾNG VIỆT khớp kịch bản, ưu tiên bài báo về đúng vụ việc, rồi bài đăng mạng xã hội công khai, rồi tìm kiếm hình ảnh. Thử nhiều cụm từ khóa đồng nghĩa, không dừng ở cụm đầu tiên, không lấy mù top 1.
+2. Ghi nhật ký tìm ảnh cho mỗi cảnh vào bàn giao và tab 10_Media_Sources: từ khóa đã thử, ứng viên tìm được (link + nguồn + tác giả nếu có), phân loại (dùng thẳng / AI xóa chữ giữ nguyên ảnh gốc / loại), và lý do loại nếu loại. Thiếu nhật ký này thì cảnh đó chưa đủ điều kiện render.
+3. Chỉ khi đã thử hết mà hoàn toàn không có ứng viên phù hợp mới được tạo AI từ prompt, và phải ghi rõ: "AI từ prompt, không có ảnh tham chiếu, đã thử các từ khóa: ..." — cấm ghi chung chung "AI generic" để lấp hồ sơ.
+4. Card chữ KHÔNG thay thế ảnh. Card chữ là template chữ, không phải ảnh minh họa. Scene không có ảnh thật vẫn phải có ảnh nền (ảnh thật generic, ảnh gốc đã xử lý, hoặc AI từ prompt có ghi rõ lý do), không được render chỉ nền tối + chữ rồi gọi là "đã có ảnh".
+5. QA chặn: nếu media table ghi AI generic / card mà không kèm nhật ký tìm ảnh thật, QA TRẢ LẠI, không duyệt im lặng, dù các cửa kỹ thuật và nội dung khác đạt.
+
 Lệnh CEO 29/10/2026, thay thế HOÀN TOÀN logic Wikipedia > Stock > AI ngày
 28/10/2026. Logic cũ (thứ tự Wikipedia > Stock > AI, script
 `search_media.py`, chấm điểm 0-100 theo khái niệm/kích thước/giấy phép,

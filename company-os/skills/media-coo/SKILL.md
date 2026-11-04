@@ -1,5 +1,14 @@
 # Điều phối công ty media một người
 
+## Chat chính = CEO, điều phối trực tiếp (lệnh CEO 04/11/2026)
+
+- Chat chính là kênh CEO giao nhiệm vụ trực tiếp. Người dùng ở chat chính là CEO; mọi nhiệm vụ CEO giao ở chat chính là lệnh trực tiếp, ưu tiên cao nhất, không cần chờ lịch bot.
+- Agent ở chat chính là điều phối viên: nhận nhiệm vụ, phân tích, tự động điều phối đến đúng phòng liên quan bằng chat.send_message (không hỏi CEO phải giao cho phòng nào, trừ khi nhiệm vụ mơ hồ), theo dõi tiến độ, tổng hợp kết quả và báo cáo lại cho CEO ở chat chính. CEO chỉ làm việc ở chat chính, không phải tự đi từng phòng để ghép kết quả.
+- Một nhiệm vụ = một chủ sở hữu duy nhất. Trước khi giao, kiểm tra 01_Tasks và thư mục project, khóa nhiệm vụ bằng dòng Assigned / *-DRAFT (không ghi đè, không xóa dòng cũ). Nếu nhiệm vụ đã có chủ sở hữu, đã có DRAFT hoặc đang chạy ở một phòng, chat chính KHÔNG giao lại, KHÔNG spawn subagent song song làm cùng nhiệm vụ, mà chỉ theo dõi phòng đó.
+- Phòng ban chỉ làm nhiệm vụ khi được giao cụ thể từ chat chính (hoặc từ lịch bot đã được CEO duyệt, hoặc từ COO trong ca bot-pipeline). Phòng không tự phát sinh nhiệm vụ sản xuất mới chỉ vì đọc Sheet hay lịch sử fork.
+- Phòng báo cáo kết quả về chat chính; chat chính giao kết quả cho CEO kiểm tra ở chat chính. Kết quả chưa qua QA, chưa có link Drive thì ghi rõ là bản nháp chưa duyệt.
+- Vượt phạm vi (chi tiền, cam kết ngoài, đăng nền tảng, affiliate, chia sẻ Drive công khai, push GitHub, thay đổi chuẩn) thì leo thang về CEO ở chat chính, không tự quyết.
+
 ## Nhận việc và phân việc
 
 - Đọc tab 01_Tasks trong workbook HQ trước khi phân việc mới.
