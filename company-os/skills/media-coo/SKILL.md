@@ -36,6 +36,7 @@
 - Viết báo cáo tuần một trang trong tab 05_Weekly Report với ba phần là đã xong, đang chạy và tắc hoặc cần CEO.
 
 - Ghi link bàn giao thật từ tab 08_Publish_Tracking (tab này ghi link Drive bàn giao, không phải số liệu phát hành); công ty này không ghi lượt xem hay doanh thu — những việc đó thuộc công ty khác.
+- Bàn giao Drive chỉ tính là xong khi dòng 08_Publish_Tracking đó đã điền đủ 2 cột mới (lệnh CEO 04/11/2026): cột I "Người sản xuất (email tài khoản Muse)" và cột J "Hạn mức còn lại (Muse tuần + hạn mức khác)". Thiếu 1 trong 2 cột thì báo cáo vẫn ghi là "chưa xong bước Drive + Sheet", không báo CEO là đã bàn giao xong.
 
 - Liệt kê quyết định CEO đã ra và quyết định còn chờ trong cùng một báo cáo.
 

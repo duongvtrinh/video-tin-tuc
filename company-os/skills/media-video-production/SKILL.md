@@ -226,6 +226,8 @@
 
 - Ghi rõ thời lượng thật, format và link bản nháp. Không ghi nền tảng dự kiến đăng — công ty này không đăng nền tảng.
 
+- Ký nhận để QA điền tab 08_Publish_Tracking sau khi duyệt + upload Drive (lệnh CEO 04/11/2026): bàn giao cho QA phải ghi rõ email của tài khoản Muse đã thực hiện sản xuất video này, và ảnh chụp hạn mức tại thời điểm sản xuất (dạng "Muse tuần: đã dùng X%, còn Y%, reset <ngày giờ +07>; <hạn mức khác>: <còn lại>;"). Email nào không xác định được thì ghi "chưa xác định — hỏi CEO", hạn mức nào không đọc được thì ghi "không đọc được" — không bịa email, không bịa con số. QA sẽ sao đúng 2 thông tin này sang cột I và J của tab 08_Publish_Tracking ngay sau bước upload Drive và ghi link.
+
 - Không tự đăng video và không tự sửa điểm chấm của chủ đề.
 
 ## Sửa theo QA

@@ -51,10 +51,31 @@ Tab thuộc công ty khác (đăng tải/affiliate/doanh thu); giữ tab để d
 không mất.
 
 ### 08_Publish_Tracking
-ID Video | Tiêu đề / Chủ đề | Nền tảng | Ngày đăng | Link video | Trạng thái | MD5 | Cờ khôi phục
+ID Video | Tiêu đề / Chủ đề | Nền tảng | Ngày đăng | Link video | Trạng thái | MD5 | Cờ khôi phục | Người sản xuất (email tài khoản Muse) | Hạn mức còn lại (Muse tuần + hạn mức khác)
 QA tải video đã duyệt lên thư mục Drive "Video Muse" ngay trong lượt duyệt
 và ghi link thật vào đây + 01_Tasks; không bịa link, không tự chia sẻ
 công khai thư mục (quyết định riêng của CEO).
+Ký nhận + hạn mức (lệnh CEO 04/11/2026, áp từ video bàn giao sau ngày này;
+video cũ đã bàn giao trước đó để trống 2 cột mới, không điền ngược số liệu
+đoán): ngay sau bước upload Drive và ghi link vào Sheet, cùng dòng đó phải
+điền đủ 2 cột mới, không được để trống rồi bàn giao:
+- Cột I "Người sản xuất (email tài khoản Muse)": email của tài khoản Muse
+đã thực hiện sản xuất video này (Production ghi trong bàn giao cho QA, QA
+sao đúng email đó sang đây). Đây là chữ ký nhận trách nhiệm, không phải tên
+phòng, không phải tên người dùng/CEO, không dùng email của tài khoản khác
+(vd email Facebook, email GitHub noreply) thay thế. Nếu không xác định được
+email thì ghi rõ "chưa xác định — hỏi CEO", không bịa email.
+- Cột J "Hạn mức còn lại (Muse tuần + hạn mức khác)": ảnh chụp hạn mức tại
+thời điểm bàn giao, định dạng: "Muse tuần: đã dùng X%, còn Y%, reset <ngày
+giờ +07>; <hạn mức khác>: <còn lại>;" — vd "Muse tuần: đã dùng 10%, còn 90%,
+reset 9/11 14:14 +07; token thêm: còn 1B". Muse báo mức dùng theo hạn mức
+gói, không phải số token tuyệt đối, nên ghi đúng dạng phần trăm + reset mà
+công cụ trạng thái gói trả về. "Hạn mức khác" là mọi hạn mức khác đã dùng
+trong lần sản xuất đó mà đọc được (vd dung lượng Drive còn lại, hạn mức tạo
+ảnh/video/TTS nếu có) — ghi từng loại một, loại nào không đọc được thì ghi
+"không đọc được" kèm ngày giờ, loại nào không áp dụng thì ghi "không áp
+dụng", tuyệt đối không bịa con số. Cột này là ảnh chụp tại thời điểm bàn
+giao, không cập nhật ngược sau đó khi hạn mức thay đổi.
 
 ### 09_Skills
 Skill | Mô tả | File | Trạng thái | Cờ khôi phục
