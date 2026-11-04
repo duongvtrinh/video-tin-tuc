@@ -95,27 +95,37 @@ app.db không chuyển qua git nên app mới mở ra danh sách project trống
 
 > Ghi chú M23: dependency `file:/opt/hatch/skills/spaces/ts-runtime/dist/space-sdk.tgz` trong `package.json` do runtime artifact của Muse cung cấp khi tạo lại app, không nằm trong repo và không cần chép tay — trên máy clone, `bun install` sẽ không resolve được đường dẫn này nếu chạy ngoài Muse, nhưng app vốn chỉ chạy qua artifact nên không chặn clone-and-run theo §6.
 
-## 7. Tài sản nhị phân (không có trong git — chuyển riêng qua Drive)
+## 7. Tài sản nhị phân (ĐÃ nằm trong git từ 04/11/2026 — clone là có)
 
 - 8 file `vieneu-asset-factory/sfx/*.mp3` (boom_sub_impact,
   cinematic_riser, heavy_thud_slam, paper_rip, punch_impact, radar_glitch,
-  typing_fast, whoosh_fast): GitHub connector chỉ nhận nội dung UTF-8 nên
-  không push được. Bản khôi phục ĐÃ KIỂM CHỨNG: thư mục Drive "sfx" (đủ
-  8 file, kiểm chứng 03/11/2026) — tải về vào đúng
-  `vieneu-asset-factory/sfx/` trước khi render video cần SFX. Nếu sfx/
-  rỗng, assemble_project.py cảnh báo rõ (ZIP ra không có SFX) và
-  validate_project chặn export của plan có broll.sfx.
-- Thư mục nhạc nền `bgm/` (~170M, 24 track Kevin MacLeod CC-BY 4.0):
-  KHÔNG nằm trong repo và CHƯA CÓ bản Drive (kiểm chứng 03/11/2026:
-  không tìm thấy bgm_catalog.json trên Drive). Muse cũ phải tải thư mục
-  bgm/ (kèm bgm_catalog.json) lên Drive trước, Muse mới tải về vào
-  `vieneu-asset-factory/bgm/`; nếu chưa có, select_bgm.py exit 2 và
-  preflight báo "BGM không tồn tại" (không crash mù, không lặng lẽ).
-  Danh sách track + license trong docs/BGM_MANIFEST.md.
+  typing_fast, whoosh_fast) và thư mục nhạc nền `vieneu-asset-factory/bgm/`
+  (24 track Kevin MacLeod CC-BY 4.0 + bgm_catalog.json + README.md, giữ
+  nguyên 8 thư mục mood calm/dramatic/funny/inspirational/news/sad/
+  suspense/upbeat): ĐÃ NẰM TRONG REPO từ ngày 04/11/2026, đẩy lên bằng
+  giao diện web GitHub (GitHub connector chỉ nhận nội dung UTF-8 nên
+  không push được file nhị phân) và đã kiểm chứng qua API GitHub
+  (đủ 34 file, đúng cây thư mục, không còn file .gitkeep tạm). Clone mới
+  có sẵn nhạc + SFX, không cần tải thêm.
+- Bản dự phòng trên Drive vẫn còn và vẫn khớp: thư mục Drive "sfx"
+  (đủ 8 file, kiểm chứng md5 8/8 ngày 04/11/2026) và thư mục Drive "bgm"
+  (26 file, đối chiếu md5 + dung lượng đủ 26/26 ngày 04/11/2026). Chỉ
+  dùng đến khi bản trong repo mất hoặc hỏng — tải về đúng đường dẫn
+  trên rồi đối chiếu lại.
+- Lưu ý cho lần đẩy sau: nhạc/SFX mới hoặc thay đổi vẫn phải đi qua
+  giao diện web GitHub, không qua connector. Các đợt đẩy text qua
+  connector trước đó không động đến file ngoài danh sách đẩy, nhưng sau
+  mỗi lần đẩy vẫn kiểm tra lại cây bgm/ và sfx/ trên remote.
+- Nếu sfx/ rỗng, assemble_project.py cảnh báo rõ (ZIP ra không có SFX)
+  và validate_project chặn export của plan có broll.sfx. Nếu bgm/ chưa
+  có, select_bgm.py exit 2 và preflight báo "BGM không tồn tại"
+  (không crash mù, không lặng lẽ). Danh sách track + license nằm trong
+  `vieneu-asset-factory/bgm/bgm_catalog.json`.
 - `projects/` cũ (project nguồn, MP4, thư mục work): không phải code,
-  Muse mới bắt đầu trống; project cũ cần thì chép qua Drive (riêng,
-  không qua git). Bài học 29/10: `projects/` từng mất mà không rõ
-  nguyên nhân — backup `projects/` ra Drive định kỳ, đừng trông chờ git.
+  không nằm trong git, Muse mới bắt đầu trống; project cũ cần thì chép
+  qua Drive (riêng, không qua git). Bài học 29/10: `projects/` từng mất
+  mà không rõ nguyên nhân — backup `projects/` ra Drive định kỳ, đừng
+  trông chờ git.
 
 ## 8. Lịch bot + chat nhân viên (tạo lại, không có trong git)
 
