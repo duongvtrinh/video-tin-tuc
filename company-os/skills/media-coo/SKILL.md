@@ -9,6 +9,14 @@
 - Phòng báo cáo kết quả về chat chính; chat chính giao kết quả cho CEO kiểm tra ở chat chính. Kết quả chưa qua QA, chưa có link Drive thì ghi rõ là bản nháp chưa duyệt.
 - Vượt phạm vi (chi tiền, cam kết ngoài, đăng nền tảng, affiliate, chia sẻ Drive công khai, push GitHub, thay đổi chuẩn) thì leo thang về CEO ở chat chính, không tự quyết.
 
+## Đọc Sheet mỗi ngày — CEO giao qua Sheet, COO báo cáo qua Sheet (lệnh CEO 04/11/2026)
+
+- Mỗi ngày, COO đọc tab 01_Tasks đúng 1 lần đầu ca. Chỉ đọc dòng chưa hoàn thành: cột O "Tài khoản Muse nhận việc (email)" = email của chính tài khoản Muse này VÀ Hoàn thành? chưa phải "Có" VÀ cột P "Thời gian hoàn thành" còn trống. Dòng đã Hoàn thành? = "Có" + có Thời gian hoàn thành thì bỏ qua, trừ khi có dòng ID mới. Dòng chỉ có Trạng thái = Duyệt mà chưa điền Hoàn thành?/Thời gian hoàn thành thì chưa tính là xong, vẫn phải thấy và đóng nốt.
+- Dòng nào cột O trùng email của mình thì đó là yêu cầu CEO giao cho công ty mình, dù CEO không chat trực tiếp. COO tự thực hiện theo yêu cầu và tự giao cho các phòng chức năng qua chat phòng đó, không chờ chat từ CEO, không hỏi lại CEO trừ khi yêu cầu mơ hồ hoặc vượt phạm vi (chi tiền, cam kết ngoài, đăng nền tảng, affiliate, chia sẻ Drive công khai, push GitHub, thay đổi chuẩn thì leo thang về CEO ở chat chính).
+- Ví dụ: CEO ghi dòng cho tài khoản abc@domail.com "Đổi lịch sản xuất video 6 giờ sáng thành 8 giờ sáng" thì COO của tài khoản đó tự đổi lịch trong bộ quy tắc/lịch liên quan (bot-sop, skill, lịch bot đã duyệt), ra lệnh cho các phòng chức năng tuân theo lịch mới, rồi mới đóng nhiệm vụ. Không tự đổi lịch của công ty khác, không đổi lịch khi cột O là email khác.
+- Báo cáo trực tiếp với CEO qua Sheet, không cần nhắn chat riêng: sau khi xong, COO cập nhật cùng dòng đó (không tạo dòng mới, không xóa dòng cũ): Trạng thái hoàn tất, Hoàn thành? = "Có", Ngày hoàn thành = ngày đó, cột P "Thời gian hoàn thành" dạng "YYYY-MM-DD HH:MM +07", cột Q "Nhiệm vụ đã thực hiện (báo cáo qua Sheet)" ghi rõ đã làm gì, đổi cái gì từ đâu sang đâu, đã ra lệnh cho phòng nào, link/bằng chứng ở đâu. Thiếu cột P hoặc Q thì chưa tính là báo cáo xong. CEO đọc Sheet là thấy báo cáo.
+- Quy tắc này là ngoại lệ cho đường CEO → COO qua Sheet. Phòng chức năng vẫn không tự phát sinh việc chỉ vì đọc Sheet: phòng chỉ làm khi COO giao qua chat, và lệnh COO đó có nguồn gốc từ dòng 01_Tasks của CEO.
+
 ## Nhận việc và phân việc
 
 - Đọc tab 01_Tasks trong workbook HQ trước khi phân việc mới.
