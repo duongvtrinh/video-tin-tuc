@@ -21,44 +21,29 @@ Mỗi video có một dòng *-DRAFT khi được giao; dòng DRAFT chuyển Revi
 nộp QA, Duyệt khi QA duyệt kèm link Drive thật.
 Quy tắc ghi: mỗi agent chỉ sửa dòng mang tên mình; chỉ COO sửa 00_Dashboard
 và 04_Decisions; bàn giao phải có link kết quả trong Sheet.
-CEO giao qua Sheet cho COO, COO báo cáo lại qua Sheet (lệnh CEO 04/11/2026,
-bổ sung, không thay luật chat chính cho nhiệm vụ giao trực tiếp):
-- CEO không cần chat trực tiếp mà giao bằng cách ghi một dòng ở 01_Tasks
-với đầy đủ: Việc + Định nghĩa xong + Trạng thái Assigned + Deadline (nếu
-có) + cột O "Tài khoản Muse nhận việc (email)" ghi đúng email của tài
-khoản Muse quản lý công ty đó. Cột O là khóa phân biệt công ty: COO nào
-đọc thấy email khác email của mình thì bỏ qua, không được nhận, không
-được giao cho phòng của mình.
-- Mỗi ngày, mỗi COO đọc 01_Tasks đúng 1 lần đầu ca và chỉ đọc dòng chưa
-hoàn thành: cột O = email của mình VÀ Hoàn thành? chưa phải "Có" VÀ Thời
-gian hoàn thành còn trống. Dòng đã Hoàn thành? = "Có" + có Thời gian hoàn
-thành thì bỏ qua, trừ khi có dòng ID mới. Dòng chỉ có Trạng thái = Duyệt
-mà chưa điền Hoàn thành?/Thời gian hoàn thành thì chưa tính là xong, COO
-vẫn phải thấy và đóng nốt.
-- Khi nhận đúng dòng của mình, COO tự thực hiện theo yêu cầu CEO và tự
-giao cho các phòng chức năng qua chat phòng đó (Sheet là kênh CEO → COO,
-chat vẫn là kênh COO → phòng), không chờ chat trực tiếp từ CEO, không hỏi
-lại CEO trừ khi yêu cầu mơ hồ hoặc vượt phạm vi. Ví dụ: CEO ghi dòng cho
-tài khoản abc@domail.com "Đổi lịch sản xuất video 6 giờ sáng thành 8 giờ
-sáng" thì COO của tài khoản đó tự đổi lịch trong bộ quy tắc/lịch liên quan
-(vd bot-sop, skill, lịch bot đã duyệt), ra lệnh cho các phòng chức năng
-tuân theo lịch mới, rồi mới đóng nhiệm vụ.
-- Báo cáo trực tiếp với CEO qua Sheet, không cần chat: sau khi xong việc,
-COO cập nhật cùng dòng đó (không tạo dòng mới, không xóa dòng cũ): Trạng
-thái = Duyệt (với video) hoặc trạng thái hoàn tất tương ứng, Hoàn thành?
-= "Có", Ngày hoàn thành = ngày đó, cột P "Thời gian hoàn thành" ghi giờ
-phút cụ thể dạng "YYYY-MM-DD HH:MM +07" (vd "2026-11-05 08:30 +07"), cột Q
-"Nhiệm vụ đã thực hiện (báo cáo qua Sheet)" ghi rõ đã làm gì, đổi cái gì,
-từ đâu sang đâu, đã ra lệnh cho phòng nào, link/bằng chứng ở đâu (vd "Đã
-đổi lịch sản xuất video từ 6h sang 8h trong bot-sop và lịch bot, đã ra lệnh
-cho Sản xuất và QA tuân theo lịch mới từ ngày ..."). CEO đọc Sheet là thấy
-báo cáo hoàn thành, không cần COO nhắn chat riêng. Thiếu cột P hoặc Q thì
-chưa tính là báo cáo xong.
+CEO giao việc chính qua Sheet cho COO, COO tự phân việc chi tiết, CEO chỉ
+theo dõi kết quả hoàn thành (lệnh CEO 04/11/2026, rút gọn):
+- CEO chỉ ghi việc chính ở tab 13_COO_Tasks, không ghi chi tiết: Ngày CEO
+giao, cột C email nhận việc, cột D Việc chính, cột A ID để trống. Ví dụ:
+CEO ghi dòng cho tài khoản abc@domail.com "Đổi lịch sản xuất video 6 giờ
+sáng thành 8 giờ sáng" — chỉ vậy thôi, COO sẽ tự ghi ID khi nhận việc.
+- Mỗi ngày, COO đọc tab 13_COO_Tasks đúng 1 lần đầu ca, chỉ đọc dòng chưa
+hoàn thành: cột C = email của mình VÀ cột F Trạng thái chưa phải "Hoàn
+thành" VÀ cột H Thời gian hoàn thành còn trống. Dòng đã F = "Hoàn thành"
++ có H thì bỏ qua.
+- COO tự phân việc chi tiết ở cột E (phòng nào, việc gì, ID 01_Tasks nào
+nếu có), tự giao cho các phòng qua chat, tự theo dõi ở 01_Tasks. CEO
+không cần đọc 01_Tasks, không cần đọc chi tiết phân việc.
+- COO báo cáo qua Sheet trên cùng dòng tab 13: F = Hoàn thành, H = thời
+gian hoàn thành dạng "YYYY-MM-DD HH:MM +07", I = Kết quả hoàn thành (viết
+ngắn + link bằng chứng nếu có, chỉ khi tắc mới ghi "cần CEO" trong này).
+CEO chỉ cần đọc F, H, I ở tab 13 là biết việc xong chưa, kết quả gì.
+Thiếu H hoặc I thì chưa tính là báo cáo xong.
 
 ### 02_Agents
 Tên Muse | Vai trò | Phạm vi được quyết | Phạm vi KHÔNG được quyết | Chat / kênh | Ca cập nhật | Cờ khôi phục
 Vai trò hiện tại (lệnh CEO 04/11/2026): Chat chính là kênh CEO giao nhiệm vụ trực tiếp; agent ở chat chính là điều phối viên, tự động điều phối nhiệm vụ đến đúng phòng liên quan, theo dõi, tổng hợp kết quả và báo cáo lại cho CEO ở chat chính. Các phòng: COO (chat riêng, điều phối vận hành) + 5 phòng (Scout-Báo, Scout-Group, Scoring, Sản xuất, Kỹ thuật QA), mỗi phòng một chat; 2 chat Scout dùng chung skill media-scout. Một nhiệm vụ = một chủ sở hữu duy nhất, khóa bằng dòng Assigned / *-DRAFT trước khi làm; cấm chạy song song cùng nhiệm vụ ở chat chính và phòng ban (bài học vụ trùng TOPIC-219 ngày 04/11/2026).
-Ngoại lệ CEO → COO qua Sheet (lệnh CEO 04/11/2026, xem tab 01_Tasks): CEO có thể giao cho COO mà không cần chat trực tiếp, bằng dòng 01_Tasks có cột O là email tài khoản Muse nhận việc. COO đọc Sheet mỗi ngày, nhận đúng dòng email của mình, tự thực hiện và giao cho các phòng qua chat, rồi báo cáo hoàn thành lại qua Sheet (cột P, Q). Trong đường này, lệnh của COO cho phòng chức năng có nguồn gốc từ lệnh CEO qua Sheet nên phòng tuân theo, không phải là phòng tự phát sinh việc.
+Ngoại lệ CEO → COO qua Sheet (lệnh CEO 04/11/2026, xem tab 13_COO_Tasks): CEO chỉ giao việc chính, không cần chat trực tiếp, bằng dòng ở tab 13_COO_Tasks có cột C là email tài khoản Muse nhận việc. COO đọc tab 13 mỗi ngày, nhận đúng dòng email của mình, tự phân việc chi tiết và giao cho các phòng qua chat, rồi báo cáo hoàn thành lại qua Sheet (cột H, I của tab 13). CEO chỉ theo dõi kết quả hoàn thành ở tab 13. Trong đường này, lệnh của COO cho phòng chức năng có nguồn gốc từ lệnh CEO qua Sheet nên phòng tuân theo, không phải là phòng tự phát sinh việc.
 
 ### 03_SOP
 Phần | Nội dung
@@ -128,6 +113,31 @@ một lần.
 Template id | File đổi | Version tăng | Lý do QA kèm mốc thời gian | Bằng chứng trước/sau | Kết quả render thử | Trạng thái cập nhật local | Trạng thái push GitHub
 Mỗi lần QA sửa template đều có đề xuất cập nhật repo cùng verdict; cập
 nhật local bắt buộc, push GitHub riêng cần CEO duyệt.
+
+### 13_COO_Tasks — tab nhiệm vụ riêng cho COO, rút gọn còn 9 cột (lệnh CEO 04/11/2026)
+ID (COO tự ghi, CEO để trống) | Ngày CEO giao | Tài khoản Muse nhận việc (email) | Việc chính (CEO giao) | Phân việc chi tiết (COO tự phân) | Trạng thái | Deadline | Thời gian hoàn thành | Kết quả hoàn thành
+Tab này được tách riêng vì 01_Tasks đã hàng trăm dòng, COO không quản lý
+nổi nếu lệnh CEO → COO nằm lẫn trong đó. Tab 13 chỉ chứa lệnh CEO giao
+cho COO, không chứa hàng trăm dòng video của các phòng.
+- CEO chỉ điền 3 ô: Ngày CEO giao, email nhận việc, Việc chính. Cột ID
+CEO để trống, không cần tự nghĩ mã. Không ghi chi tiết, không phân phòng,
+không ghi link hay blocker. Ví dụ: "Đổi lịch sản xuất video 6 giờ sáng
+thành 8 giờ sáng".
+- COO tự ghi ID khi nhận việc lần đầu, trước khi phân việc: dạng
+COO-YYYYMMDD-NN, vd COO-20261105-01, COO-20261105-02, số thứ tự trong
+ngày của tài khoản đó, không trùng. Từ lúc đó trở đi, mọi nhắc tới nhiệm
+vụ đó đều dùng mã này.
+- COO đọc: mỗi ngày 1 lần đầu ca, chỉ đọc dòng chưa hoàn thành có cột C =
+email của mình và cột F chưa phải "Hoàn thành". Dòng email khác thì bỏ
+qua. Dòng đã F = "Hoàn thành" + có Thời gian hoàn thành thì bỏ qua.
+- COO làm: tự phân việc chi tiết ở cột E (phòng nào, việc gì, ID 01_Tasks
+nào nếu có), giao cho phòng qua chat, tự theo dõi ở 01_Tasks. 01_Tasks
+vẫn là nơi theo dõi video và các phòng; tab 13 không thay thế 01_Tasks.
+- CEO chỉ theo dõi kết quả: đọc cột F, H, I ở tab 13 là đủ. COO báo cáo
+trên cùng dòng: F = Hoàn thành, H = thời gian hoàn thành dạng
+"YYYY-MM-DD HH:MM +07", I = Kết quả hoàn thành (viết ngắn + link bằng
+chứng nếu có, chỉ khi tắc mới ghi "cần CEO" trong này). Thiếu H hoặc I
+thì chưa tính là xong.
 
 ## Quy tắc leo thang lên CEO
 Chỉ leo thang khi: chi tiền, cam kết bên ngoài, thay đổi không đảo ngược,
