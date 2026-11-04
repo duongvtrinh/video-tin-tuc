@@ -33,6 +33,12 @@ Video chỉ được duyệt khi vừa sạch lỗi kỹ thuật, vừa đẹp, 
 - Khoảng lặng ngắn trước câu kết luận (dưới ngưỡng lặng lỗi 1 giây) là kỹ thuật nhấn, không tính là điểm rơi hay lỗi lặng. Ngưỡng lặng lỗi vẫn giữ: đoạn lặng từ 1 giây trở lên không có lý do mới là lỗi.
 - Bookend (mở và đóng bằng cùng một hình ảnh/footage) là điểm cộng cấu trúc, không bắt buộc; khi video có bookend thì ghi nhận trong verdict, không trừ điểm vì "lặp hình" — đó là chủ đích, khác với lặp hình do thiếu tư liệu.
 
+### Luật nghỉ nhấn CHỐT 04/11/2026 (CEO, thay luật 500ms cũ và trạng thái TEST tối 03/11)
+- Mọi part mang template chia đoạn (section-header, thesis-marker, section-title, section-caption): pauseAfterMs = 2000 ở chính part đó, và pauseAfterMs = 1000 ở part liền trước nó. Part liền trước cũng là part chia đoạn thì giữ 2000, không cộng dồn. Part chia đoạn ở đầu video không có part trước. Các part còn lại mặc định 180. Part cuối video không có silence cuối.
+- QA kiểm từ video tới theo chuẩn mới, không còn chuẩn cũ: đọc plan part-level pauseAfterMs — part chia đoạn phải là 2000, part liền trước phải là 1000 (trừ các ngoại lệ kể trên). Video mới nộp sau ngày chốt mà part chia đoạn vẫn mang 500ms là plan không theo luật đã chốt — TRẢ LẠI để Production sửa plan, cùng lớp với các lỗi trường plan khác. Không được chấm 2000/1000 là sai, và không được đòi video mới quay về 4 lần 0,50 giây như các video 203, 197, 196, 200.
+- Hệ quả cho cửa lặng (bắt buộc): mix cuối từ nay sẽ có các slot lặng CÓ CHỦ ĐÍCH ở mốc chia đoạn — khoảng 1,0 giây trước mốc và đúng 2,00 giây sau mốc (test vòng 2 tối 03/11 đã đo đúng: trước ~1,05s, sau đúng slot 2,00s; code tts_batch đã hỗ trợ từ tối 03/11). Ngưỡng lặng lỗi (≥1 giây) từ nay chỉ áp cho lặng NGOÀI các mốc chia đoạn đã lên kế hoạch: QA đối chiếu vị trí lặng với tts.json/plan, lặng ≥1 giây chỉ được chấp nhận khi rơi đúng slot trước/sau part chia đoạn; lặng ≥1 giây ở bất kỳ vị trí nào khác vẫn là lỗi. Khoảng lặng nhấn trước câu kết luận (dưới 1 giây) là luật riêng, không đổi.
+- Không hồi tố: các video đã duyệt trước ngày chốt (203, 197, 196, 200 dùng 500ms) giữ nguyên nhịp cũ, không làm lại trừ khi CEO ra lệnh riêng. QA không mở lại các video đó chỉ vì giá trị pause.
+
 ### Cách chấm
 - Duyệt chỉ khi cả 3 cửa đều qua: (1) kỹ thuật sạch, (2) đẹp, (3) giữ người xem.
 - Trả lại khi bất kỳ cửa nào rớt, kèm danh sách lỗi cụ thể theo mốc thời gian và cách sửa cho từng lỗi.

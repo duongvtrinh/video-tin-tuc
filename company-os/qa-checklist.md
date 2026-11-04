@@ -110,3 +110,9 @@ Không deploy production, không đăng video, không mua dịch vụ.
 - Chỉ giữ kèm ghi chú khi chữ là nền mờ thật sự không đọc được và không phải chủ thể.
 - Tiền lệ giữ kèm ghi chú trước 03/11 (107 S10P2, 106 S6, 114 S2/S11) là luật cũ, không áp cho video mới.
 - Gương cùng luật trong skill Sản xuất (vòng tạo lại + cửa kiểm tra thực tế 4 điểm: chữ/biển, mặt/tay, bối cảnh, đúng câu thoại).
+
+## Luật nghỉ nhấn CHỐT 04/11/2026 (CEO, áp cho mọi video sản xuất từ nay, không còn là TEST)
+- Part mang template chia đoạn (section-header, thesis-marker, section-title, section-caption): pauseAfterMs = 2000 ở chính part đó, part liền trước = 1000 (trước cũng là part chia đoạn thì giữ 2000, không cộng dồn; part chia đoạn đầu video không có part trước; các part còn lại mặc định 180; part cuối video không silence cuối). Thay luật 500ms cũ và trạng thái TEST tối 03/11.
+- QA kiểm từ video tới theo chuẩn 1000 trước + 2000 sau (đọc plan part-level pauseAfterMs); video mới vẫn mang 500ms ở part chia đoạn thì TRẢ LẠI để sửa plan. Chuẩn cũ 4 lần 0,50 giây chỉ còn đúng cho các video đã duyệt trước ngày chốt (203, 197, 196, 200).
+- Hệ quả cửa lặng: mix cuối có slot lặng có chủ đích ~1,0s trước mốc và 2,00s sau mốc chia đoạn — ngưỡng lặng lỗi ≥1s chỉ áp cho lặng ngoài các mốc đã lên kế hoạch (đối chiếu tts.json/plan).
+- Video đã duyệt trước ngày chốt giữ nguyên nhịp cũ, không làm lại trừ khi CEO ra lệnh riêng. Skill QA đã cập nhật cùng nội dung; MEMORY.md dòng luật nghỉ nhấn CHỐT đã có từ chat chính.
