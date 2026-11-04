@@ -1,0 +1,362 @@
+[
+  {
+    "id": "calm_deliberate_thought",
+    "title": "Deliberate Thought",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "calm"
+    ],
+    "duration_sec": 177.5,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Deliberate Thought by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Deliberate%20Thought.mp3",
+    "file": "calm/deliberate_thought.mp3"
+  },
+  {
+    "id": "calm_meditation_impromptu_01",
+    "title": "Meditation Impromptu 01",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "calm"
+    ],
+    "duration_sec": 212.8,
+    "bitrate_kbps": 260,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Meditation Impromptu 01 by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Meditation%20Impromptu%2001.mp3",
+    "file": "calm/meditation_impromptu_01.mp3"
+  },
+  {
+    "id": "calm_meditation_impromptu_02",
+    "title": "Meditation Impromptu 02",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "calm"
+    ],
+    "duration_sec": 249.1,
+    "bitrate_kbps": 261,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Meditation Impromptu 02 by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Meditation%20Impromptu%2002.mp3",
+    "file": "calm/meditation_impromptu_02.mp3"
+  },
+  {
+    "id": "dramatic_hitman",
+    "title": "Hitman",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "dramatic"
+    ],
+    "duration_sec": 200.8,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Hitman by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Hitman.mp3",
+    "file": "dramatic/hitman.mp3"
+  },
+  {
+    "id": "dramatic_devastation_and_revenge",
+    "title": "Devastation and Revenge",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "dramatic"
+    ],
+    "duration_sec": 185.3,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Devastation and Revenge by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Devastation%20and%20Revenge.mp3",
+    "file": "dramatic/devastation_and_revenge.mp3"
+  },
+  {
+    "id": "dramatic_five_armies",
+    "title": "Five Armies",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "dramatic"
+    ],
+    "duration_sec": 155.8,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Five Armies by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Five%20Armies.mp3",
+    "file": "dramatic/five_armies.mp3"
+  },
+  {
+    "id": "funny_sneaky_snitch",
+    "title": "Sneaky Snitch",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "funny"
+    ],
+    "duration_sec": 136.6,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Sneaky Snitch by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Sneaky%20Snitch.mp3",
+    "file": "funny/sneaky_snitch.mp3"
+  },
+  {
+    "id": "funny_monkeys_spinning_monkeys",
+    "title": "Monkeys Spinning Monkeys",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "funny"
+    ],
+    "duration_sec": 125.1,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Monkeys Spinning Monkeys by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Monkeys%20Spinning%20Monkeys.mp3",
+    "file": "funny/monkeys_spinning_monkeys.mp3"
+  },
+  {
+    "id": "funny_merry_go_distressed",
+    "title": "Merry Go - Distressed",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "funny"
+    ],
+    "duration_sec": 120.2,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Merry Go - Distressed by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Merry%20Go%20-%20Distressed.mp3",
+    "file": "funny/merry_go_distressed.mp3"
+  },
+  {
+    "id": "news_thinking_music",
+    "title": "Thinking Music",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "news"
+    ],
+    "duration_sec": 195.9,
+    "bitrate_kbps": 256,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Thinking Music by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Thinking%20Music.mp3",
+    "file": "news/thinking_music.mp3"
+  },
+  {
+    "id": "news_local_forecast_elevator",
+    "title": "Local Forecast - Elevator",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "news"
+    ],
+    "duration_sec": 189.2,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Local Forecast - Elevator by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Local%20Forecast%20-%20Elevator.mp3",
+    "file": "news/local_forecast_elevator.mp3"
+  },
+  {
+    "id": "news_airport_lounge",
+    "title": "Airport Lounge",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "news"
+    ],
+    "duration_sec": 307.7,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Airport Lounge by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Airport%20Lounge.mp3",
+    "file": "news/airport_lounge.mp3"
+  },
+  {
+    "id": "inspirational_inspired",
+    "title": "Inspired",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "inspirational"
+    ],
+    "duration_sec": 286.1,
+    "bitrate_kbps": 256,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Inspired by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Inspired.mp3",
+    "file": "inspirational/inspired.mp3"
+  },
+  {
+    "id": "inspirational_heart_of_nowhere",
+    "title": "Heart of Nowhere",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "inspirational"
+    ],
+    "duration_sec": 172.3,
+    "bitrate_kbps": 256,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Heart of Nowhere by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Heart%20of%20Nowhere.mp3",
+    "file": "inspirational/heart_of_nowhere.mp3"
+  },
+  {
+    "id": "inspirational_montauk_point",
+    "title": "Montauk Point",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "inspirational"
+    ],
+    "duration_sec": 219.7,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Montauk Point by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Montauk%20Point.mp3",
+    "file": "inspirational/montauk_point.mp3"
+  },
+  {
+    "id": "suspense_oppressive_gloom",
+    "title": "Oppressive Gloom",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "suspense"
+    ],
+    "duration_sec": 199.4,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Oppressive Gloom by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Oppressive%20Gloom.mp3",
+    "file": "suspense/oppressive_gloom.mp3"
+  },
+  {
+    "id": "suspense_volatile_reaction",
+    "title": "Volatile Reaction",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "suspense"
+    ],
+    "duration_sec": 165.4,
+    "bitrate_kbps": 256,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Volatile Reaction by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Volatile%20Reaction.mp3",
+    "file": "suspense/volatile_reaction.mp3"
+  },
+  {
+    "id": "suspense_darkest_child",
+    "title": "Darkest Child",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "suspense"
+    ],
+    "duration_sec": 238.7,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Darkest Child by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Darkest%20Child.mp3",
+    "file": "suspense/darkest_child.mp3"
+  },
+  {
+    "id": "sad_heartbreaking",
+    "title": "Heartbreaking",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "sad"
+    ],
+    "duration_sec": 96.0,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Heartbreaking by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Heartbreaking.mp3",
+    "file": "sad/heartbreaking.mp3"
+  },
+  {
+    "id": "sad_long_road_ahead",
+    "title": "Long Road Ahead",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "sad"
+    ],
+    "duration_sec": 146.1,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Long Road Ahead by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Long%20Road%20Ahead.mp3",
+    "file": "sad/long_road_ahead.mp3"
+  },
+  {
+    "id": "sad_sad_trio",
+    "title": "Sad Trio",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "sad"
+    ],
+    "duration_sec": 251.6,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Sad Trio by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Sad%20Trio.mp3",
+    "file": "sad/sad_trio.mp3"
+  },
+  {
+    "id": "upbeat_carefree",
+    "title": "Carefree",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "upbeat"
+    ],
+    "duration_sec": 205.1,
+    "bitrate_kbps": 256,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Carefree by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Carefree.mp3",
+    "file": "upbeat/carefree.mp3"
+  },
+  {
+    "id": "upbeat_wallpaper",
+    "title": "Wallpaper",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "upbeat"
+    ],
+    "duration_sec": 220.1,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Wallpaper by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Wallpaper.mp3",
+    "file": "upbeat/wallpaper.mp3"
+  },
+  {
+    "id": "upbeat_who_likes_to_party",
+    "title": "Who Likes to Party",
+    "artist": "Kevin MacLeod",
+    "moods": [
+      "upbeat"
+    ],
+    "duration_sec": 257.5,
+    "bitrate_kbps": 320,
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Who Likes to Party by Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Who%20Likes%20to%20Party.mp3",
+    "file": "upbeat/who_likes_to_party.mp3"
+  }
+]
