@@ -1,7 +1,7 @@
 // Actions for App Tạo Video — a UI shell over the real VieNeu Asset Factory
 // repo. Project content lives in the repo filesystem and is accessed through
 // privileged handlers (server/src/privileged.ts). This database only holds
-// app-side state: background job records, soft-delete trash, snapshots log.
+// app-side state: background job records, soft-delete trash, auto-progress.
 
 import { defineAction, z, type ActionsModule, type Ctx } from "@hatch/space-sdk";
 import { desc, eq } from "drizzle-orm";
@@ -12,7 +12,6 @@ import { Factory } from "@space/privileged";
 const projectSummarySchema = Factory.listProjects.response.shape.projects.element;
 const projectDetailSchema = Factory.getProject.response;
 const planSchema = Factory.savePlan.request.shape.plan;
-const inputSchema = Factory.saveInput.request.shape.input;
 const okSchema = Factory.saveScript.response;
 const templateSchema = Factory.getCatalogs.response.shape.templates.element;
 const bgmTrackSchema = Factory.getCatalogs.response.shape.bgm.element;
@@ -143,22 +142,6 @@ export const Actions = {
     async handler(ctx, args) {
       const res = await ctx.executePrivileged(Factory.createProject, args);
       ctx.invalidateQueries(["projects"]);
-      return res;
-    },
-  }),
-
-  saveInput: defineAction({
-    description: "Lưu thông tin đầu vào (tên, chủ đề) của một project, có chụp snapshot trước khi ghi.",
-    request: z.object({ projectId: z.string().min(1), input: inputSchema }),
-    response: okSchema,
-    privileged: ALL_PRIVILEGED,
-    async handler(ctx, args) {
-      await ctx.executePrivileged(Factory.snapshotProject, {
-        projectId: args.projectId,
-        kind: "before-input-save",
-      });
-      const res = await ctx.executePrivileged(Factory.saveInput, args);
-      ctx.invalidateQueries(["projects", "project"]);
       return res;
     },
   }),
@@ -445,6 +428,14 @@ export const Actions = {
     response: z.object({ fileName: z.string() }),
     privileged: ALL_PRIVILEGED,
     async handler(ctx, args) {
+      // B23 (05/11/2026, lệnh CEO, lựa chọn A): chụp snapshot trước khi
+      // ghi đè media — snapshot giữ lại plan cũ (imageFile + nguồn cũ)
+      // để biết file nào đã bị thay và lấy lại từ nguồn, như thói quen
+      // snapshot trước save/render.
+      await ctx.executePrivileged(Factory.snapshotProject, {
+        projectId: args.projectId,
+        kind: "before-media-pick",
+      });
       const res = await ctx.executePrivileged(Factory.pickMedia, args);
       ctx.invalidateQueries(["project"]);
       return res;
@@ -463,7 +454,35 @@ export const Actions = {
     response: z.object({ fileName: z.string() }),
     privileged: ALL_PRIVILEGED,
     async handler(ctx, args) {
+      // B23 (05/11/2026, lệnh CEO, lựa chọn A): chụp snapshot trước khi
+      // tạo media AI ghi đè file cũ (xem pickMedia).
+      await ctx.executePrivileged(Factory.snapshotProject, {
+        projectId: args.projectId,
+        kind: "before-ai-media",
+      });
       const res = await ctx.executePrivileged(Factory.generateAiMedia, args);
+      ctx.invalidateQueries(["project"]);
+      return res;
+    },
+  }),
+
+  clearSceneImage: defineAction({
+    description: "Xóa ảnh đã gắn của một cảnh (file trên đĩa + imageFile/mediaSource/isMossGrid trong plan) để tạo lại job ảnh khác. Dùng khi muốn thay ảnh thật đã chọn — buildGenImageJobs không tạo job cho cảnh đã có ảnh thật.",
+    request: z.object({
+      projectId: z.string().min(1),
+      sceneOrder: z.number().int().positive(),
+    }),
+    response: z.object({ cleared: z.boolean(), fileName: z.string().nullable() }),
+    privileged: ALL_PRIVILEGED,
+    async handler(ctx, args) {
+      // B23 (05/11/2026, lệnh CEO, lựa chọn A): chụp snapshot trước khi
+      // xóa ảnh cảnh (xem pickMedia) — nút xóa ở client đã hỏi xác nhận
+      // từ trước, snapshot là lớp bảo vệ thêm ở server.
+      await ctx.executePrivileged(Factory.snapshotProject, {
+        projectId: args.projectId,
+        kind: "before-clear-image",
+      });
+      const res = await ctx.executePrivileged(Factory.clearSceneImage, args);
       ctx.invalidateQueries(["project"]);
       return res;
     },

@@ -26,11 +26,13 @@
 
 - Khi viết phương án minh họa an toàn trong Ghi chú (quy tắc CEO 31/10/2026): nếu sự kiện là cụ thể và đã xác minh được (có bài báo về đúng vụ việc kèm ảnh, địa điểm/nhân vật công chúng xác định được) thì phương án mặc định là ảnh thực tế của đúng sự kiện, không viết sẵn "minh họa generic" làm mặc định. Chỉ ghi minh họa generic khi sự kiện không có ảnh thực tế kiểm chứng được, hoặc khi cần bảo vệ riêng tư (nạn nhân, cá nhân không phải nhân vật công chúng).
 
+- Ranh giới AI cho nhân vật có tên khi viết phương án minh họa (nhóm A/B theo LOGIC.md, lệnh CEO 05/11/2026): phân biệt nhóm A — nhân vật công chúng có nhiều thông tin công khai đã kiểm chứng (vd tổng thống Mỹ, Messi, Chủ tịch nước Tô Lâm), có thể tạo chân dung AI nếu cần thiết và vẫn phải ghi rõ là ảnh AI minh họa, không phải ảnh thật; và nhóm B — người thiếu thông tin hoặc đang trong vụ việc pháp lý nhạy cảm, chỉ góc rộng/sau lưng/bóng mờ/bàn tay (chỉ khi là vật chứng, ví dụ bàn tay đang ký giấy tờ — không cận cảnh bàn tay để nhận diện người)/vật chứng, không cận mặt, không dùng tên làm chỉ dẫn ngoại hình. Không chắc thì xếp nhóm B.
+
 - Viết chủ đề bằng một câu rõ ràng và thêm góc khai thác trong hai câu.
 
 - Khi viết chủ đề/góc có tỉ lệ %: không tự thêm mẫu số mà nguồn không nêu — bài học 03/11/2026 (ca học hỏi 03/11/2026): brief TOPIC-152 viết '7,7% dân số' trong khi cả 5 nguồn chỉ ghi 'chiếm khoảng 7,7%' không nêu mẫu số; kịch bản đã phải giữ wording gốc, không lặp lại mẫu số của brief. Quy tắc: nguồn không nêu mẫu số thì ghi trơ tỉ lệ; chỉ ghi mẫu số khi nguồn nêu rõ.
 
-- Ghi vào tab 06_Topics với trạng thái Pending Scoring và không tự chấm điểm.
+- Ghi vào tab 06_Topics với trạng thái Pending Scoring và không tự chấm điểm. Khi ghi chủ đề mới, Scout ghi cột O "Duyệt thủ công" = "Chờ duyệt" (sửa 05/11/2026, lựa chọn 9A); Scoring không động vào cột O, chỉ CEO đổi cột O thành "Duyệt".
 
 - KHỬ TRÙNG SỚM (quy tắc CEO 03/11/2026, chống thất thoát tài nguyên): ngay khi quét được một ứng viên thịnh hành, ĐỌC NGAY 06_Topics, 01_Tasks và 11_QA_Log để đối chiếu — trùng là cùng sự kiện/người/số liệu/câu chuyện dù wording khác, kể cả góc đã làm trong 90 ngày. Nếu trùng thì BỎ QUA NGAY, không tìm hiểu sâu, không kiểm chứng thêm, không thu thập tư liệu, không mở rộng từ khóa cùng chủ đề. Chỉ ứng viên KHÔNG trùng mới được đi tiếp vào bước kiểm chứng sâu và thu thập tư liệu. Bước kiểm tra trước khi ghi vẫn giữ như chốt chặn cuối, nhưng không thay thế bước khử trùng sớm này.
 

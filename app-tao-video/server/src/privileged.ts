@@ -1,7 +1,6 @@
 // Privileged host handlers: the only code in this artifact allowed to touch
 // the local filesystem and spawn processes. Everything here operates on the
-// real VieNeu Asset Factory repo (~/workspace/asset-factory, a symlink to
-// vieneu-asset-factory) — the repo is the source of truth; this app is a UI
+// real VieNeu Asset Factory repo (~/workspace/vieneu-media-company/vieneu-asset-factory — layout repo; đường dẫn do resolveFactory() trong server/src/priv/core.ts quyết, ưu tiên env VIENEU_FACTORY_DIR rồi layout repo — B41 06/11/2026) — the repo is the source of truth; this app is a UI
 // shell over its projects/ folder, bin/ scripts, templates/, bgm/ and sfx/.
 
 import { definePrivilegedContracts, definePrivilegedHandlers, z } from "@hatch/space-sdk";
@@ -128,6 +127,12 @@ const sceneSchema = z.looseObject({
   sceneImagePrompt: z.string().default(""),
   imageFile: z.string().nullable().optional(),
   cardImage: z.string().nullable().optional(),
+  isMossGrid: z.boolean().nullable().optional(),
+  // A21 (05/11/2026, lệnh CEO): cảnh chỉ có nền xanh rêu kẻ ô vuông thì
+  // đánh dấu isMossGrid: true — không phải ảnh thật, vẫn tính là thiếu ảnh
+  // ở tầng hồ sơ/QA. App gán cờ khi xây job card (projects.ts) và
+  // gen_images.py gán lại khi render xong nền; pickMedia/generateAiMedia
+  // xóa cờ khi gắn ảnh thật/AI. UI nhận diện bằng cờ này, không đoán theo tên file.
   text: z.string().default(""),
   motion: z.string().nullable().optional(),
   mediaSource: z.union([z.string(), mediaSourceSchema]).nullable().optional(),
@@ -286,12 +291,9 @@ const okSchema = z.object({ ok: z.literal(true) });
     capabilities: ["filesystem:write"],
     timeoutMs: 30_000,
   },
-  saveInput: {
-    request: z.object({ projectId: z.string().min(1), input: inputSchema }),
-    response: okSchema,
-    capabilities: ["filesystem:write"],
-    timeoutMs: 30_000,
-  },
+  // 12B (05/11/2026): saveInput da go — khong client nao goi no
+  // (saveScript/savePlan van con); ham handlers-projects.saveInput
+  // cung da go theo.
   savePlan: {
     request: z.object({ projectId: z.string().min(1), plan: planSchema }),
     response: z.object({ ok: z.literal(true), problems: z.array(z.string()) }),
@@ -496,6 +498,19 @@ const okSchema = z.object({ ok: z.literal(true) });
     capabilities: ["process:spawn", "filesystem:write"],
     timeoutMs: 600_000,
   },
+  clearSceneImage: {
+    // A22 (05/11/2026, lệnh CEO): xóa ảnh đã gắn của một cảnh (file trên
+    // đĩa + imageFile/mediaSource/isMossGrid trong plan). buildGenImageJobs
+    // không tạo job cho cảnh đã có ảnh thật nên đây là bước bắt buộc trước
+    // khi thay ảnh thật bằng ảnh khác.
+    request: z.object({
+      projectId: z.string().min(1),
+      sceneOrder: z.number().int().positive(),
+    }),
+    response: z.object({ cleared: z.boolean(), fileName: z.string().nullable() }),
+    capabilities: ["filesystem:write"],
+    timeoutMs: 60_000,
+  },
   renderTemplatePreview: {
     request: z.object({
       templateId: z.string().min(1),
@@ -646,9 +661,9 @@ const okSchema = z.object({ ok: z.literal(true) });
 // library (thư viện tab Media), projects (tóm tắt/snapshot/job) và 4
 // nhóm handlers-*. Các module đó CHỈ được tầng privileged import,
 // tuyệt đối không import từ actions.ts.
-import { listProjects, getProject, createProject, saveScript, saveInput, savePlan, deleteProjectForever, snapshotProject, listSnapshots, restoreSnapshot, deleteSnapshot, getCatalogs } from "./priv/handlers-projects";
+import { listProjects, getProject, createProject, saveScript, savePlan, deleteProjectForever, snapshotProject, listSnapshots, restoreSnapshot, deleteSnapshot, getCatalogs } from "./priv/handlers-projects";
 import { startJob, pollJob, cancelJob } from "./priv/handlers-jobs";
-import { searchMedia, suggestKeywords, pickMedia, generateAiMedia, renderTemplatePreview, getMediaUrl, getMediaChunk } from "./priv/handlers-media";
+import { searchMedia, suggestKeywords, pickMedia, generateAiMedia, clearSceneImage, renderTemplatePreview, getMediaUrl, getMediaChunk } from "./priv/handlers-media";
 import { getPreviewData } from "./priv/handlers-preview";
 
 export const privilegedHandlers = definePrivilegedHandlers(Factory, {
@@ -656,7 +671,6 @@ export const privilegedHandlers = definePrivilegedHandlers(Factory, {
   getProject,
   createProject,
   saveScript,
-  saveInput,
   savePlan,
   deleteProjectForever,
   snapshotProject,
@@ -671,6 +685,7 @@ export const privilegedHandlers = definePrivilegedHandlers(Factory, {
   suggestKeywords,
   pickMedia,
   generateAiMedia,
+  clearSceneImage,
   renderTemplatePreview,
   getMediaUrl,
   getMediaChunk,

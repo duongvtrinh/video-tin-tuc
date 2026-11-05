@@ -11,7 +11,7 @@ import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { FACTORY, PY3, projDir, readJson, writeJson } from "./core";
+import { FACTORY, PY3, projDir, readJson, withPlanWriteLock, writeJson } from "./core";
 import { buildGenImageJobs, jobFiles, stepCommand } from "./projects";
 
 export async function startJob({ jobId, projectId, step, force }: ArgsOf<"startJob">): Promise<ResOf<"startJob">> {
@@ -26,9 +26,27 @@ export async function startJob({ jobId, projectId, step, force }: ArgsOf<"startJ
     }
     let note = "";
     if (step === "genimages") {
-      const n = buildGenImageJobs(projectId);
-      note = `${n} job ảnh`;
-      if (n === 0) return { logTail: "Không có cảnh nào trong plan để tạo ảnh." };
+      // A22 (05/11/2026): buildGenImageJobs bỏ qua cảnh đã có ảnh thật —
+      // ghi rõ cảnh bị bỏ qua vào note của job để việc bỏ qua không lặng lẽ.
+      // B39 (06/11/2026, lệnh CEO, lựa chọn A): bọc lời gọi trong
+      // withPlanWriteLock như pickMedia/generateAiMedia — buildGenImageJobs
+      // đọc–sửa–ghi plan, trước đây đứng ngoài quy ước khóa.
+      const { count: n, skipped } = await withPlanWriteLock(projectId, () =>
+        buildGenImageJobs(projectId),
+      );
+      note = `${n} job ảnh` + (skipped.length ? ` · Bỏ qua: ${skipped.join("; ")}` : "");
+      if (n === 0) {
+        // B22 (05/11/2026, lệnh CEO, lựa chọn A): không có job thì vẫn
+        // ghi file status/log để lần poll sau ra "done" thay vì "error"
+        // ma — trước đây return sớm không ghi gì, pollJob đọc fallback
+        // {running:false, exitCode:null} rồi reconcileJob ghi DB thành
+        // error với log trống, ghi đè cả thông báo đúng ban đầu.
+        const logTail = skipped.length ? `Không có job ảnh mới. ${skipped.join("; ")}` : "Không có cảnh nào trong plan để tạo ảnh.";
+        const files0 = jobFiles(projectId, jobId);
+        writeFileSync(files0.log, logTail + "\n", "utf8");
+        writeJson(files0.status, { running: false, exitCode: 0, step, note });
+        return { logTail };
+      }
     }
     const cmd = stepCommand(projectId, step, force);
     const files = jobFiles(projectId, jobId);

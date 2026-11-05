@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """ĐÃ NGHỈ HƯU — đợt D6, CEO quyết 01/11/2026. KHÔNG còn đường nào gọi
 script này nữa (render_draft.py đã xóa nhánh động, chỉ còn đường tĩnh
-WeasyPrint). Giữ file làm lưu trữ, không chạy, không sửa. Đường động
+WeasyPrint). Giữ file làm lưu trữ, không chạy, không sửa. Giai đoạn 5
+(05/11/2026) nhắc lại theo quy tắc "dọn code chết CHỈ BẰNG GHI CHÚ":
+file này KHÔNG bị xóa, không được gọi lại, không được phục hồi nhánh
+động từ đây mà không có quyết định riêng của CEO. Đường động
 Chrome chưa từng chạy được trong môi trường này (cần Hatch WebGL domain
 policy) và từ đợt strip animation 31/10 không template nào còn keyframes.
 
@@ -39,6 +42,12 @@ _SYMLINK_FACTORY = Path.home() / "workspace" / "asset-factory"
 # May goc giu symlink cu (khong doi hanh vi); ban clone monorepo
 # khong co symlink thi resolve tu vi tri file script (bin/../).
 FACTORY = _SYMLINK_FACTORY if _SYMLINK_FACTORY.exists() else Path(__file__).resolve().parent.parent
+if FACTORY == _SYMLINK_FACTORY:
+    # B46 (06/11/2026, lệnh CEO, lựa chọn A): dấu vết khi dùng nhầm
+    # root cũ — đường symlink ~/workspace/asset-factory đã lỗi thời,
+    # factory chuẩn là layout repo (bin/../).
+    print(f"  warn: FACTORY resolve qua symlink cu {_SYMLINK_FACTORY} — kiem tra lai duong factory", file=sys.stderr)
+
 ACCENT = "#FBBF24"
 FPS = 30
 MAX_WINDOW = 5.0  # giây, chặn animation vô hạn (nháy con trỏ...)

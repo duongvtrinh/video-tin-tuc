@@ -2,6 +2,7 @@
 // xạ bước job → lệnh factory, hàng job tạo ảnh cảnh và md5 preview có
 // cache theo mtime/size. Chỉ privileged.ts import file này.
 import { createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
 import {
   copyFileSync,
   existsSync,
@@ -23,6 +24,7 @@ import {
   sceneImageFileName,
   writeJson,
 } from "./core";
+import { isAiSource } from "./plan-normalize";
 
 type RawPlan = {
   voice?: string;
@@ -81,7 +83,7 @@ export function summarize(id: string) {
     );
     if (!hasBrollMedia) {
       warnings.push(
-        `Cảnh ${order} chưa có ảnh nền nào (không thấy seg_${order}_*.jpg trong build/media/images, cũng không có b-roll) — render sẽ ra nền đen ở cảnh này`,
+        `Cảnh ${order} chưa có ảnh nền nào (không thấy seg_${order}_*.jpg/*.png/*.webp trong build/media/images, cũng không có b-roll) — render sẽ ra nền đen ở cảnh này`,
       );
     }
   }
@@ -170,7 +172,37 @@ export function stepCommand(projectId: string, step: string, force: boolean): st
   }
 }
 
-export function buildGenImageJobs(projectId: string): number {
+// B19 (05/11/2026, lệnh CEO, lựa chọn A): file ảnh phải dùng được thì
+// mới tính là "đã có ảnh thật" — tồn tại + >0 byte + giải mã được hết
+// bằng PIL (dùng chung filename.img_decode_error ở B10, qua PY3). PIL
+// không có sẵn, hoặc gọi helper thất bại/timeout, thì coi như dùng được
+// (fail-open như _decodes ở gen_images) để không chặn cả batch chỉ vì
+// thiếu thư viện hay helper lỗi.
+function imageFileUsable(path: string): boolean {
+  try {
+    if (statSync(path).size === 0) return false;
+  } catch {
+    return false;
+  }
+  try {
+    const r = spawnSync(
+      PY3,
+      [
+        "-c",
+        "import sys; sys.path.insert(0, sys.argv[1]); from filename import img_decode_error; sys.exit(0 if img_decode_error(sys.argv[2]) is None else 1)",
+        BIN,
+        path,
+      ],
+      { timeout: 15_000 },
+    );
+    if (r.error || typeof r.status !== "number") return true;
+    return r.status === 0;
+  } catch {
+    return true;
+  }
+}
+
+export function buildGenImageJobs(projectId: string): { count: number; skipped: string[] } {
   const dir = projDir(projectId);
   const plan = readJson<{
     scenes?: Array<{
@@ -179,35 +211,94 @@ export function buildGenImageJobs(projectId: string): number {
       imageFile?: string;
       sceneScriptSummary?: string;
       mediaSource?: unknown;
+      isMossGrid?: boolean;
     }>;
   } | null>(join(dir, "broll-plan.json"), null);
   const jobs: Array<Record<string, unknown>> = [];
+  const skipped: string[] = [];
+  const imagesDir = join(dir, "build/media/images");
+  let planDirty = false;
   for (const scene of plan?.scenes ?? []) {
     const order = scene.order ?? 0;
     if (!order) continue;
     const out = join(dir, `build/media/images/${scene.imageFile ?? sceneImageFileName(projectId, order)}`);
     mkdirSync(join(dir, "build/media/images"), { recursive: true });
+    // A22 (05/11/2026, lệnh CEO): cảnh đã có ảnh thật được chọn thì KHÔNG
+    // tạo job ảnh nữa — job AI/card ghi vào đúng đường out = file ảnh thật
+    // đó, trong khi mediaSource trong plan vẫn ghi nguồn thật, video sẽ
+    // chiếu ảnh AI/nền rêu mà hồ sơ nói ảnh thật. "Ảnh thật đã chọn" =
+    // imageFile đã có file trên đĩa VÀ không phải ảnh AI (classification
+    // "ai-tu-prompt" / source "AI từ prompt") VÀ không phải nền rêu
+    // (isMossGrid). File đã có mà mediaSource thiếu hẳn vẫn bỏ qua (có thể
+    // là ảnh thật mất hồ sơ — preflight A20 đã chặn cảnh đó; muốn làm lại
+    // thì xóa ảnh bằng clearSceneImage rồi tạo lại job).
+    // B18 (05/11/2026, lệnh CEO, lựa chọn A): project pipeline để
+    // imageFile null ở mọi cảnh nên A22 gốc không bao giờ kích hoạt ở tầng
+    // app — job tạo cho mọi cảnh rồi gen_images mới skip lặng ở dưới.
+    // Nay kiểm tra file theo đúng tên rand6 trên đĩa (jpg → png → webp,
+    // như partImagePath ở A24) ngay cả khi imageFile null: cảnh nào đã có
+    // file thật thì đưa vào skipped, không tạo job. Cảnh bị skip thì
+    // KHÔNG điền imageFile vào plan ở đây (việc đó thuộc getProject,
+    // B5-C); plan chỉ ghi khi có thay đổi thật (planDirty).
+    // B20: nhận diện AI dùng chung isAiSource (plan-normalize) — khớp
+    // type/source/classification chứa prompt-AI, ai-tu-prompt, AI từ
+    // prompt, chuỗi trần, và quy tắc prompt+type của pipeline cũ.
+    const isAiImage = isAiSource(scene.mediaSource);
+    const rand6Stem = sceneImageFileName(projectId, order).slice(0, -".jpg".length);
+    const diskImage = (["jpg", "png", "webp"] as const)
+      .map((ext) => join(imagesDir, `${rand6Stem}.${ext}`))
+      .find((p) => existsSync(p));
+    const pickedPath = scene.imageFile ? join(imagesDir, basename(scene.imageFile)) : undefined;
+    const existingFile = diskImage ?? (pickedPath && existsSync(pickedPath) ? pickedPath : undefined);
+    // B19: file tồn tại chưa đủ — phải dùng được (>0 byte + giải mã được,
+    // imageFileUsable). File hỏng thì tạo job lại như bình thường, không kẹt.
+    const hasPickedRealPhoto =
+      !!existingFile &&
+      imageFileUsable(existingFile) &&
+      !isAiImage &&
+      scene.isMossGrid !== true;
+    if (hasPickedRealPhoto) {
+      skipped.push(`Cảnh ${order}: đã có ảnh thật (${basename(existingFile)}) — xóa ảnh trước rồi tạo lại job`);
+      continue;
+    }
     if (scene.sceneImagePrompt && scene.sceneImagePrompt.trim()) {
       jobs.push({ prompt: scene.sceneImagePrompt, out, orientation: "vertical" });
+      // A21 (05/11/2026): cảnh có prompt AI thì ảnh thật sự là AI — xóa cờ
+      // nền rêu nếu cảnh này trước đây từng là nền rêu.
+      if (scene.isMossGrid !== undefined) {
+        delete scene.isMossGrid;
+        planDirty = true;
+      }
       if (!scene.imageFile) {
         scene.imageFile = basename(out);
+        planDirty = true;
       }
       // Ảnh cảnh do job này tạo ra là ảnh AI từ đúng prompt của cảnh:
       // ghi nguồn gốc kèm prompt vào plan (nếu cảnh chưa có nguồn) để
       // thư viện media ở tab Media hiện đúng nguồn AI + prompt.
       if (!scene.mediaSource) {
         scene.mediaSource = { source: "AI từ prompt", prompt: scene.sceneImagePrompt };
+        planDirty = true;
       }
     } else {
       jobs.push({ card_pid: projectId, card_order: order, out });
-      if (!scene.imageFile) scene.imageFile = basename(out);
+      // B41 (06/11/2026, lệnh CEO, lựa chọn A): KHÔNG gán isMossGrid ở
+      // đây nữa — cờ chỉ có nghĩa "nền rêu đã render thật", mà job card
+      // mới tạo chưa render; gen_images ghi cờ qua _mark_moss_grid sau
+      // batch khi render xong thật (trước đây gán sớm nên job lỗi vẫn để
+      // lại cờ "nền rêu" dù chưa có file nào). File out đã có thì job bị
+      // skip, cờ giữ nguyên như trong plan.
+      if (!scene.imageFile) {
+        scene.imageFile = basename(out);
+        planDirty = true;
+      }
     }
   }
-  if (plan) writeJson(join(dir, "broll-plan.json"), plan);
+  if (plan && planDirty) writeJson(join(dir, "broll-plan.json"), plan);
   const jobsPath = join(dir, ".app-jobs/genimages-jobs.json");
   mkdirSync(join(dir, ".app-jobs"), { recursive: true });
   writeFileSync(jobsPath, JSON.stringify(jobs, null, 2), "utf8");
-  return jobs.length;
+  return { count: jobs.length, skipped };
 }
 
 // Preview-MP4 md5 cache (giai đoạn 2, 03/11): getProject used to read

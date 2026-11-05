@@ -6,13 +6,26 @@
 Ghi:  projects/<id>/build/{project.json, timeline.json, subtitles/*.srt,
                             audio/sfx/*, googleFlow/config.json, README_HUONG_DAN.txt}
       projects/<id>/export/<id>.zip
-      (ZIP chứa thêm <id>/abbr_dict.json nếu project có file từ điển ở gốc,
-       để VieNeu Studio local đọc được)
+      (ZIP chứa toàn bộ build/ TRỪ file silence_*, cộng thêm ở root <id>/:
+       abbr_dict.json nếu project có file từ điển ở gốc (để VieNeu Studio
+       local đọc được), broll-plan.json (gốc sự thật của plan, gồm
+       plan.bgm), và audio/bgm/<file BGM> nếu plan chọn BGM và file tồn
+       tại trong factory/bgm/ — chốt Giai đoạn 4, 05/11/2026: ZIP KHÔNG
+       còn "không chứa BGM" như trước. Lưu ý: file BGM trong ZIP chỉ là
+       bản kèm theo để Studio/máy khác có nhạc mà không cần factory/bgm/;
+       timeline.json/project.json hiện không trỏ tới audio/bgm/ nên
+       Studio muốn dùng phải tự nối theo plan.bgm trong broll-plan.json
+       kèm theo — việc nối tự động đó thuộc đợt sau, không tự nhận là
+       đã nối. BGM thiếu file thì CHẶN assemble (13B, 05/11/2026),
+       khớp hành vi preflight và render_draft.)
+      aspectRatio mặc định khi thiếu field là "9:16" (chốt Giai đoạn 4,
+      khớp render_draft/karaoke/build_render_page/render_scene_card).
 
 Quy ước (khớp bản local): JSON UTF-8 ensure_ascii=False; URL media dạng
 /projects/<id>/...; tên file seg_<order>_<rand6>.* / broll_seg_<order>_part_<p>_<rand6>.*
 """
 import json
+import os
 import shutil
 import sys
 import zipfile
@@ -20,12 +33,18 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from filename import rand6  # noqa: E402  (single source of truth)
+from filename import atomic_write_text, check_plan, rand6  # noqa: E402  (single source of truth)
 
 _SYMLINK_FACTORY = Path.home() / "workspace" / "asset-factory"
 # May goc giu symlink cu (khong doi hanh vi); ban clone monorepo
 # khong co symlink thi resolve tu vi tri file script (bin/../).
 FACTORY = _SYMLINK_FACTORY if _SYMLINK_FACTORY.exists() else Path(__file__).resolve().parent.parent
+if FACTORY == _SYMLINK_FACTORY:
+    # B46 (06/11/2026, lệnh CEO, lựa chọn A): dấu vết khi dùng nhầm
+    # root cũ — đường symlink ~/workspace/asset-factory đã lỗi thời,
+    # factory chuẩn là layout repo (bin/../).
+    print(f"  warn: FACTORY resolve qua symlink cu {_SYMLINK_FACTORY} — kiem tra lai duong factory", file=sys.stderr)
+
 
 
 def srt_ts(sec: float) -> str:
@@ -44,17 +63,57 @@ def main() -> int:
     proj = FACTORY / "projects" / pid
     build = proj / "build"
 
-    inp = json.loads((proj / "input.json").read_text(encoding="utf-8"))
-    script = json.loads((proj / "script.json").read_text(encoding="utf-8"))
-    plan = json.loads((proj / "broll-plan.json").read_text(encoding="utf-8"))
-    tts = json.loads((proj / "tts.json").read_text(encoding="utf-8"))
+    try:
+        inp = json.loads((proj / "input.json").read_text(encoding="utf-8"))
+        script = json.loads((proj / "script.json").read_text(encoding="utf-8"))
+        plan = json.loads((proj / "broll-plan.json").read_text(encoding="utf-8"))
+        tts = json.loads((proj / "tts.json").read_text(encoding="utf-8"))
+    except Exception as exc:
+        print(f"ASSEMBLE-ERROR {pid}: không đọc được input/script/plan/tts: {exc}",
+              file=sys.stderr)
+        return 1
+    try:
+        scenes = check_plan(plan, require_voice_text=True)
+    except ValueError as exc:
+        # Giai đoạn 5: plan thiếu key báo rõ key nào, dừng trước khi ghi
+        # bất kỳ output nào — không crash trần, không coi plan hỏng là rỗng.
+        print(f"ASSEMBLE-ERROR {pid}: {exc}", file=sys.stderr)
+        return 1
+    # B26 (06/11/2026, lệnh CEO, lựa chọn A): kiểm BGM ngay đầu main —
+    # trước đây chỉ kiểm trong khối ghi ZIP (sau khi đã ghi timeline.json,
+    # project.json, SRT, googleFlow/config.json), nên project thiếu BGM để
+    # lại output dở trên đĩa và ZIP cũ vẫn nằm đó dễ nhầm là mới. Cửa
+    # chặn muộn trong khối ZIP vẫn còn làm backstop.
+    _bgm = plan.get("bgm") or {}
+    if _bgm.get("file"):
+        _bgm_file = FACTORY / "bgm" / _bgm["file"]
+        if not _bgm_file.is_file():
+            print(f"ASSEMBLE-ERROR {pid}: BGM da chon {_bgm.get('file')} "
+                  f"khong ton tai — dung dong goi, giong preflight",
+                  file=sys.stderr)
+            return 1
+    if not isinstance(tts, dict) or not isinstance(tts.get("parts"), list) \
+            or not isinstance(tts.get("scenes"), list):
+        print(f"ASSEMBLE-ERROR {pid}: tts.json hỏng: phải có 'parts' và "
+              f"'scenes' dạng list", file=sys.stderr)
+        return 1
+    try:
+        part_map = {p["id"]: p for p in tts["parts"]}
+        scene_map = {s["id"]: s for s in tts["scenes"]}
+    except (KeyError, TypeError) as exc:
+        print(f"ASSEMBLE-ERROR {pid}: tts.json thiếu key: {exc}", file=sys.stderr)
+        return 1
     chunk_cues_path = proj / "build" / "subtitles" / "sent_cues.json"
-    chunk_cues = (json.loads(chunk_cues_path.read_text(encoding="utf-8"))
-                  if chunk_cues_path.exists() else [])
-    part_map = {p["id"]: p for p in tts["parts"]}
-    scene_map = {s["id"]: s for s in tts["scenes"]}
+    try:
+        chunk_cues = (json.loads(chunk_cues_path.read_text(encoding="utf-8"))
+                      if chunk_cues_path.exists() else [])
+    except Exception:
+        chunk_cues = []
+    if not isinstance(chunk_cues, list):
+        chunk_cues = []
 
-    aspect = inp.get("aspectRatio", "16:9")
+    # Mặc định 9:16 khi thiếu field (chốt Giai đoạn 4).
+    aspect = inp.get("aspectRatio", "9:16")
     voice = plan.get("voice", "Hữu Quân")
     speed = float(plan.get("speed", 1.0))
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -65,7 +124,15 @@ def main() -> int:
     srt_cues, sent_cues = [], []
     cue_n = 0
     thumb = None
-    for sc in plan["scenes"]:
+    for sc in scenes:
+        # Giai đoạn 5: scene/part có trong plan nhưng thiếu trong tts.json
+        # là lỗi chặn, báo rõ ID — không KeyError trần giữa chừng (lúc
+        # đó chưa ghi output nào nên dừng ở đây là an toàn).
+        if sc["id"] not in scene_map:
+            print(f"ASSEMBLE-ERROR {pid}: scene {sc['id']} có trong plan "
+                  f"nhưng thiếu trong tts.json — chạy lại tts_batch trước",
+                  file=sys.stderr)
+            return 1
         ts = scene_map[sc["id"]]
         # Plan do pipeline ghi không có trường "text" ở cảnh (chỉ có
         # sceneScriptSummary + voiceText từng part) — text của cảnh theo
@@ -85,6 +152,11 @@ def main() -> int:
 
         vparts = []
         for pi, p in enumerate(sc["parts"], start=1):
+            if p["id"] not in part_map:
+                print(f"ASSEMBLE-ERROR {pid}: part {p['id']} có trong plan "
+                      f"nhưng thiếu trong tts.json — chạy lại tts_batch trước",
+                      file=sys.stderr)
+                return 1
             pt = part_map[p["id"]]
             br = p.get("broll") or {}
             broll = None
@@ -93,10 +165,15 @@ def main() -> int:
                 br6 = rand6(pid, "broll", str(sc["order"]), str(pi))
                 # B-roll có thể là video (quy tắc 27/10/2026): ưu tiên .mp4
                 # nếu có, nếu không thì .jpg như trước.
-                fn = f"broll_seg_{sc['order']}_part_{pi}_{br6}.jpg"
-                if (build / "media" / "broll" /
-                        f"broll_seg_{sc['order']}_part_{pi}_{br6}.mp4").exists():
-                    fn = f"broll_seg_{sc['order']}_part_{pi}_{br6}.mp4"
+                # 11A: b-roll co the la mp4/jpg/png/webp — thu theo thu tu do.
+                fn = None
+                for _ext in ("mp4", "jpg", "png", "webp"):
+                    if (build / "media" / "broll" /
+                            f"broll_seg_{sc['order']}_part_{pi}_{br6}.{_ext}").exists():
+                        fn = f"broll_seg_{sc['order']}_part_{pi}_{br6}.{_ext}"
+                        break
+                if fn is None:
+                    fn = f"broll_seg_{sc['order']}_part_{pi}_{br6}.jpg"
                 has_file = (build / "media" / "broll" / fn).exists()
                 broll = {
                     "url": url("media", "broll", fn) if has_file else None,
@@ -117,7 +194,13 @@ def main() -> int:
             vparts.append({
                 "id": p["id"],
                 "voiceText": p["voiceText"],
-                "pauseAfterMs": plan.get("pauseAfterMs", 180),
+                # Per-part (chốt Giai đoạn 4): part có pauseAfterMs riêng
+                # thì giữ riêng, không có thì dùng plan.pauseAfterMs
+                # (mặc định 180ms). Trước đây dùng pause chung của plan
+                # cho mọi part, lệch tts_batch.py (per-part) và lệch
+                # duration thật trong tts.json (tts đã cộng pause riêng).
+                "pauseAfterMs": p.get("pauseAfterMs",
+                                      plan.get("pauseAfterMs", 180)),
                 "duration": pt["duration"],
                 "baseDuration": pt["duration"],
                 "startSec": pt["startSec"],
@@ -129,7 +212,13 @@ def main() -> int:
             cue_n += 1
             # synced_cues: ưu tiên mốc câu ngắn đã chuẩn hoá (chunk_cues.json);
             # không có thì lùi về mốc part như cũ
-            chunked = [c for c in chunk_cues if c["partId"] == p["id"]]
+            # Giai đoạn 5: cue hỏng (thiếu key) bị bỏ qua thay vì
+            # KeyError trần — cue là dữ liệu phụ, part vẫn có mốc SRT.
+            chunked = [c for c in chunk_cues
+                       if isinstance(c, dict) and c.get("partId") == p["id"]
+                       and isinstance(c.get("start"), (int, float))
+                       and isinstance(c.get("end"), (int, float))
+                       and isinstance(c.get("text"), str)]
             if chunked:
                 for cc in chunked:
                     cue_n += 1
@@ -164,8 +253,9 @@ def main() -> int:
         })
 
     (build / "subtitles").mkdir(parents=True, exist_ok=True)
-    (build / "subtitles" / "synced_cues.srt").write_text("\n".join(srt_cues), encoding="utf-8")
-    (build / "subtitles" / "sentences.srt").write_text("\n".join(sent_cues), encoding="utf-8")
+    # Giai đoạn 5: mọi output JSON/SRT/README ghi tạm rồi rename.
+    atomic_write_text(build / "subtitles" / "synced_cues.srt", "\n".join(srt_cues))
+    atomic_write_text(build / "subtitles" / "sentences.srt", "\n".join(sent_cues))
 
     timeline = {
         "version": "2.0",
@@ -177,8 +267,8 @@ def main() -> int:
         "bgLayers": [],
         "segments": segments,
     }
-    (build / "timeline.json").write_text(
-        json.dumps(timeline, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_text(build / "timeline.json",
+                      json.dumps(timeline, ensure_ascii=False, indent=2))
 
     # ---- project.json ----
     project = {
@@ -196,8 +286,8 @@ def main() -> int:
                     "segmentCount": len(segments),
                     "hasMasterVoice": True, "thumbnail": thumb},
     }
-    (build / "project.json").write_text(
-        json.dumps(project, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_text(build / "project.json",
+                      json.dumps(project, ensure_ascii=False, indent=2))
 
     # ---- SFX kèm theo ----
     sfx_dir = build / "audio" / "sfx"
@@ -212,12 +302,16 @@ def main() -> int:
 
     # ---- googleFlow/config.json (để extension tạo video local cho part needVideo) ----
     gf_items = []
-    for sc in plan["scenes"]:
+    # B25 (06/11/2026, lệnh CEO, lựa chọn A): segIdx là chỉ số thật của
+    # scene trong danh sách segments (vị trí vòng lặp), không phải
+    # order - 1 — sau khi cắt scene, order khuyết (vd 1-9,11,12) nên
+    # order - 1 lệch 1 từ chỗ cắt trở đi.
+    for seg_idx, sc in enumerate(scenes):
         r6 = rand6(pid, "img", str(sc["order"]))
         if sc.get("sceneImagePrompt"):
             gf_items.append({
                 "prompt": sc["sceneImagePrompt"], "ratio": aspect, "quality": "standard",
-                "segIdx": sc["order"] - 1, "taskType": "scene", "segOrder": sc["order"],
+                "segIdx": seg_idx, "taskType": "scene", "segOrder": sc["order"],
                 "partIdx": None, "partOrder": None, "partId": None,
                 "targetFilename": f"seg_{sc['order']}_{r6}", "subDir": "media/images",
                 "mediaType": "image", "projectId": pid,
@@ -228,7 +322,7 @@ def main() -> int:
                 br6 = rand6(pid, "broll", str(sc["order"]), str(pi))
                 gf_items.append({
                     "prompt": br["mediaPrompt"], "ratio": aspect, "quality": "standard",
-                    "segIdx": sc["order"] - 1, "taskType": "broll", "segOrder": sc["order"],
+                    "segIdx": seg_idx, "taskType": "broll", "segOrder": sc["order"],
                     "partIdx": pi - 1, "partOrder": pi, "partId": p["id"],
                     "targetFilename": f"broll_seg_{sc['order']}_part_{pi}_{br6}",
                     "subDir": "media/broll",
@@ -237,9 +331,9 @@ def main() -> int:
                 })
     gf_dir = build / "googleFlow"
     gf_dir.mkdir(parents=True, exist_ok=True)
-    (gf_dir / "config.json").write_text(
-        json.dumps({"projectId": pid, "projectName": inp.get("name", pid),
-                    "items": gf_items}, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_text(gf_dir / "config.json",
+                      json.dumps({"projectId": pid, "projectName": inp.get("name", pid),
+                                  "items": gf_items}, ensure_ascii=False, indent=2))
 
     # ---- README ----
     plan_data = json.loads((proj / "broll-plan.json").read_text(encoding="utf-8"))
@@ -248,7 +342,8 @@ def main() -> int:
     if _bgm.get("attribution"):
         bgm_note = (f"\nNHẠC NỀN (ghi công khi đăng YouTube/Facebook):\n"
                     f"{_bgm['attribution']}\n")
-    (build / "README_HUONG_DAN.txt").write_text(
+    atomic_write_text(
+        build / "README_HUONG_DAN.txt",
         "VieNeu Asset Factory — project tạo bởi agent Muse\n"
         f"Project: {pid}\n"
         f"{bgm_note}\n"
@@ -259,28 +354,64 @@ def main() -> int:
         "4. B-roll chữ render tự động lúc xuất video (templateId + inputs đã điền sẵn).\n"
         "5. Part nào cần video: mở googleFlow/config.json, dùng extension tạo rồi\n"
         "   copy file .mp4 vào media/broll/ đúng tên targetFilename.\n"
-        "6. Bấm 'Xuất Video' để render.\n",
-        encoding="utf-8")
+        "6. Bấm 'Xuất Video' để render.\n")
 
     # ---- ZIP ----
+    # Giai đoạn 5: ghi ZIP tạm rồi rename — ZIP cũ còn nguyên nếu ghi
+    # thất bại giữa chừng, không bao giờ để lại ZIP dở mang tên thật.
     exp_dir = proj / "export"
     exp_dir.mkdir(parents=True, exist_ok=True)
     zip_path = exp_dir / f"{pid}.zip"
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-        for f in sorted(build.rglob("*")):
-            if f.is_file():
-                if f.name.startswith("silence_"):
-                    continue  # file phụ lúc nối WAV, không đưa vào project cuối
-                # zip chứa thư mục <pid>/... để user bung thẳng vào projects/
-                z.write(f, Path(pid) / f.relative_to(build))
-        # từ điển viết tắt (nếu có): file ở gốc project, không nằm trong
-        # build/ nên phải thêm riêng; đặt cùng cấp project.json trong ZIP
-        # để VieNeu Studio local đọc được sau khi bung vào projects/
-        abbr = proj / "abbr_dict.json"
-        if abbr.is_file():
-            z.write(abbr, Path(pid) / "abbr_dict.json")
+    zip_tmp = exp_dir / f".{pid}.zip.tmp"
+    _bgm_note = "bgm=none"
+    try:
+        with zipfile.ZipFile(zip_tmp, "w", zipfile.ZIP_DEFLATED) as z:
+            for f in sorted(build.rglob("*")):
+                if f.is_file():
+                    if f.name.startswith("silence_"):
+                        continue  # file phụ lúc nối WAV, không đưa vào project cuối
+                    # B31 (06/11/2026, lệnh CEO, lựa chọn A): file tạm
+                    # của build preview — _thumb_* và render_page.html
+                    # (chứa base64 toàn bộ ảnh) — không đưa vào ZIP.
+                    if f.name.startswith("_thumb_") or f.name == "render_page.html":
+                        continue
+                    # zip chứa thư mục <pid>/... để user bung thẳng vào projects/
+                    z.write(f, Path(pid) / f.relative_to(build))
+            # từ điển viết tắt (nếu có): file ở gốc project, không nằm trong
+            # build/ nên phải thêm riêng; đặt cùng cấp project.json trong ZIP
+            # để VieNeu Studio local đọc được sau khi bung vào projects/
+            abbr = proj / "abbr_dict.json"
+            if abbr.is_file():
+                z.write(abbr, Path(pid) / "abbr_dict.json")
+            # broll-plan.json (gốc sự thật của plan, gồm plan.bgm) cũng nằm
+            # ngoài build/ nên thêm riêng cùng cấp, để máy nhận ZIP vẫn biết
+            # BGM nào đã chọn và attribution nào phải ghi công.
+            z.write(proj / "broll-plan.json", Path(pid) / "broll-plan.json")
+            # BGM: file nhạc thật từ factory/bgm/ vào audio/bgm/ trong ZIP.
+            # 13B (05/11/2026): plan chọn BGM mà file không tồn tại thì CHẶN
+            # (tra ve 1, khong ghi ZIP), nhu preflight — khong canh bao roi
+            # dong goi ZIP khong nhac lang le nua.
+            _bgm = plan.get("bgm") or {}
+            if _bgm.get("file"):
+                _bgm_file = FACTORY / "bgm" / _bgm["file"]
+                if _bgm_file.is_file():
+                    z.write(_bgm_file, Path(pid) / "audio" / "bgm" / _bgm_file.name)
+                    _bgm_note = f"bgm={_bgm.get('id') or _bgm_file.name}"
+                else:
+                    print(f"ASSEMBLE-ERROR {pid}: BGM da chon {_bgm.get('file')} "
+                          f"khong ton tai — dung dong goi, giong preflight",
+                          file=sys.stderr)
+                    zip_tmp.unlink(missing_ok=True)
+                    return 1
+    except Exception as exc:
+        # ZIP dở chỉ nằm ở file tạm, ZIP cũ (nếu có) còn nguyên.
+        zip_tmp.unlink(missing_ok=True)
+        print(f"ASSEMBLE-ERROR {pid}: ghi ZIP thất bại: {exc}", file=sys.stderr)
+        return 1
+    os.replace(zip_tmp, zip_path)
     print(f"ASSEMBLE-OK zip={zip_path} size={zip_path.stat().st_size//1024}KB "
-          f"segments={len(segments)} duration={tts['totalDuration']}s")
+          f"segments={len(segments)} duration={tts['totalDuration']}s "
+          f"{_bgm_note}")
     return 0
 
 

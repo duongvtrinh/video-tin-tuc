@@ -4,6 +4,13 @@
 Mỗi voice part = 1 clip: hiện ảnh b-roll nếu có, không thì ảnh scene.
 Nối các clip + giọng đọc (WAV thật) + burn phụ đề -> MP4 xem trước.
 
+HẰNG SỐ ĐÃ CHỐT (Giai đoạn 4, 05/11/2026 — xem PIPELINE.md mục
+"Hằng số pipeline đã chốt"): aspectRatio mặc định khi thiếu field là
+"9:16" (video dọc); khung 9:16 -> 720x1280, còn lại -> 1280x720. Phụ đề
+MarginV = 20% chiều cao khi dọc, 7% khi ngang (cùng công thức
+karaoke.py và lib/render-engine.js); font phụ đề duy nhất Anton; motion
+zoom tối đa 1.05, chuyển cảnh fade 0.5s.
+
     python3 render_draft.py <project_id>
 
 Ghi: projects/<id>/export/<id>_preview.mp4
@@ -16,12 +23,18 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from filename import rand6  # noqa: E402
+from filename import check_plan, rand6  # noqa: E402
 
 _SYMLINK_FACTORY = Path.home() / "workspace" / "asset-factory"
 # May goc giu symlink cu (khong doi hanh vi); ban clone monorepo
 # khong co symlink thi resolve tu vi tri file script (bin/../).
 FACTORY = _SYMLINK_FACTORY if _SYMLINK_FACTORY.exists() else Path(__file__).resolve().parent.parent
+if FACTORY == _SYMLINK_FACTORY:
+    # B46 (06/11/2026, lệnh CEO, lựa chọn A): dấu vết khi dùng nhầm
+    # root cũ — đường symlink ~/workspace/asset-factory đã lỗi thời,
+    # factory chuẩn là layout repo (bin/../).
+    print(f"  warn: FACTORY resolve qua symlink cu {_SYMLINK_FACTORY} — kiem tra lai duong factory", file=sys.stderr)
+
 
 
 def run(cmd, **kw):
@@ -184,7 +197,9 @@ def main() -> int:
 
     inp = json.loads((proj / "input.json").read_text(encoding="utf-8"))
     tts = json.loads((proj / "tts.json").read_text(encoding="utf-8"))
-    wide = inp.get("aspectRatio", "16:9") != "9:16"
+    # Mặc định 9:16 khi thiếu field (chốt Giai đoạn 4; trước đây mặc
+    # định 16:9 ở file này trong khi render_scene_card.py mặc định 9:16).
+    wide = inp.get("aspectRatio", "9:16") != "9:16"
     W, H = (1280, 720) if wide else (720, 1280)
 
     # Phụ đề burn ở bước mux lấy từ build/subtitles/karaoke.ass, Style
@@ -202,6 +217,14 @@ def main() -> int:
         # 1. từng clip (Ken Burns + overlay chữ B-roll template sau motion)
         _VENV_PY = str(FACTORY / ".venv" / "bin" / "python")
         plan = json.loads((proj / "broll-plan.json").read_text(encoding="utf-8"))
+        # B28 (06/11/2026, lệnh CEO, lựa chọn A): guard cấu trúc plan —
+        # trước đây plan hỏng crash trần KeyError ở vòng tpl_by_part và
+        # các lần đọc plan["scenes"] bên dưới.
+        try:
+            check_plan(plan, require_voice_text=True)
+        except ValueError as exc:
+            print(f"RENDER-ERROR {pid}: {exc}", file=sys.stderr)
+            return 1
         tpl_by_part = {}
         for sc in plan["scenes"]:
             for pt in sc["parts"]:
@@ -209,6 +232,27 @@ def main() -> int:
                 if br.get("templateId"):
                     tpl_by_part[pt["id"]] = (br["templateId"],
                                              br.get("inputs") or {})
+        # B26 (06/11/2026, lệnh CEO, lựa chọn A): kiểm BGM/SFX ngay đầu
+        # main — trước đây BGM chỉ được kiểm ở cuối (sau khi render xong
+        # hết clip) và SFX ở giữa (trước ffmpeg trộn cuối), nên project
+        # thiếu file tốn hết thời gian render rồi mới dừng. Cửa chặn muộn
+        # ở cuối vẫn còn làm backstop (đề phòng file bị xóa giữa chừng).
+        _bgm0 = plan.get("bgm") or {}
+        if _bgm0.get("file"):
+            _bgm_file0 = FACTORY / "bgm" / _bgm0["file"]
+            if not _bgm_file0.exists():
+                print(f"RENDER-ERROR {pid}: BGM da chon {_bgm_file0} khong ton tai — dung render, giong preflight",
+                      file=sys.stderr)
+                return 1
+        for _sc in plan["scenes"]:
+            for _pt in _sc.get("parts", []):
+                _sfx0 = (_pt.get("broll") or {}).get("sfx")
+                if _sfx0:
+                    _f0 = FACTORY / "sfx" / f"{_sfx0['id']}.mp3"
+                    if not _f0.exists():
+                        print(f"RENDER-ERROR {pid}: SFX da chon {_f0} khong ton tai — dung render, giong preflight",
+                              file=sys.stderr)
+                        return 1
 
         def render_tpl_png(tid, inputs, W, H, out):
             r = subprocess.run(
@@ -225,9 +269,15 @@ def main() -> int:
                              for q in [build / "media" / "images" /
                                        f"seg_{order}_{rand6(pid, 'img', str(order))}.{ext}"]
                              if q.exists()), None)
-            bimg = build / "media" / "broll" / \
-                f"broll_seg_{order}_part_{pi}_{rand6(pid, 'broll', str(order), str(pi))}.jpg"
-            return bimg if bimg.exists() else simg
+            # 11A: b-roll anh co the la jpg/png/webp — thu theo thu tu do,
+            # dong bo voi preview (build_render_page.py, handlers-preview.ts).
+            bimg = next((build / "media" / "broll" /
+                         f"broll_seg_{order}_part_{pi}_{rand6(pid, 'broll', str(order), str(pi))}.{ext}"
+                         for ext in ("jpg", "png", "webp")
+                         if (build / "media" / "broll" /
+                             f"broll_seg_{order}_part_{pi}_{rand6(pid, 'broll', str(order), str(pi))}.{ext}").exists()),
+                        None)
+            return bimg if bimg is not None else simg
 
         def base_video(order, pi, part_id):
             # B-roll VIDEO (quy tắc 27/10/2026): b-roll không chỉ là ảnh.
@@ -265,6 +315,21 @@ def main() -> int:
             order = sc["order"]
             for p in [x for x in tts["parts"] if x["sceneOrder"] == order]:
                 part_list.append((si, order, p))
+        # A26 (05/11/2026, lệnh CEO): part nào không có ảnh nào (không
+        # video b-roll, không ảnh b-roll, không ảnh cảnh) thì CHẶN
+        # trước khi chạy ffmpeg — như khối BGM thiếu (13B): không render
+        # clip nền đen, không DRAFT-OK. Ảnh nền rêu vẫn tính là ảnh ở
+        # đây; cửa chặn nền rêu nằm ở preflight (A20), không phải render.
+        for _si, _order, _p in part_list:
+            _pi = _p["partIdx"]
+            _vpath = build / "media" / "broll" / \
+                f"broll_seg_{_order}_part_{_pi}_{rand6(pid, 'broll', str(_order), str(_pi))}.mp4"
+            if not _vpath.exists() and base_image(_order, _pi) is None:
+                print(f"RENDER-ERROR {pid}: anh-thieu-nen-den part={_p['id']} scene={_order} — "
+                      f"khong co anh canh seg_{_order}_{rand6(pid, 'img', str(_order))}.jpg/png/webp "
+                      f"hay b-roll broll_seg_{_order}_part_{_pi}_{rand6(pid, 'broll', str(_order), str(_pi))}.jpg/png/webp — "
+                      f"dung render, giong preflight", file=sys.stderr)
+                return 1
         for ci, (si, order, p) in enumerate(part_list):
             pi = p["partIdx"]
             _vid = base_video(order, pi, p["id"])
@@ -406,17 +471,15 @@ def main() -> int:
                      "-crf", "23", "-pix_fmt", "yuv420p",
                      "-an", str(clip)], timeout=300)
             else:
-                # B1: thiếu mọi ảnh của part -> clip nền đen, trước đây
-                # lặng mà vẫn DRAFT-OK. Chỉ ghi báo cáo, vẫn render đen
-                # như cũ (đổi hành vi chặn là việc của đợt sau).
-                render_report.append(
-                    f"anh-thieu-nen-den part={p['id']} file=-")
-                run(["ffmpeg", "-y", "-v", "error", "-f", "lavfi",
-                     "-i", f"color=c=black:s={W}x{H}:r=30:d={cdur}",
-                     "-vf", "format=yuv420p",
-                     "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
-                     "-pix_fmt", "yuv420p",
-                     "-an", str(clip)], timeout=300)
+                # A26 (05/11/2026, lệnh CEO): thiếu mọi ảnh của part thì
+                # CHẶN như BGM thiếu — không render clip nền đen lặng lẽ
+                # rồi vẫn DRAFT-OK như trước. Dự phòng cho trường hợp
+                # video b-roll tồn tại ở bước kiểm trước vòng lặp nhưng
+                # ffprobe hỏng nên rơi về ảnh mà cũng không có ảnh.
+                print(f"RENDER-ERROR {pid}: anh-thieu-nen-den part={p['id']} scene={order} — "
+                      f"khong co anh canh seg_{order}_{rand6(pid, 'img', str(order))}.jpg/png/webp "
+                      f"hay b-roll — dung render, giong preflight", file=sys.stderr)
+                return 1
             clip_files.append(clip)
             clip_durs.append(p["duration"])
 
@@ -510,6 +573,14 @@ def main() -> int:
         # chỉ số order-1 — sau khi cắt cảnh, order không còn liên tục (1-9,11,12)
         # nên plan["scenes"][order-1] vừa sai scene vừa IndexError ở order cuối.
         plan_by_order = {s.get("order"): s for s in plan["scenes"]}
+        # B9 (05/11/2026, lệnh CEO, lựa chọn A): tra partIdx bằng cách khớp
+        # part["id"] với part cùng id trong tts.json — không parse hậu tố
+        # "-part-<số>" từ ID nữa. ID không đúng mẫu (vd "part-1") từng làm
+        # rsplit trả 1 phần tử -> IndexError -> SFX bị bỏ lặng, không ghi
+        # report, không in gì. Part nào không khớp id trong tts.json thì ghi
+        # sfx-skip-id-la vào report thay vì bỏ lặng.
+        tts_partidx = {p["id"]: p["partIdx"] for p in tts["parts"]
+                       if isinstance(p.get("partIdx"), int)}
         sfx_dir = FACTORY / "sfx"
         sfx_events = []
         for sc in tts["scenes"]:
@@ -524,16 +595,26 @@ def main() -> int:
                     continue
                 f = sfx_dir / f"{sfx['id']}.mp3"
                 if not f.exists():
-                    # B1: thiếu file SFX -> bỏ qua, trước đây lặng.
+                    # B8 (05/11/2026, lệnh CEO, lựa chọn A): SFX khai trong
+                    # plan nhưng file mp3 không tồn tại thì CHẶN như BGM
+                    # (13B) — in RENDER-ERROR, dừng trước ffmpeg trộn
+                    # cuối, không render thiếu tiếng rồi DRAFT-OK nữa.
+                    # Trước đây chỉ ghi sfx-thieu-bo-qua vào report rồi
+                    # render tiếp, trái với cửa chặn preflight (A26).
+                    print(f"RENDER-ERROR {pid}: SFX da chon {f} khong ton tai — dung render, giong preflight",
+                          file=sys.stderr)
+                    return 1
+                pidx = tts_partidx.get(part.get("id"))
+                if pidx is None:
                     render_report.append(
-                        f"sfx-thieu-bo-qua part={part['id']} file={f}")
-                    continue
-                try:
-                    pidx = int(part["id"].rsplit("-part-", 1)[1])
-                except (IndexError, ValueError):
+                        f"sfx-skip-id-la part={part.get('id')} sfx={sfx['id']} — "
+                        f"không khớp part nào trong tts.json, không tra được partIdx")
                     continue
                 at = pstart.get(pidx)
                 if at is None:
+                    render_report.append(
+                        f"sfx-skip-id-la part={part.get('id')} partIdx={pidx} — "
+                        f"không có startSec trong tts.json")
                     continue
                 # SFX dừng chậm nhất khi chuyển part (luật CEO 31/10/2026):
                 # mixer trước đây phát nguyên file SFX (adelay, không cắt),
@@ -544,6 +625,9 @@ def main() -> int:
                 _start = at + float(sfx.get("offsetSec", 0))
                 _pend = pend.get(pidx)
                 if _pend is None:
+                    render_report.append(
+                        f"sfx-skip-id-la part={part.get('id')} partIdx={pidx} — "
+                        f"không có endSec trong tts.json")
                     continue
                 _dur = _pend - _start
                 if _dur <= 0:
@@ -585,11 +669,13 @@ def main() -> int:
             cmd += ["-i", str(ev["file"])]
         bgm = plan.get("bgm") or {}
         bgm_file = FACTORY / "bgm" / bgm.get("file", "") if bgm.get("file") else None
-        # B1: plan khai BGM nhưng file không tồn tại -> không nhạc nền,
-        # trước đây lặng. Plan không khai BGM thì không phải fallback nên
-        # không ghi sự kiện.
+        # 13B (05/11/2026): plan khai BGM nhưng file không tồn tại thì CHẶN,
+        # như preflight — không render không nhạc lặng lẽ nữa. Plan không
+        # khai BGM thì không phải lỗi, vẫn render bình thường.
         if bgm.get("file") and not bgm_file.exists():
-            render_report.append(f"bgm-thieu-bo-qua part=- file={bgm_file}")
+            print(f"RENDER-ERROR {pid}: BGM da chon {bgm_file} khong ton tai — dung render, giong preflight",
+                  file=sys.stderr)
+            return 1
         if bgm_file and bgm_file.exists():
             cmd += ["-i", str(bgm_file)]
 

@@ -6,6 +6,11 @@ không cắt từ ghép, chấm điểm vị trí cắt) -> karaoke.json + karao
 từng chữ rời, không lướt).
 
 - Font phụ đề: 40 * (min(W,H)/480), khớp preview (60px ở cả 16:9 và 9:16; tăng nhẹ từ 54px theo lệnh CEO 1/11/2026 vì phụ đề render nhỏ hơn cảm nhận ở preview).
+- HẰNG SỐ ĐÃ CHỐT (Giai đoạn 4, 05/11/2026 — xem PIPELINE.md mục
+  "Hằng số pipeline đã chốt"): aspectRatio mặc định khi thiếu field là
+  "9:16" (trước đây file này mặc định 16:9, mâu thuẫn render_scene_card.py).
+  MarginV = 20% chiều cao khi dọc, 7% khi ngang — khớp preview
+  (lib/render-engine.js) và bước kiểm tra lại của render_draft.py.
 - Màu vàng #FBBF24 trong ASS phải viết &H0024BFFB& (thứ tự BBGGRR), không viết trực tiếp hex RGB (sẽ ra màu xanh).
 - Part nào có b-roll template chữ thật (templateId + inputs có chữ) thì
   ẩn phụ đề (subsHidden=true, lines=[]) để tránh trùng/chen chữ với template.
@@ -28,11 +33,18 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "lib" / "vi_sub"))
 from phrase_splitter import split_cue  # noqa: E402
+from filename import check_plan  # noqa: E402
 
 _SYMLINK_FACTORY = Path.home() / "workspace" / "asset-factory"
 # May goc giu symlink cu (khong doi hanh vi); ban clone monorepo
 # khong co symlink thi resolve tu vi tri file script (bin/../).
 FACTORY = _SYMLINK_FACTORY if _SYMLINK_FACTORY.exists() else Path(__file__).resolve().parent.parent
+if FACTORY == _SYMLINK_FACTORY:
+    # B46 (06/11/2026, lệnh CEO, lựa chọn A): dấu vết khi dùng nhầm
+    # root cũ — đường symlink ~/workspace/asset-factory đã lỗi thời,
+    # factory chuẩn là layout repo (bin/../).
+    print(f"  warn: FACTORY resolve qua symlink cu {_SYMLINK_FACTORY} — kiem tra lai duong factory", file=sys.stderr)
+
 
 
 def decode_mono_16k(path: Path) -> np.ndarray:
@@ -317,6 +329,14 @@ def main() -> int:
     proj = FACTORY / "projects" / pid
     tts = json.loads((proj / "tts.json").read_text(encoding="utf-8"))
     plan = json.loads((proj / "broll-plan.json").read_text(encoding="utf-8"))
+    # B28 (06/11/2026, lệnh CEO, lựa chọn A): guard cấu trúc plan —
+    # trước đây part thiếu voiceText crash trần KeyError ở vòng
+    # plan_text[pt["id"]] = pt["voiceText"] bên dưới.
+    try:
+        check_plan(plan, require_voice_text=True)
+    except ValueError as exc:
+        print(f"{exc}", file=sys.stderr)
+        return 1
     plan_text = {}
     hide_subs = set()  # part có template chữ thật -> ẩn phụ đề (tránh trùng/chen chữ)
     for sc in plan["scenes"]:
@@ -337,7 +357,8 @@ def main() -> int:
                     if hides:
                         hide_subs.add(pt["id"])
     inp = json.loads((proj / "input.json").read_text(encoding="utf-8"))
-    wide = inp.get("aspectRatio", "16:9") != "9:16"
+    # Mặc định 9:16 khi thiếu field (chốt Giai đoạn 4).
+    wide = inp.get("aspectRatio", "9:16") != "9:16"
     W, H = (1280, 720) if wide else (720, 1280)
     # font theo chiều NHỎ (độ rộng dòng), khớp preview: 60px ở cả 16:9 và 9:16
     font_size = max(16, int(round(40 * (min(W, H) / 480.0))))
@@ -356,14 +377,27 @@ def main() -> int:
     for p in tts["parts"]:
         wav_path = proj / "build" / "audio" / "voice" / p["audio_file"]
         runs = []
-        if wav_path.exists():
+        # B29 (06/11/2026, lệnh CEO, lựa chọn A): WAV mất/hỏng hoặc VAD
+        # lỗi thì timing rơi về chia đều — trước đây lặng lẽ, phụ đề
+        # lệch giọng mà không ai biết. In KARAOKE-WARN rõ ràng và ghi
+        # dấu "fallback" vào karaoke.json để preflight cảnh báo được.
+        fallback = None
+        if not wav_path.exists():
+            fallback = "wav-missing"
+            print(f"KARAOKE-WARN {p['id']}: không thấy file WAV {wav_path.name} — timing chia đều, phụ đề có thể lệch giọng đọc")
+        else:
             try:
                 raw = vad_intervals(decode_mono_16k(wav_path))
                 # VAD theo file (gốc 0) -> đổi sang giờ tuyệt đối trên timeline
                 runs = [(s + p["startSec"], e + p["startSec"]) for s, e in raw]
-            except Exception:
-                runs = []
+            except Exception as exc:
+                fallback = "vad-error"
+                print(f"KARAOKE-WARN {p['id']}: giải mã/VAD lỗi ({exc}) — timing chia đều, phụ đề có thể lệch giọng đọc")
         entry = norm_chunks.get(p["id"], {})
+        if not entry.get("pairs"):
+            if fallback is None:
+                fallback = "norm-missing"
+            print(f"KARAOKE-WARN {p['id']}: thiếu entry trong norm_chunks.json — dùng câu gốc, timing có thể lệch")
         pairs = entry.get("pairs") or [[plan_text.get(p["id"], ""),
                                         plan_text.get(p["id"], "")]]
 
@@ -430,11 +464,14 @@ def main() -> int:
                     lines.append({"text": g["text"],
                                   "start": ws[0]["start"], "end": ws[-1]["end"],
                                   "words": ws})
-        karaoke.append({"partId": p["id"], "startSec": p["startSec"],
-                        "endSec": p["endSec"],
-                        "voiceText": plan_text.get(p["id"], ""),
-                        "lines": [] if p["id"] in hide_subs else lines,
-                        "subsHidden": p["id"] in hide_subs})
+        _entry = {"partId": p["id"], "startSec": p["startSec"],
+                  "endSec": p["endSec"],
+                  "voiceText": plan_text.get(p["id"], ""),
+                  "lines": [] if p["id"] in hide_subs else lines,
+                  "subsHidden": p["id"] in hide_subs}
+        if fallback is not None:
+            _entry["fallback"] = fallback
+        karaoke.append(_entry)
 
     # Cảnh báo căn phụ đề, thêm 28/10/2026 sau lỗi Vinspeed scene4:
     # từ dài hơn 2 giây hoặc nhiều dòng cùng start/end trong một part

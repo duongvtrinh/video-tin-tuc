@@ -4,6 +4,7 @@
 // Chỉ privileged.ts import file này.
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { isAiSource } from "./plan-normalize";
 
 // ---- Thư viện media (tab Media) ----
 // Liệt kê TOÀN BỘ file media ĐÃ CÓ trên đĩa của project (build/media/
@@ -56,10 +57,6 @@ function urlsFromText(text: string | null): string[] {
   return hits.map((u) => u.replace(/[.,;]+$/, ""));
 }
 
-// "AI" phải đứng thành từ riêng — khớp lỏng lẻo sẽ bắt nhầm chữ "ai"
-// trong từ tiếng Việt (Hải, bài, tải…) ở tên nguồn báo.
-const AI_SOURCE_RE = /(^|[\s([{\/—–-])AI($|[\s)\]}\/—–\-:,.])/;
-
 export function buildMediaLibrary(dir: string, plan: unknown): MediaLibraryItem[] {
   const planRec = (plan ?? {}) as {
     scenes?: Array<Record<string, unknown>>;
@@ -68,6 +65,8 @@ export function buildMediaLibrary(dir: string, plan: unknown): MediaLibraryItem[
   type SceneInfo = {
     order: number | null;
     imageFile: string | null;
+    // A21 (05/11/2026): cảnh nền rêu — file này không phải ảnh thật.
+    isMossGrid: boolean;
     mediaSource: Record<string, unknown>;
     sceneImagePrompt: string;
     parts: Array<{
@@ -83,6 +82,7 @@ export function buildMediaLibrary(dir: string, plan: unknown): MediaLibraryItem[
     return {
       order: typeof s["order"] === "number" ? s["order"] : null,
       imageFile: typeof s["imageFile"] === "string" && s["imageFile"] ? (s["imageFile"] as string) : null,
+      isMossGrid: s["isMossGrid"] === true,
       mediaSource: provAsRecord(s["mediaSource"]),
       sceneImagePrompt: typeof s["sceneImagePrompt"] === "string" ? (s["sceneImagePrompt"] as string) : "",
       parts: partsRaw.map((p) => {
@@ -197,14 +197,17 @@ export function buildMediaLibrary(dir: string, plan: unknown): MediaLibraryItem[
         if (t && /^https?:\/\//i.test(t)) urlSet.add(t);
         for (const u of urlsFromText(provStr(rec, "source"))) urlSet.add(u);
       }
-      const sourceTypeText = `${source} ${provStr(primary, "type") ?? ""}`;
+      // A21 (05/11/2026): file của cảnh nền rêu không phải ảnh — ghi rõ
+      // ngay ở nhãn và ghi chú của mục thư viện, để không ai đọc nó như ảnh thật.
+      const isGridFile = slot === "scene" && !!sceneInfo?.isMossGrid;
       const provPrompt =
         provStr(primary, "prompt", "aiPrompt") ??
         (recs[1] ? provStr(recs[1], "prompt", "aiPrompt") : null);
-      const isAi =
-        AI_SOURCE_RE.test(sourceTypeText) ||
-        provStr(primary, "type") === "prompt-AI" ||
-        (provPrompt !== null && /prompt/i.test(provStr(primary, "type") ?? ""));
+      // B20: nhận diện AI dùng chung isAiSource (plan-normalize) — kiểm
+      // cả bản ghi chính và bản ghi phụ (b-roll có videoSource +
+      // mediaSource). Quy tắc "AI" đứng thành từ riêng và prompt+type của
+      // pipeline cũ đã nằm trong hàm dùng chung.
+      const isAi = isAiSource(primary) || isAiSource(recs[1] ?? null);
       const planPrompt =
         slot === "scene" && sceneInfo
           ? sceneInfo.sceneImagePrompt || null
@@ -221,9 +224,11 @@ export function buildMediaLibrary(dir: string, plan: unknown): MediaLibraryItem[
         sceneOrder: sceneInfo?.order ?? null,
         partId: partInfo?.id || null,
         partLabel:
-          slot === "scene"
-            ? `Ảnh nền cảnh ${sceneInfo?.order ?? "?"}`
-            : slot === "broll"
+          slot === "scene" && isGridFile
+            ? `Nền xanh rêu cảnh ${sceneInfo?.order ?? "?"} — không phải ảnh`
+            : slot === "scene"
+              ? `Ảnh nền cảnh ${sceneInfo?.order ?? "?"}`
+              : slot === "broll"
               ? `B-roll cảnh ${sceneInfo?.order ?? "?"} · part ${partIdx ?? "?"}${partInfo?.id ? ` (${partInfo.id})` : ""}`
               : "File trong thư mục media — chưa gắn cảnh/part trong plan",
         source,
@@ -240,8 +245,10 @@ export function buildMediaLibrary(dir: string, plan: unknown): MediaLibraryItem[
         isAi,
         aiPrompt: isAi ? (provPrompt ?? planPrompt) : null,
         note:
-          provStr(primary, "note", "reason") ??
-          (recs[1] ? provStr(recs[1], "note", "reason") : null),
+          isGridFile
+            ? "Nền xanh rêu kẻ ô vuông — không phải ảnh thật, vẫn tính là thiếu ảnh ở tầng hồ sơ/QA"
+            : (provStr(primary, "note", "reason") ??
+              (recs[1] ? provStr(recs[1], "note", "reason") : null)),
       });
     }
   };

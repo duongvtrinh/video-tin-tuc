@@ -1,84 +1,55 @@
 #!/usr/bin/env python3
-"""Render ảnh cảnh dạng CARD CHỮ (không phải ảnh AI) cho 1 scene.
+"""Render nền cảnh cho 1 scene không có prompt AI — KHÔNG CÒN CARD CHỮ.
 
     <factory-venv-python> bin/render_scene_card.py <project_id> <order> <out_jpg>
 
-Bối cảnh: các video thật (topic004, hormuz002) dùng ảnh cảnh là card chữ
-(kicker + headline + dòng nguồn), không có sceneImagePrompt/mediaPrompt.
-App gọi script này trong generateImages cho mọi scene không có prompt AI
-và chưa có ảnh seg_<order>_<rand6>.jpg.
-
-Quy tắc cứng (từ QA TOPIC-004 + Hormuz, 26/10/2026):
+Logic mới, theo lệnh CEO ngày 05/11/2026, thay thế hoàn toàn card chữ cũ
+(kicker + headline + dòng nguồn trên nền tối):
+- Mặc định: nền xanh rêu đậm #1C372A, kẻ ô vuông đơn giản, KHÔNG THÊM BẤT KỲ
+  CHỮ NÀO lên ảnh — không kicker, không headline, không dòng nguồn, không
+  thanh accent, không template overlay (template nào cũng chứa chữ nên
+  đều bị bỏ qua). Các field headline/kicker/source/cardTemplateId trong
+  plan nếu còn thì bị bỏ qua, không vẽ.
+- Ngoại lệ duy nhất: scene khai cardImage/bgImage thì dùng chính ảnh đó
+  làm nền (cắt về đúng tỉ lệ khung, không bóp méo), vẫn không thêm chữ
+  nào lên trên. Đây là trường hợp ảnh nền đã có, không phải nền xanh rêu.
+  Hành vi fallback (lựa chọn 10B, 05/11/2026): nếu scene khai cardImage/bgImage
+  mà file không tồn tại (cả đường dẫn tuyệt đối lẫn build/media/images/<tên file>),
+  script in cảnh báo rõ ràng "CARDIMAGE-MISSING" ra stderr rồi mới rơi về nền
+  xanh rêu kẻ ô — không chặn, không lặng lẽ.
+  A29 (05/11/2026): đường dẫn tương đối chỉ được tra trong project
+  (build/media/images/<tên file>); không thấy ở đó thì coi như thiếu,
+  không bao giờ nhặt file trùng tên theo CWD của tiến trình gọi.
 - Khung theo render_draft.py: 9:16 -> 720x1280, còn lại -> 1280x720.
-- Lề an toàn: trái/phải 96px, trên 140px (ở khung 720x1280, scale theo khung).
-- Motion Ken Burns tối đa zoom 1.05 cắt tối đa ~34px ngang nên chữ trong
-  lề an toàn không bao giờ bị cắt.
-- Dòng nguồn dùng template `source-footer-safe` làm mặc định: ngắt tối đa
-  3 dòng ngắn, mỗi dòng <= 528px ở khung 720 (max-width của template),
-  lề phải luôn >= 96px.
+- Ô vuông: cạnh 80px ở khung 720 (scale theo chiều rộng khung), kẻ bằng
+  đường màu xanh rêu nhạt #2A4D3B, dày 2px.
 
-Scene có thể khai trong broll-plan.json:
-  headline, kicker, source (dòng nguồn), sourceLabel, cardBg (màu nền),
-  cardTemplateId + cardInputs (template overlay thay cho headline vẽ tay).
-Plan có thể khai: source, cardBg dùng chung.
+Lưu ý về trạng thái biên tập (không đổi so với luật sau 04/11/2026):
+nền xanh rêu này KHÔNG phải ảnh thật, KHÔNG phải ảnh AI, và KHÔNG thay
+thế ảnh — scene chỉ có nền này vẫn tính là thiếu ảnh ở tầng hồ sơ/QA,
+giống như card chữ cũ. Nó chỉ là nền trung tính để karaoke không phải
+chạy trên nền đen, và để không còn chữ headline lặp lại lời thoại.
 """
 import json
-import subprocess
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from PIL import Image, ImageDraw, ImageFont  # noqa: E402
-import render_template as rt  # noqa: E402
+from PIL import Image, ImageDraw  # noqa: E402
 
 _SYMLINK_FACTORY = Path.home() / "workspace" / "asset-factory"
 # May goc giu symlink cu (khong doi hanh vi); ban clone monorepo
 # khong co symlink thi resolve tu vi tri file script (bin/../).
 FACTORY = _SYMLINK_FACTORY if _SYMLINK_FACTORY.exists() else Path(__file__).resolve().parent.parent
-ACCENT = (251, 191, 36)  # #FBBF24
-INK = (245, 245, 240)
-DEFAULT_BG = "#20242c"
+if FACTORY == _SYMLINK_FACTORY:
+    # B46 (06/11/2026, lệnh CEO, lựa chọn A): dấu vết khi dùng nhầm
+    # root cũ — đường symlink ~/workspace/asset-factory đã lỗi thời,
+    # factory chuẩn là layout repo (bin/../).
+    print(f"  warn: FACTORY resolve qua symlink cu {_SYMLINK_FACTORY} — kiem tra lai duong factory", file=sys.stderr)
 
 
-def font_path(bold: bool) -> str:
-    """Font có dấu tiếng Việt: ưu tiên Noto Sans (fc-match :lang=vi)."""
-    try:
-        q = ":lang=vi:weight=bold" if bold else ":lang=vi"
-        out = subprocess.run(["fc-match", q, "file"], capture_output=True,
-                             text=True, timeout=10).stdout
-        p = out.split(":file=")[-1].strip()
-        if p and Path(p).exists():
-            return p
-    except Exception:
-        pass
-    cands = [
-        "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf" if bold
-        else "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold
-        else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-    ]
-    for c in cands:
-        if Path(c).exists():
-            return c
-    return cands[-1]
-
-
-def wrap(draw: ImageDraw.ImageDraw, text: str, font, max_w: int) -> list[str]:
-    lines: list[str] = []
-    for para in text.split("\n"):
-        words = para.split()
-        if not words:
-            continue
-        cur = words[0]
-        for w in words[1:]:
-            trial = f"{cur} {w}"
-            if draw.textlength(trial, font=font) <= max_w:
-                cur = trial
-            else:
-                lines.append(cur)
-                cur = w
-        lines.append(cur)
-    return lines
+MOSS_BG = "#1C372A"      # xanh rêu đậm nền
+MOSS_GRID = "#2A4D3B"    # xanh rêu nhạt hơn nền, kẻ ô
 
 
 def hex_rgb(h: str) -> tuple[int, int, int]:
@@ -98,95 +69,59 @@ def main() -> int:
         return 1
 
     W, H = (720, 1280) if inp.get("aspectRatio", "9:16") == "9:16" else (1280, 720)
-    sx, sy = W / 720, H / 1280
-    mx = round(96 * sx)          # lề trái/phải
-    top = round(140 * sy)        # lề trên
-    max_text_w = W - 2 * mx
 
-    bg = scene.get("cardBg") or plan.get("cardBg") or DEFAULT_BG
-    img = Image.new("RGB", (W, H), hex_rgb(bg))
-    # QA Chợ nổi 26/10/2026, lỗi 3: card kết luận nền tối che mất ảnh sông,
-    # ấn tượng cuối là nền tối. Từ nay scene card được phép khai cardImage
-    # (tên file trong build/media/images hoặc đường dẫn tuyệt đối): dùng
-    # ảnh đó làm nền thay cho màu tối, chỉ phủ một lớp tối 35% để chữ vẫn
-    # đọc được mà ảnh sông vẫn hiện rõ. Mặc định vẫn là nền tối khi không
-    # khai cardImage.
+    # Ngoại lệ duy nhất: có ảnh nền khai sẵn thì dùng ảnh đó, không chữ.
+    # 10B: khai mà file không tồn tại thì cảnh báo rõ rồi mới rơi về nền rêu.
     _card_img = scene.get("cardImage") or scene.get("bgImage")
     if _card_img:
         _p = Path(str(_card_img))
         if not _p.is_absolute():
-            _cand = proj / "build" / "media" / "images" / _p.name
-            _p = _cand if _cand.exists() else _p
-        if _p.exists():
-            _bg_im = Image.open(_p).convert("RGB")
-            # center-crop về đúng tỉ lệ khung, không bóp méo
+            # A29 (05/11/2026): duong dan tuong doi CHI duoc tra trong
+            # project (build/media/images/<ten file>). Khong thay o do thi
+            # coi nhu thieu — KHONG giu duong dan tuong doi de CWD cua
+            # tien trinh goi vo tinh nhat nham file trung ten.
+            _p = proj / "build" / "media" / "images" / _p.name
+        # B42 (06/11/2026, lệnh CEO, lựa chọn A): đường tuyệt đối phải
+        # nằm trong project (resolve cả symlink/..); ngoài project, file
+        # thiếu, hoặc mở không được thì đều CARDIMAGE-MISSING rồi rơi về
+        # nền rêu — không crash traceback.
+        _bg_im = None
+        if _p.is_absolute() and _p.exists() and not _p.resolve().is_relative_to(proj.resolve()):
+            print(f"CARDIMAGE-MISSING scene {order}: khai cardImage/bgImage={_card_img} nam ngoai project, roi ve nen xanh reu #1C372A ke o",
+                  file=sys.stderr)
+        elif not _p.exists():
+            print(f"CARDIMAGE-MISSING scene {order}: khai cardImage/bgImage={_card_img} nhung file khong ton tai, roi ve nen xanh reu #1C372A ke o",
+                  file=sys.stderr)
+        else:
+            try:
+                _bg_im = Image.open(_p).convert("RGB")
+            except Exception as _exc:
+                print(f"CARDIMAGE-MISSING scene {order}: khai cardImage/bgImage={_card_img} mo khong duoc ({_exc}), roi ve nen xanh reu #1C372A ke o",
+                      file=sys.stderr)
+        if _bg_im is not None:
             _sw, _sh = _bg_im.size
             _scale = max(W / _sw, H / _sh)
             _nw, _nh = round(_sw * _scale), round(_sh * _scale)
             _bg_im = _bg_im.resize((_nw, _nh), Image.LANCZOS)
             _x, _y = (_nw - W) // 2, (_nh - H) // 2
             img = _bg_im.crop((_x, _y, _x + W, _y + H))
-            _ov = Image.new("RGBA", (W, H), (0, 0, 0, 90))
-            img = Image.alpha_composite(img.convert("RGBA"), _ov).convert("RGB")
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            img.save(out_path, "JPEG", quality=90)
+            print(f"BG-IMAGE-OK {out_path} {W}x{H} (khong chu)")
+            return 0
+
+    # Mặc định: nền xanh rêu, kẻ ô vuông, không chữ.
+    img = Image.new("RGB", (W, H), hex_rgb(MOSS_BG))
     draw = ImageDraw.Draw(img)
-
-    # thanh accent trên cùng (như card Hormuz đã duyệt)
-    draw.rectangle([0, 0, W, round(14 * sy)], fill=ACCENT)
-
-    tpl_id = scene.get("cardTemplateId")
-    if tpl_id:
-        overlay = rt.render_template(tpl_id, scene.get("cardInputs") or {}, W, H)
-        if overlay is None:
-            print(f"render template {tpl_id} thất bại", file=sys.stderr)
-            return 1
-        img = rt.composite_center(img.convert("RGB"), overlay)
-        draw = ImageDraw.Draw(img)
-    else:
-        y = top
-        kicker = str(scene.get("kicker") or "").strip()
-        if kicker:
-            f_kick = ImageFont.truetype(font_path(True), round(30 * sx))
-            draw.text((mx, y), kicker.upper(), font=f_kick, fill=ACCENT)
-            y += round(58 * sy)
-        headline = str(scene.get("headline") or scene.get("title") or "").strip()
-        if not headline:
-            text = str(scene.get("text") or "").strip()
-            if not text:
-                parts = scene.get("parts") or []
-                text = " ".join(str(p.get("voiceText", "")) for p in parts).strip()
-            # lấy câu đầu làm headline
-            headline = text.split(". ")[0].strip()
-            if len(headline) > 110:
-                headline = headline[:107].rstrip() + "…"
-        if headline:
-            f_head = ImageFont.truetype(font_path(True), round(56 * sx))
-            for line in wrap(draw, headline, f_head, max_text_w):
-                draw.text((mx, y), line, font=f_head, fill=INK)
-                y += round(70 * sy)
-
-    # dòng nguồn: template source-footer-safe làm mặc định
-    source = str(scene.get("source") or plan.get("source") or "").strip()
-    if source:
-        label = str(scene.get("sourceLabel") or "Nguồn")
-        # đo trước số dòng ở cỡ chữ của template (22px, max-width 528px@720)
-        f_meas = ImageFont.truetype(font_path(False), round(22 * sx))
-        n_lines = len(wrap(draw, source, f_meas, round(528 * sx)))
-        if n_lines > 3:
-            print(f"FOOTER-WARN scene {order}: nguồn cần {n_lines} dòng (>3) "
-                  f"ở 528px — rút ngắn nguồn hoặc tách scene")
-        overlay = rt.render_template(
-            "source-footer-safe", {"label": label, "text": source}, W, H)
-        if overlay is None:
-            print("render source-footer-safe thất bại", file=sys.stderr)
-            return 1
-        oy = H - overlay.height - round(0.03 * H)
-        img.paste(overlay, (mx, oy), overlay)
-        print(f"FOOTER-OK scene {order}: {n_lines} dòng, lề phải >= "
-              f"{W - mx - overlay.width}px")
+    step = round(80 * (W / 720))
+    for x in range(step, W, step):
+        draw.line([(x, 0), (x, H)], fill=hex_rgb(MOSS_GRID), width=2)
+    for y in range(step, H, step):
+        draw.line([(0, y), (W, y)], fill=hex_rgb(MOSS_GRID), width=2)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     img.save(out_path, "JPEG", quality=90)
-    print(f"CARD-OK {out_path} {W}x{H}")
+    print(f"GRID-OK {out_path} {W}x{H} (nen xanh reu, ke o, khong chu)")
     return 0
 
 

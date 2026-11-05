@@ -24,13 +24,12 @@ export const trash = sqliteTable("trash", {
   deletedAt: integer("deleted_at").notNull(),
 });
 
-export const snapshots = sqliteTable("snapshots", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  projectId: text("project_id").notNull(),
-  kind: text("kind").notNull(),
-  createdAt: integer("created_at").notNull(),
-  note: text("note").notNull().default(""),
-});
+// 12B (05/11/2026) + B34 (06/11/2026, lệnh CEO, lựa chọn A): bảng
+// snapshots DB đã gỡ khỏi schema — không code nào đọc/ghi nó (snapshot
+// thật nằm trong .snapshots/ của project, xem handlers-projects.ts).
+// Migration 0002 vẫn tạo bảng này trong DB hiện có nên KHÔNG sửa file
+// migration đã áp dụng; migration 0004 DROP TABLE snapshots dọn sạch
+// DB khi áp dụng (chỉ xóa bảng DB — tính năng snapshot file giữ nguyên).
 
 // Tiến độ của panel "Tạo video tự động" (10 bước) lưu xuống server theo
 // project: đóng/mở lại app vẫn thấy đúng bước đã xong, bước lỗi và các

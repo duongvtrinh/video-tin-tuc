@@ -166,9 +166,10 @@ export function renderBlockers(detail: ProjectDetail): string[] {
   const scenes = detail.plan?.scenes ?? [];
   if (!detail.scriptContent.trim()) blockers.push("Chưa có kịch bản — viết/lưu kịch bản ở bước 1 trước");
   if (scenes.length === 0) blockers.push("Chưa có phân cảnh — tách kịch bản thành cảnh/part ở bước 1 hoặc 2 trước");
-  const missingScenes = scenes.filter((s) => !s.imageFile);
+  // A21 (05/11/2026): cảnh nền rêu vẫn tính là thiếu ảnh thật.
+  const missingScenes = scenes.filter((s) => !s.imageFile || s.isMossGrid);
   if (scenes.length > 0 && missingScenes.length > 0) {
-    blockers.push(`Còn ${missingScenes.length} cảnh chưa có ảnh (${missingScenes.map((s) => `cảnh ${s.order}`).join(", ")}) — render sẽ ra nền đen ở các cảnh này, bổ sung ở bước 3 · Media hoặc chạy Tạo video tự động`);
+    blockers.push(`Còn ${missingScenes.length} cảnh chưa có ảnh thật (${missingScenes.map((s) => `cảnh ${s.order}`).join(", ")}) — cảnh không có file ảnh sẽ ra nền đen khi render; cảnh nền xanh rêu vẫn tính là thiếu ảnh ở tầng hồ sơ/QA, bổ sung ở bước 3 · Media hoặc chạy Tạo video tự động`);
   }
   if (detail.ttsParts.length === 0) blockers.push("Chưa có TTS — chạy TTS ở bước 4 trước");
   if (detail.karaokeLineCount === 0) blockers.push("Chưa có karaoke — chạy chuẩn hóa + karaoke ở bước 4 trước");
@@ -190,7 +191,7 @@ export function firstIncompleteTab(summary: ProjectSummary | undefined, detail: 
   if (!hasScript) return "script";
   const sceneCount = detail?.plan?.scenes.length;
   if (!summary.steps.plan || sceneCount === 0) return "scenes";
-  if (detail && (detail.plan?.scenes ?? []).some((s) => !s.imageFile)) return "media";
+  if (detail && (detail.plan?.scenes ?? []).some((s) => !s.imageFile || s.isMossGrid)) return "media";
   if (!summary.steps.tts || !summary.steps.karaoke) return "audio";
   if (!summary.steps.preview) return "preview";
   if (!summary.steps.exported) return "finish";

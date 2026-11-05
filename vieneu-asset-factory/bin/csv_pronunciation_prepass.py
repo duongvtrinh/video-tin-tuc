@@ -58,7 +58,26 @@ Cách chạy:
 Log stdout: CSV-OK / CSV-EMPTY / CSV-WARN kèm số hit, số part, số entry
 mới, số xung đột. Thoát 0 cho mọi trường hợp đã xử lý được (kể cả cache
 thiếu hay CSV không trúng); thoát 2 khi sai cách dùng; thoát 1 khi plan
-của project không đọc được (lỗi thật, phải dừng).
+của project không đọc được hoặc hỏng cấu trúc (lỗi thật, phải dừng).
+
+CHẶN vs CẢNH BÁO (Giai đoạn 5, 05/11/2026, nhất quán với định nghĩa
+chặn/cảnh báo của preflight ở Giai đoạn 4):
+- CHẶN (exit 1): plan không đọc được/hỏng cấu trúc; từ điển project
+  sẵn có bị hỏng (không ghi đè, không merge mù); CSV có dòng dữ liệu
+  nhưng KHÔNG có entry hợp lệ nào (mọi dòng đều lỗi — CSV hỏng, phải
+  sửa trên GitHub rồi đồng bộ lại, không chạy tiếp với từ điển trống).
+- CẢNH BÁO (exit 0, có thể kiểm tra trong hits file): cache CSV thiếu
+  (giữ hành vi cũ — lớp agent rà soát phía sau vẫn còn nên không chặn,
+  và hits file ghi csv_found=false để kiểm tra được); dòng CSV lẻ lỗi
+  hoặc trùng term (ghi vào skipped_rows, dòng đầu thắng); xung đột term
+  với entry project (giữ entry project, ghi vào conflicts).
+- HỢP LỆ, KHÔNG PHẢI LỖI (exit 0, CSV-EMPTY): CSV chỉ có header, không
+  có dòng dữ liệu nào — tức chưa dùng từ điển CSV, giống như project
+  chưa có abbr_dict.json (ABBR-EMPTY). Dòng trống trong CSV được bỏ qua
+  hoàn toàn, không tính vào rows_total cũng không tính là dòng lỗi, để
+  CSV có dòng trống cuối file không bị kết luận là "hỏng toàn bộ".
+- BOM: CSV đọc bằng utf-8-sig nên BOM ở đầu file không biến thành ký
+  tự lạ trong term đầu tiên.
 """
 import argparse
 import csv
@@ -71,9 +90,16 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from abbr_expand import _SENT_END, build_pattern, load_dict  # noqa: E402
+from filename import atomic_write_text, check_plan  # noqa: E402  (Giai đoạn 5)
 
 _SYMLINK_FACTORY = Path.home() / "workspace" / "asset-factory"
 FACTORY = _SYMLINK_FACTORY if _SYMLINK_FACTORY.exists() else Path(__file__).resolve().parent.parent
+if FACTORY == _SYMLINK_FACTORY:
+    # B46 (06/11/2026, lệnh CEO, lựa chọn A): dấu vết khi dùng nhầm
+    # root cũ — đường symlink ~/workspace/asset-factory đã lỗi thời,
+    # factory chuẩn là layout repo (bin/../).
+    print(f"  warn: FACTORY resolve qua symlink cu {_SYMLINK_FACTORY} — kiem tra lai duong factory", file=sys.stderr)
+
 
 
 def sha256_file(path: Path) -> str:
@@ -91,11 +117,14 @@ def load_csv(path: Path):
     entries = OrderedDict()
     skipped = []
     rows_total = 0
-    with path.open(newline="", encoding="utf-8") as f:
+    # utf-8-sig: BOM không biến thành ký tự lạ trong term đầu tiên.
+    with path.open(newline="", encoding="utf-8-sig") as f:
         rows = list(csv.reader(f))
     for idx, row in enumerate(rows, start=1):
         if len(row) >= 2 and row[0].strip().lower() == "term" and row[1].strip().lower() == "reading":
             continue
+        if not row or not any(c.strip() for c in row):
+            continue  # dòng trống: bỏ qua, không tính là dữ liệu hay lỗi
         rows_total += 1
         if len(row) < 2:
             skipped.append({"row": idx, "term": row[0] if row else "", "reason": "thiếu cột reading"})
@@ -125,7 +154,12 @@ def write_abbr_dict(proj: Path, existing_path, new_entries):
     mới và chưa có file cũ.
     """
     if existing_path is not None and existing_path.exists():
-        raw = json.loads(existing_path.read_text(encoding="utf-8"))
+        try:
+            raw = json.loads(existing_path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            # Giai đoạn 5: từ điển sẵn có hỏng là CHẶN — không ghi đè
+            # mù lên file của agent, caller phải dừng để sửa tay.
+            raise ValueError(f"abbr_dict.json sẵn có hỏng: {exc}")
         if isinstance(raw, dict) and isinstance(raw.get("entries"), dict):
             raw["entries"].update(new_entries)
             merged = raw
@@ -135,14 +169,16 @@ def write_abbr_dict(proj: Path, existing_path, new_entries):
             merged = raw
             total = len([k for k in merged if not k.startswith("_")])
         else:
-            merged = dict(new_entries)
-            total = len(merged)
+            raise ValueError(
+                f"abbr_dict.json sẵn có hỏng: JSON cấp cao phải là dict, "
+                f"nhận được {type(raw).__name__}")
         path = existing_path
     else:
         merged = dict(new_entries)
         path = proj / "abbr_dict.json"
         total = len(merged)
-    path.write_text(json.dumps(merged, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # Giai đoạn 5: ghi tạm rồi rename, không ghi đè trực tiếp.
+    atomic_write_text(path, json.dumps(merged, ensure_ascii=False, indent=2) + "\n")
     return path, total
 
 
@@ -161,6 +197,13 @@ def main() -> int:
         plan = json.loads(plan_path.read_text(encoding="utf-8"))
     except Exception as exc:
         print(f"CSV-ERROR {pid}: không đọc được plan {plan_path}: {exc}", file=sys.stderr)
+        return 1
+    try:
+        scenes = check_plan(plan, require_voice_text=False)
+    except ValueError as exc:
+        # Giai đoạn 5: plan thiếu 'scenes' không còn được coi là rỗng
+        # lặng lẽ (trước đây .get("scenes", []) cho ra CSV-EMPTY giả).
+        print(f"CSV-ERROR {pid}: {exc}", file=sys.stderr)
         return 1
 
     csv_path = Path(args.csv) if args.csv else FACTORY / "data" / "pronunciation_dict.csv"
@@ -191,13 +234,36 @@ def main() -> int:
             "generated_at": datetime.now(timezone.utc).isoformat(),
         }
         hits_path.parent.mkdir(parents=True, exist_ok=True)
-        hits_path.write_text(json.dumps(hits_doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        atomic_write_text(hits_path, json.dumps(hits_doc, ensure_ascii=False, indent=2) + "\n")
         print(f"CSV-EMPTY {pid}: hits=0 parts=0 (không có cache CSV)")
         return 0
 
     entries, skipped, rows_total = load_csv(csv_path)
     if not entries:
-        print(f"CSV-WARN {pid}: CSV tại {csv_path} không có entry hợp lệ nào", file=sys.stderr)
+        if rows_total > 0:
+            # Giai đoạn 5: CSV có dòng dữ liệu nhưng không entry nào hợp
+            # lệ = CSV hỏng toàn bộ -> CHẶN. Ghi hits file trước để còn
+            # truy vết dòng nào lỗi, rồi dừng (không CSV-EMPTY giả).
+            hits_doc = {
+                "project_id": pid, "csv_path": str(csv_path), "csv_found": True,
+                "csv_rows_total": rows_total, "csv_rows_valid": 0,
+                "csv_sha256": sha256_file(csv_path),
+                "github_sha": version_info.get("github_sha"),
+                "synced_at": version_info.get("synced_at"),
+                "hits": {}, "conflicts": {}, "already_present": {},
+                "new_entries_added": {}, "skipped_rows": skipped,
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+            }
+            hits_path.parent.mkdir(parents=True, exist_ok=True)
+            atomic_write_text(hits_path, json.dumps(hits_doc, ensure_ascii=False, indent=2) + "\n")
+            print(f"CSV-ERROR {pid}: CSV tại {csv_path} có {rows_total} dòng "
+                  f"dữ liệu nhưng không có entry hợp lệ nào "
+                  f"(xem skipped_rows trong {hits_path}) — sửa CSV trên "
+                  f"GitHub rồi đồng bộ lại, không chạy tiếp với từ điển trống",
+                  file=sys.stderr)
+            return 1
+        # rows_total == 0: CSV chỉ có header -> hợp lệ, chưa dùng từ điển.
+        print(f"CSV-WARN {pid}: CSV tại {csv_path} chỉ có header, chưa có entry nào", file=sys.stderr)
         pattern = None
     else:
         pattern = build_pattern(entries)
@@ -205,7 +271,7 @@ def main() -> int:
     hits = {}
     parts_hit = set()
     if pattern is not None:
-        for sc in plan.get("scenes", []):
+        for sc in scenes:
             for pt in sc.get("parts", []):
                 text = pt.get("voiceText", "")
                 if not text:
@@ -218,7 +284,12 @@ def main() -> int:
                         slot["parts"].append(pt.get("id"))
                     parts_hit.add(pt.get("id"))
 
-    existing_entries, existing_path = load_dict(proj)
+    try:
+        existing_entries, existing_path = load_dict(proj)
+    except ValueError as exc:
+        print(f"CSV-ERROR {pid}: {exc} — không merge CSV vào từ điển hỏng",
+              file=sys.stderr)
+        return 1
     new_entries = {}
     conflicts = {}
     already_present = {}
@@ -234,7 +305,12 @@ def main() -> int:
     abbr_path = None
     total_entries = len(existing_entries)
     if new_entries:
-        abbr_path, total_entries = write_abbr_dict(proj, existing_path, new_entries)
+        try:
+            abbr_path, total_entries = write_abbr_dict(proj, existing_path, new_entries)
+        except ValueError as exc:
+            print(f"CSV-ERROR {pid}: {exc} — không ghi đè từ điển hỏng",
+                  file=sys.stderr)
+            return 1
     elif existing_path is not None:
         abbr_path = existing_path
 
@@ -257,7 +333,7 @@ def main() -> int:
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
     hits_path.parent.mkdir(parents=True, exist_ok=True)
-    hits_path.write_text(json.dumps(hits_doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_write_text(hits_path, json.dumps(hits_doc, ensure_ascii=False, indent=2) + "\n")
 
     if skipped or conflicts:
         for s in skipped:

@@ -17,6 +17,15 @@ type LibCat = "ai" | "stock" | "wiki" | "web" | "unknown";
 // hết" làm mất nhãn Stock/Wikipedia của file hỗn hợp (giai đoạn 4,
 // 03/11). Thứ tự ưu tiên hiển thị: AI, stock, wiki, web; không khớp gì
 // thì "unknown".
+// A21 (05/11/2026): mục thư viện của cảnh nền rêu không tính là ảnh.
+// Nhận diện bằng cờ isMossGrid trên plan (không đoán theo tên file) — cờ
+// này có sẵn trong plan trả về từ getProject, nên nhận diện đúng ngay cả
+// trước khi artifact rebuild đồng bộ contract sinh ra.
+function isMossGridItem(detail: ProjectDetail, item: LibItem): boolean {
+  if (item.slot !== "scene" || item.sceneOrder === null) return false;
+  return (detail.plan?.scenes ?? []).some((s) => s.order === item.sceneOrder && s.isMossGrid === true);
+}
+
 function libCategories(it: LibItem): LibCat[] {
   const s = `${it.source} ${it.urls.join(" ")}`.toLowerCase();
   const cats: LibCat[] = [];
@@ -62,7 +71,11 @@ function LibCard({ detail, item }: { detail: ProjectDetail; item: LibItem }) {
         </button>
       )}
       <div className="mt-2 flex flex-wrap items-center gap-1">
-        <span className="rounded-full bg-[var(--surface)] px-2 py-0.5 text-[11px] font-semibold">{item.kind === "video" ? "Video" : "Ảnh"}</span>
+        {isMossGridItem(detail, item) ? (
+          <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ color: "var(--warn)", background: "color-mix(in srgb, var(--warn) 12%, transparent)" }}>Nền xanh rêu — không phải ảnh</span>
+        ) : (
+          <span className="rounded-full bg-[var(--surface)] px-2 py-0.5 text-[11px] font-semibold">{item.kind === "video" ? "Video" : "Ảnh"}</span>
+        )}
         {cats.map((cat) => (
           <span
             key={cat}
@@ -130,7 +143,7 @@ function MediaLibrary({ detail }: { detail: ProjectDetail }) {
   const items = detail.mediaLibrary ?? [];
   const [filter, setFilter] = useState<string>("all");
   const counts = {
-    image: items.filter((i) => i.kind === "image").length,
+    image: items.filter((i) => i.kind === "image" && !isMossGridItem(detail, i)).length,
     video: items.filter((i) => i.kind === "video").length,
     ai: items.filter((i) => libCategories(i).includes("ai")).length,
     stock: items.filter((i) => libCategories(i).includes("stock")).length,
@@ -140,7 +153,8 @@ function MediaLibrary({ detail }: { detail: ProjectDetail }) {
   };
   const visible = items.filter((i) => {
     if (filter === "all") return true;
-    if (filter === "image" || filter === "video") return i.kind === filter;
+    if (filter === "image") return i.kind === "image" && !isMossGridItem(detail, i);
+    if (filter === "video") return i.kind === "video";
     return libCategories(i).includes(filter as LibCat);
   });
   const chips: Array<{ key: string; label: string }> = [
@@ -281,6 +295,33 @@ export function MediaTab({ detail }: { detail: ProjectDetail }) {
       queryClient.invalidateQueries({ queryKey: ["project", detail.id] });
     },
   });
+  // A22 (05/11/2026, lệnh CEO): xóa ảnh đã gắn của cảnh — buildGenImageJobs
+  // không tạo job cho cảnh đã có ảnh thật nên muốn thay ảnh thì xóa trước.
+  const clearImage = useMutation({
+    mutationFn: () =>
+      api.clearSceneImage({
+        projectId: detail.id,
+        sceneOrder: scene?.order ?? 1,
+      }),
+    onSuccess: (r) => {
+      setMsg(r.fileName ? `Đã xóa ảnh ${r.fileName} khỏi cảnh ${scene?.order}. Tạo lại job ảnh để gắn ảnh mới.` : `Cảnh ${scene?.order} không còn ảnh gắn.`);
+      queryClient.invalidateQueries({ queryKey: ["project", detail.id] });
+    },
+  });
+  // B23 (05/11/2026, lệnh CEO, lựa chọn A): ghi đè media phải hỏi xác
+  // nhận trước — file cũ (kể cả ảnh thật) sẽ bị thay ngay. Trả true khi
+  // đích chưa có file (không có gì để ghi đè) hoặc user đồng ý. Nút xóa
+  // ảnh ở dưới đã có confirm riêng từ trước.
+  const confirmOverwrite = (): boolean => {
+    const existing =
+      target === "scene" ? scene?.imageFile : part?.broll?.file;
+    if (!existing) return true;
+    const where =
+      target === "scene"
+        ? `Cảnh ${scene?.order} đã có ảnh ${existing}`
+        : `B-roll của ${part?.id} đã có file ${existing}`;
+    return window.confirm(`${where} — thao tác này sẽ ghi đè file cũ. Tiếp tục?`);
+  };
   if (!plan || scenes.length === 0) {
     // Chưa có phân cảnh thì chưa gắn media mới được, nhưng thư viện
     // file đã có trên đĩa vẫn phải liệt kê được.
@@ -332,10 +373,25 @@ export function MediaTab({ detail }: { detail: ProjectDetail }) {
           <InfoTip text="Thứ tự bắt buộc, không đảo ngược: chỉ sang lớp sau khi lớp trước không có file đúng sau khi soi trực quan. Video được chấm theo độ gần với thời lượng voice của part đích." />
           {ttsPart && <> · voice part này: <span className="mono">{ttsPart.duration.toFixed(1)}s</span></>}
         </p>
-        {scene?.imageFile && target === "scene" && (
+        {scene?.imageFile && target === "scene" && (scene.isMossGrid ? (
+          <div className="mt-3 max-w-xs">
+            <p className="rounded-full px-2 py-0.5 text-xs font-semibold" style={{ color: "var(--warn)", background: "color-mix(in srgb, var(--warn) 12%, transparent)" }}>Nền xanh rêu — thiếu ảnh (cảnh {scene.order})</p>
+            <p className="mt-1 text-xs text-[var(--dim)]">Cảnh này chỉ có nền xanh rêu kẻ ô vuông ({scene.imageFile}), không phải ảnh thật — vẫn tính là thiếu ảnh ở tầng hồ sơ/QA. Tìm ảnh thật hoặc tạo ảnh AI để thay.</p>
+          </div>
+        ) : (
           <div className="mt-3 max-w-xs">
             <MediaFile projectId={detail.id} relPath={`build/media/images/${scene.imageFile}`} kind="image" label={`Ảnh cảnh ${scene.order}: ${scene.imageFile}`} />
             <p className="mono mt-1 text-xs text-[var(--dim)]">{scene.imageFile}{scene.mediaSource ? ` · ${provText(scene.mediaSource).source} · ${provText(scene.mediaSource).license}` : ""}</p>
+            <button
+              type="button"
+              className={btnCls}
+              disabled={clearImage.isPending}
+              onClick={() => {
+                if (window.confirm(`Xóa ảnh cảnh ${scene.order} (${scene.imageFile})? File trên đĩa và nguồn trong plan sẽ bị gỡ. Muốn thay bằng ảnh khác thì xóa trước rồi tìm/tạo ảnh mới.`)) clearImage.mutate();
+              }}
+            >
+              Xóa ảnh cảnh này
+            </button>
             {sceneLibItem && sceneLibItem.urls.length > 0 && (
               <p className="mt-0.5 break-all text-xs [overflow-wrap:anywhere]">
                 {sceneLibItem.urls.map((u) => (
@@ -350,7 +406,7 @@ export function MediaTab({ detail }: { detail: ProjectDetail }) {
               </details>
             )}
           </div>
-        )}
+        ))}
         {part?.broll?.file && (
           <div className="mt-3 max-w-xs">
             <MediaFile projectId={detail.id} relPath={`build/media/broll/${part.broll.file}`} kind={part.broll.file.endsWith(".mp4") ? "video" : "image"} label={`B-roll ${part.id}: ${part.broll.file}`} />
@@ -414,7 +470,7 @@ export function MediaTab({ detail }: { detail: ProjectDetail }) {
                 </p>
                 <p className="text-[11px] text-[var(--dim)]">{c.author}</p>
                 <div className="mt-2 flex gap-2">
-                  <button type="button" className={btnPrimary} disabled={pick.isPending} onClick={() => pick.mutate(c)} aria-label={`Dùng file ${c.title}`}>Dùng file này</button>
+                  <button type="button" className={btnPrimary} disabled={pick.isPending} onClick={() => { if (confirmOverwrite()) pick.mutate(c); }} aria-label={`Dùng file ${c.title}`}>Dùng file này</button>
                   {c.pageUrl && (
                     <a className={`${btnCls} inline-flex items-center`} href={c.pageUrl} target="_blank" rel="noreferrer" aria-label={`Mở trang file ${c.title}`}>Trang file ↗</a>
                   )}
@@ -433,7 +489,7 @@ export function MediaTab({ detail }: { detail: ProjectDetail }) {
         </h3>
         <label className={labelCls} htmlFor="ai-prompt">Prompt (tiếng Việt)</label>
         <textarea id="ai-prompt" className={inputCls} rows={3} value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="Bối cảnh, chủ thể, hành động/chuyển động, ánh sáng, góc máy, dọc 9:16, không chữ, không watermark…" />
-        <button type="button" className={`${btnPrimary} mt-2`} disabled={!aiPrompt.trim() || genAi.isPending} onClick={() => genAi.mutate()} aria-label="Tạo media bằng AI">
+        <button type="button" className={`${btnPrimary} mt-2`} disabled={!aiPrompt.trim() || genAi.isPending} onClick={() => { if (confirmOverwrite()) genAi.mutate(); }} aria-label="Tạo media bằng AI">
           {genAi.isPending ? "Đang tạo (có thể vài phút)…" : `Tạo ${mediaType === "video" ? "video" : "ảnh"} bằng AI`}
         </button>
         {genAi.error && <p className="mt-2 text-sm text-[var(--bad)]">Tạo AI thất bại: {String(genAi.error)}</p>}
@@ -441,7 +497,7 @@ export function MediaTab({ detail }: { detail: ProjectDetail }) {
       <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
         <h3 className="font-bold">
           Tạo ảnh cảnh hàng loạt theo plan
-          <InfoTip text="Cảnh có prompt AI thì tạo ảnh AI; cảnh không có prompt thì dựng card chữ bằng render_scene_card (đó không phải “thiếu ảnh”). Job chạy nền, file đã có sẽ được bỏ qua." />
+          <InfoTip text="Cảnh có prompt AI thì tạo ảnh AI; cảnh không có prompt thì dựng nền xanh rêu kẻ ô, không chữ, bằng render_scene_card (đó không phải ảnh thật, vẫn tính là thiếu ảnh ở tầng hồ sơ/QA). Job chạy nền, file đã có sẽ được bỏ qua." />
         </h3>
         <div className="mt-2">
           <JobRunner projectId={detail.id} step="genimages" label="tạo ảnh cảnh" />

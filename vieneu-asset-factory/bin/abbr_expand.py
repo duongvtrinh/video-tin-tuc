@@ -68,26 +68,44 @@ _SYMLINK_FACTORY = Path.home() / "workspace" / "asset-factory"
 # May goc giu symlink cu (khong doi hanh vi); ban clone monorepo
 # khong co symlink thi resolve tu vi tri file script (bin/../).
 FACTORY = _SYMLINK_FACTORY if _SYMLINK_FACTORY.exists() else Path(__file__).resolve().parent.parent
+if FACTORY == _SYMLINK_FACTORY:
+    # B46 (06/11/2026, lệnh CEO, lựa chọn A): dấu vết khi dùng nhầm
+    # root cũ — đường symlink ~/workspace/asset-factory đã lỗi thời,
+    # factory chuẩn là layout repo (bin/../).
+    print(f"  warn: FACTORY resolve qua symlink cu {_SYMLINK_FACTORY} — kiem tra lai duong factory", file=sys.stderr)
+
 _SENT_END = re.compile(r"[.!?\n\r]")
 
 
 def load_dict(proj: Path):
     """Đọc từ điển của project. Trả về (entries, path_hoặc_None).
-    entries: {term: cách_đọc} đã lọc entry vi phạm quy tắc."""
+    entries: {term: cách_đọc} đã lọc entry vi phạm quy tắc.
+
+    CHẶN vs CẢNH BÁO (Giai đoạn 5, 05/11/2026, nhất quán với định nghĩa
+    chặn/cảnh báo của preflight ở Giai đoạn 4):
+    - CHẶN: toàn bộ từ điển hỏng (JSON lỗi, hoặc JSON không phải dict)
+      -> raise ValueError, caller PHẢI dừng, không được chạy tiếp ra
+      audio sai. Trước đây fail-open (chỉ cảnh báo stderr, exit 0, bỏ
+      qua cả từ điển) nên audio đọc sai mà pipeline vẫn chạy tiếp.
+    - CẢNH BÁO: entry lẻ vi phạm (term/cách đọc rỗng, cách đọc chứa dấu
+      kết câu, trùng term sau chuẩn hoá khoảng trắng) -> bỏ entry đó,
+      log ABBR-WARN, giữ các entry còn lại; trùng term giữ entry đầu
+      (khớp luật trùng term của CSV prepass: dòng đầu thắng)."""
     path = proj / "abbr_dict.json"
     if not path.exists():
         return {}, None
     try:
         raw = json.loads(path.read_text(encoding="utf-8"))
-    except Exception as exc:  # từ điển hỏng: không chặn pipeline, chỉ bỏ qua
-        print(f"ABBR-WARN dict hỏng, bỏ qua: {exc}", file=sys.stderr)
-        return {}, path
+    except Exception as exc:
+        raise ValueError(f"abbr_dict.json hỏng, không dùng được: {exc}")
     if isinstance(raw, dict) and isinstance(raw.get("entries"), dict):
         mapping = raw["entries"]
     elif isinstance(raw, dict):
         mapping = {k: v for k, v in raw.items() if not k.startswith("_")}
     else:
-        mapping = {}
+        raise ValueError(
+            f"abbr_dict.json hỏng: JSON cấp cao phải là dict, nhận được "
+            f"{type(raw).__name__}")
     entries, skipped = {}, []
     for term, spoken in mapping.items():
         if not isinstance(term, str) or not term.strip():
@@ -99,7 +117,11 @@ def load_dict(proj: Path):
         if _SENT_END.search(spoken):
             skipped.append((term, "cách đọc chứa dấu kết câu/xuống dòng"))
             continue
-        entries[term.strip()] = " ".join(spoken.split())
+        term = term.strip()
+        if term in entries:
+            skipped.append((term, "trùng term sau chuẩn hoá, giữ entry đầu"))
+            continue
+        entries[term] = " ".join(spoken.split())
     for term, reason in skipped:
         print(f"ABBR-WARN bỏ entry {term!r}: {reason}", file=sys.stderr)
     return entries, path
@@ -158,14 +180,29 @@ def main() -> int:
         return 2
     pid = sys.argv[1]
     proj = FACTORY / "projects" / pid
-    plan = json.loads((proj / "broll-plan.json").read_text(encoding="utf-8"))
-    entries, path = load_dict(proj)
+    try:
+        plan = json.loads((proj / "broll-plan.json").read_text(encoding="utf-8"))
+    except Exception as exc:
+        print(f"ABBR-ERROR {pid}: không đọc được plan: {exc}", file=sys.stderr)
+        return 1
+    try:
+        from filename import check_plan  # noqa: E402  (guard plan, Giai đoạn 5)
+        scenes = check_plan(plan, require_voice_text=True)
+    except ValueError as exc:
+        print(f"ABBR-ERROR {pid}: {exc}", file=sys.stderr)
+        return 1
+    try:
+        entries, path = load_dict(proj)
+    except ValueError as exc:
+        print(f"ABBR-ERROR {pid}: {exc} — sửa abbr_dict.json rồi chạy lại, "
+              f"không chạy tiếp với từ điển hỏng", file=sys.stderr)
+        return 1
     if path is None:
         print(f"ABBR-EMPTY {pid}: chưa có abbr_dict.json trong thư mục dự án")
         return 0
     total_hits = {}
     n_parts = 0
-    for sc in plan["scenes"]:
+    for sc in scenes:
         for pt in sc["parts"]:
             _, hits = expand_text(pt["voiceText"], entries)
             if hits:

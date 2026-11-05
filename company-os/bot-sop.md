@@ -10,9 +10,12 @@ của tài khoản, không nằm trong repo.
 
 Workbook: "HQ - Công ty 1 người" (cùng tài khoản: dùng tiếp workbook đang
 chạy, không tạo mới, không ghi đè; khác tài khoản: tạo mới từ
-`company-os/google-sheet-spec.md` — đủ 13 tab). Đọc/ghi Sheet bằng
+`company-os/google-sheet-spec.md` — đủ 14 tab, từ `00_Dashboard` tới
+`13_COO_Tasks`). Đọc/ghi Sheet bằng
 connector Google Sheets. Không sửa MEMORY.md trong ca bot; quan sát ghi
-vào nhật ký ngày.
+vào nhật ký ngày. bot-pipeline thuộc lịch bot đã được CEO duyệt (kênh
+giao việc số 2 trong 3 kênh duy nhất theo spec §02_Agents), không phải
+kênh riêng ngoài 3 kênh đó.
 
 ## bot-lang-thang — mỗi 4 giờ (06:57, 10:57, 14:57, 18:57, 22:57, 02:57)
 
@@ -78,9 +81,10 @@ vụ Scoring đã gửi hoặc gửi thất bại, hoặc (b) có blocker MỚI 
 bị chặn hoàn toàn, ghi Sheet thất bại). Ca không có chủ đề mới thì im
 lặng, kết quả chỉ lưu trong lịch sử ca.
 
-## bot-pipeline — mỗi 2 giờ (các ca :15)
+## bot-pipeline — mỗi 2 giờ
 
-Vai trò: điều phối pipeline. Chat nhân viên: Sản xuất, Kỹ thuật QA. Gửi
+Vai trò: điều phối pipeline (một ca của lịch bot đã được CEO duyệt — xem
+spec §02_Agents). Chat nhân viên: Sản xuất, Kỹ thuật QA. Gửi
 nhiệm vụ bằng chat.send_message; nếu công cụ nhắn chat không có trong ca
 này thì chỉ ghi dòng Assigned vào 01_Tasks và ghi rõ vào kết quả ca để
 main agent chuyển tiếp, không coi là lỗi ca.
@@ -116,24 +120,22 @@ video/ngày từ các chủ đề đã duyệt; nếu số chủ đề đã duy�
 giao hết, không cắt bớt.
 
 B. Bàn giao Drive: đọc 11_QA_Log và 08_Publish_Tracking. Thư mục bàn giao
-đã được CEO xác nhận ngày 29/10/2026 là thư mục Drive "Video Muse" (tìm
+đã được CEO xác nhận là thư mục Drive "Video Muse" (quyền anyone with link đã được CEO cấp; tìm
 bằng Drive files list với q name = 'Video Muse', không tự đoán ID). Quy
 định mới 29/10/2026 (lệnh CEO): QA tải lên NGAY trong lượt duyệt, nên
 bước B này chỉ là lưới bắt sót — chỉ khi có verdict Duyệt đã qua mà
 08_Publish_Tracking và 01_Tasks vẫn chưa có link thì mới nhắn chat QA tải
 file đã duyệt lên đúng thư mục Video Muse đó và ghi link thật vào
-08_Publish_Tracking và 01_Tasks. Tuyệt đối không bịa link, không tự tạo
-thư mục khác, không tự chia sẻ công khai thư mục (thư mục hiện không
-chia sẻ công khai; nếu cần chia sẻ thì đó là quyết định riêng của CEO,
-không phải của ca này).
+08_Publish_Tracking và 01_Tasks; khi ghi link, ghi luôn đủ cột I "Người sản xuất (email tài khoản Muse)" theo quy tắc thống nhất cột I và cột J "Hạn mức còn lại" do QA tự đọc lại hạn mức tại thời điểm upload, bằng chữ, không chụp màn hình, ở cùng dòng tab 08 (sửa 05/11/2026, lựa chọn A8). Tuyệt đối không bịa link, không tự tạo
+thư mục khác, không tự thay đổi quyền thư mục (thư mục "Video Muse" đã được CEO cấp quyền anyone with link ngày 05/11/2026).
 
 C. Leo thang: nếu một video có từ 2 lần QA Trả lại trong 11_QA_Log mà
 chưa có verdict Duyệt sau đó, và chưa từng leo thang video đó (kiểm tra
 nhật ký ngày các ngày trước), thì nhắn về chat chính một lần để CEO xử
 lý. Đã leo thang rồi thì không nhắc lại.
 
-D. Nếu gặp thẻ phê duyệt của người dùng, 429/403/rate-limit thì dừng
-nhánh đó, ghi blocker vào nhật ký ngày, không chờ, không thử lại ẩu.
+D. Nếu gặp 429/403/rate-limit thì dừng
+nhánh đó, ghi blocker vào nhật ký ngày, không chờ, không thử lại ẩu. Riêng thẻ phê duyệt upload Drive hết hạn sau 30 phút (approval_expired / Timed out) thì KHÔNG dừng hẳn: **Thẻ phê duyệt upload Drive hết hạn sau 30 phút (lệnh CEO 05/11/2026, tiền lệ TOPIC-232):** lệnh upload lên Drive hiện thẻ phê duyệt, chỉ cho 30 phút để bấm; hết 30 phút không có quyết định thì thẻ tự hết hạn (approval_expired / Timed out), thao tác không chạy, file không lên Drive. Tiền lệ: thẻ gửi 10:52:57 +07, hết hạn 11:22:57 +07, Timed out 11:23:02 +07 — không phải bị từ chối, không phải file hỏng hay thư mục sai quyền. Cách xử lý đúng là **chạy lại upload một lần để hệ thống cấp thẻ mới** (không tính là "thử lại ẩu"); cấp phép toàn quyền của CEO cho QA hoàn tất bàn giao mà không hỏi lại trong chat **không tắt được thẻ hệ thống** — thẻ vẫn hiện mỗi lần upload, cần bấm trong 30 phút; upload Drive không có standing Allow. **Khi gặp thẻ hết hạn, QA phải báo ngay cho COO; COO ghi lại thông báo tình trạng vào cột H "Kết quả hoàn thành" của dòng tab 13 tương ứng (ghi tạm thời trong khi nhiệm vụ vẫn ở "Đang làm", cột G thời gian hoàn thành vẫn để trống), để CEO đọc tab 13 là biết vấn đề ở đâu, không phải chờ tới khi xong mới biết. Khi nhiệm vụ hoàn thành sau đó, COO cập nhật lại cột H bằng kết quả cuối cùng kèm link. Quy tắc này khác với 429/403/rate-limit: gặp 429/403 thì dừng nhánh, ghi blocker, không thử lại.**
 
 Giới hạn cứng: không đăng nền tảng, không gắn affiliate, không chi tiền,
 không push GitHub, không bịa link/số liệu, không ghi đè hay xóa dòng đã
@@ -178,9 +180,10 @@ media-video-production, media-video-tech-qa, và tab 03_SOP trong Sheet.
    code/template) và vào nhật ký ngày (mọi cải tiến, kèm bằng chứng).
    Không ghi đè hay xóa dòng đã có.
 5. Đề xuất cần CEO quyết (chỉ ghi lại, KHÔNG tự áp dụng): mọi ý tưởng
-   đụng tới giới hạn cứng hoặc chuẩn đã chốt — đổi chuẩn thời lượng
-   180-300s, đổi 3 cửa QA, đổi thang điểm Scoring, đổi phạm vi công ty,
-   đăng nền tảng, affiliate, chi tiền, push GitHub, chia sẻ Drive, xóa
+   đụng tới giới hạn cứng hoặc chuẩn đã chốt — đổi lệnh tự quyết độ dài
+   (đề xuất 2–3 phút, Production tự quyết; chuẩn 180-300s đã bãi theo
+   lệnh CEO tối 29/10/2026, xem A5), đổi 3 cửa QA, đổi thang điểm Scoring, đổi phạm vi công ty,
+   đăng nền tảng, affiliate, chi tiền, push GitHub, thay đổi quyền thư mục Drive, xóa
    dữ liệu. Những đề xuất này chỉ xuất hiện trong báo cáo về chat chính,
    kèm lý do và bằng chứng, để CEO quyết.
 6. Nếu không tìm thấy mẫu lặp đủ bằng chứng thì KHÔNG bịa cải tiến: ca
@@ -188,8 +191,7 @@ media-video-production, media-video-tech-qa, và tab 03_SOP trong Sheet.
 
 Giới hạn cứng: không đăng nền tảng, không gắn affiliate, không chi tiền,
 không push GitHub, không bịa nguồn/link/số liệu/bằng chứng, không ghi đè
-hay xóa dòng đã có, không sửa MEMORY.md. Gặp 429/403/rate-limit hoặc thẻ
-phê duyệt thì dừng nhánh đó, ghi blocker, không chờ, không thử lại ẩu.
+hay xóa dòng đã có, không sửa MEMORY.md. Gặp 429/403/rate-limit thì dừng nhánh đó, ghi blocker, không chờ, không thử lại ẩu. Riêng thẻ phê duyệt upload Drive hết hạn sau 30 phút thì chạy lại upload một lần để lấy thẻ mới, và báo cho COO ghi tình trạng vào cột H "Kết quả hoàn thành" của dòng tab 13 tương ứng (xem mục D ở trên).
 
 Báo cáo: chỉ nhắn về chat chính khi (a) đã áp dụng ít nhất 1 cải tiến
 (liệt kê từng cải tiến kèm bằng chứng và file đổi), hoặc (b) có đề xuất

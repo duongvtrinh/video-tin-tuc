@@ -5,7 +5,7 @@
 - Scoring: media-topic-scoring — chấm 100 điểm, loại trùng và chủ đề không thú vị. File: ~/workspace/custom-skills/media-topic-scoring/SKILL.md
 - Sản xuất: media-video-production — kịch bản, giọng VieNeu TTS, dựng video chờ QA. File: ~/workspace/custom-skills/media-video-production/SKILL.md
 - Kỹ thuật: media-video-tech-qa — đánh giá thành phẩm, nâng cấp code, test lại. File: ~/workspace/custom-skills/media-video-tech-qa/SKILL.md
-- Kỹ thuật QA (nhận thêm): media-video-tech-qa — ngoài đánh giá thành phẩm và nâng cấp code, còn bàn giao video đã duyệt lên Drive (không chia sẻ công khai) và ghi link vào Sheet (tab 08_Publish_Tracking và tab 01_Tasks).
+- Kỹ thuật QA (nhận thêm): media-video-tech-qa — ngoài đánh giá thành phẩm và nâng cấp code, còn bàn giao video đã duyệt lên thư mục Drive "Video Muse" (đã được CEO cấp quyền anyone with link ngày 05/11/2026) và ghi link vào Sheet (tab 08_Publish_Tracking và tab 01_Tasks).
 
 Đã giải thể 2026-10-26, skill đã xóa khỏi bộ skill (file đưa vào thùng rác, khôi phục được trong 30 ngày, không xóa dữ liệu Sheet):
 - Kinh doanh Affiliate: media-affiliate — đã giải thể, chức năng affiliate thuộc công ty kinh doanh khác.

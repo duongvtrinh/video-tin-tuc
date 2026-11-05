@@ -9,7 +9,7 @@ type ResOf<K extends keyof typeof Factory> = z.infer<(typeof Factory)[K]["respon
 
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { basename, join } from "node:path";
-import { FACTORY, ffprobe, findFirstGlob, projDir, readJson, run } from "./core";
+import { FACTORY, brollFileName, ffprobe, projDir, rand6, readJson, run } from "./core";
 import { renderMotionByPartId } from "./motion";
 
 export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): Promise<ResOf<"getPreviewData">> {
@@ -63,7 +63,14 @@ export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): P
     const W = wide ? 1280 : 720;
     const H = wide ? 720 : 1280;
 
-    const engineSource = readFileSync(join(FACTORY, "lib/render-engine.js"), "utf8");
+    // B41 (06/11/2026, lệnh CEO, lựa chọn A): engine thiếu thì báo rõ
+    // thay vì ENOENT thô.
+    let engineSource: string;
+    try {
+      engineSource = readFileSync(join(FACTORY, "lib/render-engine.js"), "utf8");
+    } catch {
+      throw new Error(`Không đọc được lib/render-engine.js trong factory ${FACTORY} — kiểm tra lại đường dẫn factory (xem resolveFactory ở core.ts)`);
+    }
 
     const brollMap = new Map<
       string,
@@ -100,16 +107,26 @@ export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): P
     // Real image of a part: b-roll jpg if present, else the scene image —
     // identical lookup to build_render_page.py part_image().
     const partImagePath = (sceneOrder?: number, partIdx?: number): string | null => {
+      // A24 (05/11/2026): tra ĐÚNG tên rand6 như render_draft.py — KHÔNG
+      // dùng glob nữa: file lạ cùng tiền tố từng hiện ở preview nhưng
+      // render bỏ qua. 11A: anh co the la jpg/png/webp — thu theo thu
+      // tu jpg, png, webp o ca b-roll lan anh canh, dong bo voi
+      // build_render_page.py va render_draft.py.
       if (sceneOrder !== undefined && partIdx !== undefined) {
-        const b = findFirstGlob(
-          join(build, "media/broll"),
-          `broll_seg_${sceneOrder}_part_${partIdx}_`,
-          ".jpg",
-        );
-        if (b) return b;
+        for (const ext of ["jpg", "png", "webp"] as const) {
+          const cand = join(build, "media/broll", brollFileName(projectId, sceneOrder, partIdx, ext));
+          if (existsSync(cand)) return cand;
+        }
       }
       if (sceneOrder !== undefined) {
-        return findFirstGlob(join(build, "media/images"), `seg_${sceneOrder}_`, ".jpg");
+        for (const ext of ["jpg", "png", "webp"] as const) {
+          const cand = join(
+            build,
+            "media/images",
+            `seg_${sceneOrder}_${rand6(projectId, "img", sceneOrder)}.${ext}`,
+          );
+          if (existsSync(cand)) return cand;
+        }
       }
       return null;
     };
@@ -129,12 +146,12 @@ export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): P
       partIdx?: number,
     ): { rel: string; w: number; h: number } | null => {
       if (sceneOrder === undefined || partIdx === undefined) return null;
-      const v = findFirstGlob(
-        join(build, "media/broll"),
-        `broll_seg_${sceneOrder}_part_${partIdx}_`,
-        ".mp4",
-      );
-      if (!v) return null;
+      // B21 (05/11/2026, lệnh CEO, lựa chọn A): tra đúng tên rand6 như
+      // render thật (render_draft.py base_video) — glob cũ lấy file đầu
+      // tiên theo sort nên một file lạ (vd broll_seg_2_part_1_000001.mp4)
+      // có thể được preview chiếu trong khi MP4 render dùng file đúng.
+      const v = join(build, "media/broll", brollFileName(projectId, sceneOrder, partIdx, "mp4"));
+      if (!existsSync(v)) return null;
       const hit = videoProbeCache.get(v);
       if (hit !== undefined) return hit;
       const probe = ffprobe(v);

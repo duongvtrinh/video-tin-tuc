@@ -112,6 +112,12 @@ const sceneSchema = z.looseObject({
   sceneImagePrompt: z.string().default(""),
   imageFile: z.string().nullable().optional(),
   cardImage: z.string().nullable().optional(),
+  isMossGrid: z.boolean().nullable().optional(),
+  // A21 (05/11/2026, lệnh CEO): cảnh chỉ có nền xanh rêu kẻ ô vuông thì
+  // đánh dấu isMossGrid: true — không phải ảnh thật, vẫn tính là thiếu ảnh
+  // ở tầng hồ sơ/QA. App gán cờ khi xây job card (projects.ts) và
+  // gen_images.py gán lại khi render xong nền; pickMedia/generateAiMedia
+  // xóa cờ khi gắn ảnh thật/AI. UI nhận diện bằng cờ này, không đoán theo tên file.
   text: z.string().default(""),
   motion: z.string().nullable().optional(),
   mediaSource: z.union([z.string(), mediaSourceSchema]).nullable().optional(),
@@ -270,12 +276,9 @@ const okSchema = z.object({ ok: z.literal(true) });
     capabilities: ["filesystem:write"],
     timeoutMs: 30_000,
   },
-  saveInput: {
-    request: z.object({ projectId: z.string().min(1), input: inputSchema }),
-    response: okSchema,
-    capabilities: ["filesystem:write"],
-    timeoutMs: 30_000,
-  },
+  // 12B (05/11/2026): saveInput da go — khong client nao goi no
+  // (saveScript/savePlan van con); ham handlers-projects.saveInput
+  // cung da go theo.
   savePlan: {
     request: z.object({ projectId: z.string().min(1), plan: planSchema }),
     response: z.object({ ok: z.literal(true), problems: z.array(z.string()) }),
@@ -479,6 +482,19 @@ const okSchema = z.object({ ok: z.literal(true) });
     response: z.object({ fileName: z.string() }),
     capabilities: ["process:spawn", "filesystem:write"],
     timeoutMs: 600_000,
+  },
+  clearSceneImage: {
+    // A22 (05/11/2026, lệnh CEO): xóa ảnh đã gắn của một cảnh (file trên
+    // đĩa + imageFile/mediaSource/isMossGrid trong plan). buildGenImageJobs
+    // không tạo job cho cảnh đã có ảnh thật nên đây là bước bắt buộc trước
+    // khi thay ảnh thật bằng ảnh khác.
+    request: z.object({
+      projectId: z.string().min(1),
+      sceneOrder: z.number().int().positive(),
+    }),
+    response: z.object({ cleared: z.boolean(), fileName: z.string().nullable() }),
+    capabilities: ["filesystem:write"],
+    timeoutMs: 60_000,
   },
   renderTemplatePreview: {
     request: z.object({

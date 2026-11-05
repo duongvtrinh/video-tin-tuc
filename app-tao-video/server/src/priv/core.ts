@@ -15,9 +15,30 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 export const HOME = homedir();
-export const FACTORY = existsSync(join(HOME, "workspace/asset-factory"))
-  ? join(HOME, "workspace/asset-factory")
-  : join(HOME, "workspace/vieneu-asset-factory");
+// Resolve thư mục nhà máy theo thứ tự ưu tiên, theo mẫu resolveTtsPy
+// trong cùng file (quyết CEO 05/11/2026, mục A25 — ghi vào repo sau khi
+// rebuild §6 đã kiểm chứng app đọc đúng factory trên máy thật):
+//   1. Biến môi trường VIENEU_FACTORY_DIR (nếu đặt)
+//   2. ~/workspace/vieneu-media-company/vieneu-asset-factory nếu tồn tại (layout repo)
+//   3. ~/workspace/vieneu-asset-factory nếu tồn tại (layout cũ)
+//   4. ~/workspace/asset-factory nếu tồn tại (layout cũ nhất)
+//   5. Mặc định ~/workspace/vieneu-media-company/vieneu-asset-factory (layout repo)
+function resolveFactory(): string {
+  const envDir = process.env.VIENEU_FACTORY_DIR?.trim();
+  // B41 (06/11/2026, lệnh CEO, lựa chọn A): env trỏ sai thì bỏ qua, rơi
+  // xuống ứng viên tiếp theo — trước đây trả thẳng đường chết.
+  if (envDir && existsSync(envDir)) return envDir;
+  for (const cand of [
+    "vieneu-media-company/vieneu-asset-factory",
+    "vieneu-asset-factory",
+    "asset-factory",
+  ]) {
+    const p = join(HOME, "workspace", cand);
+    if (existsSync(p)) return p;
+  }
+  return join(HOME, "workspace/vieneu-media-company/vieneu-asset-factory");
+}
+export const FACTORY = resolveFactory();
 export const PROJECTS = join(FACTORY, "projects");
 export const BIN = join(FACTORY, "bin");
 export const VENV_PY = join(FACTORY, ".venv/bin/python");
@@ -30,7 +51,8 @@ export const VENV_PY = join(FACTORY, ".venv/bin/python");
 //   4. Mặc định ~/workspace/vieneu-tts/.venv/bin/python (layout repo)
 function resolveTtsPy(): string {
   const envDir = process.env.VIENEU_TTS_DIR?.trim();
-  if (envDir) return join(envDir, ".venv/bin/python");
+  // B41: như resolveFactory — env sai thì bỏ qua thay vì trả đường chết.
+  if (envDir && existsSync(join(envDir, ".venv/bin/python"))) return join(envDir, ".venv/bin/python");
   const repoPath = join(HOME, "workspace/vieneu-tts/.venv/bin/python");
   if (existsSync(repoPath)) return repoPath;
   const legacyPath = join(HOME, "workspace/vieneu-tts-api/.venv/bin/python");
@@ -38,7 +60,17 @@ function resolveTtsPy(): string {
   return repoPath;
 }
 export const TTS_PY = resolveTtsPy();
-export const SEARCH_MEDIA = join(HOME, "workspace/company-os/media-search/search_media.py");
+// SEARCH_MEDIA: file thật nằm trong monorepo (quyết CEO 05/11/2026,
+// mục A25) — đường cũ ~/workspace/company-os/... không tồn tại.
+function resolveSearchMedia(): string {
+  const repoPath = join(HOME, "workspace/vieneu-media-company/company-os/media-search/search_media.py");
+  if (existsSync(repoPath)) return repoPath;
+  // B41 (06/11/2026, lệnh CEO, lựa chọn A): đường cũ
+  // ~/workspace/company-os/... không tồn tại — ném lỗi rõ thay vì trả
+  // đường chết rồi vỡ ở chỗ gọi.
+  throw new Error(`Không tìm thấy search_media.py (đã thử ${repoPath}) — kiểm tra lại vị trí repo`);
+}
+export const SEARCH_MEDIA = resolveSearchMedia();
 export const PY3 = "python3";
 
 // Filename contract of the factory (bin/filename.py — the single source
@@ -81,7 +113,10 @@ export function randomSuffix(): string {
 }
 
 export function safeId(id: string): string {
-  if (!/^[A-Za-z0-9._-]+$/.test(id) || id.includes("..")) {
+  // Chặn id rỗng, "." , ".." và mọi id chỉ gồm dấu chấm (vá audit 05/11/2026):
+  // id "." thỏa regex cũ và không chứa "..", nên projDir(".") chính là
+  // thư mục projects/ gốc — xóa project đó sẽ xóa cả thư mục gốc.
+  if (!id || /^\.+$/.test(id) || !/^[A-Za-z0-9._-]+$/.test(id) || id.includes("..")) {
     throw new Error(`ID project không hợp lệ: ${id}`);
   }
   return id;
@@ -146,20 +181,6 @@ export async function withPlanWriteLock<T>(projectId: string, fn: () => T): Prom
     return fn();
   } finally {
     release();
-  }
-}
-
-// First file (sorted) in dir whose name starts with prefix and ends with
-// suffix — the TS equivalent of build_render_page.py's find_one(glob).
-export function findFirstGlob(dir: string, prefix: string, suffix: string): string | null {
-  try {
-    const hits = readdirSync(dir)
-      .filter((f) => f.startsWith(prefix) && f.endsWith(suffix))
-      .sort();
-    const first = hits[0];
-    return first ? join(dir, first) : null;
-  } catch {
-    return null;
   }
 }
 

@@ -65,8 +65,15 @@ Mỗi Visual Beat bắt buộc phải được gắn một trong 4 cự ly:
     "heavy military tank training field"
   ],
   "ai_image_prompt": "Cinematic documentary shot, Leopard 2 tank maneuvering through dusty desert terrain, low angle ground shot, realistic 8k, photorealistic",
-  "source_preference": ["archival", "stock", "generated"],
   "must_show": "Xe tăng đang lao nhanh, đất cát văng tung tóe tạo cảm giác dồn dập",
   "must_avoid": ["xe tăng đồ chơi", "chữ 3D nổi", "watermark", "ảnh tĩnh phẳng lặng"]
 }
 ```
+
+## Ghi chú luật công ty ghi đè — Giai đoạn 3, 05/11/2026 (áp cho video của công ty, luật chuẩn tại `company-os/media-search/LOGIC.md`)
+
+- **Field `source_preference` cũ đã bị BỎ:** schema cũ có `"source_preference": ["archival", "stock", "generated"]` — field này KHÔNG còn được emit nữa, vì thứ tự archival > stock > generated là tàn dư của logic Wikipedia > Stock > AI ngày 28/10/2026 đã bị CEO bãi bỏ hoàn toàn ngày 29/10/2026. Không dùng bất kỳ thứ tự nguồn mặc định nào thay thế; nguồn quyết theo luật phân nhánh + cửa bối cảnh + nhật ký tìm ảnh của LOGIC.md.
+- **Phân nhánh Việt Nam:** kịch bản về Việt Nam thì ẢNH bỏ qua Wikipedia và Stock hoàn toàn, chỉ lấy ảnh từ nguồn gốc qua tìm kiếm tiếng Việt (bài báo về đúng vụ việc, bài đăng mạng xã hội công khai liên quan). Kịch bản về nước ngoài mới được dùng Wikipedia/Stock cộng các nguồn chung. Video cho kịch bản Việt Nam giữ ngoại lệ Wikipedia/Stock nếu qua cửa bối cảnh cứng — ngoại lệ này chỉ cho video, không cho ảnh.
+- **Quy tắc generic cho AI-from-prompt:** AI từ prompt chỉ là fallback sau khi nhật ký tìm ảnh per-scene (từ khóa đã thử, ứng viên link + nguồn, phân loại, lý do loại — xem skill Sản xuất) chứng minh đã thử hết mà không có ứng viên phù hợp. Beat chỉ có nền xanh rêu kẻ ô, không chữ (thay card chữ cũ), thì tính là thiếu ảnh, không tính là đã có ảnh.
+- **Từ khóa và prompt cho video công ty:** các ví dụ query/prompt tiếng Anh trong skill này là ví dụ phương pháp chung; khi lập plan cho video công ty thì query tìm ảnh và prompt đều viết bằng TIẾNG VIỆT khớp kịch bản theo LOGIC.md, và nhân vật có tên tuân ranh giới AI hai nhóm của LOGIC.md (nhóm công chúng có thể tạo chân dung nếu cần thiết; nhóm thiếu thông tin chỉ góc rộng/sau lưng/bóng mờ/vật chứng, không cận mặt, không dùng tên làm chỉ dẫn ngoại hình).
+- Áp cho video mới từ 05/11/2026; plan cũ không hồi tố.

@@ -62,31 +62,300 @@ Muse GitHub App, KHÔNG BAO GIỜ chuyển repo sang public.
   — đó là lý do dựng lại được mà không cần bộ nhớ cũ.
 - Bắt buộc đọc `company-os/media-search/LOGIC.md`, đặc biệt bài học
   TOPIC-219 04/11/2026: tìm ảnh thật từ bài báo về đúng vụ việc / bài
-  đăng công khai trước, AI generic chỉ là fallback khi đã thử nhiều
-  từ khóa mà không có ứng viên phù hợp, card chữ không thay thế ảnh.
+  đăng công khai trước, AI từ prompt chỉ là fallback khi đã thử nhiều
+  từ khóa mà không có ứng viên phù hợp, nền xanh rêu kẻ ô vuông (không chữ) không thay thế ảnh.
+  Hai điều bắt buộc theo LOGIC.md (mục 2 và mục 5 — bổ sung 05/11/2026, mục A30): (a) nhật ký tìm ảnh là bắt buộc cho mỗi cảnh — từ khóa đã thử, ứng viên tìm được (link + nguồn), phân loại và lý do loại, thiếu nhật ký thì cảnh đó chưa đủ điều kiện render; (b) QA TRẢ LẠI video nếu thiếu nhật ký, không duyệt im lặng.
   Tài khoản Muse mới clone repo về mà bỏ qua mục này sẽ lặp lại đúng
-  sai sót TOPIC-219 (toàn ảnh AI / card chữ dù bài gốc đã có ảnh thật).
+  sai sót TOPIC-219 (toàn ảnh AI / nền xanh rêu kẻ ô vuông dù bài gốc đã có ảnh thật).
+
+**Khai báo chữ ký định danh cho tài khoản Muse mới (lệnh CEO 05/11/2026 — bắt buộc trước ca quét tab 13 đầu tiên):**
+- Hệ thống Muse không cho agent đọc email đăng nhập của chính nó, nên email trong cột B tab 13 không thể tự đối chiếu bằng hệ thống. Mỗi tài khoản Muse phải khai báo email của mình một lần và lưu vào bộ nhớ của chính tài khoản đó như chữ ký định danh.
+- Cách khai: CEO nói cho tài khoản đó biết email của nó (qua chat chính hoặc chat COO); tài khoản đó ghi vào MEMORY.md dòng: "Email khai báo của tài khoản Muse này: <email> — dùng làm chữ ký định danh, đối chiếu cột B tab 13" và lưu tên COO chính là email khai báo đó (ví dụ COO (006@vuachim.com) — tên COO là email khai báo, không phải tên người).
+- Bộ nhớ là của từng tài khoản, không đi kèm repo khi clone: tài khoản khác clone repo về sẽ có bộ nhớ trống, phải khai lại từ đầu, không được copy email của tài khoản cũ sang, không được dùng email dịch vụ khác (Drive/GitHub/Facebook) thay thế.
+- Nếu bộ nhớ chưa có email khai báo, COO không được nhận bất kỳ dòng tab 13 nào; phải báo về chat chính để CEO khai báo trước, không đoán. Email khai báo là khai báo, không phải xác thực hệ thống: khai sai thì tài khoản sẽ nhận nhầm dòng hoặc bỏ qua dòng đúng, CEO chịu trách nhiệm về email đã khai cho từng tài khoản.
+
+## Khởi tạo tài khoản Muse mới (mục duy nhất, các skill/spec chỉ trỏ về đây)
+
+Khi một tài khoản Muse mới clone repo về, làm đúng 3 nhóm việc — cài đặt, khai báo, kiểm chứng — rồi mới bắt đầu ca quét tab 13 đầu tiên. Không bước nào được đoán, không bước nào được bỏ. (Chốt ngày 06/11/2026 theo lệnh CEO — phương án A.)
+
+### 0. Mô hình vận hành công ty (CEO mô tả 06/11/2026)
+
+1. **CEO** có quyền ra lệnh trực tiếp, giao bất kỳ nhiệm vụ gì qua chat, hoặc giao nhiệm
+   vụ gián tiếp qua Sheet tab 13_COO_Tasks.
+2. **Mỗi tài khoản Muse là một chi nhánh công ty độc lập**, tự sản xuất video, có COO
+   quản lý điều phối công việc cùng các bộ phận chức năng khác.
+3. **Mỗi chi nhánh được định danh bằng một Email** (người dùng cung cấp email của tài
+   khoản Muse đang hoạt động). Khi COO hoặc các bộ phận chức năng gửi báo cáo vào Sheet
+   thì dùng chung định danh này để xác nhận/ký nhận danh tính người hoàn thành công
+   việc, để phân biệt với các chi nhánh công ty khác.
+4. **Định danh của chi nhánh phải khai báo khi Muse vừa được clone về** (gợi ý là email
+   của tài khoản Muse đang hoạt động) — xem mục 1.8 và 2.2.
+5. Hệ quả: Sheet vận hành dùng chung cho nhiều chi nhánh; luật một nhiệm vụ = một chủ sở
+   hữu và khóa `*-DRAFT` càng quan trọng để tránh hai chi nhánh làm trùng một việc
+   (mục 3.4). Các phòng trong cùng một chi nhánh dùng chung định danh chi nhánh khi báo
+   cáo; không dùng email của chi nhánh khác hay email dịch vụ khác thay thế.
+
+
+### 1. Cài đặt bổ sung — những gì tài khoản mới phải có trước khi làm việc
+
+#### 1.1 Kết nối tài khoản (qua luồng kết nối chính thức, không nhập mật khẩu vào chat)
+
+| # | Kết nối | Dùng để làm gì | Kiểm chứng xong khi |
+| --- | --- | --- | --- |
+| 1 | **GitHub** — tài khoản `duongvtrinh` | Clone repo private `duongvtrinh/vieneu-media-company`, nhánh `main` | Đọc được repo, đúng nhánh `main`, repo vẫn private |
+| 2 | **Google Sheets** | Workbook vận hành `HQ - Công ty 1 người` (ID `1P6DumLF_eIXmo7h8Qrpk-rpVy7xmqtf5ztVIFsiXZ3I`) — dùng workbook đang chạy, **không tạo mới, không ghi đè** | Đếm đủ 14 tab (00–13), tab 13 đúng 8 cột A–H (xem mục 3) |
+| 3 | **Google Drive** | Thư mục `Video Muse` (ID `1bA21n3Y3YiY6HSjLUEFmxnJXLnjtSJGc`) — chỉ bàn giao video đã QA duyệt lên đây | Mở được thư mục, thấy file TOPIC-232 đã bàn giao |
+| 4 | **Facebook** (chỉ khi làm việc Facebook) | Liên kết lại qua Meta Accounts Center | CEO xác nhận đã liên kết — `facebook-cli me` không chứng minh được |
+
+#### 1.2 Môi trường trên máy (kiểm theo BOOTSTRAP §0–§3, thiếu thì cài theo BOOTSTRAP)
+
+- `ffmpeg`, Python 3.12, Pillow (PIL), `bun`.
+- Factory venv (`vieneu-asset-factory/.venv`) và TTS venv (`vieneu-tts/.venv`) + engine VieNeu
+  giọng đọc (11 giọng preset: Adam, Ái Hân, Mỹ Duyên, Đức Trí, Hữu Quân, Xuân Tiên, Mai Anh,
+  Trúc Ly, Anh Khôi, Minh Quân, Mạnh Dũng).
+- App-tao-video đúng **47 file** (không phải 48) — đếm bằng
+  `find app-tao-video -type f | wc -l`; khác 47 thì dừng và báo CEO, không tự sửa số.
+
+#### 1.3 Tài sản nhị phân — đã nằm trong git từ 04/11/2026, clone là có
+
+- `vieneu-asset-factory/sfx/`: đủ 8 file `.mp3` khác 0 byte.
+- `vieneu-asset-factory/bgm/`: đủ 24 track (3 track/mood: calm, dramatic, funny,
+  inspirational, news, sad, suspense, upbeat) + `README.md` + `bgm_catalog.json`.
+- Thiếu thì khôi phục từ bản backup trên Drive theo BOOTSTRAP §7, không tự tải nguồn khác.
+
+#### 1.4 Skills — đồng bộ 2 bản, kiểm md5 phải khớp
+
+- 5 skill trong repo (`company-os/skills/`) phải khớp tuyệt đối với bản custom
+  (`~/workspace/custom-skills/`): media-coo, media-scout, media-topic-scoring,
+  media-video-production, media-video-tech-qa.
+- Kiểm chứng 06/11/2026: 5/5 khớp md5. Tài khoản mới copy skill từ repo sang custom
+  rồi kiểm lại md5; lệch thì dừng và báo CEO.
+
+#### 1.5 Chat nhân viên — tạo mới 6 chat, mỗi chat một skill
+
+Scout - Báo, Scout - Group, Scoring, Sản xuất, Kỹ thuật QA, COO. Mỗi chat gắn đúng skill
+của phòng đó. Phòng chỉ làm việc khi được giao qua đúng 1 trong 3 kênh (mục 3.4).
+
+#### 1.6 Artifact "App tạo video" — tài khoản mới tự build từ repo
+
+- Build bằng `artifact.create_web_fullstack`, tên "App tạo video", slug `app-tao-video`,
+  từ đúng 47 file repo. Lần build đầu (05/11/2026): platformVersion 28,
+  typecheck đạt, 14/14 test script-prompt pass, `listProjects` trả đủ 4 project thật.
+- Tài khoản mới build lần đầu sẽ tự có các sửa app từ B-series (B18–B41) vì build từ
+  source repo hiện tại — không cần làm thêm bước nào cho các sửa đó.
+- Sau này, mỗi lần sửa code app xong thì build lại mới có hiệu lực trên app đang chạy;
+  sửa factory Python thì có hiệu lực ngay cho lần chạy pipeline sau.
+
+#### 1.7 Lịch — mặc định KHÔNG tạo lịch nào
+
+- Không bật bot-pipeline (mỗi 2 giờ), bot-lang-thang (quét 4 giờ/lần), bot-hoc-hoi (hàng
+  ngày) trừ khi CEO duyệt riêng.
+
+#### 1.8 Chat chính chủ động hỏi bổ sung thông tin — ngay sau khi clone xong (lệnh CEO 06/11/2026)
+
+- **Thời điểm:** ngay sau khi clone xong, đọc BOOTSTRAP (§0–§4) và kiểm tra môi trường
+  xong (mục 1.2). Chat chính **KHÔNG chờ CEO tự biết phải cung cấp gì** — Chat chính là
+  bên chủ động gửi tin nhắn hỏi.
+- **Nội dung tin nhắn:** Chat chính gửi 1 tin nhắn liệt kê đúng các thông tin còn thiếu
+  để công ty vận hành (danh sách mục 2.1), dưới dạng câu hỏi, kèm ví dụ mẫu cho từng
+  mục. Mẫu tin nhắn:
+  > Chào CEO, tôi đã clone repo xong. Để công ty vận hành được, tôi cần CEO cung cấp
+  > thêm các thông tin sau (trả lời gộp một lần hoặc trả lời từng mục đều được, tôi sẽ
+  > lưu từng câu trả lời vào bộ nhớ):
+  > 1. Email khai báo của tài khoản Muse này là gì? (vd 006@vuachim.com — dùng làm chữ
+  > ký định danh, đối chiếu cột B tab 13)
+  > 2. Workbook vận hành có phải "HQ - Công ty 1 người" không? (xác nhận dùng workbook
+  > đang chạy, không tạo mới)
+  > 3. Thư mục Drive bàn giao có phải "Video Muse" không? Quyền hiện tại ra sao?
+  > 4. Repo GitHub có phải duongvtrinh/vieneu-media-company, nhánh main, private không?
+  > 5. CEO có cấp phép toàn quyền cho QA hoàn tất bàn giao không? (để QA chạy lại upload
+  > mà không hỏi lại trong chat; thẻ phê duyệt của hệ thống vẫn hiện mỗi lần upload và vẫn
+  > cần bấm trong 30 phút)
+  > 6. Lịch bot có bật không? Mặc định: không bật — chỉ bật khi CEO duyệt riêng. Nếu bật thì gồm:
+  >    - bot-pipeline mỗi 2 giờ hoặc các mốc thời gian cụ thể mỗi ngày: sản xuất video đã duyệt.
+  >    - bot-lang-thang quét 4 giờ/lần hoặc các mốc thời gian cụ thể mỗi ngày: tìm chủ đề được quan tâm.
+  >    - bot-hoc-hoi hàng ngày ~20:22: rút bài học từ lỗi lặp lại có bằng chứng, cải tiến
+  >      template/skill/SOP; đổi chuẩn thì chỉ đề xuất để CEO quyết.
+  > 7. Facebook đã liên kết lại qua Meta Accounts Center chưa? (không bắt buộc cho video;
+  > cần kết nối để quét bài viết, group. Tôi không tự tham gia group mới, không tự đăng.)
+- **CEO trả lời trong chat chính** — gộp một lần hoặc từng mục đều được.
+- **Agent lưu vào bộ nhớ ngay khi nhận được từng câu trả lời:** ghi nguyên văn câu trả
+  lời vào `MEMORY.md` của chính tài khoản này (kèm ngày giờ nhận), theo đúng mẫu câu ở
+  mục 2.2; rồi xác nhận lại với CEO những gì đã lưu và còn thiếu mục nào.
+- Mục nào CEO chưa trả lời thì ghi "chưa xác định" và dừng đúng bước cần nó — không
+  đoán, không dùng thông tin của dịch vụ khác thay thế.
+- Chỉ khi đã có đủ các mục bắt buộc (email khai báo, workbook, Drive, repo) thì mới ghi
+  vào bộ nhớ ở mục 2.2 và đi tiếp sang ca quét đầu tiên ở mục 3.2.
+
+
+### 2. Khai báo bổ sung — CEO cung cấp, tài khoản mới ghi vào bộ nhớ của chính nó
+
+#### 2.1 CEO phải cung cấp trước qua chat chính (thiếu mục nào thì dừng ở mục đó)
+
+CEO cung cấp bằng cách **trả lời tin nhắn hỏi bổ sung của Chat chính ở mục 1.8**.
+
+| # | Thông tin | Ghi chú |
+| --- | --- | --- |
+| 1 | **Email khai báo của tài khoản Muse này** (vd `006@vuachim.com`) | **BẮT BUỘC.** Chữ ký định danh duy nhất. Đối chiếu **cột B** tab 13, làm email người sản xuất cho cột I tab 08. Tên COO chính là email này. **Đây chính là định danh của chi nhánh** (mục 0): mọi phòng trong chi nhánh dùng chung email này khi báo cáo lên Sheet để ký nhận người hoàn thành công việc. |
+| 2 | **Workbook vận hành** — `HQ - Công ty 1 người`, xác nhận dùng workbook đang chạy | 14 tab, giữ tiền tố số, không đổi tên tab. Công ty khác thì tạo workbook mới từ spec — đúng 14 tab, bắt đầu trống. |
+| 3 | **Thư mục Drive "Video Muse"** + quyền hiện tại | Chỉ bàn giao lên đúng thư mục này. **Không tự tạo thư mục khác, không tự thay đổi quyền.** Quyền anyone with link (nếu có) là do CEO cấp. |
+| 4 | **Repo GitHub** — `duongvtrinh/vieneu-media-company`, nhánh `main`, private | Clone đúng repo này. Đọc BOOTSTRAP + 5 skill trước khi làm việc. |
+| 5 | **Cấp phép toàn quyền cho QA hoàn tất bàn giao** (có hay không) | Bắt buộc trước lần upload Drive đầu tiên. Nếu chưa cấp: QA phải chắc CEO đang có mặt để bấm thẻ phê duyệt trong 30 phút. Nếu đã cấp: QA được chạy lại upload mà không hỏi lại trong chat — nhưng **thẻ phê duyệt của hệ thống vẫn hiện mỗi lần upload và vẫn cần bấm trong 30 phút**; cấp phép không tắt được thẻ hệ thống. |
+| 6 | **Lịch bot có bật không** | Mặc định KHÔNG bật (xem 1.7). |
+| 7 | **Facebook** — đã liên kết lại qua Meta Accounts Center chưa | Không bắt buộc cho lần khởi tạo video; bắt buộc trước khi làm việc Facebook. |
+| 8 | **Ngưỡng inline voice (4C) — ĐÃ QUYẾT: 10.000.000 byte** | Quyết 05/11/2026, đã sửa trong `handlers-media.ts` `getMediaUrl`. File trên 10 MB đi đường chunked download. |
+| 9 | **Đường dẫn factory (3C/A25) — ĐÃ QUYẾT, ĐÃ GHI VÀO REPO** | `core.ts` có `resolveFactory`/`resolveSearchMedia` (env → layout repo → layout cũ); đã kiểm chứng trên máy artifact thật trong lần rebuild 05/11 (`listProjects` trả đủ 4 project). Tài khoản mới không sửa đường dẫn. |
+
+#### 2.2 Tài khoản mới ghi vào `MEMORY.md` của chính nó — làm ngay sau khi CEO cung cấp 2.1
+
+Ghi đúng mẫu câu, đúng thứ tự. **Không copy MEMORY.md của tài khoản cũ. Không dùng email
+Drive/GitHub/Facebook thay email khai báo.**
+
+**Bước 1 — Dòng khai báo (bắt buộc, trước mọi ca quét tab 13):**
+
+```
+Email khai báo của tài khoản Muse này: <email CEO đã cung cấp> — dùng làm chữ ký định danh, đối chiếu cột B tab 13
+```
+
+Đây là **định danh của chi nhánh** (mục 0): gợi ý là email của tài khoản Muse đang hoạt
+động; cả chi nhánh dùng chung định danh này khi báo cáo lên Sheet.
+
+**Bước 2 — Tên COO (bắt buộc, cùng lúc với Bước 1):**
+
+```
+Tên COO chính là email khai báo này (COO (<email khai báo>))
+```
+
+**Bước 3 — Quy tắc cột I (bắt buộc):**
+
+```
+Quy tắc thống nhất cột I: email người sản xuất = email khai báo trong bộ nhớ của tài khoản Muse này; thứ tự lấy email là (1) email Production ghi ở cột O dòng *-DRAFT trong 01_Tasks, nếu có và khớp email khai báo — email khai báo thắng khi khác nhau; (2) nếu bàn giao ghi "chưa xác định" thì lấy email khai báo trong bộ nhớ, không hỏi lại CEO; (3) chỉ khi bộ nhớ cũng chưa có mới ghi "chưa xác định — hỏi CEO" và lúc đó mới hỏi CEO.
+```
+
+**Bước 4 — Cấp phép toàn quyền cho QA (chỉ ghi khi CEO đã cấp ở 2.1 mục 5):**
+
+```
+CEO cấp phép toàn quyền cho Kỹ thuật QA ngày <ngày> lúc <giờ> +07: QA được chạy lại upload Drive và hoàn tất bàn giao Drive + Sheet mà không hỏi lại CEO trong chat; thẻ phê duyệt của hệ thống cho lệnh upload vẫn hiện theo luật hệ thống và cần bấm trong 30 phút, đó không phải là hỏi lại.
+```
+
+Nếu CEO chưa cấp thì **không ghi dòng này**.
+
+**Bước 5 — Tự kiểm tra bộ nhớ (bắt buộc):** đọc lại `MEMORY.md`, xác nhận các dòng
+Bước 1, 2, 3 đều có, đúng chính tả email, không có email khác xen vào. Thiếu 1 dòng thì
+coi như chưa khai báo xong — quay lại Bước 1, không đi tiếp.
+
+
+### 3. Quy trình chuẩn — làm đủ từng bước, không bỏ bước
+
+#### 3.1 Nguyên tắc vàng
+
+1. **Một tài khoản Muse = một bộ nhớ riêng.** Bộ nhớ không đi kèm repo khi clone.
+2. **Không đoán bất cứ thông tin nào.** Không có thì ghi "chưa xác định — hỏi CEO" và dừng đúng bước đó.
+3. **Hệ thống không cho agent đọc email đăng nhập của chính nó.** Mọi đối chiếu dùng email khai báo (mục 2.2).
+4. **Chưa có email khai báo thì chưa làm gì với tab 13.** COO không nhận dòng nào, không ghi ID, không phân việc, không tạo lịch, không sản xuất.
+5. **Mọi lần push GitHub đều chờ CEO duyệt riêng.** Trước push, gửi CEO bản phân tích (file nào đổi, đổi gì, vì sao, rủi ro và ảnh hưởng gì); chỉ push sau khi CEO duyệt riêng. Làm xong các bước dưới đây vẫn **CHƯA push**.
+
+#### 3.2 Kiểm chứng trước ca quét tab 13 đầu tiên — đủ 6 điểm, thiếu 1 thì dừng
+
+1. **Repo:** đúng `duongvtrinh/vieneu-media-company`, nhánh `main`, private; đã đọc BOOTSTRAP, spec, bot-sop, LOGIC và 5 skill; app-tao-video đúng 47 file.
+2. **Bộ nhớ:** đã có email khai báo (Bước 5 ở mục 2.2 đã qua). Chưa có thì dừng, báo chat chính.
+3. **Workbook:** đúng workbook "HQ - Công ty 1 người", đủ 14 tab, tab 13 đúng **8 cột**: A ID, B Tài khoản Muse nhận việc (email), C Việc chính, D Phân việc chi tiết, E Trạng thái, F Deadline, G Thời gian hoàn thành, H Kết quả hoàn thành. Không tạo workbook mới, không đổi tên tab, không xóa dòng cũ.
+4. **Thư mục Drive:** đúng thư mục "Video Muse" theo 2.1 mục 3. Không tự tạo thư mục khác, không tự thay đổi quyền.
+5. **Tài sản nhị phân:** sfx đủ 8 file `.mp3`, bgm đủ 24 track + `README.md` + `bgm_catalog.json` (mục 1.3).
+6. **Lịch:** chưa tạo lịch nào trừ khi có dòng tab 13 giao hoặc CEO duyệt riêng (mục 1.7). Ca quét tab 13 đầu tiên là **06:00 Asia/Saigon** đầu ca; việc giao sau 06:00 đọc vào 06:00 hôm sau. CEO có thể ra lệnh quét ngoại lệ ngoài 06:00 bằng lệnh trực tiếp ở chat chính — lần quét đó vẫn theo đủ điều kiện nhận dòng.
+
+#### 3.3 Ca quét tab 13 — từng bước
+
+1. Đọc tab `13_COO_Tasks` đúng 1 lần lúc 06:00 +07 đầu ca (hoặc theo lệnh quét ngoại lệ của CEO ở chat chính).
+2. Chỉ nhận dòng thỏa **cả 3 điều kiện**: (a) cột **B** = email khai báo trong bộ nhớ; (b) cột **E** chưa phải "Hoàn thành"; (c) cột **G** còn trống. Dòng email khác thì bỏ qua ("không khớp email khai báo của mình").
+3. Ghi ID vào cột A **trước khi phân việc**: dạng `COO-YYYYMMDD-NN`. **Ngày trong ID lấy theo ngày COO đọc/nhận** (không còn cột ngày giao — đã bỏ hẳn 05/11/2026). Số thứ tự NN tính theo ngày đọc/nhận. Chưa có ID thì không phân việc.
+4. Chuyển E sang "Đang làm" ngay khi ghi ID. Cột E chỉ dùng 4 giá trị: Assigned / Đang làm / Hoàn thành / Tắc. "Blocked" **không phải** giá trị E tab 13.
+5. Điền cột F Deadline khi nhận việc, luôn dạng `YYYY-MM-DD HH:MM +07`.
+6. Tự phân việc chi tiết ở cột D (phòng nào, việc gì, ID 01_Tasks nào nếu có), tự giao cho các phòng qua chat, không chờ CEO, không hỏi lại trừ khi mơ hồ hoặc vượt phạm vi.
+7. Báo cáo trên cùng dòng khi xong: E = Hoàn thành, G = `YYYY-MM-DD HH:MM +07`, H = kết quả (viết ngắn + link bằng chứng; chỉ khi tắc mới ghi "cần CEO" trong H). Công thức hoàn thành thống nhất: **"Thiếu E, G hoặc H thì chưa xong."**
+8. **3 kênh giao việc duy nhất:** (1) chat chính — CEO giao trực tiếp; (2) lịch bot đã được CEO duyệt (kể cả bot-pipeline); (3) COO qua tab 13. Phòng không tự phát sinh nhiệm vụ sản xuất mới chỉ vì đọc Sheet hay lịch sử fork.
+
+#### 3.4 Cổng sản xuất — đủ cả 3 mới được giao
+
+Chủ đề chỉ được giao khi đồng thời: (1) Trạng thái **Approved** trong 06_Topics; (2) cột O "Duyệt thủ công" = **"Duyệt"** (chủ đề mới do **Scout** ghi O = "Chờ duyệt"; Scoring không động vào cột O; chỉ CEO đổi cột O thành "Duyệt"); (3) **chưa có dòng `*-DRAFT`** trong 01_Tasks và chưa có project đang chạy cho chủ đề đó.
+
+- **Không có ngoại lệ vượt cổng O.** Cách duy nhất để cột O thành "Duyệt" là CEO tự đổi trên Sheet; ghi "vượt cổng O" trong lệnh chat hay dòng tab 13 đều **không** mở cổng. Lệnh trực tiếp cho chủ đề chưa đủ cổng thì chờ cho tới khi CEO đổi O.
+- Một nhiệm vụ = một chủ sở hữu duy nhất. Trước khi giao, kiểm tra 01_Tasks và thư mục project, khóa bằng dòng Assigned / `*-DRAFT` (không ghi đè, không xóa dòng cũ). Đã có chủ sở hữu/DRAFT/đang chạy thì không giao lại, không spawn song song. **Chỉ Production và bot-pipeline được tạo dòng `*-DRAFT`** (COO không tạo); khi Production nhận việc mà dòng DRAFT đã có sẵn nhưng cột O còn trống thì điền ngay cột O = email khai báo của mình trước mọi bước khác.
+
+#### 3.5 Cửa chặn ảnh thật trước AI — làm đúng thứ tự
+
+1. Kịch bản Việt Nam: **bỏ qua Wikipedia và Stock hoàn toàn**; chỉ tìm ảnh thật từ nguồn gốc bằng từ khóa tiếng Việt (bài báo về đúng vụ việc, bài đăng công khai, tìm kiếm hình ảnh). Ảnh báo không logo/watermark/chữ được dùng thẳng kèm ghi nguồn theo quyết định chịu rủi ro của CEO 29/10/2026.
+2. Chỉ sau khi thử nhiều từ khóa mà không có ứng viên phù hợp mới được tạo AI từ prompt, ghi rõ "AI từ prompt, không có ảnh tham chiếu, đã thử các từ khóa: …" — **cấm ghi chung chung "AI generic"**.
+3. Ảnh có logo/watermark/chữ: **cắt (crop) trước**; nếu cắt không sửa được thì AI tạo lại **từ chính ảnh gốc làm tham chiếu**, prompt của CEO: "Tạo ảnh giống ảnh tham chiếu, chỉ loại bỏ chữ hoặc watermark trên ảnh"; bắt buộc đối chiếu trực quan với ảnh gốc, méo thì loại. Không tạo từ prompt chữ khi không có ảnh tham chiếu. Hồ sơ = URL gốc + prompt + ghi chú + kết quả đối chiếu + ghi chú rủi ro CEO.
+4. **Nhật ký từ khóa bắt buộc cho mỗi cảnh** (từ khóa đã thử, ứng viên + link + nguồn, phân loại, lý do loại). QA **TRẢ LẠI** video nếu cảnh AI thiếu nhật ký. Cửa này **đã có trong code**: preflight chặn khi scene thiếu `mediaSource.source`, thiếu `media-log.json` hoặc thiếu `keywordsTried`, và chặn cả scene nền rêu có gắn nguồn (B7); `gen_images` chỉ bỏ qua file khi giải mã được hết bằng PIL (A23).
+5. **Nền xanh rêu không thay thế ảnh:** nền `#1C372A`, kẻ ô vuông 80px (lưới `#2A4D3B`, dày 2px), **không thêm bất kỳ chữ nào**; ngoại lệ duy nhất là scene khai `cardImage` thì dùng chính ảnh đó làm nền, **vẫn không chữ**. Scene chỉ có nền này vẫn tính là **thiếu ảnh**; 3 giây đầu không được là nền xanh rêu trơn. `cardImage`/`bgImage` khai mà file không tồn tại hoặc nằm ngoài project: in `CARDIMAGE-MISSING` ra stderr rồi rơi về nền rêu, không chặn.
+6. **Ranh giới AI cho nhân vật có tên (LOGIC.md là nơi chuẩn):** Nhóm A (nhân vật công chúng có nhiều thông tin công khai đã kiểm chứng — vd tổng thống Mỹ, Messi, Chủ tịch nước Tô Lâm): được tạo chân dung AI **chỉ khi cần thiết** (đã tìm ảnh thật mà không có ứng viên phù hợp), chỉ dùng thông tin công khai đã kiểm chứng, ghi rõ "ảnh AI minh họa, không phải ảnh thật". Nhóm B (nhân vật thiếu thông tin): chỉ góc rộng / sau lưng / bóng mờ / bàn tay (chỉ khi là vật chứng, vd bàn tay đang ký giấy tờ — không cận cảnh bàn tay để nhận diện người) / vật chứng / ngoại cảnh / ghế trống; **không cận mặt, không dùng tên làm chỉ dẫn ngoại hình**. Không chắc thì xếp nhóm B.
+
+#### 3.6 Hằng số pipeline — dùng đúng số đã chốt, không tự đổi
+
+- Khung hình mặc định **9:16** (720x1280). Phụ đề: lề dọc **20%**, lề ngang **7%**.
+- TTS chunk tối đa **140 ký tự** (`normalize_chunks.py` `MAX_CHARS = 140`). Pause sau mỗi part mặc định **180ms**.
+- ZIP bàn giao gồm **file BGM thật** + `broll-plan.json` + `abbr_dict.json` (trừ `silence_*`, `_thumb_*`, `render_page.html`); `timeline.json`/`project.json` không trỏ `audio/bgm/` (khác biệt có chủ ý, đã ghi rõ).
+- **BGM thiếu file thì CHẶN:** preflight exit 1, render in `RENDER-ERROR`, assemble in `ASSEMBLE-ERROR` và xóa ZIP tạm. Plan không chọn BGM thì vẫn render bình thường. BGM đã chọn nhưng `bgm.file` trống/thiếu cũng chặn.
+- Preview và render đều nhận **jpg/png/webp**, tra đúng tên rand6, không glob. `pickMedia`: timeout **60 giây**, cap **100 MB**, kiểm content-type và magic bytes.
+- Thời lượng: **đề xuất 2–3 phút, Production tự quyết**; QA không trả lại video chỉ vì thời lượng (lệnh CEO tối 29/10/2026; chuẩn 180–300s đã bãi).
+- `safeId()` chặn id rỗng / chỉ dấu chấm / chứa `..` / ký tự ngoài `[A-Za-z0-9._-]`; `deleteProjectForever` có lớp chặn thứ hai.
+- Ngưỡng inline voice **10.000.000 byte** (4C, mục 2.1).
+
+#### 3.7 Bàn giao Drive + Sheet — chỉ tính là xong khi đủ I và J
+
+1. Chỉ bàn giao video **đã được QA duyệt**. QA tải lên **NGAY trong cùng lượt duyệt** lên thư mục Drive "Video Muse", không chờ ca pipeline; bot-pipeline chỉ làm lưới bắt sót.
+2. Ghi link thật vào tab 08_Publish_Tracking (một dòng cho một video) và vào tab 01_Tasks; không bịa link, không tự tạo thư mục khác, không tự thay đổi quyền thư mục.
+3. Cùng dòng tab 08 đó phải điền đủ 2 cột:
+
+- **Cột I "Người sản xuất (email tài khoản Muse)"** — theo quy tắc mục 2.2 Bước 3.
+- **Cột J "Hạn mức còn lại"** — **QA TỰ ĐỌC lại hạn mức tại thời điểm upload** (lựa chọn 8A); chỉ ghi bằng chữ, **KHÔNG chụp ảnh màn hình**, vd "Muse tuần đã dùng 10%, còn 90%, reset 9/11 lúc 14:14 +07; token thêm còn 1B". Không đọc được thì ghi "không đọc được", không bịa số.
+
+4. Thiếu 1 trong 2 cột I/J thì chưa tính là bàn giao xong — báo cáo ghi "chưa xong bước Drive + Sheet". Video cũ bàn giao trước 04/11/2026 thì để trống 2 cột, không điền ngược.
+5. Sau khi bàn giao xong, 01_Tasks chuyển sang Duyệt; COO đóng dòng tab 13 bằng E = Hoàn thành, G và H đầy đủ (mục 3.3). QA không tự ghi vào tab 13.
+6. **Snapshots (12B):** chỉ bảng DB `snapshots` đã xóa (migration 0004 `DROP TABLE snapshots`); tính năng snapshot trên filesystem vẫn sống (giữ 30 bản, tự snapshot trước save/render). Không xóa tính năng.
+
+#### 3.8 TUYỆT ĐỐI KHÔNG làm trong lần khởi tạo
+
+1. Không push GitHub khi chưa có CEO duyệt riêng sau phân tích.
+2. Không tự tạo thư mục Drive khác, không tự thay đổi quyền thư mục, không tự chia sẻ Drive công khai.
+3. Không đoán email, không dùng email Drive/GitHub/Facebook thay email khai báo, không copy email/MEMORY của tài khoản cũ.
+4. Không sản xuất khi chưa đủ cổng 3 điều kiện; không tự tạo `*-DRAFT` cho chủ đề chưa duyệt; không sản xuất hàng loạt không kiểm soát.
+5. Không tự phát sinh nhiệm vụ sản xuất mới chỉ vì đọc Sheet hay lịch sử fork; chỉ làm việc khi được giao qua đúng 1 trong 3 kênh.
+6. Không chi tiền, không cam kết ngoài, không đăng nền tảng, không affiliate, không ghi số liệu views/follow/doanh thu/hoa hồng (publish-checklist.md là tài liệu lịch sử, **KHÔNG dùng làm checklist hiện hành**).
+7. Không sửa kết quả chấm điểm trong 06_Topics; không tự đổi cột O thành "Duyệt" (chỉ CEO đổi); không sửa migration đã áp dụng; không sửa tay file `.generated` (build lại để đồng bộ — contract đã được tạo lại chính thức ngày 05/11/2026); không chạy `bun run build`; không sửa bundle đã build dưới `~/workspace/ts-spaces/<slug>/.space-build/`; không chạy sqlite/script trực tiếp vào `app.db`.
+8. Không đổi tên tab Sheet (giữ tiền tố số 00–13), không xóa dòng Sheet cũ, không dùng lệnh Drive ghi đè lên file Google Sheet.
+9. Không bịa nguồn/link/điểm số, không ghi "đã xóa bằng AI" khi chưa có output đối chiếu thật, không ghi "AI generic" để lấp hồ sơ, không gắn nhãn ảnh AI là "tư liệu thật".
+
+#### 3.9 Xử lý khi gặp sự cố trong lần khởi tạo
+
+- **Thẻ phê duyệt upload Drive hết hạn (30 phút):** KHÔNG phải bị từ chối, KHÔNG phải file hỏng. Không ghi dòng tab 08 thiếu link, không chuyển 01_Tasks sang Duyệt; báo chat chính "chưa xong bước Drive + Sheet vì thẻ phê duyệt hết hạn"; **chạy lại upload để hệ thống cấp thẻ mới** (thẻ mới vẫn cần bấm trong 30 phút); trước khi chạy lại, chắc chắn CEO đã cấp phép toàn quyền cho QA **hoặc** CEO đang có mặt để bấm thẻ.
+- **Cột I thiếu thông tin (bàn giao ghi "chưa xác định"):** lấy email khai báo trong bộ nhớ theo mục 2.2, không hỏi lại CEO. Chỉ khi bộ nhớ cũng chưa có thì mới ghi "chưa xác định — hỏi CEO".
+- **Không còn chủ đề đủ cổng:** báo ngắn về chat chính, không tự sản xuất chủ đề chưa đủ cổng, không tự tạo DRAFT cho chủ đề chưa duyệt.
+- **Lỗi 429/403/rate-limit:** dừng nhánh đó, ghi blocker vào nhật ký ngày, **không thử lại**.
+- **Thẻ phê duyệt hệ thống vẫn hiện dù đã cấp phép toàn quyền:** đó là luật hệ thống, không phải QA hỏi lại.
+- **Quyền phê duyệt (để CEO cài trước, không phải để agent cài):** nhiều quyền cài trước Allow ở Settings > Permissions để khỏi hỏi lại từng lần; nhưng **không đạt "không bao giờ hỏi lại" cho mọi thứ** — upload Drive vẫn hiện thẻ mỗi lần và không có standing Allow; mạng trực tiếp không có lựa chọn Allow; upload file mới qua trình duyệt và đăng artifact vẫn hỏi lại mỗi lần; mua hàng vẫn cần phê duyệt mỗi lần (trừ phê duyệt thanh toán của một lịch đã tạo bao các lần mua sau cùng lịch, cùng cửa hàng, cùng phương thức thanh toán). Agent **không cài được** các quyền này từ trong chat — CEO phải cài ở màn hình Settings của app.
+
 
 ## 5. Google Sheet (dữ liệu vận hành, không phải code)
 
 - Cùng tài khoản: tìm workbook theo tên "HQ - Công ty 1 người" qua
   connector, dùng tiếp Sheet đang chạy (không tạo mới, không ghi đè).
 - Khác tài khoản: tạo workbook mới từ
-  `company-os/google-sheet-spec.md` — đúng 13 tab
-  (`00_Dashboard` … `12_Repo_Updates`), bắt đầu trống, không chép
+  `company-os/google-sheet-spec.md` — đúng 14 tab
+  (`00_Dashboard` … `13_COO_Tasks`), bắt đầu trống, không chép
   dữ liệu cũ.
 - Tuyệt đối không dùng lệnh Drive ghi đè lên file Google Sheet.
 
 ## 6. Drive + Facebook + app
 
-- Drive: tìm/tạo thư mục "Video Muse" theo tên qua connector; KHÔNG tự
-  chia sẻ công khai (quyết định của CEO).
+- Drive: tìm/tạo thư mục "Video Muse" theo tên qua connector; thư mục "Video Muse" đã được CEO cấp quyền anyone with link ngày 05/11/2026; không tự tạo thư mục khác, không tự thay đổi quyền thư mục.
 - Facebook: liên kết lại qua Meta Accounts Center (một tài khoản dùng
   chung); bot không tự tham gia group mới.
 - App `app-tao-video` là artifact, không phải repo git: cùng tài khoản
   thì dùng chung artifact, khác tài khoản thì tạo lại app bằng
   artifact tools. Khi tạo lại, CHÉP NGUYÊN TOÀN BỘ cây `app-tao-video/`
-  (48 file: client/src App.tsx + lib.ts + 11 component theo tab; server/src
+  (47 file: client/src App.tsx + lib.ts + 11 component theo tab; server/src
   priv/ 9 module + privileged.ts + actions.ts + schema.ts + script-prompt.ts
   + script-prompt.test.ts; drizzle 0001–0003; theme.css, config, space.json —
   kể cả `AGENTS.md`, `DATA-PLAN.md`, `bun.lock`, `bunfig.toml`,
@@ -97,9 +366,15 @@ Muse GitHub App, KHÔNG BAO GIỜ chuyển repo sang public.
   từ mô tả, vì giao diện nằm trong chính code đó (App.tsx, theme.css)
   nên chép nguyên thì giao diện giống hệt app cũ. Bản build `client/dist`, `server/dist` và `.tsbuildinfo` KHÔNG nằm trong repo (sản phẩm build, build lại khi tạo artifact).
 
-app.db không chuyển qua git nên app mới mở ra danh sách project trống (đó là dữ liệu, không phải giao diện).
+app.db không chuyển qua git nên chỉ state trong app.db (jobs, trash, auto_progress) là trống khi mở app mới; danh sách project vẫn hiện nếu FACTORY trỏ đúng cùng một factory dùng chung, vì project đọc từ thư mục factory, không nằm trong app.db (đó là dữ liệu, không phải giao diện).
 
 > Ghi chú M23: dependency `file:/opt/hatch/skills/spaces/ts-runtime/dist/space-sdk.tgz` trong `package.json` do runtime artifact của Muse cung cấp khi tạo lại app, không nằm trong repo và không cần chép tay — trên máy clone, `bun install` sẽ không resolve được đường dẫn này nếu chạy ngoài Muse, nhưng app vốn chỉ chạy qua artifact nên không chặn clone-and-run theo §6.
+
+> Kiểm tra sau khi rebuild (lệnh CEO 05/11/2026, mục A27 — KHÔNG sửa tay file `.generated`, chỉ kiểm chứng sau khi build sinh lại). Kết quả lần rebuild 05/11/2026 (đã xong — ghi để lần sau khỏi kiểm lại từ đầu; lần rebuild sau vẫn kiểm lại 4 mục này vì code đã đổi thêm):
+> - `server/.generated/privileged.contract.ts` không còn `saveInput` sống (đã gỡ khỏi nguồn theo 12B; contract cũ còn sót dòng 273-279), và có đủ các lệnh mới: `clearSceneImage` (A22), trường `isMossGrid` trong scene (A21) — đã đạt trong rebuild 05/11/2026.
+> - Typecheck TypeScript phải qua cho các sửa từ 05/11/2026 (11A, A21, A22, A24, 4C — trước đó chỉ mới kiểm tra transpile, chưa typecheck) — đã qua trong môi trường build 05/11/2026 theo báo cáo builder (local không chạy được typecheck vì repo chưa từng `bun install`, xem B4).
+> - Contract sinh ra `.generated/privileged.contract.ts` đã tái sinh ngày 05/11/2026 bằng extractor chính thức (không sửa tay): hết entry `saveInput` sống (chỉ còn trong comment), có đủ `clearSceneImage` + `isMossGrid`; sinh lại lần 2 cho diff rỗng; test 14/14 pass.
+> - `FACTORY`/`SEARCH_MEDIA` trong `core.ts` trỏ đúng trên máy artifact thật (A25 — đã quyết và ghi vào repo ngày 05/11/2026; rebuild 05/11/2026 kiểm chứng: `listProjects` trả đủ 4 project thật trên máy artifact).
 
 ## 7. Tài sản nhị phân (ĐÃ nằm trong git từ 04/11/2026 — clone là có)
 
@@ -150,14 +425,15 @@ app.db không chuyển qua git nên app mới mở ra danh sách project trống
   dòng Assigned / *-DRAFT trong 01_Tasks trước khi làm; cấm chạy song
   song cùng nhiệm vụ ở chat chính và phòng ban. Phòng ban chỉ làm
   nhiệm vụ khi được giao cụ thể từ chat chính (hoặc từ lịch bot đã
-  được CEO duyệt, hoặc từ COO trong ca bot-pipeline), không tự phát
+  được CEO duyệt, hoặc từ COO qua tab 13_COO_Tasks), không tự phát
   sinh nhiệm vụ sản xuất mới chỉ vì đọc Sheet hay lịch sử fork.
+  Không có ngoại lệ vượt cổng O (lệnh CEO 05/11/2026, mục B16, phương án B — bãi bỏ A33/9A): chỉ sản xuất chủ đề đủ cả ba điều kiện Approved + cột O = "Duyệt" + chưa có *-DRAFT; cách duy nhất để cột O thành "Duyệt" là CEO tự đổi trên Sheet, ghi "vượt cổng O" ở bất cứ đâu đều không mở cổng.
 
 ## 9. Kiểm chứng cuối ("dựng xong" khi nào)
 
 - TTS sample ra WAV; factory scripts compile OK; ffmpeg OK; SFX mp3
   và bgm đã chép đủ (nếu render cần).
-- 5 skill đã đọc; Sheet đủ 13 tab (hoặc Sheet cũ tìm thấy theo tên);
+- 5 skill đã đọc; Sheet đủ 14 tab (hoặc Sheet cũ tìm thấy theo tên);
   thư mục Drive tìm thấy theo tên.
 - Dựng 1 video test bằng đúng pipeline (`PIPELINE.md`) → preflight
   ĐẠT, karaoke lines > 0 ở part không template, MP4 720x1280.

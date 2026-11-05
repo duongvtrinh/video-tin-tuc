@@ -9,7 +9,7 @@ type ResOf<K extends keyof typeof Factory> = z.infer<(typeof Factory)[K]["respon
 
 import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from "node:fs";
 import { basename, join } from "node:path";
-import { FACTORY, PROJECTS, ffprobe, findFirstGlob, projDir, randomSuffix, readJson, writeJson } from "./core";
+import { FACTORY, PROJECTS, ffprobe, projDir, rand6, randomSuffix, readJson, withPlanWriteLock, writeJson } from "./core";
 import { normalizePlanProvenance } from "./plan-normalize";
 import { buildMediaLibrary } from "./media-library";
 import { previewMd5, summarize, takeSnapshot } from "./projects";
@@ -64,14 +64,22 @@ export async function getProject({ projectId }: ArgsOf<"getProject">): Promise<R
       topic: "",
       content: "",
     });
-    const planRaw = readJson<unknown>(join(dir, "broll-plan.json"), null);
+    const planPath = join(dir, "broll-plan.json");
+    const planRaw = readJson<unknown>(planPath, null);
     // Pipeline projects leave scene.imageFile null and address the scene
     // image purely by the seg_<order>_* file convention. Fill it in the
-    // RETURNED copy only (the plan file on disk is not rewritten) so the
-    // UI shows the real scene image instead of falsely claiming "chưa có
-    // ảnh cảnh — render sẽ ra nền đen" for scenes whose image is sitting
-    // in build/media/images — that false black warning is part of why a
-    // good render was reported as a black video.
+    // RETURNED copy so the UI shows the real scene image instead of
+    // falsely claiming "chưa có ảnh cảnh — render sẽ ra nền đen" for
+    // scenes whose image is sitting in build/media/images — that false
+    // black warning is part of why a good render was reported as a black
+    // video. B5-C (05/11/2026, lệnh CEO): ghi hẳn imageFile đã điền xuống
+    // đĩa ngay trong getProject để UI/server khớp nhau vĩnh viễn — nút
+    // "Xóa ảnh cảnh này" (clearSceneImage chỉ đọc plan trên đĩa) không
+    // còn báo thành công giả với project pipeline (imageFile null). B21
+    // (05/11/2026, lệnh CEO, lựa chọn A): chỉ điền khi file khớp đúng tên
+    // rand6 của cảnh (hợp đồng tên file, như A24 partImagePath); file lạ
+    // không khớp thì không điền gì cả — UI không hiện ảnh lạ.
+    const filled: Array<{ order: number; file: string }> = [];
     if (planRaw && typeof planRaw === "object") {
       const scenes = (planRaw as { scenes?: unknown }).scenes;
       if (Array.isArray(scenes)) {
@@ -82,12 +90,41 @@ export async function getProject({ projectId }: ArgsOf<"getProject">): Promise<R
           if (typeof s["imageFile"] === "string" && s["imageFile"]) continue;
           const order = s["order"];
           if (typeof order !== "number") continue;
-          const hit =
-            findFirstGlob(imagesDir, `seg_${order}_`, ".jpg") ??
-            findFirstGlob(imagesDir, `seg_${order}_`, ".png") ??
-            findFirstGlob(imagesDir, `seg_${order}_`, ".webp");
-          if (hit) s["imageFile"] = basename(hit);
+          const stem = `seg_${order}_${rand6(projectId, "img", order)}`;
+          const hit = (["jpg", "png", "webp"] as const)
+            .map((ext) => join(imagesDir, `${stem}.${ext}`))
+            .find((p) => existsSync(p));
+          if (hit) {
+            s["imageFile"] = basename(hit);
+            filled.push({ order, file: basename(hit) });
+          }
         }
+      }
+    }
+    if (filled.length > 0) {
+      const planPathForWrite = planPath;
+      // Mọi file đã điền đều khớp đúng tên rand6 (tra ở trên) nên ghi
+      // thẳng xuống đĩa, không cần lọc lại như B5-C ban đầu.
+      const persistable = filled;
+      if (persistable.length > 0) {
+        // Ghi dưới khóa ghi plan, đọc lại plan mới rồi chỉ điền chỗ còn
+        // trống, để không ghi đè cập nhật song song.
+        await withPlanWriteLock(projectId, () => {
+          const fresh = readJson<Record<string, unknown> | null>(planPathForWrite, null);
+          if (!fresh || typeof fresh !== "object") return;
+          const scenes = (fresh as { scenes?: unknown }).scenes;
+          if (!Array.isArray(scenes)) return;
+          for (const { order, file } of persistable) {
+            const sc = scenes.find(
+              (x): x is Record<string, unknown> =>
+                !!x && typeof x === "object" && (x as Record<string, unknown>)["order"] === order,
+            );
+            if (!sc) continue;
+            if (typeof sc["imageFile"] === "string" && sc["imageFile"]) continue;
+            sc["imageFile"] = file;
+          }
+          writeJson(planPathForWrite, fresh);
+        });
       }
     }
     const tts = readJson<{
@@ -207,13 +244,11 @@ export async function saveScript({ projectId, content, topic }: ArgsOf<"saveScri
     return { ok: true as const };
   }
 
-export async function saveInput({ projectId, input }: ArgsOf<"saveInput">): Promise<ResOf<"saveInput">> {
-    writeJson(join(projDir(projectId), "input.json"), input);
-    return { ok: true as const };
-  }
-
 export async function savePlan({ projectId, plan }: ArgsOf<"savePlan">): Promise<ResOf<"savePlan">> {
-    normalizePlanProvenance(plan);
+    // B41 (06/11/2026, lệnh CEO, lựa chọn A): không ghi "Chưa ghi nguồn"
+    // bịa xuống đĩa — plan thiếu source thì cảnh báo thiếu nguồn ở dưới
+    // vẫn chạy; bản trả về cho UI (getProject) vẫn bịa nhãn hiển thị.
+    normalizePlanProvenance(plan, { inventSource: false });
     const problems: string[] = [];
     const ids = new Set<string>();
     const templateIds = new Set(
@@ -256,11 +291,17 @@ export async function savePlan({ projectId, plan }: ArgsOf<"savePlan">): Promise
     const imagesDir = join(projDir(projectId), "build/media/images");
     const brollDir = join(projDir(projectId), "build/media/broll");
     for (const scene of plan.scenes) {
+      // A21 (05/11/2026): cảnh nền rêu có cảnh báo RIÊNG, không dùng chung
+      // cảnh báo thiếu source — nền rêu không phải ảnh, vẫn tính là thiếu
+      // ảnh ở tầng hồ sơ/QA (preflight chặn riêng ở cửa A20).
+      if (scene.isMossGrid) {
+        problems.push(`Cảnh báo: cảnh ${scene.order} chỉ có nền xanh rêu kẻ ô vuông, chưa có ảnh — vẫn tính là thiếu ảnh ở tầng hồ sơ/QA`);
+      }
       if (scene.imageFile) {
         if (!existsSync(join(imagesDir, scene.imageFile))) {
           problems.push(`Cảnh báo: cảnh ${scene.order} trỏ ảnh ${scene.imageFile} nhưng file không có trên đĩa`);
         }
-        if (!sourceOf(scene.mediaSource)) {
+        if (!sourceOf(scene.mediaSource) && !scene.isMossGrid) {
           problems.push(`Cảnh báo: cảnh ${scene.order} đã có ảnh nhưng mediaSource thiếu trường source (luật nguồn 29/10)`);
         }
       }
@@ -309,7 +350,13 @@ export async function savePlan({ projectId, plan }: ArgsOf<"savePlan">): Promise
   }
 
 export async function deleteProjectForever({ projectId }: ArgsOf<"deleteProjectForever">): Promise<ResOf<"deleteProjectForever">> {
-    rmSync(projDir(projectId), { recursive: true, force: true });
+    // Lớp chặn thứ hai (vá audit 05/11/2026): không bao giờ xóa thư mục
+    // projects/ gốc, dù safeId() có bị lách trong tương lai.
+    const dir = projDir(projectId);
+    if (dir === PROJECTS) {
+      throw new Error(`Từ chối xóa thư mục projects/ gốc: ${projectId}`);
+    }
+    rmSync(dir, { recursive: true, force: true });
     return { ok: true as const };
   }
 

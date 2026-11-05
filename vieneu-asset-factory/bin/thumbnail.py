@@ -15,7 +15,7 @@ import textwrap
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from filename import rand6  # noqa: E402
+from filename import check_plan, rand6  # noqa: E402
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -23,15 +23,27 @@ _SYMLINK_FACTORY = Path.home() / "workspace" / "asset-factory"
 # May goc giu symlink cu (khong doi hanh vi); ban clone monorepo
 # khong co symlink thi resolve tu vi tri file script (bin/../).
 FACTORY = _SYMLINK_FACTORY if _SYMLINK_FACTORY.exists() else Path(__file__).resolve().parent.parent
+if FACTORY == _SYMLINK_FACTORY:
+    # B46 (06/11/2026, lệnh CEO, lựa chọn A): dấu vết khi dùng nhầm
+    # root cũ — đường symlink ~/workspace/asset-factory đã lỗi thời,
+    # factory chuẩn là layout repo (bin/../).
+    print(f"  warn: FACTORY resolve qua symlink cu {_SYMLINK_FACTORY} — kiem tra lai duong factory", file=sys.stderr)
+
 W, H = 1280, 720
 GOLD = (251, 191, 36)
 
 
 def font(size, bold=True):
-    for name in ("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-                 if bold else
-                 "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-                 "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"):
+    # B43 (06/11/2026, lệnh CEO, lựa chọn A): Anton là font chuẩn của
+    # toàn pipeline (phụ đề karaoke.py, template lib/render-engine.js),
+    # đã cài trên máy này (~/.fonts/Anton-Regular.ttf); DejaVu giữ làm
+    # fallback cho máy khác chưa cài Anton.
+    candidates = [str(Path.home() / ".fonts" / "Anton-Regular.ttf"),
+                  ("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+                   if bold else
+                   "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+                  "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"]
+    for name in candidates:
         try:
             return ImageFont.truetype(name, size)
         except Exception:
@@ -40,14 +52,26 @@ def font(size, bold=True):
 
 
 def base_image(proj, pid, order, pi):
-    b = (proj / "build" / "media" / "broll" /
-         f"broll_seg_{order}_part_{pi}_{rand6(pid, 'broll', str(order), str(pi))}.jpg")
-    if b.exists():
-        return Image.open(b).convert("RGB")
-    s = (proj / "build" / "media" / "images" /
-         f"seg_{order}_{rand6(pid, 'img', str(order))}.jpg")
-    if s.exists():
-        return Image.open(s).convert("RGB")
+    # 11A: anh co the la jpg/png/webp — thu theo thu tu do, dong bo voi
+    # preview va render.
+    # B43 (06/11/2026, lệnh CEO, lựa chọn A): ảnh hỏng thì thử ứng viên
+    # tiếp theo thay vì văng cả script — trước đây Image.open không try.
+    for ext in ("jpg", "png", "webp"):
+        b = (proj / "build" / "media" / "broll" /
+             f"broll_seg_{order}_part_{pi}_{rand6(pid, 'broll', str(order), str(pi))}.{ext}")
+        if b.exists():
+            try:
+                return Image.open(b).convert("RGB")
+            except Exception as exc:
+                print(f"  warn: bo qua b-roll hong {b.name}: {exc}", file=sys.stderr)
+    for ext in ("jpg", "png", "webp"):
+        s = (proj / "build" / "media" / "images" /
+             f"seg_{order}_{rand6(pid, 'img', str(order))}.{ext}")
+        if s.exists():
+            try:
+                return Image.open(s).convert("RGB")
+            except Exception as exc:
+                print(f"  warn: bo qua anh scene hong {s.name}: {exc}", file=sys.stderr)
     return None
 
 
@@ -131,6 +155,13 @@ def main() -> int:
     inp = json.loads((proj / "input.json").read_text(encoding="utf-8"))
     tts = json.loads((proj / "tts.json").read_text(encoding="utf-8"))
     plan = json.loads((proj / "broll-plan.json").read_text(encoding="utf-8"))
+    # B28 (06/11/2026, lệnh CEO, lựa chọn A): guard cấu trúc plan —
+    # trước đây plan hỏng crash trần KeyError ở vòng chọn part bên dưới.
+    try:
+        check_plan(plan, require_voice_text=True)
+    except ValueError as exc:
+        print(f"{exc}", file=sys.stderr)
+        return 1
     title = sys.argv[2] if len(sys.argv) > 2 else inp.get("topic", "Video")
     # rút gọn tiêu đề cho thumbnail
     title = title.replace("Kịch bản ", "").strip()
@@ -140,16 +171,24 @@ def main() -> int:
     # chọn 3 part đắt: ưu tiên part có template chữ, rải đều video
     tpl_parts = []
     for sc in plan["scenes"]:
-        for p in sc["parts"]:
+        # B43 (06/11/2026, lệnh CEO, lựa chọn A): dùng enumerate thay cho
+        # .index(p) — .index trả về part đầu tiên trùng dict, sai pi khi
+        # có 2 part giống hệt nhau.
+        for pi, p in enumerate(sc["parts"], start=1):
             br = p.get("broll") or {}
             if br.get("templateId"):
-                tpl_parts.append((sc["order"], sc["parts"].index(p) + 1, p))
+                tpl_parts.append((sc["order"], pi, p))
     picks = []
     if tpl_parts:
         idxs = [0, len(tpl_parts) // 2, len(tpl_parts) - 1]
         for ii in dict.fromkeys(idxs):
             picks.append(tpl_parts[ii])
     else:
+        # B43: tts.json rỗng thì báo rõ, không crash IndexError ở
+        # tts["parts"][0] như trước.
+        if not tts.get("parts"):
+            print("không có part nào trong tts.json để làm thumbnail", file=sys.stderr)
+            return 1
         mid = len(tts["parts"]) // 2
         for p in [tts["parts"][0], tts["parts"][mid], tts["parts"][-1]]:
             picks.append((p["sceneOrder"], p["partIdx"], p))

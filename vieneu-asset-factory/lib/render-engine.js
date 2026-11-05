@@ -60,6 +60,20 @@
  *    template hiển thị đúng như bản render.
  *  - Karaoke: highlight từng từ #FBBF24 theo [start,end); part có
  *    template chữ thật (subsHidden) thì KHÔNG hiện phụ đề.
+ *  - HẰNG SỐ ĐÃ CHỐT (Giai đoạn 4, 05/11/2026 — xem PIPELINE.md mục
+ *    "Hằng số pipeline đã chốt"): khung mặc định 9:16 khi thiếu
+ *    aspectRatio (host tính W/H, engine chỉ nhận W/H); phụ đề cách đáy
+ *    20% chiều cao khi dọc, 7% khi ngang (khớp karaoke.ass MarginV —
+ *    trước đây subsDiv ghim 7% cả hai chiều nên preview dọc lệch MP4);
+ *    font phụ đề 40*(min(W,H)/480) khớp karaoke.py; zoom tối đa 1.05,
+ *    chuyển cảnh 0.5s, accent theo bảng ACCENT_HEX của
+ *    render_template.py (host phải gắn part.tplAccent = accent.default
+ *    trong meta thì preview mới khớp MP4 — build_render_page.py đã gắn).
+ *    PREVIEW CHỈ LÀ XẤP XỈ ở: pan blur-fill (xem COMP_KEYFRAMES),
+ *    easing (cubic-bezier xấp xỉ smoothstep của ffmpeg), độ mờ nền
+ *    (CSS blur 30px + scale 1.1 so với gblur sigma=25 của ffmpeg) và
+ *    co chữ template (preview vẽ HTML đúng cỡ stage, MP4 vẽ PNG rồi
+ *    co 92%W/80%H trừ full-stage) — xem PIPELINE.md liệt kê đầy đủ.
  *  - Phụ đề fallback: host tự xử lý khi không có karaoke (ngoài engine).
  *  - Font DUY NHẤT (CEO chốt 30/10/2026): Anton cho MỌI template và cho
  *    phụ đề karaoke — ở preview này và ở bản render ffmpeg (karaoke.py
@@ -353,7 +367,12 @@
     stage.appendChild(brollDiv);
 
     subsDiv = document.createElement('div');
-    subsDiv.style.cssText = 'position:absolute;left:0;right:0;bottom:7%;text-align:center;pointer-events:none;';
+    // Vị trí phụ đề: 20% chiều cao khi dọc, 7% khi ngang — khớp
+    // karaoke.ass MarginV (karaoke.py) và render_draft.py. Trước đây
+    // ghim 7% cả hai chiều nên preview video dọc đặt phụ đề thấp hơn
+    // MP4 (MP4 cách đáy 20%H). CSS bottom % tính theo chiều cao stage
+    // nên 20%/7% tương đương đúng MarginV theo px của .ass.
+    subsDiv.style.cssText = 'position:absolute;left:0;right:0;bottom:' + (data.H > data.W ? '20%' : '7%') + ';text-align:center;pointer-events:none;';
     stage.appendChild(subsDiv);
     lastSubsHtml = null;
 

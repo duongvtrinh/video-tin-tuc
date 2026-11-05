@@ -408,7 +408,9 @@ export function AutoPanel({ detail, summary, onNavigate, unsavedScript, unsavedT
       const aiQueue: MediaNeed[] = [];
       for (const scene of cur.plan?.scenes ?? []) {
         if (cancelledRef.current) throw new Error("__cancelled__");
-        if (!scene.imageFile) {
+        // A21 (05/11/2026): cảnh nền rêu vẫn tính là thiếu ảnh thật nên
+        // luồng tự động cũng tìm media thật cho nó.
+        if (!scene.imageFile || scene.isMossGrid) {
           const summary = scene.sceneScriptSummary || scene.text || "";
           if (!summary && !scene.sceneImagePrompt) { failures.push(`Cảnh ${scene.order} (chưa có tóm tắt/prompt để tìm media)`); continue; }
           const need: MediaNeed = { sceneOrder: scene.order, partId: null, summary: summary || scene.sceneImagePrompt, prompt: scene.sceneImagePrompt, label: `cảnh ${scene.order}`, failLabel: `Cảnh ${scene.order}`, mediaType: "image" };

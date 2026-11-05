@@ -26,7 +26,7 @@
 
 - Ghi Approved khi tổng từ 70 điểm trở lên VÀ điểm quan tâm từ 30 trở lên, và ghi rõ góc làm. Điểm quan tâm = điểm Hot + điểm Khán giả (tối đa 50).
 
-- Cổng duyệt thủ công (luật CEO 31/10/2026, sửa đợt A 01/11/2026): Approved chỉ có nghĩa là ĐỦ ĐIỀU KIỆN để CEO duyệt thủ công, chưa phải là lệnh dựng. Chủ đề mới luôn ghi cột O "Duyệt thủ công" = "Chờ duyệt"; chỉ CEO đổi cột này thành "Duyệt" thì ca pipeline mới giao dựng. Scoring không tự ghi "Duyệt" vào cột O và không giao việc dựng.
+- Cổng duyệt thủ công (luật CEO 31/10/2026, sửa đợt A 01/11/2026): Approved chỉ có nghĩa là ĐỦ ĐIỀU KIỆN để CEO duyệt thủ công, chưa phải là lệnh dựng. Khi ghi chủ đề mới, Scout ghi cột O "Duyệt thủ công" = "Chờ duyệt"; chỉ CEO đổi cột này thành "Duyệt" VÀ chủ đề chưa có dòng `*-DRAFT` nào trong 01_Tasks thì ca pipeline mới giao dựng (sửa 05/11/2026, lựa chọn A3). Scoring không tự ghi "Duyệt" vào cột O và không giao việc dựng.
 
 - Cửa tiên quyết về mức độ quan tâm (quy tắc CEO 29/10/2026): cửa này xét TRƯỚC tổng điểm — một chủ đề không ai quan tâm thì không vào sản xuất dù mới, khả thi và rõ nguồn tới đâu. Chủ đề tổng từ 70 trở lên nhưng điểm quan tâm dưới 30 thì ghi Hold, không phải Rejected, kèm tín hiệu chờ: "chờ tín hiệu quan tâm rõ hơn trong 24 giờ (tương tác mạng xã hội tăng hoặc độ phủ báo chí rộng hơn)". Quan tâm có thể tăng theo thời gian nên Hold là trạng thái chờ đúng nghĩa, không phải loại bỏ.
 

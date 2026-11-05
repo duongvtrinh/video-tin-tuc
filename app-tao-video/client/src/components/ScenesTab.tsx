@@ -137,7 +137,9 @@ export function ScenesTab({ detail, catalogs }: { detail: ProjectDetail; catalog
                 <span className="mono text-xs text-[var(--dim)]">{scene.id}</span>
               </div>
               <div className="mt-1 flex flex-wrap items-center gap-2">
-                {scene.imageFile ? (
+                {scene.isMossGrid ? (
+                  <span className="rounded-full px-2 py-0.5 text-xs font-semibold" style={{ color: "var(--warn)", background: "color-mix(in srgb, var(--warn) 12%, transparent)" }}>Nền xanh rêu — thiếu ảnh</span>
+                ) : scene.imageFile ? (
                   <span className="rounded-full bg-[var(--surface2)] px-2 py-0.5 text-xs">Ảnh: <span className="mono">{scene.imageFile}</span>{scene.mediaSource ? ` · ${provText(scene.mediaSource).source}${provText(scene.mediaSource).license ? ` · ${provText(scene.mediaSource).license}` : ""}` : ""}</span>
                 ) : (
                   <span className="rounded-full px-2 py-0.5 text-xs font-semibold" style={{ color: "var(--bad)", background: "color-mix(in srgb, var(--bad) 12%, transparent)" }}>Chưa có ảnh cảnh — render sẽ ra nền đen</span>

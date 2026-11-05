@@ -8,7 +8,7 @@
 ## Tiêu chí duyệt 3 cửa — bắt buộc từ 2026-10-26 (nâng cấp theo phản hồi CEO: skill QA cũ còn yếu, video chưa đẹp và chưa giữ người xem)
 - Chỉ duyệt khi qua cả 3 cửa: (1) kỹ thuật sạch, (2) đẹp, (3) giữ người xem. Video sạch lỗi nhưng xấu hoặc buồn tẻ vẫn phải TRẢ LẠI, kèm điểm rơi theo mốc thời gian.
 - Xem toàn bộ ít nhất 1 lần để chấm kỹ thuật, xem lại lần 2 chỉ để chấm đẹp và giữ người xem.
-- Đẹp: 3 giây đầu có hình ảnh mạnh, không phải card chữ trơn hay cảnh tĩnh kéo dài; mỗi cảnh có tiêu điểm thị giác rõ, bố cục không rối, chữ tương phản tốt với nền, màu và font nhất quán; hình ảnh các cảnh đa dạng, không lặp cùng kiểu template, cùng góc, cùng tông màu ở 3 cảnh liên tiếp; motion mượt, không giật, không cắt chữ ở mép (lề an toàn 96px trái/phải, 140px trên ở 720x1280, zoom motion tối đa 1.05); phụ đề ngắn, đọc kịp, không che hình chính, không tràn mép.
+- Đẹp: 3 giây đầu có hình ảnh mạnh, không phải nền xanh rêu kẻ ô vuông trơn hay cảnh tĩnh kéo dài; mỗi cảnh có tiêu điểm thị giác rõ, bố cục không rối, chữ tương phản tốt với nền, màu và font nhất quán; hình ảnh các cảnh đa dạng, không lặp cùng kiểu template, cùng góc, cùng tông màu ở 3 cảnh liên tiếp; motion mượt, không giật, không cắt chữ ở mép (lề an toàn 96px trái/phải, 140px trên ở 720x1280, zoom motion tối đa 1.05); phụ đề ngắn, đọc kịp, không che hình chính, không tràn mép.
 - Giữ người xem: hook 0-3 giây có xung đột, câu hỏi hoặc con số gây tò mò và phải được trả lời ở cuối video (hook chung chung kiểu "hôm nay cùng tìm hiểu" là không đạt); mỗi 3-5 giây có một thay đổi (thông tin mới, hình mới, hoặc chuyển cảnh có lý do), cảnh tĩnh hoặc giọng đều đều không có điểm nhấn hơn 5 giây là điểm rơi; khoảng 50% video có một lần móc lại (câu hỏi mới, diễn biến mới, hoặc con số bất ngờ); kết video có kết luận rõ ràng và một câu chốt đáng nhớ, không kết lửng, không lặp lại mở đầu.
 - Kiểm tra tắt tiếng: tắt tiếng mà vẫn hiểu được ý chính qua hình và chữ thì mới đạt về mặt hình ảnh.
 - Khi trả lại: ghi rõ từng điểm rơi theo mốc thời gian và cách sửa cho từng điểm, ví dụ "12s: người xem rời vì cảnh tĩnh 6s không có thông tin mới — cần đổi hình và thêm con số", không ghi chung "video chưa hay".
@@ -20,9 +20,9 @@
 - Motion mới: vị trí tuyệt đối on/frames cho mọi kiểu, easing smoothstep, ảnh nguồn phóng 4x, zoom tối đa vẫn 1,05, lề 96px/140px không đổi. Khi chấm video mới, trích khung liên tiếp và đo độ đổi khung trong từng part: cảnh motion tốt có hầu hết các khung đổi nhẹ, không có chuỗi dài khung gần như đứng yên xen kẽ cú nhảy. Chuỗi đứng yên kéo dài trong một part là lỗi motion, phải trả lại kèm mốc thời gian.
 - Các video đã duyệt bằng motion cũ vẫn giữ trạng thái Duyệt, trừ khi CEO yêu cầu làm lại.
 
-## Cửa thời lượng — áp dụng cho video bàn giao nộp từ 27/10/2026 trở đi (quy tắc CEO)
-- Video bàn giao phải đủ 180-300 giây, đo bằng thời lượng thật của file MP4 cuối và đối chiếu tts.json, không đoán từ số từ. Dưới 180 giây là không đạt dù nội dung đúng và sạch lỗi, QA trả lại với yêu cầu mở rộng bằng góc đã kiểm chứng, không bịa số, không lặp ý, không giảm tốc độ TTS dưới 1.0. Mục tiêu an toàn 200-260 giây (Án mạng karaoke 226,15 giây là ví dụ đúng).
-- Ngoại lệ duy nhất là clip test kỹ thuật ghi rõ là test pipeline (test001 4,04 giây, textdensity001 12,5 giây). Quy tắc này không thu hồi các video đã duyệt trước đó (TOPIC-004 v2 37,29 giây, Hormuz v3 68,71 giây, Chợ nổi v2 55,53 giây).
+## Cửa thời lượng — lệnh tự quyết của CEO tối 29/10/2026 thay thế chuẩn 180-300s ngày 27/10 (sửa 05/11/2026, lựa chọn A5)
+- Đề xuất video 2-3 phút; Production tự quyết độ dài và KHÔNG hỏi lại CEO về cắt hay ngoại lệ. Chuẩn cũ 180-300 giây và cơ chế "ngoại lệ độ dài chỉ khi CEO cho phép rõ ràng từng video" đã bị thay thế — QA không trả lại video chỉ vì ngắn hơn 180 giây hay dài hơn 300 giây. Đo bằng thời lượng thật của file MP4 cuối và đối chiếu tts.json, không đoán từ số từ. Bằng chứng áp dụng: đã duyệt TOPIC-039 144,1 giây, TOPIC-029 151,1 giây, TOPIC-041 164,9 giây (dưới 180 giây) và TOPIC-232 219,37 giây, TOPIC-048 255,3 giây (dài hơn 2-3 phút).
+- Ngoại lệ duy nhất còn giữ nguyên nghĩa là clip test kỹ thuật ghi rõ là test pipeline (test001 4,04 giây, textdensity001 12,5 giây). Quy tắc này không thu hồi các video đã duyệt trước đó (TOPIC-004 v2 37,29 giây, Hormuz v3 68,71 giây, Chợ nổi v2 55,53 giây).
 
 ## Quy tắc mật độ chữ — áp dụng cho video nộp từ 27/10/2026 trở đi (upstream c9222959, docs/TEXT_DENSITY_RULES.md)
 - Mặc định một part không gắn template chữ; chỉ gắn khi là beat nhấn mạnh (con số, mốc thời gian, trích dẫn, luận điểm, đối đầu, tỉ số, mở chương, câu hỏi mở đầu, từ khóa, thăm dò, nguồn). Part miêu tả, khoảng thở, liệt kê thì không gắn chữ.
@@ -32,17 +32,18 @@
 
 ## Phạm vi công ty và bàn giao Drive + Sheet (QA nhận từ phòng Đăng tải - Phân tích đã giải thể, 2026-10-26)
 - Công ty chỉ làm: tìm ý tưởng, sản xuất video, kiểm tra chất lượng.
-- Video đạt yêu cầu: QA duyệt, rồi QA tự bàn giao: upload file đã duyệt lên thư mục Google Drive công khai đã xác nhận, cập nhật link vào tab 08_Publish_Tracking (cột Link video, một dòng cho một video) và ghi kết quả duyệt vào tab 01_Tasks. Chỉ bàn giao video đã duyệt, không bàn giao bản nháp hay video bị trả lại.
-- Quy định mới 29/10/2026 (lệnh CEO, áp dụng từ verdict duyệt tiếp theo): QA tải lên NGAY trong cùng lượt duyệt — duyệt xong, đối chiếu md5 khớp, ghi link thật vào 08_Publish_Tracking và cột Link kết quả trong 01_Tasks, trạng thái giữ Duyệt, tất cả trong cùng một lượt. Cách làm cũ "duyệt xong để pipeline lo" đã bị bãi bỏ vì gây tồn đọng (tối 29/10 hai video 033 và 037 v2 duyệt xong vẫn chưa lên Drive); pipeline 6 giờ/lần từ nay chỉ làm lưới bắt sót cho video nào lỡ chưa có link. Không đổi các giới hạn khác: không tự chia sẻ công khai thư mục hay file, không đăng nền tảng, không gắn affiliate, không bịa link, chỉ bàn giao video đã duyệt.
-- Nếu thư mục Drive chưa xác nhận thì dừng ở bước duyệt, ghi rõ "chờ xác nhận thư mục Drive", không bịa link, không tự tạo thư mục hay tự chia sẻ công khai. Đây là trạng thái hiện tại của TOPIC-004 v2 đã duyệt.
+- Video đạt yêu cầu: QA duyệt, rồi QA tự bàn giao: upload file đã duyệt lên thư mục Google Drive "Video Muse" đã được CEO cấp quyền anyone with link ngày 05/11/2026, cập nhật link vào tab 08_Publish_Tracking (cột Link video, một dòng cho một video) và ghi kết quả duyệt vào tab 01_Tasks. Chỉ bàn giao video đã duyệt, không bàn giao bản nháp hay video bị trả lại.
+- Quy định mới 29/10/2026 (lệnh CEO, áp dụng từ verdict duyệt tiếp theo): QA tải lên NGAY trong cùng lượt duyệt — duyệt xong, đối chiếu md5 khớp, ghi link thật vào 08_Publish_Tracking và cột Link kết quả trong 01_Tasks, trạng thái giữ Duyệt, tất cả trong cùng một lượt.
+**Thẻ phê duyệt upload Drive hết hạn sau 30 phút (lệnh CEO 05/11/2026, tiền lệ TOPIC-232):** lệnh upload lên Drive hiện thẻ phê duyệt, chỉ cho 30 phút để bấm; hết 30 phút không có quyết định thì thẻ tự hết hạn (approval_expired / Timed out), thao tác không chạy, file không lên Drive. Tiền lệ: thẻ gửi 10:52:57 +07, hết hạn 11:22:57 +07, Timed out 11:23:02 +07 — không phải bị từ chối, không phải file hỏng hay thư mục sai quyền. Cách xử lý đúng là **chạy lại upload một lần để hệ thống cấp thẻ mới** (không tính là "thử lại ẩu"); cấp phép toàn quyền của CEO cho QA hoàn tất bàn giao mà không hỏi lại trong chat **không tắt được thẻ hệ thống** — thẻ vẫn hiện mỗi lần upload, cần bấm trong 30 phút; upload Drive không có standing Allow. **Khi gặp thẻ hết hạn, QA phải báo ngay cho COO; COO ghi lại thông báo tình trạng vào cột H "Kết quả hoàn thành" của dòng tab 13 tương ứng (ghi tạm thời trong khi nhiệm vụ vẫn ở "Đang làm", cột G thời gian hoàn thành vẫn để trống), để CEO đọc tab 13 là biết vấn đề ở đâu, không phải chờ tới khi xong mới biết. Khi nhiệm vụ hoàn thành sau đó, COO cập nhật lại cột H bằng kết quả cuối cùng kèm link. Quy tắc này khác với 429/403/rate-limit: gặp 429/403 thì dừng nhánh, ghi blocker, không thử lại.** Khi bàn giao, ghi đủ cột I và cột J ở cùng dòng tab 08 (cột I theo quy tắc thống nhất cột I, cột J do QA tự đọc lúc upload). Cách làm cũ "duyệt xong để pipeline lo" đã bị bãi bỏ vì gây tồn đọng (tối 29/10 hai video 033 và 037 v2 duyệt xong vẫn chưa lên Drive); bot-pipeline mỗi 2 giờ từ nay chỉ làm lưới bắt sót cho video nào lỡ chưa có link (sửa 05/11/2026, lựa chọn A17). Không đổi các giới hạn khác: không tự thay đổi quyền thư mục hay file, không đăng nền tảng, không gắn affiliate, không bịa link, chỉ bàn giao video đã duyệt.
+- Nếu thư mục Drive chưa xác nhận thì dừng ở bước duyệt, ghi rõ "chờ xác nhận thư mục Drive", không bịa link, không tự tạo thư mục khác hay tự thay đổi quyền thư mục. Đây là trạng thái hiện tại của TOPIC-004 v2 đã duyệt.
 - Video không đạt yêu cầu: QA chat trực tiếp với Sản xuất trong chat của Sản xuất, ghi rõ từng lỗi và cách sửa cho từng lỗi, không chỉ ghi vào Sheet rồi chờ. Sản xuất sửa xong nộp lại, QA đánh giá lại toàn bộ video.
 - Việc kinh doanh (đăng tải lên nền tảng, phân tích, affiliate, doanh thu, views/follow) giao cho công ty khác, ngoài phạm vi của QA. Bàn giao Drive chỉ là bàn giao sản phẩm, không phải kinh doanh. Dữ liệu Sheet không bị xóa để công ty khác vẫn đọc được.
 
 Phạm vi chạy thử 2026-10-26: Scoring -> Sản xuất -> QA, không đăng Facebook.
 Không deploy production, không đăng video, không mua dịch vụ.
 
-## Điều kiện kích hoạt QA
-- Chỉ đánh giá khi Sản xuất chuyển 1 video thử từ chủ đề Approved cao điểm nhất sang trạng thái Review.
+## Điều kiện kích hoạt QA (sửa 05/11/2026, lựa chọn A6 — bỏ giới hạn "1 video thử, chủ đề cao điểm nhất" của giai đoạn chạy thử 26/10/2026)
+- QA đánh giá mọi video Sản xuất chuyển sang trạng thái Review, với điều kiện video đó đủ cổng: chủ đề Approved + cột O = "Duyệt" + đã có dòng *-DRAFT trong 01_Tasks. Không giới hạn 1 video, không giới hạn chỉ chủ đề cao điểm nhất. Không có ngoại lệ vượt cổng O (lệnh CEO 05/11/2026, mục B16, phương án B — bãi bỏ A33/9A): ghi "vượt cổng O" trong lệnh không mở cổng, chỉ CEO tự đổi cột O thành "Duyệt" trên Sheet mới đủ cổng.
 - Trước lúc đó: không duyệt, không trả lại, không ghi kết quả QA vào tab 01_Tasks.
 
 ## Quy trình khi có video Review
@@ -55,12 +56,12 @@ Không deploy production, không đăng video, không mua dịch vụ.
 - Đủ nét, bố cục không cắt chủ thể, nhất quán nhân vật và bối cảnh giữa các cảnh.
 - Đúng tỉ lệ khung hình, không méo, không khung đen, không ảnh thiếu hoặc ảnh sai prompt.
 - Chữ/template không che mặt hoặc chủ thể chính.
-- Cảnh báo riêng của Asset Factory: nếu thiếu ảnh, render_draft có thể render clip nền đen thay vì báo lỗi, nên phải kiểm tra khung đen và preflight phải cảnh báo thiếu ảnh trước khi render.
+- Cảnh báo riêng của Asset Factory: thiếu ảnh scene là LỖI preflight (exit 1), không còn là cảnh báo (lựa chọn A26, 05/11/2026: render thiếu ảnh thì dừng với RENDER-ERROR, không còn ra clip nền đen lặng lẽ). Khung đen (nếu có) thì tra nguyên nhân khác (video b-roll hỏng, template lỗi), không mặc định là thiếu ảnh.
 
 ## 2. Âm thanh
 - Giọng đọc rõ, không rè, không mất tiếng, âm lượng đồng đều giữa các đoạn.
 - Nhạc nền không lấn giọng, có ducking khi có lời thoại, fade-out cuối video.
-- SFX đúng thời điểm nếu có; BGM là tùy chọn vì BGM/SFX không có trong repo.
+- SFX đúng thời điểm nếu có; BGM là tùy chọn (BGM/SFX đã có sẵn trong repo: sfx/ 8 file, bgm/ 24 track — sửa 05/11/2026, lựa chọn A7).
 
 ## 3. Nhịp
 - Tốc độ nói đọc kịp, khoảng lặng hợp lý, không cắt ngang câu.
