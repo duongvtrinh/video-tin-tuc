@@ -40,7 +40,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from filename import atomic_write_text, img_decode_error  # noqa: E402
+from filename import atomic_write_text, img_decode_error, plan_lock  # noqa: E402
 
 try:
     from PIL import Image as _PILImage
@@ -118,6 +118,15 @@ def _validate_job(job, idx: int):
     if job.get("card_pid") is not None:
         if "card_order" not in job:
             return f"job {idx} (card, out={job['out']}) thiếu key 'card_order'"
+        # R4-39 (07/11/2026, DEC-047): card_order phải đổi được thành
+        # số — int() ở cuối vòng lặp sẽ crash ValueError nếu không
+        # (vd "hai"), sau khi job đã chạy; chặn ở đây thì job này lỗi
+        # per-job rõ ràng, các job khác vẫn chạy.
+        try:
+            int(job["card_order"])
+        except (TypeError, ValueError):
+            return (f"job {idx} (card, out={job['out']}) card_order "
+                    f"{job['card_order']!r} không phải số")
         return None
     if not isinstance(job.get("prompt"), str) or not job["prompt"].strip():
         return f"job {idx} (AI, out={job['out']}) thiếu key 'prompt' (hoặc rỗng)"
@@ -125,22 +134,49 @@ def _validate_job(job, idx: int):
 
 
 def one(item):
-    """Chạy 1 job. Trả về (out, skipped, error): error None nghĩa là
-    thành công/skip; error khác None nghĩa là job này lỗi nhưng batch
-    vẫn tiếp tục các job khác (không raise ra ngoài)."""
+    """Chạy 1 job. Trả về (out, skipped, error, card_flag): error None
+    nghĩa là thành công/skip; error khác None nghĩa là job này lỗi nhưng
+    batch vẫn tiếp tục các job khác (không raise ra ngoài). card_flag
+    chỉ có ý nghĩa với job card: "grid" = render_scene_card in GRID-OK
+    (nền rêu thật), "bg" = in BG-IMAGE-OK (ảnh thật làm nền qua
+    cardImage), "unknown" = stdout không chứa mã nào (fail-closed),
+    None = không phải job card / job skip / job lỗi."""
     idx, job = item
     err = _validate_job(job, idx)
     if err is not None:
-        return (job.get("out") if isinstance(job, dict) else "?", False, err)
+        return (job.get("out") if isinstance(job, dict) else "?", False, err, None)
     out = job["out"]
+    card_flag = None
     try:
         if not job.get("force") and _exists_ok(out):
-            return out, True, None
+            return out, True, None, None
         if job.get("card_pid") is not None:
             # Nền xanh rêu kẻ ô, không chữ, không qua media-generation.
             cmd = [str(VENV_PY), str(FACTORY / "bin" / "render_scene_card.py"),
                    str(job["card_pid"]), str(job["card_order"]), out]
-            subprocess.run(cmd, check=True, timeout=300)
+            # R4-25 (07/11/2026, DEC-033 phương án A): capture stdout để
+            # phân biệt ảnh thật làm nền (BG-IMAGE-OK) với nền rêu thật
+            # (GRID-OK) — trước đây không đọc stdout nên gắn cờ cho mọi
+            # job card, kể cả scene có ảnh thật qua cardImage.
+            p = subprocess.run(cmd, check=True, timeout=300,
+                               capture_output=True, text=True)
+            if p.stdout:
+                print(p.stdout.strip(), flush=True)
+            if p.stderr:
+                print(p.stderr.strip(), file=sys.stderr, flush=True)
+            _so = p.stdout or ""
+            if "BG-IMAGE-OK" in _so:
+                card_flag = "bg"
+            elif "GRID-OK" in _so:
+                card_flag = "grid"
+            else:
+                # Fail-closed: stdout lạ/trống — gắn cờ + cảnh báo rõ để
+                # Production/QA kiểm tra tay (cổng B7 chặn scene thiếu ảnh).
+                card_flag = "unknown"
+                print(f"IMG-FLAG-WARN card {job['card_pid']} order {job['card_order']}: "
+                      f"stdout không chứa BG-IMAGE-OK/GRID-OK — gắn cờ isMossGrid "
+                      f"fail-closed (stdout: {_so.strip()[:300]!r})",
+                      file=sys.stderr, flush=True)
         else:
             cmd = ["/opt/hatch/bin/media-generation", "--media-subagent-output-type", "image"]
             if job.get("orientation"):
@@ -152,24 +188,24 @@ def one(item):
             # trước đây parse stdout của tiến trình lỗi rồi crash cả batch.
             if p.returncode != 0:
                 return out, False, (f"media-generation exit {p.returncode}: "
-                                    f"{(p.stderr or p.stdout or '').strip()[-500:]}")
+                                    f"{(p.stderr or p.stdout or '').strip()[-500:]}"), None
             try:
                 d = json.loads(p.stdout)
             except Exception as exc:
-                return out, False, f"media-generation trả stdout không phải JSON: {exc}"
+                return out, False, f"media-generation trả stdout không phải JSON: {exc}", None
             paths = d.get("media_paths") if isinstance(d, dict) else None
             if not paths:
-                return out, False, "media-generation không trả media_paths"
+                return out, False, "media-generation không trả media_paths", None
             src = paths[0]
             subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", src, out],
                            check=True, timeout=120)
         if not _exists_ok(out):
-            return out, False, "chạy xong nhưng file out không tồn tại, rỗng hoặc không giải mã được"
-        return out, False, None
+            return out, False, "chạy xong nhưng file out không tồn tại, rỗng hoặc không giải mã được", None
+        return out, False, None, card_flag
     except Exception as exc:
         # Giai đoạn 5: lỗi per-job — trả về để main ghi IMG-FAIL và
         # chạy tiếp job khác, không crash cả batch.
-        return out, False, f"{type(exc).__name__}: {exc}"
+        return out, False, f"{type(exc).__name__}: {exc}", None
 
 
 
@@ -184,15 +220,19 @@ def _mark_moss_grid(rendered_cards: list[tuple[str, int]]) -> None:
         for pid in sorted({pid for pid, _ in rendered_cards}):
             orders = {o for p, o in rendered_cards if p == pid}
             plan_path = FACTORY / "projects" / pid / "broll-plan.json"
-            plan = json.loads(plan_path.read_text(encoding="utf-8"))
-            changed = False
-            for sc in plan.get("scenes", []):
-                if sc.get("order") in orders and not sc.get("isMossGrid"):
-                    sc["isMossGrid"] = True
-                    changed = True
-            if changed:
-                atomic_write_text(plan_path, json.dumps(plan, ensure_ascii=False, indent=2))
-                print(f"IMG-FLAG {pid}: đánh dấu isMossGrid cho cảnh {sorted(orders)}", flush=True)
+            # R4-49 (08/11/2026, DEC-059 A): đọc–sửa–ghi cờ dưới khóa chung
+            # trên đĩa — trước đây ngoài khóa, savePlan đúng lúc này là đè
+            # mất cờ (khóa promise trong app Node không bao được Python).
+            with plan_lock(plan_path, holder="gen_images._mark_moss_grid"):
+                plan = json.loads(plan_path.read_text(encoding="utf-8"))
+                changed = False
+                for sc in plan.get("scenes", []):
+                    if sc.get("order") in orders and not sc.get("isMossGrid"):
+                        sc["isMossGrid"] = True
+                        changed = True
+                if changed:
+                    atomic_write_text(plan_path, json.dumps(plan, ensure_ascii=False, indent=2))
+                    print(f"IMG-FLAG {pid}: đánh dấu isMossGrid cho cảnh {sorted(orders)}", flush=True)
     except Exception as exc:
         print(f"IMG-FLAG-WARN không ghi được cờ isMossGrid: {exc}", file=sys.stderr, flush=True)
 
@@ -212,7 +252,7 @@ def main() -> int:
     n_failed = 0
     rendered_cards: list[tuple[str, int]] = []
     with ThreadPoolExecutor(max_workers=4) as ex:
-        for n, (f, skipped, err) in enumerate(
+        for n, (f, skipped, err, card_flag) in enumerate(
                 ex.map(one, list(enumerate(jobs))), start=1):
             job = jobs[n - 1] if 0 < n <= len(jobs) else {}
             if err is not None:
@@ -224,7 +264,13 @@ def main() -> int:
                 # A21 (05/11/2026): chỉ job card nào render xong THẬT (không
                 # skip) mới được ghi cờ — job bị skip vì file đã có thì cờ
                 # giữ nguyên như trong plan.
-                if not skipped and isinstance(job, dict) and job.get("card_pid") is not None:
+                # R4-25 (07/11/2026, DEC-033 phương án A): chỉ gắn cờ khi
+                # render_scene_card in GRID-OK (nền rêu thật) hoặc stdout
+                # không rõ mã (fail-closed, "unknown"); BG-IMAGE-OK = ảnh
+                # thật làm nền qua cardImage → KHÔNG gắn cờ.
+                if (not skipped and isinstance(job, dict)
+                        and job.get("card_pid") is not None
+                        and card_flag in ("grid", "unknown")):
                     rendered_cards.append((str(job["card_pid"]), int(job["card_order"])))
     if rendered_cards:
         _mark_moss_grid(rendered_cards)

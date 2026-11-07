@@ -1,0 +1,15 @@
+.broll-sc{position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;background-color:#1C372A;background-image:linear-gradient(#2A4D3B 0,#2A4D3B 2px,transparent 2px,transparent 80px),linear-gradient(90deg,#2A4D3B 0,#2A4D3B 2px,transparent 2px,transparent 80px);background-size:80px 80px}
+.broll-sc-frame{position:absolute;top:200px;left:96px;width:528px;height:380px;border:4px solid #fbbf24;box-sizing:border-box;overflow:hidden}
+.broll-sc-img{width:100%;height:100%;object-fit:cover;display:block}
+.broll-sc-text{position:absolute;top:610px;left:96px;right:96px;display:flex;flex-direction:column;align-items:center;gap:.35em;text-align:center}
+.broll-sc-kicker{font:800 clamp(14px,3.4vmin,26px)/1.25 'Anton',Arial,sans-serif;color:#fbbf24;letter-spacing:.18em;text-transform:uppercase;overflow-wrap:anywhere}
+.broll-sc-headline{font:800 clamp(24px,5.0vmin,40px)/1.2 'Anton',Arial,sans-serif;color:#ffffff;overflow-wrap:anywhere}
+.broll-sc-subline{font:400 clamp(16px,3.4vmin,26px)/1.35 Arial,sans-serif;color:#cbd5e1;overflow-wrap:anywhere}
+.broll-sc-kicker:empty,.broll-sc-subline:empty{display:none}
+/* Stage 06/11/2026: các lớp xuất hiện lần lượt (video reveal qua broll.reveal). visibility:hidden
+   thay vì display:none để bố cục KHÔNG nhảy khi lớp mới hiện. Stage mặc định 4 = đủ lớp.
+   Khung ảnh đặt absolute cố định (top 200, left 96, 528x380) nên ô video (100,204,520x372)
+   không dịch theo độ dài chữ; khối chữ cũng absolute (top 610) nên không đè lên ảnh. */
+.broll-sc-stage-1 .broll-sc-kicker,.broll-sc-stage-1 .broll-sc-headline,.broll-sc-stage-1 .broll-sc-subline{visibility:hidden}
+.broll-sc-stage-2 .broll-sc-headline,.broll-sc-stage-2 .broll-sc-subline{visibility:hidden}
+.broll-sc-stage-3 .broll-sc-subline{visibility:hidden}

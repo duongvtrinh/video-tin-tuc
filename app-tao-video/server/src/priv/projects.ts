@@ -22,6 +22,7 @@ import {
   projDir,
   readJson,
   sceneImageFileName,
+  withPlanWriteLock,
   writeJson,
 } from "./core";
 import { isAiSource } from "./plan-normalize";
@@ -59,15 +60,16 @@ export function summarize(id: string) {
   const warnings: string[] = [];
   for (const s of scenes) {
     if (s.imageFile && !existsSync(join(imagesDir, s.imageFile))) {
-      warnings.push(`Cảnh ${s.order ?? "?"} thiếu file ảnh ${s.imageFile} (render sẽ ra nền đen)`);
+      warnings.push(`Cảnh ${s.order ?? "?"} thiếu file ảnh ${s.imageFile} (render sẽ DỪNG với RENDER-ERROR)`);
     }
   }
   // Pipeline projects leave scene.imageFile null and address images purely
   // by the seg_<order>_* file convention, so the check above never fires
   // for them — a scene with NO image file at all (and no b-roll media for
-  // that scene) renders as a solid black clip in render_draft.py, silently.
-  // Warn from the actual files on disk so the black render is visible in
-  // the project list and the Render tab BEFORE the user exports it.
+  // that scene) makes render STOP with RENDER-ERROR (A26, 05/11/2026);
+  // it no longer renders a solid black clip as it did before A26. Warn
+  // from the actual files on disk so the block is visible in the project
+  // list and the Render tab BEFORE the user exports it.
   const imageFiles = existsSync(imagesDir) ? readdirSync(imagesDir) : [];
   const brollFiles = existsSync(brollDir) ? readdirSync(brollDir) : [];
   for (const s of scenes) {
@@ -83,7 +85,7 @@ export function summarize(id: string) {
     );
     if (!hasBrollMedia) {
       warnings.push(
-        `Cảnh ${order} chưa có ảnh nền nào (không thấy seg_${order}_*.jpg/*.png/*.webp trong build/media/images, cũng không có b-roll) — render sẽ ra nền đen ở cảnh này`,
+        `Cảnh ${order} chưa có ảnh nền nào (không thấy seg_${order}_*.jpg/*.png/*.webp trong build/media/images, cũng không có b-roll) — render sẽ DỪNG với RENDER-ERROR ở cảnh này`,
       );
     }
   }
@@ -202,7 +204,18 @@ function imageFileUsable(path: string): boolean {
   }
 }
 
-export function buildGenImageJobs(projectId: string): { count: number; skipped: string[] } {
+export async function buildGenImageJobs(
+  projectId: string,
+): Promise<{ count: number; skipped: string[] }> {
+  // R4-49 (08/11/2026, DEC-059 A): khóa tự bọc trong hàm — trước đây chỉ
+  // caller (handlers-jobs.ts) bọc nên hàm tự nó không an toàn nếu có
+  // caller thứ hai; withPlanWriteLock kiêm luôn file lock trên đĩa nên
+  // khóa cả gen_images/select_bgm. Caller KHÔNG bọc nữa (bọc lồng cùng
+  // project sẽ deadlock).
+  return withPlanWriteLock(projectId, () => buildGenImageJobsLocked(projectId));
+}
+
+function buildGenImageJobsLocked(projectId: string): { count: number; skipped: string[] } {
   const dir = projDir(projectId);
   const plan = readJson<{
     scenes?: Array<{
@@ -268,6 +281,20 @@ export function buildGenImageJobs(projectId: string): { count: number; skipped: 
       if (scene.isMossGrid !== undefined) {
         delete scene.isMossGrid;
         planDirty = true;
+        // R4-26 (07/11/2026, lệnh CEO, DEC-034 phương án B): xóa cờ thì
+        // xóa LUÔN file ảnh cũ trên đĩa — nếu không, gen_images thấy file
+        // nền rêu cũ vẫn tồn tại và decode được thì bỏ qua job AI, plan
+        // ghi "AI từ prompt" trong khi file trên đĩa vẫn là nền rêu (cả
+        // A20 lẫn B7 đều qua). Chỉ xóa file trong build/media/images của
+        // chính project này (existingFile luôn được dựng từ imagesDir);
+        // job AI đã push ở trên nên gen_images buộc phải tạo ảnh mới.
+        if (
+          existingFile &&
+          existingFile.startsWith(imagesDir + "/") &&
+          existsSync(existingFile)
+        ) {
+          rmSync(existingFile, { force: true });
+        }
       }
       if (!scene.imageFile) {
         scene.imageFile = basename(out);
@@ -326,6 +353,12 @@ export function previewMd5(path: string): { md5: string; sizeBytes: number } {
 // snapshot chỉ tăng không giảm, không có đường khôi phục).
 const SNAPSHOT_KEEP = 30;
 
+// R4-55 (08/11/2026, DEC-064 B): snapshot CHỈ copy 4 file JSON (input,
+// script, plan, TTS) + mã md5 của video preview — KHÔNG copy file ảnh
+// trong build/media/images. Khôi phục snapshot chỉ lấy lại được
+// plan/kịch bản, không lấy lại được ảnh đã bị ghi đè/xóa (xem skill
+// Production: trước khi pick/generate cho scene đã có ảnh thật thì tự
+// sao lưu file ảnh ra ngoài).
 export function takeSnapshot(projectId: string, kind: string): void {
   const dir = projDir(projectId);
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");

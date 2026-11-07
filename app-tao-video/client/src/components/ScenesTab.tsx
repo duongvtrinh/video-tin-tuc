@@ -6,13 +6,13 @@ import { InfoTip } from "./InfoTip";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import type { ApiResponse } from "../api";
-import type { BgmTrack, Plan, ProjectDetail } from "../lib";
+import type { BgmTrack, Part, Plan, ProjectDetail } from "../lib";
 
 
-function TemplatePreviewButton({ templateId, inputs }: { templateId: string; inputs: Record<string, string> }) {
+function TemplatePreviewButton({ templateId, inputs, projectId }: { templateId: string; inputs: Record<string, string>; projectId: string }) {
   const [png, setPng] = useState<string | null>(null);
   const m = useMutation({
-    mutationFn: () => api.renderTemplatePreview({ templateId, inputs }),
+    mutationFn: () => api.renderTemplatePreview({ templateId, inputs, projectId }),
     onSuccess: (r) => setPng(r.pngBase64),
   });
   return (
@@ -31,6 +31,78 @@ function TemplatePreviewButton({ templateId, inputs }: { templateId: string; inp
         </span>
       )}
     </span>
+  );
+}
+
+type Stamp = NonNullable<NonNullable<Part["broll"]>["stamps"]>[number];
+
+// R4-59 (08/11/2026, DEC-068 A): sửa dấu (stamp) của một part — trước
+// đây stamp/reveal chỉ sửa được bằng tay trong file plan. Mỗi dấu:
+// text (chữ đóng dấu; trống thì render bỏ qua), tone (màu, mặc định
+// "red"), tilt (độ nghiêng, mặc định "-15"), on (slot ảnh, vd "img1"),
+// at (giây xuất hiện), sfx (thud riêng — offsetSec luôn bằng at, kêu
+// cùng lúc dấu hiện). Sửa xong ghi vào broll.stamps; hết dấu thì xóa key.
+function StampsEditor({ idPrefix, stamps, sfxList, onStamps }: { idPrefix: string; stamps: Stamp[]; sfxList: Array<{ id: string }>; onStamps: (next: Stamp[]) => void }) {
+  const set = (i: number, patch: Partial<Stamp>) => onStamps(stamps.map((s, j) => (j === i ? { ...s, ...patch } : s)));
+  const setAt = (i: number, at: number) => {
+    const next = stamps.map((s) => ({ ...s }));
+    const st = next[i]!;
+    st.at = at;
+    if (st.sfx) st.sfx = { ...st.sfx, offsetSec: at };
+    onStamps(next);
+  };
+  const setSfx = (i: number, sid: string) => {
+    const next = stamps.map((s) => ({ ...s }));
+    const st = next[i]!;
+    if (!sid) delete st.sfx;
+    else st.sfx = { id: sid, offsetSec: st.at ?? 0, volume: sid === "heavy_thud_slam" || sid === "boom_sub_impact" ? 0.35 : 0.65 };
+    onStamps(next);
+  };
+  return (
+    <div className="mt-2">
+      <label className={labelCls}>Dấu (stamp) — chữ đóng dấu lên template</label>
+      {stamps.map((st, i) => (
+        <div key={i} className="mt-2 rounded-lg border border-[var(--border)] p-2">
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="min-w-32 flex-1">
+              <label className={labelCls} htmlFor={`stamp-${idPrefix}-text-${i}`}>Chữ dấu</label>
+              <input id={`stamp-${idPrefix}-text-${i}`} className={inputCls} value={st.text ?? ""} placeholder="VD: THUA" onChange={(e) => set(i, { text: e.target.value })} />
+            </div>
+            <div className="w-20">
+              <label className={labelCls} htmlFor={`stamp-${idPrefix}-tone-${i}`}>Màu</label>
+              <input id={`stamp-${idPrefix}-tone-${i}`} className={inputCls} value={st.tone ?? "red"} placeholder="red" onChange={(e) => set(i, { tone: e.target.value })} />
+            </div>
+            <div className="w-16">
+              <label className={labelCls} htmlFor={`stamp-${idPrefix}-tilt-${i}`}>Nghiêng</label>
+              <input id={`stamp-${idPrefix}-tilt-${i}`} className={inputCls} value={String(st.tilt ?? "-15")} placeholder="-15" onChange={(e) => set(i, { tilt: e.target.value })} />
+            </div>
+            <div className="w-20">
+              <label className={labelCls} htmlFor={`stamp-${idPrefix}-on-${i}`}>Lên slot</label>
+              <input id={`stamp-${idPrefix}-on-${i}`} className={inputCls} value={st.on ?? "img1"} placeholder="img1" onChange={(e) => set(i, { on: e.target.value })} />
+            </div>
+            <div className="w-20">
+              <label className={labelCls} htmlFor={`stamp-${idPrefix}-at-${i}`}>Giây hiện</label>
+              <input id={`stamp-${idPrefix}-at-${i}`} className={inputCls} type="number" step="0.1" min="0" value={st.at ?? 0} onChange={(e) => { const v = Number(e.target.value); setAt(i, Number.isFinite(v) ? v : 0); }} />
+            </div>
+            <div className="w-44">
+              <label className={labelCls} htmlFor={`stamp-${idPrefix}-sfx-${i}`}>SFX của dấu</label>
+              <select id={`stamp-${idPrefix}-sfx-${i}`} className={inputCls} value={st.sfx?.id ?? ""} onChange={(e) => setSfx(i, e.target.value)}>
+                <option value="">— Không SFX —</option>
+                {sfxList.map((s) => (
+                  <option key={s.id} value={s.id}>{s.id}</option>
+                ))}
+              </select>
+            </div>
+            <button type="button" className={btnCls} style={{ color: "var(--bad)" }} onClick={() => onStamps(stamps.filter((_, j) => j !== i))} aria-label={`Xóa dấu ${i + 1}`}>Xóa dấu</button>
+          </div>
+          {st.sfx && <p className="mt-1 text-xs text-[var(--dim)]">SFX {st.sfx.id} · volume {st.sfx.volume} · kêu ở giây {st.sfx.offsetSec}</p>}
+        </div>
+      ))}
+      <button type="button" className={btnCls} onClick={() => onStamps([...stamps, { text: "", tone: "red", tilt: "-15", on: "img1", at: 0 }])} aria-label="Thêm dấu mới">
+        + Thêm dấu
+      </button>
+      <p className="mt-1 text-xs text-[var(--dim)]">Dấu hiện từ giây “at” lên slot “on”; SFX thud kêu cùng lúc dấu hiện. Dấu không có chữ sẽ bị render bỏ qua.</p>
+    </div>
   );
 }
 
@@ -255,6 +327,18 @@ export function ScenesTab({ detail, catalogs }: { detail: ProjectDetail; catalog
                       {part.broll?.sfx && <p className="mt-1 text-xs text-[var(--dim)]">Âm lượng {part.broll.sfx.volume} (SFX nặng để 0,35; render còn cap 0,4 + limiter)</p>}
                     </div>
                   </div>
+                  <StampsEditor
+                    idPrefix={part.id}
+                    stamps={part.broll?.stamps ?? []}
+                    sfxList={sfxList}
+                    onStamps={(next) => update((p) => {
+                      const b = { ...(p.scenes[si]!.parts[pi]!.broll ?? {}) };
+                      if (next.length === 0) delete b.stamps;
+                      else b.stamps = next;
+                      p.scenes[si]!.parts[pi]!.broll = b;
+                      return p;
+                    })}
+                  />
                   {tpl && (
                     <div className="mt-2 grid gap-2">
                       {tpl.inputs.map((inp) => (
@@ -276,7 +360,25 @@ export function ScenesTab({ detail, catalogs }: { detail: ProjectDetail; catalog
                           />
                         </div>
                       ))}
-                      <TemplatePreviewButton templateId={tpl.id} inputs={toStringInputs(part.broll?.inputs)} />
+                      <div>
+                        <label className={labelCls} htmlFor={`reveal-${part.id}`}>Hiện lần lượt (reveal) — stage, cách nhau bằng dấu phẩy</label>
+                        <input
+                          id={`reveal-${part.id}`}
+                          className={inputCls}
+                          value={(part.broll?.reveal ?? []).join(",")}
+                          placeholder="VD: 1,2,5,6"
+                          onChange={(e) => update((p) => {
+                            const b = { ...(p.scenes[si]!.parts[pi]!.broll ?? {}) };
+                            const stages = e.target.value.split(",").map((s) => s.trim()).filter((s) => /^\d+$/.test(s));
+                            if (stages.length === 0) delete b.reveal;
+                            else b.reveal = stages;
+                            p.scenes[si]!.parts[pi]!.broll = b;
+                            return p;
+                          })}
+                        />
+                        <p className="mt-1 text-xs text-[var(--dim)]">Chỉ áp cho template full-stage; template không full-stage thì reveal bị bỏ qua. Để trống là không reveal.</p>
+                      </div>
+                      <TemplatePreviewButton templateId={tpl.id} inputs={toStringInputs(part.broll?.inputs)} projectId={detail.id} />
                     </div>
                   )}
                 </div>

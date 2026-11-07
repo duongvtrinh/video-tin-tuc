@@ -11,7 +11,7 @@ import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { FACTORY, PY3, projDir, readJson, withPlanWriteLock, writeJson } from "./core";
+import { FACTORY, PY3, projDir, readJson, run, writeJson } from "./core";
 import { buildGenImageJobs, jobFiles, stepCommand } from "./projects";
 
 export async function startJob({ jobId, projectId, step, force }: ArgsOf<"startJob">): Promise<ResOf<"startJob">> {
@@ -23,17 +23,39 @@ export async function startJob({ jobId, projectId, step, force }: ArgsOf<"startJ
         const files = jobFiles(projectId, jobId);
         writeFileSync(files.status.replace(".json", ".prevmd5"), md5);
       }
+      // R4-57 (08/11/2026, DEC-066 A'): cổng preflight trước render —
+      // render không chạy khi preflight chưa đạt (thiếu audio/ảnh,
+      // template lỗi, tiling/lossless...). Preflight là bộ kiểm tra
+      // trước render của layout factory; validate_project.py chỉ hợp
+      // lệ SAU assemble nên không dùng ở đây. Chạy đồng bộ, fail thì
+      // ghi log + status lỗi và dừng, không spawn render. Cổng này
+      // không có ngoại lệ force — force chỉ là render lại, không phải
+      // bỏ qua kiểm tra.
+      const gate = await run(stepCommand(projectId, "preflight", false));
+      if (gate.code !== 0) {
+        const files = jobFiles(projectId, jobId);
+        let errLines: string[] = [];
+        try {
+          const parsed = JSON.parse(gate.out.slice(gate.out.indexOf("{"))) as { errors?: string[] };
+          errLines = (parsed.errors ?? []).map((e) => `  [LỖI] ${e}`);
+        } catch {
+          errLines = [];
+        }
+        if (errLines.length === 0) errLines = [gate.out.trim().slice(-2000)];
+        const report = [`=== PREFLIGHT ${projectId} ===`, ...errLines, "KẾT QUẢ: CHƯA ĐẠT ✗"].join("\n");
+        writeFileSync(files.log, report + "\n", "utf8");
+        writeJson(files.status, { running: false, exitCode: 1, step, note: `Preflight chưa đạt (${errLines.length} lỗi) — render dừng, xem log để biết lỗi nào` });
+        return { logTail: report.slice(-400) };
+      }
     }
     let note = "";
     if (step === "genimages") {
       // A22 (05/11/2026): buildGenImageJobs bỏ qua cảnh đã có ảnh thật —
       // ghi rõ cảnh bị bỏ qua vào note của job để việc bỏ qua không lặng lẽ.
-      // B39 (06/11/2026, lệnh CEO, lựa chọn A): bọc lời gọi trong
-      // withPlanWriteLock như pickMedia/generateAiMedia — buildGenImageJobs
-      // đọc–sửa–ghi plan, trước đây đứng ngoài quy ước khóa.
-      const { count: n, skipped } = await withPlanWriteLock(projectId, () =>
-        buildGenImageJobs(projectId),
-      );
+      // B39 (06/11/2026, lệnh CEO, lựa chọn A): buildGenImageJobs tự bọc
+      // khóa trong hàm (R4-49 dời khóa vào trong để hàm tự an toàn với mọi
+      // caller) — không bọc ở đây nữa (bọc lồng cùng project sẽ deadlock).
+      const { count: n, skipped } = await buildGenImageJobs(projectId);
       note = `${n} job ảnh` + (skipped.length ? ` · Bỏ qua: ${skipped.join("; ")}` : "");
       if (n === 0) {
         // B22 (05/11/2026, lệnh CEO, lựa chọn A): không có job thì vẫn

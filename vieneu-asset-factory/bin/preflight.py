@@ -17,7 +17,7 @@ với validate_project.py (cả hai: exit 1 khi và chỉ khi có lỗi chặn;
 cảnh báo không tính vào exit code):
 - CHẶN (exit 1): thiếu tts.json; part ID trùng (plan hoặc tts.json);
   part chưa có audio TTS / file audio không tồn tại / duration = 0;
-  scene chưa có ảnh (render sẽ ra clip nền đen); template không tồn
+  scene chưa có ảnh (render sẽ DỪNG với RENDER-ERROR, A26); template không tồn
   tại / meta.json hỏng / inputs không phải dict; thiếu input bắt buộc
   của template; BGM đã chọn nhưng file không tồn tại; SFX đã chọn
   nhưng file không tồn tại (A26, 05/11/2026); tổng thời lượng
@@ -28,6 +28,13 @@ cảnh báo không tính vào exit code):
   xanh rêu kẻ ô (không có mediaSource) cũng chặn ở đây, vì nền xanh
   rêu không tính là ảnh. Miễn cửa provenance cho project test kỹ
   thuật (pid bắt đầu bằng "test", vd test001 fixture).
+  R4-57 (08/11/2026, DEC-066 A', port từ validate_project.py — chỉ
+  hợp lệ SAU assemble nên không gọi nó trước render): thứ tự scene
+  không tăng dần; part startSec không nối tiếp part trước (tiling,
+  lệch >0.05s; part đầu phải bắt đầu ở 0s); endSec của scene không
+  khớp part cuối (lệch >0.1s); voiceText trong plan nối lại không khớp
+  nội dung script.json (lossless fail — sửa plan hoặc script cho khớp;
+  thiếu script.json thì bỏ qua kiểm này).
 - CẢNH BÁO (exit 0): b-roll video khai nhưng thiếu file mp4 (render
   rơi về ảnh scene); karaoke thiếu hoặc lệch số part / lines=0 diện
   rộng ở part không template / có part fallback timing (WAV hỏng/mất
@@ -37,11 +44,20 @@ cảnh báo không tính vào exit code):
   SFX nhưng plan chưa có broll.sfx.
 """
 import json
+import re
 import sys
+import unicodedata
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from filename import check_plan, img_decode_error, rand6  # noqa: E402
+
+
+def _norm(s: str) -> str:
+    # Chuẩn hóa text để so sánh lossless — khớp validate_project.py
+    # norm(): NFC + gộp khoảng trắng + cắt dấu câu ở hai đầu.
+    s = unicodedata.normalize("NFC", s)
+    return re.sub(r"\s+", " ", s).strip(" .,;!?\"'")
 
 try:
     import PIL.Image  # noqa: F401
@@ -59,6 +75,40 @@ if FACTORY == _SYMLINK_FACTORY:
     # factory chuẩn là layout repo (bin/../).
     print(f"  warn: FACTORY resolve qua symlink cu {_SYMLINK_FACTORY} — kiem tra lai duong factory", file=sys.stderr)
 
+
+
+def _normalize_stamps(br: dict) -> list:
+    """Danh sách dấu của một part (cơ chế danh sách dấu, 06/11/2026):
+    broll.stamps = [ {...}, ... ]; broll.stamp đơn cũ -> 1 phần tử."""
+    stamps = (br or {}).get("stamps")
+    if isinstance(stamps, list):
+        return [s for s in stamps if isinstance(s, dict)]
+    stamp = (br or {}).get("stamp")
+    if isinstance(stamp, dict):
+        return [stamp]
+    return []
+
+
+def _part_sfx_ids(br: dict) -> list:
+    """ID các SFX của một part: sfx của part + sfx riêng từng dấu."""
+    ids = []
+    _ps = (br or {}).get("sfx") or {}
+    if isinstance(_ps, dict) and _ps.get("id"):
+        ids.append(_ps["id"])
+    for _st in _normalize_stamps(br):
+        _ss = _st.get("sfx") or {}
+        if isinstance(_ss, dict) and _ss.get("id"):
+            ids.append(_ss["id"])
+    return ids
+
+
+# Stage đầu tiên mỗi ô ảnh hiện trong reveal (theo ngữ nghĩa stage của
+# từng template; mặc định 1): photo-duo img2 hiện từ stage 5, photo-duo-h
+# img2 từ stage 2. Dùng để kiểm at >= giờ ảnh hiện.
+_STAMP_APPEAR_STAGE = {
+    ("photo-duo", "img2"): 5,
+    ("photo-duo-h", "img2"): 2,
+}
 
 
 def main() -> int:
@@ -110,9 +160,22 @@ def main() -> int:
             _plan_ids.add(_p["id"])
 
     tts_by_id = {p["id"]: p for p in tts["parts"]}
+
+    # R4-57 (08/11/2026, DEC-066 A'): thứ tự scene phải tăng dần —
+    # port từ validate_project.py (B25: chỉ cần tăng dần + duy nhất;
+    # trùng order đã bị check_plan chặn ở trên nên ở đây chỉ kiểm tăng
+    # dần). Render ghép scene theo order nên order lộn xộn là video lộn
+    # xộn; order khuyết (vd 1-9,11,12 sau khi cắt scene) vẫn đúng.
+    _orders = [sc.get("order") for sc in plan["scenes"]]
+    if (all(isinstance(o, int) and not isinstance(o, bool) for o in _orders)
+            and _orders != sorted(_orders)):
+        errors.append(f"Thứ tự scene không tăng dần: {_orders} — sửa "
+                      f"order trong plan cho tăng dần (khuyết được, "
+                      f"lộn xộn thì không)")
     build = proj / "build"
     n_parts = 0
     n_sfx = 0
+    total_parts = sum(len(sc.get("parts", [])) for sc in plan["scenes"])
     # B10: PIL không có sẵn thì cửa kiểm giải mã ảnh không chạy — cảnh
     # báo một lần để Production biết preflight chỉ kiểm ảnh tồn tại.
     if not _PIL_OK:
@@ -137,8 +200,8 @@ def main() -> int:
             # côi 20261028165436_213948 (ảnh lệch quy ước tên factory nên
             # render cũng không tìm thấy) là preflight sẽ báo lỗi — đúng
             # hành vi mong muốn, không phải false positive.
-            errors.append(f"Scene {order} chưa có ảnh — render sẽ ra "
-                          f"clip nền đen cho scene này, phải tạo ảnh "
+            errors.append(f"Scene {order} chưa có ảnh — render sẽ DỪNG với "
+                          f"RENDER-ERROR (thiếu ảnh), phải tạo ảnh "
                           f"trước (generateImages: job AI hoặc card)")
         elif _PIL_OK:
             # B10 (05/11/2026, lệnh CEO, lựa chọn A): ảnh tồn tại chưa
@@ -163,17 +226,21 @@ def main() -> int:
             elif tp.get("duration", 0) <= 0:
                 errors.append(f"Part {p['id']}: duration = 0")
             br = p.get("broll") or {}
-            if (br.get("sfx") or {}).get("id"):
+            # 06/11/2026 (danh sách dấu): SFX của part + SFX riêng từng
+            # dấu đều phải tồn tại file (mở rộng cửa A26 cho SFX của dấu).
+            _sfx_ids = _part_sfx_ids(br)
+            if _sfx_ids:
                 n_sfx += 1
-                # A26 (05/11/2026, lệnh CEO): SFX khai trong plan nhưng
-                # file mp3 không tồn tại thì LỖI như BGM thiếu — trước
-                # đây render chỉ log sfx-thieu-bo-qua rồi render tiếp
-                # không tiếng đó.
-                _sf = FACTORY / "sfx" / f"{br['sfx']['id']}.mp3"
-                if not _sf.exists():
-                    errors.append(
-                        f"Part {p['id']}: SFX '{br['sfx']['id']}' không tồn tại "
-                        f"({_sf.name} trong thư mục sfx) — render sẽ thiếu tiếng này")
+                for _sid in _sfx_ids:
+                    # A26 (05/11/2026, lệnh CEO): SFX khai trong plan nhưng
+                    # file mp3 không tồn tại thì LỖI như BGM thiếu — trước
+                    # đây render chỉ log sfx-thieu-bo-qua rồi render tiếp
+                    # không tiếng đó.
+                    _sf = FACTORY / "sfx" / f"{_sid}.mp3"
+                    if not _sf.exists():
+                        errors.append(
+                            f"Part {p['id']}: SFX '{_sid}' không tồn tại "
+                            f"({_sf.name} trong thư mục sfx) — render sẽ thiếu tiếng này")
             # Sửa đợt B 01/11/2026 (chỉ warning): part khai b-roll video
             # nhưng không có file mp4 thì render rơi về ảnh scene lặng lẽ
             # (base_video trả None). Cảnh báo để Production biết trước,
@@ -202,6 +269,7 @@ def main() -> int:
                         errors.append(f"Part {p['id']}: ảnh b-roll hỏng/không "
                                       f"giải mã được ({_bimg.name}: {_berr}) — "
                                       f"tạo lại ảnh b-roll")
+            meta = None
             if br.get("templateId"):
                 tdir = FACTORY / "templates" / br["templateId"]
                 if not (tdir / "template.html").exists():
@@ -237,11 +305,64 @@ def main() -> int:
                                     errors.append(
                                         f"Part {p['id']}: thiếu input bắt buộc "
                                         f"'{name}' của {br['templateId']}")
-                                ml = idef.get("maxLength")
-                                if ml and len(str(v)) > ml:
-                                    warnings.append(
+                            # R4-41 (07/11/2026, DEC-049, phương án A):
+                            # input vượt maxLength thì FAIL — trước đây chỉ
+                            # warn với input bắt buộc, không kiểm input
+                            # tùy chọn; khớp validate_project.py:200.
+                            ml = idef.get("maxLength")
+                            if ml:
+                                _v = (br.get("inputs") or {}).get(name, "")
+                                if len(str(_v)) > ml:
+                                    errors.append(
                                         f"Part {p['id']}: '{name}' dài "
-                                        f"{len(str(v))}>{ml} ký tự")
+                                        f"{len(str(_v))}>{ml} ký tự")
+                            # 06/11/2026 (photo-duo): input ảnh (meta
+                            # type=image) phải trỏ tới file thật trong
+                            # project — thiếu file thì template render ra
+                            # khung trống lặng lẽ.
+                            if idef.get("type") == "image":
+                                v = (br.get("inputs") or {}).get(name, "")
+                                if str(v).strip() and not str(v).startswith("file://"):
+                                    _ip = Path(str(v))
+                                    if not _ip.is_absolute():
+                                        _ip = proj / _ip
+                                    if not _ip.exists():
+                                        errors.append(
+                                            f"Part {p['id']}: ảnh input '{name}' "
+                                            f"của {br['templateId']} không có file "
+                                            f"{_ip.name}")
+                    # 06/11/2026 (compare-bars 1.1.0, tên cũ duel-bars):
+                    # count 2-4 bars; thiếu count -> mặc định 2 bars (plan
+                    # cũ vẫn đúng). count>=3 mà thiếu input của bar đó thì
+                    # render ra hàng trống (w thiếu -> width:% vô hiệu, fill
+                    # dài 100%; tone thiếu -> chữ đen chìm) nên chặn ở đây.
+                    if br.get("templateId") == "compare-bars":
+                        _cnt = str((br.get("inputs") or {}).get("count", "2")).strip()
+                        if _cnt not in ("2", "3", "4"):
+                            errors.append(
+                                f"Part {p['id']}: compare-bars count '{_cnt}' "
+                                f"phải là 2|3|4")
+                        else:
+                            _need = []
+                            if _cnt in ("3", "4"):
+                                _need += ["label3", "value3", "w3", "tone3"]
+                            if _cnt == "4":
+                                _need += ["label4", "value4", "w4", "tone4"]
+                            for _n in _need:
+                                _v = (br.get("inputs") or {}).get(_n, "")
+                                if not str(_v).strip():
+                                    errors.append(
+                                        f"Part {p['id']}: compare-bars "
+                                        f"count={_cnt} mà thiếu input '{_n}'")
+                                else:
+                                    _ml = ((inputs_def.get(_n) or {}).get("maxLength")
+                                           if isinstance(inputs_def, dict) else None)
+                                    # R4-41 (07/11/2026, DEC-049): vượt
+                                    # maxLength thì FAIL như input thường.
+                                    if _ml and len(str(_v)) > _ml:
+                                        errors.append(
+                                            f"Part {p['id']}: '{_n}' dài "
+                                            f"{len(str(_v))}>{_ml} ký tự")
                     # Sửa 29/10/2026 (code-fix, audit D-L6): render chỉ đọc
                     # SFX từ plan, không bao giờ đọc meta template. Nếu
                     # template gợi ý SFX mà plan chưa copy thì SFX đó mất
@@ -250,12 +371,271 @@ def main() -> int:
                     meta_sfx = meta.get("sfx")
                     meta_sfx_id = (meta_sfx.get("id") if isinstance(meta_sfx, dict)
                                    else meta_sfx if isinstance(meta_sfx, str) else None)
-                    if meta_sfx_id and not (br.get("sfx") or {}).get("id"):
+                    if meta_sfx_id and meta_sfx_id not in _part_sfx_ids(br):
                         warnings.append(
                             f"Part {p['id']}: template {br['templateId']} gợi ý "
                             f"SFX '{meta_sfx_id}' nhưng plan chưa có broll.sfx "
                             f"— copy vào plan trước khi render (render chỉ đọc "
                             f"SFX từ plan, không đọc meta template)")
+            # 06/11/2026 (reveal lần lượt, CEO): broll.reveal =
+            # [stage...] — các lớp của template hiện lần lượt (cắt
+            # cứng, chia đều thời lượng part). Chỉ áp cho template
+            # full-stage; template không full-stage thì reveal bị bỏ
+            # qua lặng lẽ ở render — cảnh báo trước.
+            _rv = br.get("reveal")
+            # Chỉ kiểm khi part có template (reveal không có template
+            # thì render bỏ qua; meta ở đây là của part này vì đã qua
+            # khối templateId phía trên).
+            if _rv is not None and br.get("templateId"):
+                if (not isinstance(_rv, list) or len(_rv) < 2
+                        or not all(isinstance(_s, str)
+                                   and _s.strip().isdigit()
+                                   for _s in _rv)):
+                    errors.append(f"Part {p['id']}: broll.reveal phải là "
+                                  f"danh sách >=2 stage dạng chuỗi số, "
+                                  f"vd [\"1\",\"2\",\"3\",\"4\"]")
+                elif meta is not None and (
+                        meta.get("mode") != "fullscreen"
+                        or (meta.get("position") or {}).get("default") != "full-stage"):
+                    warnings.append(f"Part {p['id']}: reveal chỉ áp cho "
+                                    f"template full-stage — {br['templateId']} "
+                                    f"không full-stage nên reveal sẽ bị bỏ qua")
+                # R4-34 (07/11/2026, DEC-042): reveal không vượt maxStage
+                # của template (meta.json) — stage không tồn tại thì
+                # render rơi về đường tĩnh lặng lẽ (render_draft: stage
+                # render lỗi -> _reveal_ok=False).
+                if (isinstance(_rv, list) and len(_rv) >= 2
+                        and all(isinstance(_s, str)
+                                and _s.strip().isdigit() for _s in _rv)
+                        and meta is not None
+                        and isinstance(meta.get("maxStage"), int)
+                        and not isinstance(meta.get("maxStage"), bool)):
+                    _mx = int(meta["maxStage"])
+                    _over = sorted({int(_s) for _s in _rv if int(_s) > _mx})
+                    if _over:
+                        errors.append(f"Part {p['id']}: broll.reveal có "
+                                      f"stage {_over} vượt maxStage {_mx} "
+                                      f"của {br['templateId']}")
+                # R4-34 (07/11/2026, DEC-042): video-slot phải hiện trong
+                # reveal — ô ảnh chỉ hiện từ stage S (vd photo-duo img2
+                # từ stage 5) mà reveal chỉ tới stage < S thì video ghép
+                # vào slot chưa có ảnh (trống/sai vị trí). Chỉ kiểm khi
+                # reveal có hiệu lực (template full-stage); dùng cùng
+                # bảng _STAMP_APPEAR_STAGE như kiểm stamp.
+                if (_rv is not None and br.get("templateId")
+                        and meta is not None
+                        and meta.get("mode") == "fullscreen"
+                        and (meta.get("position") or {}).get("default") == "full-stage"
+                        and isinstance(_rv, list) and len(_rv) >= 2
+                        and all(isinstance(_s, str)
+                                and _s.strip().isdigit() for _s in _rv)):
+                    _rv_max = max(int(_s) for _s in _rv)
+                    _vslots = meta.get("videoSlots") or {}
+                    for _vk, _vv in (br.get("inputs") or {}).items():
+                        if (_vk in _vslots and str(_vv).strip()
+                                and Path(str(_vv)).suffix.lower()
+                                in (".mp4", ".mov", ".webm", ".mkv")):
+                            _ap = _STAMP_APPEAR_STAGE.get(
+                                (br["templateId"], _vk), 1)
+                            if _ap > _rv_max:
+                                errors.append(
+                                    f"Part {p['id']}: video-slot '{_vk}' "
+                                    f"chỉ hiện từ stage {_ap} của "
+                                    f"{br['templateId']} nhưng reveal chỉ "
+                                    f"tới stage {_rv_max} — video ghép vào "
+                                    f"slot chưa có ảnh")
+            # Lớp dấu — danh sách dấu (06/11/2026, khôi phục sau lệnh xoá
+            # cùng ngày + mở rộng): broll.stamps = [{text, tone, tilt,
+            # on, at, sfx}, ...]; broll.stamp đơn cũ -> 1 phần tử.
+            # Dấu đóng vào TÂM Ô ẢNH (stamp.on), hiện từ t=at, SFX thud
+            # khớp at. Kiểm từng dấu như kiểm một dấu đơn.
+            _stamps = _normalize_stamps(br)
+            if _stamps and not br.get("templateId"):
+                errors.append(f"Part {p['id']}: có dấu nhưng không có "
+                              f"templateId — part ảnh thường không template "
+                              f"thì dùng verdict-stamp làm templateId trực tiếp")
+            if _stamps and br.get("templateId"):
+                if len(_stamps) > 3:
+                    errors.append(f"Part {p['id']}: tối đa 3 dấu/part, "
+                                  f"đang có {len(_stamps)}")
+                _part_dur = tp.get("duration", 0) or 0
+                _is_last = (n_parts == total_parts)
+                # cdur như render_draft (XFADE_D 0.5s, trừ part cuối).
+                _cdur = _part_dur + (0 if _is_last else 0.5)
+                _img_ins = None
+                if meta is not None:
+                    _img_ins = sorted(
+                        n for n, d in (meta.get("inputs") or {}).items()
+                        if isinstance(d, dict) and d.get("type") == "image")
+                _seen_on = set()
+                for _sti, _st in enumerate(_stamps):
+                    _pfx = f"Part {p['id']} dấu {_sti + 1}"
+                    _text = str(_st.get("text") or "").strip()
+                    if not _text:
+                        errors.append(f"{_pfx}: thiếu text")
+                    elif len(_text) > 14:
+                        errors.append(f"{_pfx}: text '{_text}' dài "
+                                      f"{len(_text)}>14 ký tự")
+                    _tone = _st.get("tone", "red")
+                    if _tone not in ("green", "red"):
+                        errors.append(f"{_pfx}: tone '{_tone}' phải là "
+                                      f"green|red")
+                    _tilt = str(_st.get("tilt", "-15"))
+                    if _tilt not in ("-15", "0", "15"):
+                        errors.append(f"{_pfx}: tilt '{_tilt}' phải là "
+                                      f"-15|0|15")
+                    _on = str(_st.get("on") or "").strip()
+                    if _on and _img_ins is not None and _on not in _img_ins:
+                        errors.append(f"{_pfx}: on '{_on}' không phải "
+                                      f"input ảnh của {br['templateId']}")
+                    if _on:
+                        if _on in _seen_on:
+                            warnings.append(f"{_pfx}: 2 dấu trên cùng ô "
+                                            f"'{_on}' sẽ chồng nhau")
+                        _seen_on.add(_on)
+                    _at = _st.get("at")
+                    if (not isinstance(_at, (int, float))
+                            or isinstance(_at, bool)):
+                        errors.append(f"{_pfx}: thiếu at (giây trong part) "
+                                      f"— dấu bắt buộc có at > 0")
+                        _at = None
+                    elif _at <= 0:
+                        errors.append(f"{_pfx}: at={_at} phải > 0 — dấu "
+                                      f"hiện từ t=at, không hiện suốt part")
+                    elif _part_dur and _at >= _part_dur:
+                        errors.append(f"{_pfx}: at={_at} >= thời lượng "
+                                      f"part {_part_dur}s")
+                    if _at is not None and _at > 0:
+                        # Giờ ảnh hiện: không reveal -> 0; có reveal ->
+                        # stage đầu tiên ảnh hiện, tính theo cdur + reveal
+                        # (photo-duo img2 hiện từ stage 5, photo-duo-h
+                        # img2 từ stage 2, còn lại từ stage 1).
+                        _appear = 0.0
+                        _rv_ok = (isinstance(_rv, list) and len(_rv) >= 2
+                                  and all(isinstance(_s, str)
+                                          and _s.strip().isdigit()
+                                          for _s in _rv))
+                        if _rv_ok:
+                            _stage = _STAMP_APPEAR_STAGE.get(
+                                (br["templateId"], _on), 1)
+                            _idx = None
+                            for _i, _sv in enumerate(_rv):
+                                if int(_sv) >= _stage:
+                                    _idx = _i
+                                    break
+                            if _idx is None:
+                                _on_name = _on or (
+                                    _img_ins[0] if _img_ins else "?")
+                                errors.append(
+                                    f"{_pfx}: ảnh '{_on_name}' không hiện "
+                                    f"trong reveal nên dấu không có chỗ đóng")
+                            else:
+                                _appear = _idx * _cdur / len(_rv)
+                        if _at < _appear:
+                            errors.append(
+                                f"{_pfx}: stamp at {_at}s < giờ ảnh "
+                                f"'{_on}' hiện {_appear:.2f}s — dấu phải "
+                                f"hiện SAU ảnh")
+                    # SFX của dấu: mỗi dấu mang thud riêng; dấu đơn không
+                    # có sfx riêng thì dùng sfx của part (luật cũ).
+                    _ssfx = _st.get("sfx")
+                    if not isinstance(_ssfx, dict):
+                        _ssfx = None
+                    if _ssfx is None and len(_stamps) > 1:
+                        errors.append(f"{_pfx}: dấu trong danh sách thiếu "
+                                      f"sfx riêng — part-level sfx không thể "
+                                      f"khớp nhiều mốc at")
+                    elif _ssfx is not None:
+                        if _ssfx.get("id") != "heavy_thud_slam":
+                            warnings.append(f"{_pfx}: SFX của dấu phải là "
+                                            f"heavy_thud_slam, đang là "
+                                            f"'{_ssfx.get('id')}'")
+                        # R4-42 (07/11/2026, DEC-050, phương án A): lệch
+                        # >0.15s thì FAIL (trước đây chỉ warn) — thud
+                        # phải đánh đúng lúc dấu đóng, không lệch nhịp.
+                        elif _at is not None and abs(
+                                float(_ssfx.get("offsetSec", 0)) - _at) > 0.15:
+                            errors.append(f"{_pfx}: SFX offsetSec "
+                                            f"{_ssfx.get('offsetSec')} lệch at "
+                                            f"{_at} quá 0.15s — thud phải đánh "
+                                            f"đúng lúc dấu đóng")
+                    elif len(_stamps) == 1:
+                        _psfx = br.get("sfx") or {}
+                        if _psfx.get("id") != "heavy_thud_slam":
+                            warnings.append(f"{_pfx}: SFX của part phải là "
+                                            f"heavy_thud_slam (thud của dấu), "
+                                            f"đang là '{_psfx.get('id')}'")
+                        # R4-42 (07/11/2026, DEC-050, phương án A): lệch
+                        # >0.15s thì FAIL (trước đây chỉ warn).
+                        elif _at is not None and abs(
+                                float(_psfx.get("offsetSec", 0)) - _at) > 0.15:
+                            errors.append(f"{_pfx}: SFX offsetSec "
+                                            f"{_psfx.get('offsetSec')} lệch at "
+                                            f"{_at} quá 0.15s")
+
+    # R4-57 (08/11/2026, DEC-066 A'): tiling + endSec + lossless —
+    # port từ validate_project.py (chỉ hợp lệ SAU assemble nên không
+    # gọi nó trước render — sai công cụ, đợt D7). Ngưỡng khớp
+    # validate: tiling lệch >0.05s, endSec lệch >0.1s.
+    # (a) tiling: các part nối nhau không hở/không chồng — render ghép
+    # part theo startSec/endSec nên hở là đoạn câm/đen, chồng là cắt
+    # âm. Chuỗi nối xuyên scene (scene sau bắt đầu đúng lúc scene
+    # trước kết thúc). Part chưa có audio TTS thì bỏ qua ở đây (đã báo
+    # ở vòng trên) để không báo trùng.
+    _prev_end = None
+    _first = True
+    for sc in plan["scenes"]:
+        _sc_last_end = None
+        for p in sc.get("parts", []):
+            tp = tts_by_id.get(p["id"])
+            if tp is None:
+                continue
+            _s = tp.get("startSec")
+            _e = tp.get("endSec")
+            if not isinstance(_s, (int, float)) or not isinstance(_e, (int, float)):
+                continue
+            if _first:
+                if abs(_s) > 0.05:
+                    errors.append(f"Part {p['id']}: startSec {_s}s — part "
+                                  f"đầu phải bắt đầu ở 0s (lệch {abs(_s):.2f}s)")
+                _first = False
+            elif _prev_end is not None and abs(_s - _prev_end) > 0.05:
+                errors.append(f"Part {p['id']}: startSec {_s}s không khớp "
+                              f"tiling — part trước kết thúc ở {_prev_end}s "
+                              f"(lệch {abs(_s - _prev_end):.2f}s, cho phép 0.05s)")
+            _prev_end = _e
+            _sc_last_end = _e
+        # (d) endSec của scene khớp part cuối (khớp validate:213).
+        if _sc_last_end is not None:
+            _tts_sc = next((s for s in tts.get("scenes", [])
+                            if s.get("order") == sc.get("order")), None)
+            if _tts_sc is not None:
+                _sc_end = _tts_sc.get("endSec")
+                if isinstance(_sc_end, (int, float)) and abs(_sc_end - _sc_last_end) > 0.1:
+                    errors.append(f"Scene {sc.get('order')}: endSec "
+                                  f"{_sc_end}s không khớp tổng parts (part "
+                                  f"cuối kết thúc ở {_sc_last_end}s, lệch "
+                                  f"{abs(_sc_end - _sc_last_end):.2f}s, cho "
+                                  f"phép 0.1s)")
+    # (b) voiceText lossless: lời thoại trong plan nối lại phải khớp nội
+    # dung kịch bản (khớp validate_project.py:211) — plan và script lệch
+    # nhau nghĩa là sửa một nơi mà quên nơi kia, audio (theo script)
+    # sẽ lệch với plan (QA đọc plan để đối chiếu). Thiếu script.json
+    # thì bỏ qua (không chặn oan — 2 project test không có script).
+    _script_path = proj / "script.json"
+    if _script_path.exists():
+        try:
+            _script = json.loads(_script_path.read_text(encoding="utf-8"))
+            _ref = _norm(str(_script.get("content", "")))
+            _joined = _norm(" ".join(str(p.get("voiceText", ""))
+                                     for sc in plan["scenes"]
+                                     for p in sc.get("parts", [])))
+            if _ref and _joined and _ref != _joined:
+                errors.append("voiceText trong plan nối lại không khớp nội "
+                              "dung script.json (lossless fail) — sửa plan "
+                              "hoặc script cho khớp rồi chạy lại preflight")
+        except (OSError, json.JSONDecodeError):
+            pass
 
     # Cửa chặn ảnh thật — provenance (lệnh CEO 05/11/2026, lựa chọn A20):
     # mỗi scene phải có mediaSource.source là chuỗi không rỗng VÀ có
@@ -418,8 +798,8 @@ def main() -> int:
         _sfx_by_id = {}
         for _sc in plan["scenes"]:
             for _p in _sc["parts"]:
-                _sfx_by_id[_p["id"]] = ((_p.get("broll") or {}).get("sfx")
-                                        or {}).get("id")
+                _ids = _part_sfx_ids(_p.get("broll") or {})
+                _sfx_by_id[_p["id"]] = _ids[0] if _ids else None
         _ordered = [p["id"] for sc in plan["scenes"] for p in sc["parts"]]
         if not _sfx_by_id.get(_ordered[0]):
             warnings.append(f"Beat hook (part {_ordered[0]}) chưa có SFX "

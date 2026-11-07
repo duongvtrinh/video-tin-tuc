@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from filename import atomic_write_text  # noqa: E402  (Giai đoạn 5)
+from filename import PlanLockTimeout, atomic_write_text, plan_lock  # noqa: E402  (Giai đoạn 5)
 
 _SYMLINK_FACTORY = Path.home() / "workspace" / "asset-factory"
 # May goc giu symlink cu (khong doi hanh vi); ban clone monorepo
@@ -84,59 +84,75 @@ def main() -> int:
         print("bgm_catalog.json hỏng: cấp cao phải là list", file=sys.stderr)
         return 1
     proj = FACTORY / "projects" / pid
+    plan_path = proj / "broll-plan.json"
     try:
-        plan = json.loads((proj / "broll-plan.json").read_text(encoding="utf-8"))
         inp = json.loads((proj / "input.json").read_text(encoding="utf-8"))
     except Exception as exc:
-        print(f"không đọc được plan/input của {pid}: {exc}", file=sys.stderr)
+        print(f"không đọc được input của {pid}: {exc}", file=sys.stderr)
         return 1
-    if not isinstance(plan, dict) or not isinstance(inp, dict):
-        print(f"plan/input của {pid} hỏng: phải là dict", file=sys.stderr)
+    if not isinstance(inp, dict):
+        print(f"input của {pid} hỏng: phải là dict", file=sys.stderr)
         return 1
+    # R4-49 (08/11/2026, DEC-059 A): đọc–sửa–ghi plan dưới khóa chung trên
+    # đĩa — trước đây ngoài khóa, savePlan/gen_images đúng lúc này là đè
+    # mất lựa chọn BGM (khóa promise trong app Node không bao được Python).
+    try:
+        with plan_lock(plan_path, holder="select_bgm"):
+            try:
+                plan = json.loads(plan_path.read_text(encoding="utf-8"))
+            except Exception as exc:
+                print(f"không đọc được plan của {pid}: {exc}", file=sys.stderr)
+                return 1
+            if not isinstance(plan, dict):
+                print(f"plan của {pid} hỏng: phải là dict", file=sys.stderr)
+                return 1
 
-    if "--mood" in sys.argv:
-        try:
-            mood = sys.argv[sys.argv.index("--mood") + 1]
-        except IndexError:
-            print("--mood thiếu giá trị", file=sys.stderr)
-            return 2
-    else:
-        mood = plan.get("mood") or guess_mood(inp.get("topic", ""))
+            if "--mood" in sys.argv:
+                try:
+                    mood = sys.argv[sys.argv.index("--mood") + 1]
+                except IndexError:
+                    print("--mood thiếu giá trị", file=sys.stderr)
+                    return 2
+            else:
+                mood = plan.get("mood") or guess_mood(inp.get("topic", ""))
 
-    cands = [t for t in catalog if isinstance(t, dict) and mood in t.get("moods", [])]
-    if not cands:
-        print(f"không có track nào mood '{mood}'", file=sys.stderr)
+            cands = [t for t in catalog if isinstance(t, dict) and mood in t.get("moods", [])]
+            if not cands:
+                print(f"không có track nào mood '{mood}'", file=sys.stderr)
+                return 1
+            # chọn ngẫu nhiên theo seed project để ổn định
+            track = random.Random(f"bgm-{pid}-{mood}").choice(cands)
+            # Giai đoạn 5: track thiếu key bắt buộc -> lỗi rõ, không crash trần
+            # KeyError và không ghi plan.bgm dở.
+            _missing = [k for k in ("id", "file", "title", "artist") if k not in track]
+            if _missing:
+                print(f"track BGM mood '{mood}' thiếu key: {', '.join(_missing)} "
+                      f"(track={track}) — sửa bgm_catalog.json rồi chạy lại",
+                      file=sys.stderr)
+                return 1
+            # B30 (06/11/2026, lệnh CEO, lựa chọn A): track trong catalog nhưng
+            # file nhạc không có trên đĩa thì LỖI, không ghi plan — trước đây
+            # vẫn in BGM-OK và lỗi chỉ lộ ở preflight/render/assemble sau đó.
+            _bgm_file = BGM_DIR / track["file"]
+            if not _bgm_file.is_file():
+                print(f"track BGM '{track['id']}' thiếu file nhạc trên đĩa: {_bgm_file} "
+                      f"— copy file vào bgm/ hoặc sửa bgm_catalog.json rồi chạy lại",
+                      file=sys.stderr)
+                return 1
+            plan["bgm"] = {"id": track["id"], "mood": mood, "file": track["file"],
+                           "title": track["title"], "artist": track["artist"],
+                           "attribution": track.get("attribution", "")}
+            # Giai đoạn 5: ghi plan tạm rồi rename — crash giữa chừng không để
+            # lại broll-plan.json bị cắt (plan là gốc sự thật của cả pipeline).
+            atomic_write_text(plan_path,
+                              json.dumps(plan, ensure_ascii=False, indent=1))
+            print(f"BGM-OK mood={mood} track={track['title']} - {track['artist']}")
+            if track.get("attribution"):
+                print(f"  ghi công: {track['attribution']}")
+            return 0
+    except PlanLockTimeout as exc:
+        print(f"không ghi được BGM cho {pid}: {exc}", file=sys.stderr)
         return 1
-    # chọn ngẫu nhiên theo seed project để ổn định
-    track = random.Random(f"bgm-{pid}-{mood}").choice(cands)
-    # Giai đoạn 5: track thiếu key bắt buộc -> lỗi rõ, không crash trần
-    # KeyError và không ghi plan.bgm dở.
-    _missing = [k for k in ("id", "file", "title", "artist") if k not in track]
-    if _missing:
-        print(f"track BGM mood '{mood}' thiếu key: {', '.join(_missing)} "
-              f"(track={track}) — sửa bgm_catalog.json rồi chạy lại",
-              file=sys.stderr)
-        return 1
-    # B30 (06/11/2026, lệnh CEO, lựa chọn A): track trong catalog nhưng
-    # file nhạc không có trên đĩa thì LỖI, không ghi plan — trước đây
-    # vẫn in BGM-OK và lỗi chỉ lộ ở preflight/render/assemble sau đó.
-    _bgm_file = BGM_DIR / track["file"]
-    if not _bgm_file.is_file():
-        print(f"track BGM '{track['id']}' thiếu file nhạc trên đĩa: {_bgm_file} "
-              f"— copy file vào bgm/ hoặc sửa bgm_catalog.json rồi chạy lại",
-              file=sys.stderr)
-        return 1
-    plan["bgm"] = {"id": track["id"], "mood": mood, "file": track["file"],
-                   "title": track["title"], "artist": track["artist"],
-                   "attribution": track.get("attribution", "")}
-    # Giai đoạn 5: ghi plan tạm rồi rename — crash giữa chừng không để
-    # lại broll-plan.json bị cắt (plan là gốc sự thật của cả pipeline).
-    atomic_write_text(proj / "broll-plan.json",
-                      json.dumps(plan, ensure_ascii=False, indent=1))
-    print(f"BGM-OK mood={mood} track={track['title']} - {track['artist']}")
-    if track.get("attribution"):
-        print(f"  ghi công: {track['attribution']}")
-    return 0
 
 
 if __name__ == "__main__":

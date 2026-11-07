@@ -58,6 +58,35 @@ def resolve_accent(template_id: str, inputs: dict) -> str:
     return ACCENT
 
 
+def _image_uri(value, base_dir):
+    """Input ảnh (meta type=image) -> file:// URI để WeasyPrint đọc.
+    Giá trị có thể là file:// sẵn, đường dẫn tuyệt đối, hoặc đường dẫn
+    tương đối so với base_dir (thư mục project, render_draft truyền vào
+    qua argv thứ 6). 06/11/2026: photo-duo, template ảnh nhiều lớp."""
+    s = str(value)
+    if s.startswith("file://"):
+        return s
+    p = Path(s)
+    if not p.is_absolute():
+        if not base_dir:
+            return s
+        p = Path(base_dir) / p
+    try:
+        return p.resolve().as_uri()
+    except Exception:
+        return s
+
+
+# Video-slot (06/11/2026, photo-duo): input ảnh của một slot khai trong
+# meta "videoSlots" mà trỏ tới file video (.mp4...) thì ảnh trong khung
+# được THAY BẰNG VIDEO — video không render qua WeasyPrint mà do
+# render_draft composite bằng ffmpeg vào đúng ô slot. Ở đây chỉ cần để
+# ô ảnh trong suốt (ảnh 1x1 trong suốt) để video lộ ra qua lỗ đó; viền
+# vàng và chữ của template vẫn nằm trên cùng như cũ.
+_VIDEO_EXTS = {".mp4", ".mov", ".webm", ".mkv"}
+_TRANSPARENT_PNG = FACTORY / "templates" / "_shared" / "transparent.png"
+
+
 def fill_placeholders(tpl: str, inputs: dict) -> str:
     # QA Chợ nổi 26/10/2026: đường render tĩnh trước đây chèn nguyên chuỗi
     # items vào <ul> mà không tạo <li>, nên chữ checklist rơi về màu đen
@@ -116,7 +145,7 @@ body {{ margin:0; width:{W}px; height:{H}px; display:flex;
 
 
 def render_template(template_id: str, inputs: dict, W: int = 1280,
-                    H: int = 720) -> Image.Image | None:
+                    H: int = 720, base_dir=None) -> Image.Image | None:
     """Trả về PIL RGBA của template (alpha thật, tách bằng matting 2 nền)."""
     import numpy as np
     tdir = FACTORY / "templates" / template_id
@@ -124,7 +153,19 @@ def render_template(template_id: str, inputs: dict, W: int = 1280,
     css_path = tdir / "style.css"
     if not html_path.exists():
         return None
-    body = fill_placeholders(html_path.read_text(encoding="utf-8"), inputs or {})
+    inputs = dict(inputs or {})
+    try:
+        _meta = json.loads((tdir / "meta.json").read_text(encoding="utf-8"))
+    except Exception:
+        _meta = {}
+    video_slots = _meta.get("videoSlots") or {}
+    for _k, _idef in (_meta.get("inputs") or {}).items():
+        if isinstance(_idef, dict) and _idef.get("type") == "image" and inputs.get(_k):
+            if _k in video_slots and Path(str(inputs[_k])).suffix.lower() in _VIDEO_EXTS:
+                inputs[_k] = _TRANSPARENT_PNG.as_uri()
+            else:
+                inputs[_k] = _image_uri(inputs[_k], base_dir)
+    body = fill_placeholders(html_path.read_text(encoding="utf-8"), inputs)
     css = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
     # bỏ bóng đổ: khó tách alpha ở vùng shadow mềm. LƯU Ý: pattern cũ
     # [^;]+ ăn qua dấu } khi shadow là khai báo cuối rule (không có ;)
@@ -182,7 +223,8 @@ if __name__ == "__main__":
     import sys as _sys
     _tid, _inputs_json, _W, _H, _out = _sys.argv[1:6]
     _inputs = _json.loads(_inputs_json)
-    _im = render_template(_tid, _inputs, int(_W), int(_H))
+    _base = _sys.argv[6] if len(_sys.argv) > 6 else None
+    _im = render_template(_tid, _inputs, int(_W), int(_H), _base)
     if _im is None:
         print("RENDER-FAIL", file=_sys.stderr)
         raise _sys.exit(1)

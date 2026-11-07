@@ -247,7 +247,11 @@ function HtmlPreviewPlayer({ detail, data }: { detail: ProjectDetail; data: Prev
           const buf = await ctx.decodeAudioData(await blob.arrayBuffer());
           if (!cancelled) sfxBufsRef.current.set(id, buf);
         } catch {
-          /* file SFX thiếu trong repo — render cuối cũng bỏ qua file thiếu */
+          // R4-62 (08/11/2026, DEC-070 A): file SFX thiếu khi tải — chỉ
+          // là phòng thủ, vì server đã lọc file thiếu ra khỏi sfxEvents
+          // và báo qua data.missingSfx. KHÔNG được hiểu là "render cuối
+          // cũng bỏ qua": render chặn đúng ở A26 (preflight BÁO LỖI +
+          // render dừng RENDER-ERROR), chỉ preview là bỏ qua tiếng này.
         }
       }
     })();
@@ -682,6 +686,11 @@ function HtmlPreviewPlayer({ detail, data }: { detail: ProjectDetail; data: Prev
       {data.sfxEvents.length > 0 && (
         <p className="mono mt-1 text-[11px] text-[var(--dim)]">
           Mốc SFX: {data.sfxEvents.map((e) => `${e.id} @ ${fmtClock(e.atSec)}–${fmtClock(e.endSec)} (${e.durationSec.toFixed(2)}s, vol ${e.volume})`).join(" · ")}
+        </p>
+      )}
+      {(data.missingSfx ?? []).length > 0 && (
+        <p className="mt-1 text-xs" style={{ color: "var(--warn)" }}>
+          Cảnh báo: thiếu file SFX {(data.missingSfx ?? []).map((m) => `${m.id} (part ${m.partId})`).join(", ")} — render sẽ DỪNG với RENDER-ERROR (A26). Khôi phục file mp3 trong thư mục sfx hoặc gỡ SFX khỏi plan trước khi render.
         </p>
       )}
       <input

@@ -114,6 +114,26 @@ const brollSchema = z.looseObject({
   videoNote: z.string().nullable().optional(),
   sfx: sfxSchema.optional(),
   sourceStartSec: z.number().nullable().optional(),
+  // R4-59 (08/11/2026, DEC-068 A): dấu (stamp) + hiện lần lượt (reveal)
+  // của part — factory đọc thật (preflight kiểm, render_draft dùng);
+  // trước đây schema không khai nên client không có kiểu để sửa qua UI
+  // (looseObject vẫn giữ ở runtime). Stamp: text bắt buộc (trống thì
+  // render bỏ qua), tone mặc định "red", tilt mặc định "-15", on là
+  // slot ảnh (vd "img1"), at là giây xuất hiện, sfx là thud riêng.
+  stamps: z
+    .array(
+      z.looseObject({
+        text: z.string().nullable().optional(),
+        tone: z.string().nullable().optional(),
+        tilt: z.union([z.string(), z.number()]).nullable().optional(),
+        on: z.string().nullable().optional(),
+        at: z.number().nullable().optional(),
+        sfx: sfxSchema.nullable().optional(),
+      }),
+    )
+    .nullable()
+    .optional(),
+  reveal: z.array(z.string()).nullable().optional(),
 });
 const partSchema = z.looseObject({
   id: z.string(),
@@ -515,6 +535,11 @@ const okSchema = z.object({ ok: z.literal(true) });
     request: z.object({
       templateId: z.string().min(1),
       inputs: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()]).nullable()),
+      // R4-61 (08/11/2026, DEC-069 A): projectId optional để handler
+      // truyền argv 6 base_dir cho render_template.py (tìm ảnh input
+      // tương đối) — trước đây preview photo thiếu ảnh vì không có
+      // base_dir; để optional cho tương thích ngược.
+      projectId: z.string().min(1).optional(),
     }),
     response: z.object({ pngBase64: z.string() }),
     capabilities: ["process:spawn"],
@@ -645,6 +670,15 @@ const okSchema = z.object({ ok: z.literal(true) });
           endSec: z.number(),
           loop: z.boolean(),
         }),
+      ),
+      // R4-62 (08/11/2026, DEC-070 A): SFX khai trong plan nhưng file
+      // mp3 không còn trong sfx/ — preview không được nuốt lặng (trước
+      // đây chỉ bỏ qua, Production tưởng part không có SFX) vì render
+      // chặn đúng ở A26 (preflight BÁO LỖI + render dừng RENDER-ERROR).
+      // Client hiện cảnh báo này để Production biết file thiếu trước
+      // khi render. Rỗng khi đủ file.
+      missingSfx: z.array(
+        z.object({ id: z.string(), partId: z.string() }),
       ),
     }),
     capabilities: ["filesystem:read", "process:spawn"],

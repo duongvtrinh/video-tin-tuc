@@ -496,6 +496,10 @@ export const Actions = {
         z.string(),
         z.union([z.string(), z.number(), z.boolean()]).nullable(),
       ),
+      // R4-61 (08/11/2026, DEC-069 A): projectId optional — để handler
+      // truyền argv 6 base_dir cho render_template.py (tìm ảnh input
+      // tương đối); không có thì vẫn render như cũ (không ảnh).
+      projectId: z.string().min(1).optional(),
     }),
     response: z.object({ pngBase64: z.string() }),
     privileged: ALL_PRIVILEGED,
@@ -605,7 +609,7 @@ export const Actions = {
   }),
 
   listSnapshots: defineAction({
-    description: "Liệt kê các snapshot đã chụp của một project (input, kịch bản, plan, TTS) mới nhất trước, để người dùng xem và khôi phục.",
+    description: "Liệt kê các snapshot đã chụp của một project (input, kịch bản, plan, TTS) mới nhất trước, để người dùng xem và khôi phục. Snapshot chỉ khôi phục 4 file JSON đó, KHÔNG khôi phục ảnh.",
     request: z.object({ projectId: z.string().min(1) }),
     response: Factory.listSnapshots.response,
     privileged: ALL_PRIVILEGED,
@@ -615,7 +619,7 @@ export const Actions = {
   }),
 
   restoreSnapshot: defineAction({
-    description: "Khôi phục input, kịch bản, plan và TTS của project từ một snapshot đã chụp; trạng thái hiện tại được chụp lại trước khi ghi đè.",
+    description: "Khôi phục input, kịch bản, plan và TTS của project từ một snapshot đã chụp; trạng thái hiện tại được chụp lại trước khi ghi đè. Snapshot KHÔNG khôi phục ảnh — ảnh đã bị ghi đè/xóa thì không lấy lại được.",
     request: z.object({
       projectId: z.string().min(1),
       snapshotId: z.string().min(1),

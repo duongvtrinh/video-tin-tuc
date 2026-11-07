@@ -169,8 +169,15 @@ def main() -> int:
         title = title[:57] + "..."
 
     # chọn 3 part đắt: ưu tiên part có template chữ, rải đều video
+    # R4-40 (07/11/2026, DEC-048, phương án A): bỏ qua cảnh nền rêu —
+    # ảnh bìa không được lấy từ card nền rêu trơn; nếu mọi cảnh đều
+    # rêu thì không làm thumbnail nào (lỗi rõ), không bịa ảnh bìa.
+    moss_orders = {sc.get("order") for sc in plan["scenes"]
+                   if sc.get("isMossGrid")}
     tpl_parts = []
     for sc in plan["scenes"]:
+        if sc.get("isMossGrid"):
+            continue
         # B43 (06/11/2026, lệnh CEO, lựa chọn A): dùng enumerate thay cho
         # .index(p) — .index trả về part đầu tiên trùng dict, sai pi khi
         # có 2 part giống hệt nhau.
@@ -191,6 +198,8 @@ def main() -> int:
             return 1
         mid = len(tts["parts"]) // 2
         for p in [tts["parts"][0], tts["parts"][mid], tts["parts"][-1]]:
+            if p.get("sceneOrder") in moss_orders:
+                continue
             picks.append((p["sceneOrder"], p["partIdx"], p))
     # quote cho mẫu 3
     quote = ""

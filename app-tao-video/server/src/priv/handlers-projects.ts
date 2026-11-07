@@ -230,7 +230,7 @@ export async function createProject({ name, topic }: ArgsOf<"createProject">): P
       aspectRatio: "9:16",
       lang: "vi",
       density: "normal",
-      created_at: `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
+      created_at: `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`,
       topic,
       sourceType: "",
       isTestClip: false,
@@ -245,10 +245,10 @@ export async function saveScript({ projectId, content, topic }: ArgsOf<"saveScri
   }
 
 export async function savePlan({ projectId, plan }: ArgsOf<"savePlan">): Promise<ResOf<"savePlan">> {
-    // B41 (06/11/2026, lệnh CEO, lựa chọn A): không ghi "Chưa ghi nguồn"
-    // bịa xuống đĩa — plan thiếu source thì cảnh báo thiếu nguồn ở dưới
-    // vẫn chạy; bản trả về cho UI (getProject) vẫn bịa nhãn hiển thị.
-    normalizePlanProvenance(plan, { inventSource: false });
+    // R4-54 (08/11/2026, lệnh CEO, lựa chọn A): "Chưa ghi nguồn" không
+    // còn được bịa ở đâu nữa (kể cả bản trả về cho UI) — plan thiếu source
+    // thì cảnh báo thiếu nguồn ở dưới vẫn chạy.
+    normalizePlanProvenance(plan);
     const problems: string[] = [];
     const ids = new Set<string>();
     const templateIds = new Set(
@@ -268,7 +268,7 @@ export async function savePlan({ projectId, plan }: ArgsOf<"savePlan">): Promise
     // - mediaSource ở cảnh/part đã có file nhưng thiếu source chuỗi
     //   khác rỗng (luật nguồn bắt buộc 29/10);
     // - input template bắt buộc còn trống hoặc vượt maxLength của meta;
-    // - SFX nặng (heavy_thud_slam / boom_sub_impact) để volume > 0,35;
+    // - SFX nặng (heavy_thud_slam / boom_sub_impact) để volume > 0,4;
     // - file media plan trỏ tới không tồn tại trên đĩa.
     const HEAVY_SFX = new Set(["heavy_thud_slam", "boom_sub_impact"]);
     const templateMetaCache = new Map<string, Record<string, Record<string, unknown>>>();
@@ -328,8 +328,11 @@ export async function savePlan({ projectId, plan }: ArgsOf<"savePlan">): Promise
         const sfxId = part.broll?.sfx?.id;
         if (sfxId && !sfxIds.has(sfxId)) problems.push(`SFX không tồn tại: ${sfxId} (part ${part.id})`);
         const sfxVol = part.broll?.sfx?.volume;
-        if (sfxId && HEAVY_SFX.has(sfxId) && typeof sfxVol === "number" && sfxVol > 0.35) {
-          problems.push(`Cảnh báo: part ${part.id} gắn SFX nặng ${sfxId} ở volume ${sfxVol}, vượt trần 0,35`);
+        // R4-59 (08/11/2026, DEC-068 A): thống nhất trần SFX nặng ở 0,4
+        // (khớp cap thật ở preview + render) — trước đây cảnh báo ở
+        // 0,35 nên SFX 0,38 bị cảnh báo dù không bị cap ở đâu.
+        if (sfxId && HEAVY_SFX.has(sfxId) && typeof sfxVol === "number" && sfxVol > 0.4) {
+          problems.push(`Cảnh báo: part ${part.id} gắn SFX nặng ${sfxId} ở volume ${sfxVol}, vượt trần 0,4`);
         }
         const bfile = part.broll?.file;
         if (bfile) {
@@ -345,7 +348,18 @@ export async function savePlan({ projectId, plan }: ArgsOf<"savePlan">): Promise
       }
       scene.text = scene.parts.map((p) => p.voiceText).join(" ");
     }
-    writeJson(join(projDir(projectId), "broll-plan.json"), plan);
+    // R4-59 (08/11/2026, DEC-068 A): BGM plan trỏ tới nhưng file không
+    // còn trong bgm/ — cảnh báo ở lúc lưu (cùng kiểu cảnh báo file
+    // b-roll ở trên) thay vì tới render mới fail.
+    const bgmFile = plan.bgm?.file;
+    if (typeof bgmFile === "string" && bgmFile !== "" && !existsSync(join(FACTORY, "bgm", bgmFile))) {
+      problems.push(`Cảnh báo: BGM ${plan.bgm?.id ?? ""} trỏ file ${bgmFile} nhưng file không có trong bgm/`);
+    }
+    // R4-49 (08/11/2026, DEC-059 A): ghi plan dưới khóa (trước đây ghi
+    // thẳng, ngoài lock — savePlan đúng lúc gen_images ghi cờ là đè nhau).
+    await withPlanWriteLock(projectId, () => {
+      writeJson(join(projDir(projectId), "broll-plan.json"), plan);
+    });
     return { ok: true as const, problems };
   }
 
@@ -442,16 +456,21 @@ export async function getCatalogs(): Promise<ResOf<"getCatalogs">> {
       })
       .sort((a, b) => a.id.localeCompare(b.id));
     const bgmRaw = readJson<Array<Record<string, unknown>>>(join(FACTORY, "bgm/bgm_catalog.json"), []);
-    const bgm = bgmRaw.map((t) => ({
-      id: String(t["id"] ?? ""),
-      title: String(t["title"] ?? ""),
-      artist: String(t["artist"] ?? ""),
-      moods: (t["moods"] as string[] | undefined) ?? [],
-      durationSec: typeof t["duration_sec"] === "number" ? t["duration_sec"] : 0,
-      license: String(t["license"] ?? ""),
-      attribution: String(t["attribution"] ?? ""),
-      file: String(t["file"] ?? ""),
-    }));
+    // R4-59 (08/11/2026, DEC-068 A): chỉ trả track còn file trên đĩa —
+    // trước đây dropdown hiện cả track đã bị xóa khỏi bgm/, chọn xong
+    // tới render mới fail (factory select_bgm kiểm ở B30 nhưng đã muộn).
+    const bgm = bgmRaw
+      .map((t) => ({
+        id: String(t["id"] ?? ""),
+        title: String(t["title"] ?? ""),
+        artist: String(t["artist"] ?? ""),
+        moods: (t["moods"] as string[] | undefined) ?? [],
+        durationSec: typeof t["duration_sec"] === "number" ? t["duration_sec"] : 0,
+        license: String(t["license"] ?? ""),
+        attribution: String(t["attribution"] ?? ""),
+        file: String(t["file"] ?? ""),
+      }))
+      .filter((t) => t.file !== "" && existsSync(join(FACTORY, "bgm", t.file)));
     const sfx = readdirSync(join(FACTORY, "sfx"))
       .filter((f) => f.endsWith(".mp3"))
       .map((f) => ({ id: f.replace(/\.mp3$/, ""), file: f, durationSec: null }));

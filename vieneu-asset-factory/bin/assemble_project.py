@@ -147,7 +147,10 @@ def main() -> int:
             if cand.exists():
                 img_file = cand.name
                 break
-        if img_file and thumb is None:
+        # R4-40 (07/11/2026, DEC-048, phương án A): bỏ qua cảnh nền rêu
+        # khi chọn thumbnail — ảnh bìa không được là card nền rêu trơn;
+        # nếu mọi cảnh đều rêu thì thumbnail để None (không bịa ảnh bìa).
+        if img_file and thumb is None and not sc.get("isMossGrid"):
             thumb = url("media", "images", img_file)
 
         vparts = []

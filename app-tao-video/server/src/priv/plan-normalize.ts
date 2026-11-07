@@ -8,7 +8,11 @@
 // "AI" phải đứng thành từ riêng — khớp lỏng lẻo sẽ bắt nhầm chữ "ai"
 // trong từ tiếng Việt (Hải, bài, tải…) ở tên nguồn báo. (Chuyển từ
 // media-library sang đây ở B20 để cả 3 nơi dùng chung một quy tắc.)
-const AI_SOURCE_RE = /(^|[\s([{\/—–-])AI($|[\s)\]}\/—–\-:,.])/;
+// R4-54 (08/11/2026, lệnh CEO, lựa chọn A): regex có cờ i để "AI" đứng
+// riêng khớp cả chữ thường (trước đây type: "ai" thường bị bỏ sót); thêm
+// tên tool AI — nguồn chỉ ghi tên tool mà không ghi type cũng là ảnh AI.
+const AI_SOURCE_RE = /(^|[\s([{\/—–-])AI($|[\s)\]}\/—–\-:,.])/i;
+const AI_TOOL_NAMES = ["midjourney", "dall-e", "dall·e", "dalle", "stable diffusion", "leonardo", "firefly", "ideogram", "imagen", "flux", "dreamstudio", "nightcafe"];
 
 function isAiText(text: string): boolean {
   const t = text.toLowerCase();
@@ -16,7 +20,8 @@ function isAiText(text: string): boolean {
     t.includes("prompt-ai") ||
     t.includes("ai-tu-prompt") ||
     t.includes("ai từ prompt") ||
-    AI_SOURCE_RE.test(text)
+    AI_SOURCE_RE.test(text) ||
+    AI_TOOL_NAMES.some((n) => t.includes(n))
   );
 }
 
@@ -29,6 +34,9 @@ function isAiText(text: string): boolean {
 // prompt" (không phân biệt hoa/thường); chấp nhận mediaSource dạng chuỗi
 // trần. Một bản ghi có trường prompt/aiPrompt mà type chứa "prompt" cũng
 // là ảnh AI (pipeline cũ ghi {type: "prompt-...", prompt: ...}).
+// R4-54 (08/11/2026, lựa chọn A): "AI" đứng riêng khớp cả chữ thường;
+// tên tool AI (Midjourney, DALL-E, Stable Diffusion, …) cũng được nhận
+// diện dù không ghi type.
 export function isAiSource(value: unknown): boolean {
   if (typeof value === "string") return isAiText(value);
   if (value && typeof value === "object") {
@@ -52,16 +60,12 @@ export function isAiSource(value: unknown): boolean {
 // closed response schema reject the whole project. The UI renders
 // mediaSource.source, and the plan law requires every mediaSource to
 // carry one, so when `source` is missing/null we derive it from `type`,
-// falling back to a prompt marker or an explicit "not recorded" label.
-// getProject applies this only to the returned copy — it never writes
-// the plan file; savePlan applies it before writing so plans saved
-// through the app always carry a source string. B41 (06/11/2026, lệnh
-// CEO, lựa chọn A): "Chưa ghi nguồn" chỉ là nhãn hiển thị cho bản trả
-// về — savePlan gọi với inventSource: false để KHÔNG ghi chuỗi bịa này
-// xuống đĩa (ghi bịa thì kiểm tra thiếu source ở savePlan không còn
-// cảnh báo nữa); plan trên đĩa giữ nguyên thiếu source cho tới khi
-// Production ghi nguồn thật.
-function normalizeProvenance(value: unknown, inventSource = true): unknown {
+// falling back to a prompt marker. R4-54 (08/11/2026, lệnh CEO, lựa
+// chọn A): KHÔNG bịa "Chưa ghi nguồn" nữa — cả bản trả về lẫn bản ghi
+// đĩa đều để trống source khi không suy ra được (trước đây B41 chỉ chặn
+// ghi đĩa, bản trả về vẫn bịa nhãn nên người đọc tưởng đã có nguồn);
+// thiếu source thì cảnh báo thiếu nguồn còn chạy, A20 chặn đúng.
+function normalizeProvenance(value: unknown): unknown {
   // The pipeline has also written provenance as a BARE STRING (topic053001
   // records broll.videoSource as just a Pexels page URL). Wrap it into the
   // object shape instead of letting response validation reject the whole
@@ -108,12 +112,11 @@ function normalizeProvenance(value: unknown, inventSource = true): unknown {
   if (!source && isAiSource(rec)) source = "AI từ prompt";
   if (!source) source = asStr(rec["type"]);
   if (!source) {
-    // B41: chỉ bịa "Chưa ghi nguồn" cho bản trả về (inventSource); bản
-    // ghi xuống đĩa thì để trống source để cảnh báo thiếu nguồn còn chạy.
+    // R4-54 (08/11/2026, lựa chọn A): không bịa "Chưa ghi nguồn" nữa —
+    // thiếu source thì để trống để cảnh báo thiếu nguồn còn chạy và A20
+    // chặn đúng; chỉ suy ra "AI từ prompt" khi có aiPrompt/prompt.
     if (typeof rec["aiPrompt"] === "string" || typeof rec["prompt"] === "string") {
       source = "AI từ prompt";
-    } else if (inventSource) {
-      source = "Chưa ghi nguồn";
     }
   }
   if (source) rec["source"] = source;
@@ -145,9 +148,8 @@ function normalizeTemplateInputs(value: unknown): unknown {
   return out;
 }
 
-export function normalizePlanProvenance<T>(plan: T, opts?: { inventSource?: boolean }): T {
+export function normalizePlanProvenance<T>(plan: T): T {
   if (!plan || typeof plan !== "object") return plan;
-  const inventSource = opts?.inventSource ?? true;
   const scenes = (plan as { scenes?: unknown }).scenes;
   if (!Array.isArray(scenes)) return plan;
   for (const scene of scenes) {
@@ -160,7 +162,7 @@ export function normalizePlanProvenance<T>(plan: T, opts?: { inventSource?: bool
     for (const k of ["imageFile", "cardImage", "motion", "text", "sceneScriptSummary", "sceneImagePrompt"]) {
       if (s[k] === null) delete s[k];
     }
-    if ("mediaSource" in s) s["mediaSource"] = normalizeProvenance(s["mediaSource"], inventSource);
+    if ("mediaSource" in s) s["mediaSource"] = normalizeProvenance(s["mediaSource"]);
     const parts = s["parts"];
     if (!Array.isArray(parts)) continue;
     for (const part of parts) {
@@ -174,8 +176,8 @@ export function normalizePlanProvenance<T>(plan: T, opts?: { inventSource?: bool
         if (b[k] === null) delete b[k];
       }
       if ("inputs" in b) b["inputs"] = normalizeTemplateInputs(b["inputs"]);
-      if ("mediaSource" in b) b["mediaSource"] = normalizeProvenance(b["mediaSource"], inventSource);
-      if ("videoSource" in b) b["videoSource"] = normalizeProvenance(b["videoSource"], inventSource);
+      if ("mediaSource" in b) b["mediaSource"] = normalizeProvenance(b["mediaSource"]);
+      if ("videoSource" in b) b["videoSource"] = normalizeProvenance(b["videoSource"]);
     }
   }
   return plan;

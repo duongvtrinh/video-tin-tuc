@@ -312,14 +312,24 @@ export function MediaTab({ detail }: { detail: ProjectDetail }) {
   // nhận trước — file cũ (kể cả ảnh thật) sẽ bị thay ngay. Trả true khi
   // đích chưa có file (không có gì để ghi đè) hoặc user đồng ý. Nút xóa
   // ảnh ở dưới đã có confirm riêng từ trước.
+  // R4-62 (08/11/2026, DEC-070 A): không chỉ tin imageFile/broll.file
+  // trong plan — plan và đĩa có thể lệch (vd plan ghi null nhưng đĩa
+  // vẫn còn file thật, xem R4-25/R4-26): kiểm tra cả thư viện media
+  // trên đĩa (server đã khớp file → cảnh/part theo tên file seg_N_ /
+  // broll_seg_N_part_M_ nên lệch plan vẫn bắt được).
   const confirmOverwrite = (): boolean => {
     const existing =
       target === "scene" ? scene?.imageFile : part?.broll?.file;
-    if (!existing) return true;
+    const onDisk = (detail.mediaLibrary ?? []).some((i) =>
+      target === "scene"
+        ? i.slot === "scene" && i.sceneOrder === scene?.order
+        : i.slot === "broll" && i.partId === part?.id,
+    );
+    if (!existing && !onDisk) return true;
     const where =
       target === "scene"
-        ? `Cảnh ${scene?.order} đã có ảnh ${existing}`
-        : `B-roll của ${part?.id} đã có file ${existing}`;
+        ? `Cảnh ${scene?.order} đã có ảnh ${existing ?? "trên đĩa"}`
+        : `B-roll của ${part?.id} đã có file ${existing ?? "trên đĩa"}`;
     return window.confirm(`${where} — thao tác này sẽ ghi đè file cũ. Tiếp tục?`);
   };
   if (!plan || scenes.length === 0) {

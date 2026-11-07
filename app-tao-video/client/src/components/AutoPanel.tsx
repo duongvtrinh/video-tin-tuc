@@ -226,6 +226,29 @@ export function AutoPanel({ detail, summary, onNavigate, unsavedScript, unsavedT
     return false;
   }
 
+  // R4-62 (08/11/2026, DEC-070 A): AutoPanel cũng phải hỏi trước khi
+  // ghi đè như thao tác tay (B23) — plan có thể ghi trống nhưng đĩa
+  // vẫn còn file thật (lệch plan/đĩa, xem R4-25/R4-26). Hỏi 1 lần cho
+  // mỗi mục sắp ghi đè, ngay lúc chọn mục (chạy tuần tự) chứ không hỏi
+  // trong hàng chờ AI chạy song song; user từ chối thì trả false để
+  // caller bỏ qua mục đó và đưa vào danh sách cần xử lý tay.
+  const confirmOverwriteTarget = (
+    lib: Array<{ slot: string; sceneOrder: number | null; partId: string | null }>,
+    sceneOrder: number,
+    partId: string | null,
+    label: string,
+  ): boolean => {
+    const onDisk = lib.some((i) =>
+      partId === null
+        ? i.slot === "scene" && i.sceneOrder === sceneOrder
+        : i.slot === "broll" && i.partId === partId,
+    );
+    if (!onDisk) return true;
+    return window.confirm(
+      `${label} đã có file trên đĩa (plan ghi trống — lệch plan/đĩa). Tạo video tự động sẽ ghi đè file đó. Tiếp tục?`,
+    );
+  };
+
   // Giai đoạn 2: tạo media bằng AI cho MỘT mục trong hàng chờ. Việc
   // chậm nằm cả ở phía server (công cụ tạo media); ghi plan đã được
   // server khóa theo project nên nhiều luồng gọi đồng thời vẫn an toàn.
@@ -414,10 +437,17 @@ export function AutoPanel({ detail, summary, onNavigate, unsavedScript, unsavedT
           const summary = scene.sceneScriptSummary || scene.text || "";
           if (!summary && !scene.sceneImagePrompt) { failures.push(`Cảnh ${scene.order} (chưa có tóm tắt/prompt để tìm media)`); continue; }
           const need: MediaNeed = { sceneOrder: scene.order, partId: null, summary: summary || scene.sceneImagePrompt, prompt: scene.sceneImagePrompt, label: `cảnh ${scene.order}`, failLabel: `Cảnh ${scene.order}`, mediaType: "image" };
-          const found = await searchMediaForTarget(need);
-          if (!found) {
-            aiQueue.push(need);
-            setMessages((m) => [...m, `${need.failLabel}: tìm kiếm không có file đạt — đưa vào hàng chờ tạo bằng AI, tiếp tục xác định cảnh/part tiếp theo.`]);
+          // R4-62 (08/11/2026, DEC-070 A): hỏi trước khi ghi đè nếu đĩa
+          // còn file (plan ghi trống) — từ chối thì bỏ qua mục này.
+          if (!confirmOverwriteTarget(cur.mediaLibrary ?? [], scene.order, null, `Cảnh ${scene.order}`)) {
+            failures.push(`Cảnh ${scene.order} (đã có file trên đĩa, user không đồng ý ghi đè)`);
+            setMessages((m) => [...m, `Cảnh ${scene.order}: đã có file trên đĩa nhưng plan ghi trống — đã hỏi và user không đồng ý ghi đè, bỏ qua mục này, xử lý tay ở tab Media.`]);
+          } else {
+            const found = await searchMediaForTarget(need);
+            if (!found) {
+              aiQueue.push(need);
+              setMessages((m) => [...m, `${need.failLabel}: tìm kiếm không có file đạt — đưa vào hàng chờ tạo bằng AI, tiếp tục xác định cảnh/part tiếp theo.`]);
+            }
           }
         }
         for (const part of scene.parts) {
@@ -429,10 +459,17 @@ export function AutoPanel({ detail, summary, onNavigate, unsavedScript, unsavedT
             // không bao giờ tìm/tạo được b-roll VIDEO dù plan ghi rõ
             // mediaType video và tab Media tay có chọn video.
             const need: MediaNeed = { sceneOrder: scene.order, partId: part.id, summary: part.broll?.scriptSummary || part.voiceText, prompt: part.broll?.prompt ?? "", label: `b-roll ${part.id}`, failLabel: `B-roll ${part.id}`, mediaType: part.broll?.mediaType === "video" ? "video" : "image" };
-            const found = await searchMediaForTarget(need);
-            if (!found) {
-              aiQueue.push(need);
-              setMessages((m) => [...m, `${need.failLabel}: tìm kiếm không có file đạt — đưa vào hàng chờ tạo bằng AI, tiếp tục xác định cảnh/part tiếp theo.`]);
+            // R4-62 (08/11/2026, DEC-070 A): hỏi trước khi ghi đè nếu
+            // đĩa còn file (plan ghi trống) — từ chối thì bỏ qua mục này.
+            if (!confirmOverwriteTarget(cur.mediaLibrary ?? [], scene.order, part.id, `B-roll ${part.id}`)) {
+              failures.push(`B-roll ${part.id} (đã có file trên đĩa, user không đồng ý ghi đè)`);
+              setMessages((m) => [...m, `B-roll ${part.id}: đã có file trên đĩa nhưng plan ghi trống — đã hỏi và user không đồng ý ghi đè, bỏ qua mục này, xử lý tay ở tab Media.`]);
+            } else {
+              const found = await searchMediaForTarget(need);
+              if (!found) {
+                aiQueue.push(need);
+                setMessages((m) => [...m, `${need.failLabel}: tìm kiếm không có file đạt — đưa vào hàng chờ tạo bằng AI, tiếp tục xác định cảnh/part tiếp theo.`]);
+              }
             }
           } else if (!want && !part.broll?.file) {
             // Không bỏ qua lặng lẽ như trước: ghi lại để báo rõ ở dưới —

@@ -9,7 +9,7 @@ type ResOf<K extends keyof typeof Factory> = z.infer<(typeof Factory)[K]["respon
 
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { basename, join } from "node:path";
-import { FACTORY, brollFileName, ffprobe, projDir, rand6, readJson, run } from "./core";
+import { FACTORY, brollFileName, ffprobe, mimeForPath, projDir, rand6, readJson, run } from "./core";
 import { renderMotionByPartId } from "./motion";
 
 export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): Promise<ResOf<"getPreviewData">> {
@@ -88,10 +88,18 @@ export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): P
       if (k.partId) karaMap.set(k.partId, k);
     }
     const tplCache = new Map<string, [string, string]>();
-    const getTpl = (tid: string): [string, string] => {
+    const getTpl = (tid: string, partId: string): [string, string] => {
       const hit = tplCache.get(tid);
       if (hit) return hit;
       const td = join(FACTORY, "templates", tid);
+      // R4-56 (08/11/2026, DEC-065 A): template thiếu thì báo lỗi rõ
+      // thay vì im lặng hiển thị trống — Production gõ sai templateId
+      // thì biết ngay là do tên template, không tưởng part bị lỗi
+      // render. Template thật nào cũng có template.html không rỗng
+      // (đã kiểm 43 template); thư mục _shared không phải template.
+      if (!existsSync(td)) {
+        throw new Error(`Template "${tid}" không tồn tại (part ${partId}) — kiểm tra lại templateId trong plan`);
+      }
       const readOrEmpty = (f: string) => {
         try {
           return readFileSync(join(td, f), "utf8");
@@ -100,6 +108,9 @@ export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): P
         }
       };
       const pair: [string, string] = [readOrEmpty("template.html"), readOrEmpty("style.css")];
+      if (!pair[0]) {
+        throw new Error(`Template "${tid}" không có template.html (part ${partId}) — template bị hỏng, kiểm tra lại trong factory`);
+      }
       tplCache.set(tid, pair);
       return pair;
     };
@@ -184,7 +195,11 @@ export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): P
           );
           if (code !== 0) throw new Error(`ffmpeg scale failed (${code})`);
         }
-        dataUrl = `data:image/jpeg;base64,${readFileSync(thumb).toString("base64")}`;
+        // R4-56 (08/11/2026, DEC-065 A): nhãn MIME theo phần mở rộng
+        // thật của thumbnail (PNG → image/png, WebP → image/webp) thay
+        // vì ghi cứng image/jpeg — trước đây thumbnail PNG/WebP bị gắn
+        // nhãn sai (mimeForPath ở core.ts đã đúng, chỉ chỗ này ghi cứng).
+        dataUrl = `data:${mimeForPath(thumb)};base64,${readFileSync(thumb).toString("base64")}`;
       } catch {
         dataUrl = "";
       }
@@ -202,7 +217,7 @@ export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): P
       let tplCss = "";
       const tplInputs: Record<string, string> = {};
       if (tid) {
-        [tplHtml, tplCss] = getTpl(tid);
+        [tplHtml, tplCss] = getTpl(tid, p.id);
         for (const [k, v] of Object.entries(br.inputs ?? {})) {
           tplInputs[k] = v === null || v === undefined ? "" : String(v);
         }
@@ -267,10 +282,21 @@ export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): P
       endSec: number;
       loop: boolean;
     }> = [];
+    // R4-62 (08/11/2026, DEC-070 A): SFX khai trong plan nhưng file
+    // mp3 không còn trong sfx/ — ghi vào missingSfx để client cảnh báo,
+    // không nuốt lặng như trước (Production tưởng part không có SFX,
+    // đến lúc render mới biết vì A26 chặn + RENDER-ERROR dừng render).
+    const missingSfx: Array<{ id: string; partId: string }> = [];
     for (const p of tts.parts) {
       const br = brollMap.get(p.id);
       const sfx = br?.sfx;
       if (!sfx?.id) continue;
+      // File SFX thiếu thì không đưa vào sfxEvents (không phát được)
+      // mà ghi cảnh báo — khớp hành vi render (A26 chặn, không bỏ qua).
+      if (!existsSync(join(FACTORY, "sfx", `${sfx.id}.mp3`))) {
+        missingSfx.push({ id: sfx.id, partId: p.id });
+        continue;
+      }
       let vol = typeof sfx.volume === "number" ? sfx.volume : 0.6;
       if (/(thud|slam|boom)/.test(sfx.id)) vol = Math.min(vol, 0.4);
       const atSec =
@@ -312,5 +338,6 @@ export async function getPreviewData({ projectId }: ArgsOf<"getPreviewData">): P
       parts,
       bgm,
       sfxEvents,
+      missingSfx,
     };
   }

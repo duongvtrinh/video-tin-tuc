@@ -1,0 +1,100 @@
+{
+ "accent": {
+  "default": "gold",
+  "type": "enum"
+ },
+ "animation": {
+  "default": "none",
+  "type": "enum"
+ },
+ "background": "opaque",
+ "capability": [
+  "ảnh minh họa",
+  "nhân vật",
+  "số liệu"
+ ],
+ "category": "photo",
+ "description": "Một nhân vật/đối tượng lớn + một con số then chốt, theo ngôn ngữ reel Vietnam Business News: ảnh lớn trong khung viền vàng, số vàng lớn phía dưới, nhãn trắng và dòng chú thích xám. Dùng cho beat 'một người, một con số' — nhân vật làm chứng cho số liệu. Ảnh là input kiểu image; Production cắt ảnh trước về tỉ lệ khung 528x460. Stage 1-4 cho video reveal (1: ảnh, 2: +số lớn, 3: +nhãn, 4: +chú thích); lớp chưa tới lượt ẩn bằng visibility:hidden nên bố cục không nhảy; mặc định stage 4. Không animation (đường render tĩnh). ĐỔI NỀN 06/11/2026: nền navy sao → xanh rêu kẻ ô vuông chuẩn (#1C372A, ô 80px, kẻ #2A4D3B 2px), thống nhất bộ màu với các template khác.",
+ "exampleInputs": {
+  "big": "168 TRIỆU USD",
+  "img": "build/media/images/musk.jpg",
+  "label": "ELON MUSK CHI CHO PHE CỘNG HÒA",
+  "stage": "4",
+  "sub": "Số tiền lớn nhất từng chi cho một cuộc đua Thống đốc Texas"
+ },
+ "hidesSubs": true,
+ "id": "photo-hero",
+ "inputs": {
+  "big": {
+   "maxLength": 20,
+   "required": true,
+   "type": "string"
+  },
+  "img": {
+   "required": true,
+   "type": "image"
+  },
+  "label": {
+   "maxLength": 40,
+   "required": true,
+   "type": "string"
+  },
+  "stage": {
+   "default": "4",
+   "type": "enum"
+  },
+  "sub": {
+   "maxLength": 70,
+   "required": false,
+   "type": "string"
+  }
+ },
+ "maxStage": 4,
+ "mode": "fullscreen",
+ "name": "Ảnh lớn + số liệu / Photo Hero",
+ "notFor": [
+  "Hai nhân vật trở lên (dùng photo-duo hoặc photo-duo-h)",
+  "Số liệu không gắn với nhân vật cụ thể (dùng stat-counter)",
+  "Trích dẫn lời nói (dùng photo-quote: headline = câu trích nguyên văn, subline = tên nguồn)"
+ ],
+ "performance": {
+  "maxDomNodes": 10,
+  "usesExternalAssets": true,
+  "usesFilters": false
+ },
+ "position": {
+  "default": "full-stage",
+  "type": "enum"
+ },
+ "schemaVersion": 1,
+ "sfx": {
+  "id": "heavy_thud_slam",
+  "offsetSec": 0,
+  "volume": 0.35
+ },
+ "status": "active",
+ "supportedAspectRatios": [
+  "9:16"
+ ],
+ "tags": [
+  "ảnh",
+  "nhân vật",
+  "số liệu"
+ ],
+ "themes": [
+  "general"
+ ],
+ "version": "1.3.0",
+ "whenToUse": [
+  "Beat 'một người, một con số': nhân vật cụ thể gắn với con số then chốt của câu chuyện",
+  "Cần người xem nhớ mặt nhân vật cùng lúc với số liệu"
+ ],
+ "videoSlots": {
+  "img": {
+   "x": 100,
+   "y": 310,
+   "w": 520,
+   "h": 452
+  }
+ }
+}

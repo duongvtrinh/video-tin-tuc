@@ -12,10 +12,14 @@ thấy đúng file (hết clip đen/sai hình do lệch tên).
     python3 filename.py <project_id> partwav <order> <partIdx> -> parts/part_1_2_771122.wav
 """
 import hashlib
+import json
 import os
 import sys
 import tempfile
+import time
+import uuid
 import wave
+from contextlib import contextmanager
 from pathlib import Path
 
 
@@ -46,6 +50,78 @@ def atomic_write_bytes(path: Path, data: bytes) -> None:
 def atomic_write_text(path: Path, text: str, encoding: str = "utf-8") -> None:
     """Như atomic_write_bytes, cho nội dung text (JSON/SRT/README)."""
     atomic_write_bytes(Path(path), text.encode(encoding))
+
+
+# R4-49 (08/11/2026, lệnh CEO, DEC-059 phương án A): khóa ghi plan CHUNG
+# trên đĩa (file lock) để khóa cả tiến trình Node (app) — khóa promise
+# trong app không bao được script Python. Giao thức dùng chung với
+# server/src/priv/core.ts (Node), phải giữ đồng nhất cả hai bên:
+#   - file khóa: <plan>.lock (cạnh file plan, vd broll-plan.json.lock);
+#   - tạo bằng open(..., "x") (O_EXCL — tạo mới nguyên tử, chỉ một thắng);
+#   - nội dung JSON {pid, token, holder, at} (token để lúc giải phóng chỉ
+#     xóa đúng khóa của mình);
+#   - khóa cũ hơn 30s thì bị phá (tiến trình giữ khóa chết giữa chừng);
+#   - chờ tối đa 30s rồi lỗi rõ thay vì ghi không khóa (fail-closed).
+# Ghi plan bình thường xong trong <1s nên 30s là biên an toàn lớn.
+PLAN_LOCK_TIMEOUT_S = 30.0
+PLAN_LOCK_STALE_S = 30.0
+PLAN_LOCK_POLL_S = 0.05
+
+
+class PlanLockTimeout(TimeoutError):
+    """Không lấy được khóa ghi plan trong thời gian chờ."""
+
+
+def plan_lock_path(plan_path: Path) -> Path:
+    return Path(str(plan_path) + ".lock")
+
+
+def acquire_plan_lock(plan_path, holder="?"):
+    """Lấy khóa ghi plan; trả (lock_path, token). Hết timeout thì raise PlanLockTimeout."""
+    lock_path = plan_lock_path(plan_path)
+    token = uuid.uuid4().hex
+    deadline = time.monotonic() + PLAN_LOCK_TIMEOUT_S
+    while True:
+        try:
+            with open(lock_path, "x", encoding="utf-8") as f:
+                f.write(json.dumps({"pid": os.getpid(), "token": token, "holder": holder, "at": time.time()}))
+            return lock_path, token
+        except FileExistsError:
+            try:
+                age = time.time() - lock_path.stat().st_mtime
+            except FileNotFoundError:
+                continue  # khóa biến mất giữa hai lần kiểm — thử lại ngay
+            if age > PLAN_LOCK_STALE_S:
+                try:
+                    lock_path.unlink()
+                except FileNotFoundError:
+                    pass
+                continue
+            if time.monotonic() > deadline:
+                raise PlanLockTimeout(
+                    f"không lấy được khóa ghi plan {plan_path} sau {PLAN_LOCK_TIMEOUT_S:.0f}s "
+                    f"(khóa đang giữ bởi tiến trình khác: {lock_path})"
+                )
+            time.sleep(PLAN_LOCK_POLL_S)
+
+
+def release_plan_lock(lock_path, token) -> None:
+    try:
+        cur = json.loads(Path(lock_path).read_text(encoding="utf-8"))
+        if cur.get("token") == token:
+            Path(lock_path).unlink(missing_ok=True)
+    except (FileNotFoundError, ValueError):
+        pass  # khóa đã bị phá (stale) hoặc không đọc được — không còn gì để giải phóng
+
+
+@contextmanager
+def plan_lock(plan_path, holder="?"):
+    """Context manager: giữ khóa ghi plan trong khối with, giải phóng luôn cả khi lỗi."""
+    lock_path, token = acquire_plan_lock(plan_path, holder)
+    try:
+        yield
+    finally:
+        release_plan_lock(lock_path, token)
 
 
 def wav_ok(path: Path) -> bool:

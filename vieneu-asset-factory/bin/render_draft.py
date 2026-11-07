@@ -99,6 +99,21 @@ def esc_filter_path(p: str) -> str:
     return p.replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'").replace(",", "\\,")
 
 
+def _normalize_stamps(br: dict) -> list:
+    """Danh sách dấu của một part (cơ chế danh sách dấu, 06/11/2026 —
+    khôi phục tính năng dấu đã xoá cùng ngày rồi mở rộng):
+    broll.stamps = [ {text, tone, tilt, on, at, sfx}, ... ];
+    broll.stamp dạng đơn cũ -> danh sách 1 phần tử (tương thích ngược).
+    Trả về list (có thể rỗng)."""
+    stamps = (br or {}).get("stamps")
+    if isinstance(stamps, list):
+        return [s for s in stamps if isinstance(s, dict)]
+    stamp = (br or {}).get("stamp")
+    if isinstance(stamp, dict):
+        return [stamp]
+    return []
+
+
 # BLUR-FILL 3:4 (CEO 2026-11-01): ảnh/video ngang hoặc vuông không còn
 # bị cắt mù về 9:16. Ảnh ngang cắt vuông (focus chủ thể — pipeline hiện
 # chưa có model saliency nên vuông lấy giữa khung, cùng cách crop giữa
@@ -153,13 +168,21 @@ def blurfill_image_vf(motion: str, W: int, H: int, frames: int) -> str:
               f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=720x720:fps=30")
         win = "crop=540:720:x=90:y=0"
     elif motion == "pan_right":
+        # TANG DO MIN (CEO 06/11/2026, giu crop): pan ngang truoc day dung
+        # crop 540:720 o tang 720 voi x='2*trunc(90*sn)' — buoc nhay
+        # 2,67px tren man hinh, 6 frame dau x=0 tuyet doi (lag). Nay tang
+        # tang zoompan len 1440x1440, cua so 1080:1440, x='2*round(180*sn)'
+        # — buoc nhay chi 1,33px tren man hinh, frame dau nhuc nhich tu
+        # frame 3, round giu vi tri sat quy dao muot hon trunc. Giu x chan
+        # (2*) cho yuv420p; x toi da 360, cua so 1080+360=1440 vua khit.
         zp = (f"zoompan=z='1.05':x='iw/2-(iw/zoom/2)':"
-              f"y='ih/2-(ih/zoom/2)':d=1:s=720x720:fps=30")
-        win = f"crop=540:720:x='2*trunc(90*{sn})':y=0"
+              f"y='ih/2-(ih/zoom/2)':d=1:s=1440x1440:fps=30")
+        win = f"crop=1080:1440:x='2*round(180*{sn})':y=0"
     elif motion == "pan_left":
+        # Nhu pan_right, chieu nguoc (xem ghi chu tren).
         zp = (f"zoompan=z='1.05':x='iw/2-(iw/zoom/2)':"
-              f"y='ih/2-(ih/zoom/2)':d=1:s=720x720:fps=30")
-        win = f"crop=540:720:x='2*trunc(90*(1-{sn}))':y=0"
+              f"y='ih/2-(ih/zoom/2)':d=1:s=1440x1440:fps=30")
+        win = f"crop=1080:1440:x='2*round(180*(1-{sn}))':y=0"
     elif motion == "pan_down":
         zp = (f"zoompan=z='1.05':x='iw/2-(iw/zoom/2)':"
               f"y='(ih-ih/zoom)*{s}':d=1:s=720x720:fps=30")
@@ -231,7 +254,9 @@ def main() -> int:
                 br = pt.get("broll") or {}
                 if br.get("templateId"):
                     tpl_by_part[pt["id"]] = (br["templateId"],
-                                             br.get("inputs") or {})
+                                             br.get("inputs") or {},
+                                             br.get("reveal"),
+                                             _normalize_stamps(br))
         # B26 (06/11/2026, lệnh CEO, lựa chọn A): kiểm BGM/SFX ngay đầu
         # main — trước đây BGM chỉ được kiểm ở cuối (sau khi render xong
         # hết clip) và SFX ở giữa (trước ffmpeg trộn cuối), nên project
@@ -258,9 +283,86 @@ def main() -> int:
             r = subprocess.run(
                 [_VENV_PY, str(FACTORY / "bin" / "render_template.py"),
                  tid, json.dumps(inputs, ensure_ascii=False),
-                 str(W), str(H), str(out)],
+                 str(W), str(H), str(out), str(proj)],
                 capture_output=True, text=True, timeout=180)
             return r.returncode == 0 and Path(out).exists()
+
+        def _gold_frame_rects(png_path):
+            # Ô trong (x, y, w, h) các khung ảnh viền vàng trong PNG template
+            # đã render, theo thứ tự trên-trước-trái-trước (khớp thứ tự input
+            # ảnh đã sắp xếp: img < img1 < img2). Dùng để đặt video vào đúng
+            # ô ảnh (06/11/2026, CEO: ảnh/video thay nhau trong cửa sổ ảnh).
+            # Bố cục flex dịch chuyển theo nội dung nên phải đo trên PNG thật,
+            # không dùng tọa độ cứng trong meta (meta chỉ là fallback).
+            # Ô trong = khung ngoài trừ viền 4px mỗi bên.
+            try:
+                import numpy as _np
+                from PIL import Image as _PILImage
+                _a = _np.asarray(
+                    _PILImage.open(png_path).convert("RGB")).astype(int)
+            except Exception:
+                return []
+            _gold = ((_a[:, :, 0] > 230) & (_a[:, :, 1] >= 160)
+                     & (_a[:, :, 1] <= 215) & (_a[:, :, 2] < 90))
+            _g = _np.concatenate(
+                [_np.zeros((_gold.shape[0], 1), dtype=bool), _gold,
+                 _np.zeros((_gold.shape[0], 1), dtype=bool)], axis=1)
+            _d = _np.diff(_g.astype(_np.int8), axis=1)
+            _bands = []
+            for _y in range(_gold.shape[0]):
+                _s = _np.where(_d[_y] == 1)[0]
+                _e = _np.where(_d[_y] == -1)[0]
+                for _s0, _e0 in zip(_s, _e):
+                    if _e0 - _s0 < 150:
+                        continue
+                    _placed = False
+                    for _i, _b in enumerate(_bands):
+                        _ov = min(_b[3], int(_e0)) - max(_b[2], int(_s0))
+                        _w = min(_b[3] - _b[2], int(_e0) - int(_s0))
+                        if _y - _b[1] <= 3 and _ov > 0.5 * _w:
+                            _bands[_i] = (_b[0], _y, min(_b[2], int(_s0)),
+                                         max(_b[3], int(_e0)))
+                            _placed = True
+                            break
+                    if not _placed:
+                        _bands.append((_y, _y, int(_s0), int(_e0)))
+            _used = set()
+            _rects = []
+            for _i, _b in enumerate(_bands):
+                if _i in _used:
+                    continue
+                for _j in range(_i + 1, len(_bands)):
+                    if _j in _used:
+                        continue
+                    _ov = min(_b[3], _bands[_j][3]) - max(_b[2], _bands[_j][2])
+                    _w = min(_b[3] - _b[2], _bands[_j][3] - _bands[_j][2])
+                    if _ov > 0.5 * _w and _bands[_j][0] - _b[1] > 50:
+                        _ox = min(_b[2], _bands[_j][2])
+                        _ow = max(_b[3], _bands[_j][3]) - _ox
+                        _oy = _b[0]
+                        _oh = _bands[_j][1] - _b[0] + 1
+                        _rects.append({"x": int(_ox + 4), "y": int(_oy + 4),
+                                       "w": int(_ow - 8), "h": int(_oh - 8)})
+                        _used.add(_i)
+                        _used.add(_j)
+                        break
+            _rects.sort(key=lambda r: (r["y"], r["x"]))
+            return _rects
+
+        def _gold_frame_centers(png_path):
+            # Tâm (cx, cy) các khung ảnh viền vàng trong PNG template đã
+            # render, thứ tự trên-trước-trái-trước (khớp thứ tự input ảnh
+            # đã sắp xếp: img < img1 < img2). Dùng để đóng dấu vào TÂM Ô
+            # ẢNH (06/11/2026, CEO: dấu đóng vào lớp ảnh/video, không
+            # phải giữa template). Tâm ô trong = tâm khung ngoài (viền
+            # đối xứng) nên suy thẳng từ _gold_frame_rects, cùng logic
+            # band; template không đo được khung thì trả về [] và dấu
+            # rơi về giữa khung.
+            return [(round(r["x"] + r["w"] / 2, 1),
+                     round(r["y"] + r["h"] / 2, 1))
+                    for r in _gold_frame_rects(png_path)]
+
+
 
         def base_image(order, pi):
             simg = build / "media" / "images" / f"seg_{order}_{rand6(pid, 'img', str(order))}.jpg"
@@ -343,7 +445,7 @@ def main() -> int:
             # animation 31/10 không template nào còn @keyframes nên nhánh
             # động vốn đã chết — nay xóa hẳn, chỉ còn đường tĩnh.
             if img and p["id"] in tpl_by_part:
-                tid, inputs = tpl_by_part[p["id"]]
+                tid, inputs, _reveal, _stamps = tpl_by_part[p["id"]]
                 ov_path = tmp / f"tpl_{si}_{pi}.png"
                 if render_tpl_png(tid, inputs, W, H, ov_path):
                     static_png = ov_path
@@ -405,7 +507,54 @@ def main() -> int:
                 _ow, _oh = _Im.open(static_png).size
                 _is_fullstage = (abs(_ow / _oh - W / H) < 0.05
                         and _ow >= int(W * 0.90) and _oh >= int(H * 0.90))
-                if _is_fullstage:
+                # Reveal lần lượt (06/11/2026, CEO: các lớp ảnh/video, dấu,
+                # chữ, icon hiện lần lượt tạo hiệu ứng chuyển động):
+                # broll.reveal = [stage...] (vd ["1","2","3","4"]) — mỗi
+                # stage hiện một khoảng bằng nhau trong part (cắt cứng,
+                # như reel Texas). Chỉ áp cho template full-stage (PNG
+                # đúng kích thước khung nên tọa độ khớp); stage nào render
+                # lỗi thì rơi về đường tĩnh 1 stage (không dừng video).
+                # static_png được đổi thành PNG của stage CUỐI (đủ lớp)
+                # để kiểm video-slot / đo khung vàng cho dấu được đúng.
+                _stage_pngs = []
+                _reveal_ok = False
+                if (_is_fullstage and isinstance(_reveal, list)
+                        and len(_reveal) >= 2
+                        and all(isinstance(_s, str) and _s.strip().isdigit()
+                                for _s in _reveal)):
+                    _ok = True
+                    for _i, _sv in enumerate(_reveal):
+                        _rin = dict(inputs or {})
+                        _rin["stage"] = str(_sv).strip()
+                        _rpath = tmp / f"tpl_{si}_{pi}_r{_i}.png"
+                        if not render_tpl_png(tid, _rin, W, H, _rpath):
+                            render_report.append(
+                                f"reveal-loi-roi-ve-tinh part={p['id']} stage={_sv}")
+                            _ok = False
+                            break
+                        _stage_pngs.append(_rpath)
+                    _reveal_ok = _ok
+                    if _reveal_ok:
+                        static_png = _stage_pngs[-1]
+                        _ow, _oh = _Im.open(static_png).size
+                        _is_fullstage = (abs(_ow / _oh - W / H) < 0.05
+                                and _ow >= int(W * 0.90)
+                                and _oh >= int(H * 0.90))
+                _tpl_n = len(_stage_pngs) if _reveal_ok else 1
+                _tpl_base = 1 + _tpl_n
+                if _reveal_ok:
+                    # Chuỗi stage: scale từng PNG stage về khung rồi
+                    # overlay lần lượt; stage 0 luôn hiện, stage i>0
+                    # hiện từ t = i*cdur/N (cắt cứng, chia đều part).
+                    _ovf = "".join(
+                        f"[{i + 1}:v]scale={W}:{H}[st{i}];"
+                        for i in range(_tpl_n))
+                    _ovf += "[v0][st0]overlay=x='(W-w)/2':y='0'[v1];"
+                    for _i in range(1, _tpl_n):
+                        _ti = _i * cdur / _tpl_n
+                        _ovf += (f"[v{_i}][st{_i}]overlay=x='(W-w)/2':y='0':"
+                                 f"enable='gte(t,{_ti:.3f})'[v{_i + 1}];")
+                elif _is_fullstage:
                     _ovf = f"[1:v]scale={W}:{H}[ov];"
                 elif tid in ("preview-banner", "keyword-block"):
                     # 2 template đặc thù (CEO 31/10/2026): khối nền phủ
@@ -429,7 +578,9 @@ def main() -> int:
                 # (story-title và clip-caption đã về hidesSubs: true);
                 # clip-caption giữ thiết kế caption sát đáy 3% theo lệnh
                 # riêng, còn story-title về bottom chung như mọi template.
-                if _is_fullstage:
+                if _reveal_ok:
+                    _ox, _oy = "(W-w)/2", "0"
+                elif _is_fullstage:
                     _ox, _oy = "(W-w)/2", "0"
                 elif tid in ("preview-banner", "keyword-block"):
                     # Khối nền đặc thù: sát đáy khung và 2 bên, không
@@ -451,19 +602,241 @@ def main() -> int:
                         _ox, _oy = "(W-w)/2", "H-h-(H*0.03)"
                     else:
                         _ox, _oy = "(W-w)/2", f"H-h-{_margin_v}"
-                fc = (
-                    f"[0:v]{vf},format=yuva420p[v0];"
-                    f"{_ovf}"
-                    f"[v0][ov]overlay=x='{_ox}':y='{_oy}',"
-                    f"format=yuv420p[vout]")
+                # Video-slot (06/11/2026, photo-duo): input ảnh của slot
+                # khai trong meta "videoSlots" mà trỏ tới file video thì
+                # video thay đúng chỗ ảnh trong khung. Thứ tự composite:
+                # nền -> ảnh template -> video trong ô slot (video đè lên
+                # đúng ô trong của khung, viền vàng + chữ nằm ngoài ô nên
+                # vẫn hiện). Chỉ áp cho template full-stage (PNG đúng
+                # kích thước khung nên tọa độ slot khớp). Kiểm tra 2 điều
+                # trên PNG template: viền ô phải là vàng (khung hiện, không
+                # bị stage ẩn) và ô trong phải đồng đều (không có ảnh thật
+                # — ảnh đã được thay bằng placeholder trong suốt nên ô chỉ
+                # còn nền navy); thiếu một trong hai thì bỏ qua slot, không
+                # vẽ video đè lên ảnh thật. Video tắt tiếng (lệnh đã có
+                # -an), ngắn hơn part thì lặp, dài hơn thì cắt, như video
+                # b-roll.
+                _slot_args = []
+                _slot_chains = []
+                _slot_cur = f"v{_tpl_n}" if _reveal_ok else "v1"
+                if _is_fullstage:
+                    try:
+                        _meta = json.loads((FACTORY / "templates" / tid / "meta.json").read_text(encoding="utf-8"))
+                    except Exception:
+                        _meta = {}
+                    _slots = _meta.get("videoSlots") or {}
+                    if _slots:
+                        from PIL import ImageStat as _ImageStat
+                        _tpl_im = _Im.open(static_png).convert("RGB")
+                        # Thứ tự ô ảnh (map input -> khung đo được) + khung
+                        # đo trực tiếp từ PNG template (stage cuối, đủ lớp).
+                        _img_ins = sorted(
+                            n for n, d in (_meta.get("inputs") or {}).items()
+                            if isinstance(d, dict) and d.get("type") == "image")
+                        _frame_rects = _gold_frame_rects(static_png)
+                        # Ảnh từng stage (reveal) để đo viền vàng của ô
+                        # slot theo từng stage; đường tĩnh chỉ có 1 ảnh.
+                        _stage_ims = [_tpl_im]
+                        if _reveal_ok:
+                            _stage_ims = [_Im.open(_rp).convert("RGB")
+                                          for _rp in _stage_pngs]
+
+                        def _gold_frac(_im, _box):
+                            _bx0, _by0 = max(0, _box[0]), max(0, _box[1])
+                            _bx1, _by1 = min(_ow, _box[2]), min(_oh, _box[3])
+                            if _bx1 <= _bx0 or _by1 <= _by0:
+                                return 0.0, 0
+                            _px = list(_im.crop((_bx0, _by0, _bx1, _by1)).getdata())
+                            _g = sum(1 for _p in _px
+                                     if _p[0] > 230 and 160 <= _p[1] <= 215 and _p[2] < 90)
+                            return _g / max(1, len(_px)), len(_px)
+
+                        def _ring_gold_frac(_im, _x, _y, _w, _h):
+                            _rg = 0
+                            _rn = 0
+                            for _rb in ((_x - 4, _y - 4, _x + _w + 4, _y),
+                                        (_x - 4, _y + _h, _x + _w + 4, _y + _h + 4),
+                                        (_x - 4, _y, _x, _y + _h),
+                                        (_x + _w, _y, _x + _w + 4, _y + _h)):
+                                _f, _n = _gold_frac(_im, _rb)
+                                _rg += _f * _n
+                                _rn += _n
+                            return _rg / max(1, _rn)
+
+                        for _skey, _rect in _slots.items():
+                            _val = (inputs or {}).get(_skey, "")
+                            if not str(_val).strip():
+                                continue
+                            if Path(str(_val)).suffix.lower() not in (
+                                    ".mp4", ".mov", ".webm", ".mkv"):
+                                continue
+                            _vp = str(_val)
+                            if _vp.startswith("file://"):
+                                _vp = _vp[7:]
+                            _vpath = Path(_vp)
+                            if not _vpath.is_absolute():
+                                _vpath = proj / _vpath
+                            if not _vpath.exists():
+                                render_report.append(
+                                    f"video-slot-thieu-bo-qua part={p['id']} file={_vpath.name}")
+                                continue
+                            # Ô slot: ưu tiên đo trực tiếp từ khung viền
+                            # vàng trên PNG (bố cục flex dịch theo nội dung);
+                            # không đo được thì dùng tọa độ meta làm fallback.
+                            _x = _y = _w = _h = None
+                            _measured = False
+                            if _skey in _img_ins:
+                                _fi = _img_ins.index(_skey)
+                                if _fi < len(_frame_rects):
+                                    _r = _frame_rects[_fi]
+                                    _x, _y, _w, _h = _r["x"], _r["y"], _r["w"], _r["h"]
+                                    _measured = True
+                            if not _measured:
+                                _x, _y = int(_rect["x"]), int(_rect["y"])
+                                _w, _h = int(_rect["w"]), int(_rect["h"])
+                            if _x < 0 or _y < 0 or _x + _w > _ow or _y + _h > _oh:
+                                render_report.append(
+                                    f"video-slot-ngoai-khung-bo-qua part={p['id']} slot={_skey}")
+                                continue
+                            # Ô đo được thì viền vàng đã chắc chắn (đo từ
+                            # khung vàng), chỉ còn kiểm ô trong đồng đều;
+                            # fallback meta thì kiểm cả viền + ô trong.
+                            if _measured:
+                                _ring_gold = 1.0
+                            else:
+                                _ring_gold = _ring_gold_frac(_tpl_im, _x, _y, _w, _h)
+                            # Reveal: video trong slot chỉ hiện từ stage
+                            # đầu tiên mà viền vàng của ô đã hiện; đường
+                            # tĩnh thì video hiện suốt part (_slot_at=None).
+                            _slot_at = None
+                            if _reveal_ok:
+                                for _si, _sim in enumerate(_stage_ims):
+                                    if _ring_gold_frac(_sim, _x, _y, _w, _h) >= 0.5:
+                                        _slot_at = _si * cdur / _tpl_n
+                                        break
+                                if _slot_at is None:
+                                    render_report.append(
+                                        f"video-slot-khung-an-bo-qua part={p['id']} slot={_skey}")
+                                    continue
+                            _in_std = max(_ImageStat.Stat(
+                                _tpl_im.crop((_x, _y, _x + _w, _y + _h))).stddev)
+                            if _ring_gold < 0.5 or _in_std > 20:
+                                render_report.append(
+                                    f"video-slot-khong-trong-bo-qua part={p['id']} slot={_skey} "
+                                    f"vien-vang={_ring_gold:.2f} trong-std={_in_std:.0f}")
+                                continue
+                            _n = len(_slot_args) // 5
+                            _slot_args += ["-stream_loop", "-1", "-t", str(cdur),
+                                         "-i", str(_vpath)]
+                            _slot_chains.append(
+                                f"[{_tpl_base + _n}:v]scale={_w}:{_h}:force_original_aspect_ratio=increase,"
+                                f"crop={_w}:{_h},fps=30,format=yuva420p[slot{_n}];")
+                            _en = ""
+                            if _slot_at is not None and _slot_at > 0:
+                                _en = f":enable='gte(t,{_slot_at:.3f})'"
+                            _slot_chains.append(
+                                f"[{_slot_cur}][slot{_n}]overlay=x={_x}:y={_y}{_en}[{_slot_cur}s{_n}];")
+                            _slot_cur = f"{_slot_cur}s{_n}"
+                # Lớp dấu (06/11/2026 — khôi phục sau lệnh xoá cùng ngày,
+                # mở rộng thành danh sách dấu): mỗi dấu render riêng qua
+                # template verdict-stamp (xoay CSS transform theo tilt) rồi composite
+                # SAU ảnh template và SAU cả video-slot (lên trên cùng),
+                # tại TÂM Ô ẢNH của riêng nó (đo từ khung viền vàng trên
+                # PNG template; không đo được thì rơi về giữa khung),
+                # hiện từ t=at (overlay enable). Mỗi dấu mang SFX thud
+                # riêng (thu ở bước mix bên dưới).
+                _stamp_args = []
+                _stamp_chains = []
+                _stamp_cur = _slot_cur
+                if _stamps:
+                    try:
+                        _smeta = json.loads((FACTORY / "templates" / tid / "meta.json").read_text(encoding="utf-8"))
+                    except Exception:
+                        _smeta = {}
+                    _s_img_ins = sorted(
+                        n for n, d in (_smeta.get("inputs") or {}).items()
+                        if isinstance(d, dict) and d.get("type") == "image")
+                    _s_centers = (_gold_frame_centers(static_png)
+                                  if _is_fullstage else [])
+                    _n_slots = len(_slot_args) // 6
+                    _sn = 0
+                    for _st in _stamps:
+                        _stext = str(_st.get("text") or "").strip()
+                        if not _stext:
+                            render_report.append(
+                                f"stamp-thieu-text-bo-qua part={p['id']}")
+                            continue
+                        _spng = tmp / f"stamp_{si}_{pi}_{_sn}.png"
+                        if not render_tpl_png(
+                                "verdict-stamp",
+                                {"text": _stext,
+                                 "tone": str(_st.get("tone") or "red"),
+                                 "tilt": str(_st.get("tilt") or "-15")},
+                                W, H, _spng):
+                            render_report.append(
+                                f"stamp-loi-bo-qua part={p['id']} text={_stext}")
+                            continue
+                        _son = str(_st.get("on") or "").strip()
+                        _cx = _cy = None
+                        if _son and _son in _s_img_ins:
+                            _fi = _s_img_ins.index(_son)
+                            if _fi < len(_s_centers):
+                                _cx, _cy = _s_centers[_fi]
+                        elif not _son and _s_centers:
+                            _cx, _cy = _s_centers[0]
+                        if _cx is None:
+                            _cx, _cy = W // 2, H // 2
+                            if _son:
+                                render_report.append(
+                                    f"stamp-khong-do-duoc-khung part={p['id']} on={_son}")
+                        try:
+                            _at = float(_st.get("at", 0) or 0)
+                        except (TypeError, ValueError):
+                            _at = 0.0
+                        _sidx = _tpl_base + _n_slots + _sn
+                        _stamp_args += ["-loop", "1", "-framerate", "30",
+                                        "-t", str(cdur), "-i", str(_spng)]
+                        _stamp_chains.append(
+                            f"[{_sidx}:v]format=yuva420p[stamp{_sn}];")
+                        _en = (f":enable='gte(t,{_at:.3f})'"
+                               if _at > 0 else "")
+                        _stamp_chains.append(
+                            f"[{_stamp_cur}][stamp{_sn}]overlay="
+                            f"x='{int(round(_cx))}-w/2':y='{int(round(_cy))}-h/2'"
+                            f"{_en}[{_stamp_cur}s{_sn}];")
+                        _stamp_cur = f"{_stamp_cur}s{_sn}"
+                        _sn += 1
+                if _reveal_ok:
+                    fc = (
+                        f"[0:v]{vf},format=yuva420p[v0];"
+                        f"{_ovf}"
+                        f"{''.join(_slot_chains)}"
+                        f"{''.join(_stamp_chains)}"
+                        f"[{_stamp_cur}]format=yuv420p[vout]")
+                    _tpl_inputs_args = []
+                    for _rp in _stage_pngs:
+                        _tpl_inputs_args += ["-loop", "1", "-framerate", "30",
+                                             "-t", str(cdur), "-i", str(_rp)]
+                else:
+                    fc = (
+                        f"[0:v]{vf},format=yuva420p[v0];"
+                        f"{_ovf}"
+                        f"[v0][ov]overlay=x='{_ox}':y='{_oy}'[v1];"
+                        f"{''.join(_slot_chains)}"
+                        f"{''.join(_stamp_chains)}"
+                        f"[{_stamp_cur}]format=yuv420p[vout]")
+                    _tpl_inputs_args = ["-loop", "1", "-framerate", "30",
+                                        "-t", str(cdur), "-i", str(static_png)]
                 run(["ffmpeg", "-y", "-v", "error",
                      *base_args,
-                     "-loop", "1", "-framerate", "30", "-t", str(cdur),
-                     "-i", str(static_png),
+                     *_tpl_inputs_args,
+                     *_slot_args,
+                     *_stamp_args,
                      "-filter_complex", fc, "-map", "[vout]",
                      "-c:v", "libx264", "-preset", "veryfast",
                      "-crf", "23", "-pix_fmt", "yuv420p",
                      "-an", str(clip)], timeout=300)
+
             elif img:
                 _vf = f"{vf},format=yuv420p" if (is_video_broll or _blurfill) else vf
                 run(["ffmpeg", "-y", "-v", "error", *base_args,
@@ -582,6 +955,10 @@ def main() -> int:
         tts_partidx = {p["id"]: p["partIdx"] for p in tts["parts"]
                        if isinstance(p.get("partIdx"), int)}
         sfx_dir = FACTORY / "sfx"
+        # R4-42 (07/11/2026, DEC-050): _seen_sfx là dict (id SFX, mốc ms)
+        # -> tập các ô `on` đã phát ở mốc đó; None trong tập nghĩa là SFX
+        # của part (không có ô) đã phát — dedup với mọi SFX cùng mốc.
+        _seen_sfx = {}
         sfx_events = []
         for sc in tts["scenes"]:
             order = sc["order"]
@@ -590,75 +967,101 @@ def main() -> int:
             pend = {p["partIdx"]: p["endSec"]
                     for p in tts["parts"] if p["sceneOrder"] == order}
             for part in plan_by_order.get(order, {}).get("parts", []):
-                sfx = (part.get("broll") or {}).get("sfx")
-                if not sfx:
-                    continue
-                f = sfx_dir / f"{sfx['id']}.mp3"
-                if not f.exists():
-                    # B8 (05/11/2026, lệnh CEO, lựa chọn A): SFX khai trong
-                    # plan nhưng file mp3 không tồn tại thì CHẶN như BGM
-                    # (13B) — in RENDER-ERROR, dừng trước ffmpeg trộn
-                    # cuối, không render thiếu tiếng rồi DRAFT-OK nữa.
-                    # Trước đây chỉ ghi sfx-thieu-bo-qua vào report rồi
-                    # render tiếp, trái với cửa chặn preflight (A26).
-                    print(f"RENDER-ERROR {pid}: SFX da chon {f} khong ton tai — dung render, giong preflight",
-                          file=sys.stderr)
-                    return 1
-                pidx = tts_partidx.get(part.get("id"))
-                if pidx is None:
-                    render_report.append(
-                        f"sfx-skip-id-la part={part.get('id')} sfx={sfx['id']} — "
-                        f"không khớp part nào trong tts.json, không tra được partIdx")
-                    continue
-                at = pstart.get(pidx)
-                if at is None:
-                    render_report.append(
-                        f"sfx-skip-id-la part={part.get('id')} partIdx={pidx} — "
-                        f"không có startSec trong tts.json")
-                    continue
-                # SFX dừng chậm nhất khi chuyển part (luật CEO 31/10/2026):
-                # mixer trước đây phát nguyên file SFX (adelay, không cắt),
-                # nên typing_fast 6.37s trên part 3.39s lấn ~3s sang part
-                # sau, riser 3.0s trên part móc lại 1.7s lấn ~1s. Cắt đuôi
-                # file theo cuối part, fade-out 0.05s tránh click ở điểm
-                # cắt; SFX bắt đầu sau cuối part thì bỏ luôn.
-                _start = at + float(sfx.get("offsetSec", 0))
-                _pend = pend.get(pidx)
-                if _pend is None:
-                    render_report.append(
-                        f"sfx-skip-id-la part={part.get('id')} partIdx={pidx} — "
-                        f"không có endSec trong tts.json")
-                    continue
-                _dur = _pend - _start
-                if _dur <= 0:
-                    print(f"SFX-SKIP {sfx['id']} part {pidx}: bắt đầu "
-                          f"{_start:.2f}s sau cuối part {_pend:.2f}s")
-                    continue
-                # typing: thời gian gõ theo độ dài văn bản HIỂN THỊ trong
-                # template (inputs.text), KHÔNG theo thời gian part/giọng
-                # đọc — đính chính CEO 31/10/2026 (bản loop trước đó hiểu
-                # sai: lấy thời gian part). Tốc độ 0.1s/ký tự (10 ký tự/
-                # giây, tính cả dấu cách); vẫn chặn trên bằng cuối part.
-                if "typing" in sfx["id"]:
-                    _txt = ((part.get("broll") or {}).get("inputs") or {}).get("text") or ""
-                    if _txt:
-                        _dur = min(_dur, len(_txt) * 0.1)
-                        print(f"SFX-TYPE {sfx['id']} part {pidx}: "
-                              f"{len(_txt)} ký tự -> {_dur:.2f}s "
-                              f"(part còn {_pend - _start:.2f}s)")
-                # QA Chợ nổi 26/10/2026, lỗi 4: heavy_thud_slam ở volume 0.6
-                # cộng với giọng + BGM đã chạm trần 564 mẫu ở 0 dBFS. SFX
-                # nặng (thud/slam/boom) bị giới hạn mặc định ở 0.4 trong
-                # tầng mix, bất kể plan khai cao hơn; limiter cuối (bên
-                # dưới) là lớp bảo vệ thứ hai để không bao giờ chạm trần.
-                _vol = float(sfx.get("volume", 0.6))
-                if any(k in sfx["id"] for k in ("thud", "slam", "boom")):
-                    _vol = min(_vol, 0.4)
-                sfx_events.append({"file": f,
-                                   "ms": int((at + float(sfx.get("offsetSec", 0))) * 1000),
-                                   "dur": round(_dur, 3),
-                                   "loop": "typing" in sfx["id"],
-                                   "vol": _vol})
+                _br = part.get("broll") or {}
+                # SFX của part + SFX riêng từng dấu (cơ chế danh sách dấu
+                # 06/11/2026): mỗi dấu mang thud riêng (offsetSec = at);
+                # dấu đơn cũ không có sfx riêng thì dùng sfx của part (đã
+                # có trong danh sách, không cộng thêm).
+                _specs = []
+                if _br.get("sfx"):
+                    _specs.append((_br["sfx"], None))
+                for _st in _normalize_stamps(_br):
+                    if _st.get("sfx"):
+                        _specs.append((_st["sfx"], _st.get("on")))
+                for sfx, _on in _specs:
+                    f = sfx_dir / f"{sfx['id']}.mp3"
+                    if not f.exists():
+                        # B8 (05/11/2026, lệnh CEO, lựa chọn A): SFX khai trong
+                        # plan nhưng file mp3 không tồn tại thì CHẶN như BGM
+                        # (13B) — in RENDER-ERROR, dừng trước ffmpeg trộn
+                        # cuối, không render thiếu tiếng rồi DRAFT-OK nữa.
+                        # Trước đây chỉ ghi sfx-thieu-bo-qua vào report rồi
+                        # render tiếp, trái với cửa chặn preflight (A26).
+                        print(f"RENDER-ERROR {pid}: SFX da chon {f} khong ton tai — dung render, giong preflight",
+                              file=sys.stderr)
+                        return 1
+                    pidx = tts_partidx.get(part.get("id"))
+                    if pidx is None:
+                        render_report.append(
+                            f"sfx-skip-id-la part={part.get('id')} sfx={sfx['id']} — "
+                            f"không khớp part nào trong tts.json, không tra được partIdx")
+                        continue
+                    at = pstart.get(pidx)
+                    if at is None:
+                        render_report.append(
+                            f"sfx-skip-id-la part={part.get('id')} partIdx={pidx} — "
+                            f"không có startSec trong tts.json")
+                        continue
+                    # SFX dừng chậm nhất khi chuyển part (luật CEO 31/10/2026):
+                    # mixer trước đây phát nguyên file SFX (adelay, không cắt),
+                    # nên typing_fast 6.37s trên part 3.39s lấn ~3s sang part
+                    # sau, riser 3.0s trên part móc lại 1.7s lấn ~1s. Cắt đuôi
+                    # file theo cuối part, fade-out 0.05s tránh click ở điểm
+                    # cắt; SFX bắt đầu sau cuối part thì bỏ luôn.
+                    _start = at + float(sfx.get("offsetSec", 0))
+                    _pend = pend.get(pidx)
+                    if _pend is None:
+                        render_report.append(
+                            f"sfx-skip-id-la part={part.get('id')} partIdx={pidx} — "
+                            f"không có endSec trong tts.json")
+                        continue
+                    _dur = _pend - _start
+                    if _dur <= 0:
+                        print(f"SFX-SKIP {sfx['id']} part {pidx}: bắt đầu "
+                              f"{_start:.2f}s sau cuối part {_pend:.2f}s")
+                        continue
+                    # typing: thời gian gõ theo độ dài văn bản HIỂN THỊ trong
+                    # template (inputs.text), KHÔNG theo thời gian part/giọng
+                    # đọc — đính chính CEO 31/10/2026 (bản loop trước đó hiểu
+                    # sai: lấy thời gian part). Tốc độ 0.1s/ký tự (10 ký tự/
+                    # giây, tính cả dấu cách); vẫn chặn trên bằng cuối part.
+                    if "typing" in sfx["id"]:
+                        _txt = ((part.get("broll") or {}).get("inputs") or {}).get("text") or ""
+                        if _txt:
+                            _dur = min(_dur, len(_txt) * 0.1)
+                            print(f"SFX-TYPE {sfx['id']} part {pidx}: "
+                                  f"{len(_txt)} ký tự -> {_dur:.2f}s "
+                                  f"(part còn {_pend - _start:.2f}s)")
+                    # QA Chợ nổi 26/10/2026, lỗi 4: heavy_thud_slam ở volume 0.6
+                    # cộng với giọng + BGM đã chạm trần 564 mẫu ở 0 dBFS. SFX
+                    # nặng (thud/slam/boom) bị giới hạn mặc định ở 0.4 trong
+                    # tầng mix, bất kể plan khai cao hơn; limiter cuối (bên
+                    # dưới) là lớp bảo vệ thứ hai để không bao giờ chạm trần.
+                    _vol = float(sfx.get("volume", 0.6))
+                    if any(k in sfx["id"] for k in ("thud", "slam", "boom")):
+                        _vol = min(_vol, 0.4)
+                    # Dedup (06/11/2026, sửa R4-42 07/11/2026 DEC-050):
+                    # SFX của dấu trùng SFX của part (cùng id + cùng mốc
+                    # ms) thì chỉ phát một lần. 2 dấu KHÁC ô ảnh (on khác
+                    # nhau) thì mỗi dấu giữ tiếng riêng — không dedup.
+                    # Dấu không có on (None) dedup như SFX part (hành vi
+                    # cũ, an toàn).
+                    _key = (sfx["id"], int((at + float(sfx.get("offsetSec", 0))) * 1000))
+                    _seen_on = _seen_sfx.get(_key)
+                    if _seen_on is not None and (
+                            None in _seen_on or _on is None or _on in _seen_on):
+                        render_report.append(
+                            f"sfx-trung-bo-qua part={part['id']} file={sfx['id']}")
+                        continue
+                    if _seen_on is None:
+                        _seen_sfx[_key] = {_on}
+                    else:
+                        _seen_on.add(_on)
+                    sfx_events.append({"file": f,
+                                       "ms": int((at + float(sfx.get("offsetSec", 0))) * 1000),
+                                       "dur": round(_dur, 3),
+                                       "loop": "typing" in sfx["id"],
+                                       "vol": _vol})
 
         out = proj / "export" / f"{pid}_preview.mp4"
         out.parent.mkdir(parents=True, exist_ok=True)

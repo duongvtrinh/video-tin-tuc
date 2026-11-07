@@ -7,9 +7,9 @@ import type { z } from "@hatch/space-sdk";
 type ArgsOf<K extends keyof typeof Factory> = z.infer<(typeof Factory)[K]["request"]>;
 type ResOf<K extends keyof typeof Factory> = z.infer<(typeof Factory)[K]["response"]>;
 
-import { closeSync, copyFileSync, existsSync, fstatSync, mkdirSync, openSync, readFileSync, readSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { closeSync, copyFileSync, existsSync, fstatSync, mkdirSync, openSync, readFileSync, readSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import { BIN, FACTORY, HOME, PY3, SEARCH_MEDIA, VENV_PY, brollFileName, mimeForPath, projDir, rand6, randomSuffix, readJson, run, runCaptureJson, sceneImageFileName, withPlanWriteLock, writeJson } from "./core";
+import { BIN, FACTORY, HOME, PY3, SEARCH_MEDIA, VENV_PY, assertPublicUrl, brollFileName, ffprobe, mimeForPath, projDir, rand6, randomSuffix, readJson, run, runCaptureJson, sceneImageFileName, withPlanWriteLock, writeJson } from "./core";
 
 export async function searchMedia({ layer, summary, enKeywords, extraKeywords, mediaType, durationSec }: ArgsOf<"searchMedia">): Promise<ResOf<"searchMedia">> {
     const args =
@@ -68,7 +68,7 @@ export async function suggestKeywords({ summary }: ArgsOf<"suggestKeywords">): P
     // lần gọi đầu tiên lỗi 500 ở writeFileSync ngoài try/catch.
     const mediaSearchDir = dirname(SEARCH_MEDIA);
     const helper = join(mediaSearchDir, ".app_suggest.py");
-    const noCluster = { clusterId: null, viPhrases: [], enPhrases: [], noCluster: true } as const;
+    const noCluster: { clusterId: string | null; viPhrases: string[]; enPhrases: string[]; noCluster: boolean } = { clusterId: null, viPhrases: [], enPhrases: [], noCluster: true };
     if (!existsSync(helper)) {
       try {
         writeFileSync(
@@ -182,6 +182,10 @@ export async function pickMedia({ projectId, sceneOrder, partId, fileUrl, mediaT
     const timer = setTimeout(() => controller.abort(), 60_000);
     let buf: Buffer;
     try {
+      // R4-58 (08/11/2026, DEC-067 A): chặn URL nội bộ trước khi fetch
+      // (SSRF) — chỉ http/https, hostname phải phân giải ra IP công
+      // khai. Đặt trong try ngoài để finally vẫn dọn timer khi lỗi.
+      await assertPublicUrl(fileUrl);
       let res: Response;
       try {
         res = await fetch(fileUrl, { signal: controller.signal });
@@ -225,7 +229,29 @@ export async function pickMedia({ projectId, sceneOrder, partId, fileUrl, mediaT
     } finally {
       clearTimeout(timer);
     }
-    if (mediaType !== "video") {
+    if (mediaType === "video") {
+      // R4-45 (08/11/2026, lệnh CEO, lựa chọn A): video cũng phải kiểm
+      // như ảnh — trước đây nhánh video được bỏ qua hẳn nên file 0 byte
+      // hay hỏng vẫn ghi xuống đĩa + ghi nguồn vào plan, tới render mới
+      // rơi về ảnh nền lặng lẽ.
+      if (buf.length === 0) throw new Error("Tải file thất bại: file video rỗng (0 byte)");
+      const isMp4 = buf.length >= 8 && buf.toString("ascii", 4, 8) === "ftyp";
+      const isWebm = buf.length >= 4 && buf[0] === 0x1a && buf[1] === 0x45 && buf[2] === 0xdf && buf[3] === 0xa3;
+      if (!isMp4 && !isWebm) throw new Error("Tải file thất bại: file video không đúng định dạng MP4/WebM theo magic bytes");
+      // ffprobe cần file thật: ghi ra file tạm, kiểm có khung hình rồi
+      // mới đổi tên thành file đích — file hỏng không bao giờ thành file
+      // đích và không được ghi vào plan.
+      const tmpPath = join(destDir, `${fileName}.tmp`);
+      writeFileSync(tmpPath, buf);
+      try {
+        const probe = ffprobe(tmpPath);
+        if (probe.width === null || probe.height === null) throw new Error("Tải file thất bại: file video không đọc được (ffprobe không thấy khung hình)");
+        renameSync(tmpPath, join(destDir, fileName));
+      } catch (e) {
+        try { rmSync(tmpPath, { force: true }); } catch { /* đã đổi tên xong hoặc file tạm đã mất */ }
+        throw e;
+      }
+    } else {
       // Magic bytes co ban cho anh: JPEG FF D8 FF, PNG 89 50 4E 47,
       // WEBP RIFF....WEBP. Khong decode day du o day; viec decode day
       // du thuoc ve buoc soi truc quan/render, khong phai pickMedia.
@@ -236,8 +262,8 @@ export async function pickMedia({ projectId, sceneOrder, partId, fileUrl, mediaT
       // Luu y: khong bat buoc magic bytes phai khop phan mo rong suy tu URL,
       // vi URL bao chi co the sai hau to; render/preview doc noi dung file
       // (PIL/ffmpeg sniff) chu khong chi dua vao hau to, nen file van dung duoc.
+      writeFileSync(join(destDir, fileName), buf);
     }
-    writeFileSync(join(destDir, fileName), buf);
     await withPlanWriteLock(projectId, () => {
       const plan = readJson<PlanShape | null>(planPath, null);
       if (!plan) throw new Error("Project chưa có plan");
@@ -322,14 +348,22 @@ export async function generateAiMedia({ projectId, sceneOrder, partId, prompt, m
     }
     const src = parsed.media_paths?.[0];
     if (!src || !existsSync(src)) throw new Error("Công cụ tạo media không trả về file");
-    const mediaSource = { source: "AI từ prompt", reason: "Không tìm được file đạt yêu cầu ở Wikipedia/stock", visuallyChecked: false, prompt };
+    // R4-58 (08/11/2026, DEC-067 A): lý do thật — trước đây ghi "Không
+    // tìm được file đạt yêu cầu ở Wikipedia/stock" dù hàm không hề tìm
+    // ở đó (chỉ tạo ảnh AI từ prompt); lý do bịa phá luật media bằng
+    // cách tạo ảo giác "đã tìm rồi". Ảnh AI ghi đúng là ảnh AI tạo từ
+    // prompt.
+    const mediaSource = { source: "AI từ prompt", reason: "Tạo bằng AI từ prompt", visuallyChecked: false, prompt };
     const dest = join(destDir, fileName);
     mkdirSync(destDir, { recursive: true });
     if (isVideo) {
       copyFileSync(src, dest);
     } else {
+      // R4-45 (08/11/2026, lệnh CEO, lựa chọn A): chuyển sang JPEG thất
+      // bại thì báo lỗi rõ — trước đây copy thô file gốc (thường là PNG)
+      // vào tên .jpg, tên file nói dối về định dạng.
       const conv = await run(["ffmpeg", "-y", "-v", "error", "-i", src, dest], { timeoutMs: 120_000 });
-      if (conv.code !== 0) copyFileSync(src, dest);
+      if (conv.code !== 0) throw new Error("Tạo ảnh AI thất bại: không chuyển được file tạo ra sang JPEG — file gốc không phải ảnh hợp lệ");
     }
     await withPlanWriteLock(projectId, () => {
       const plan = readJson<PlanShape | null>(planPath, null);
@@ -389,7 +423,7 @@ export async function generateAiMedia({ projectId, sceneOrder, partId, prompt, m
     return { cleared: true, fileName };
   }
 
-  export async function renderTemplatePreview({ templateId, inputs }: ArgsOf<"renderTemplatePreview">): Promise<ResOf<"renderTemplatePreview">> {
+  export async function renderTemplatePreview({ templateId, inputs, projectId }: ArgsOf<"renderTemplatePreview">): Promise<ResOf<"renderTemplatePreview">> {
     const outPath = join(FACTORY, `.app-tmp-template-${templateId}-${randomSuffix()}.png`);
     // The template engine consumes text inputs; coerce any numeric/boolean
     // values (e.g. bar-chart w1..w4 written as numbers by the pipeline).
@@ -397,8 +431,13 @@ export async function generateAiMedia({ projectId, sceneOrder, partId, prompt, m
     for (const [k, v] of Object.entries(inputs ?? {})) {
       strInputs[k] = v === null || v === undefined ? "" : String(v);
     }
+    // R4-61 (08/11/2026, DEC-069 A): truyền argv 6 base_dir (thư mục
+    // project) để render_template.py tìm được ảnh input tương đối —
+    // trước đây preview photo-duo thiếu ảnh (khung trống) trong khi
+    // render thật đủ ảnh. projectId optional để tương thích ngược:
+    // không có thì vẫn render như cũ (không ảnh).
     const { code, out } = await run(
-      [VENV_PY, join(BIN, "render_template.py"), templateId, JSON.stringify(strInputs), "720", "1280", outPath],
+      [VENV_PY, join(BIN, "render_template.py"), templateId, JSON.stringify(strInputs), "720", "1280", outPath, ...(projectId ? [projDir(projectId)] : [])],
       { timeoutMs: 110_000 },
     );
     if (code !== 0 || !existsSync(outPath)) {

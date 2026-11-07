@@ -1,0 +1,23 @@
+.broll-cb{display:flex;flex-direction:column;gap:.6em;padding:.8em 1.3em .9em;border-radius:8px;background:rgba(28,55,42,.85);border-top:.14em solid var(--broll-accent);text-align:left;box-sizing:border-box;width:100%;max-width:528px}
+.broll-cb-title{font:800 clamp(18px,4.3vmin,36px)/1.25 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.04em;overflow-wrap:anywhere}
+.broll-cb-row{display:flex;flex-direction:column;gap:.3em}
+.broll-cb-head{display:flex;justify-content:space-between;align-items:baseline;gap:.5em}
+.broll-cb-label{font:800 clamp(15px,3.9vmin,30px)/1.2 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;overflow-wrap:anywhere}
+.broll-cb-value{font:900 clamp(20px,5.0vmin,40px)/1 'Anton',Arial,sans-serif}
+.broll-cb-val-gold{color:#fbbf24}
+.broll-cb-val-white{color:#fff}
+.broll-cb-val-decline{color:#ef4444}
+.broll-cb-track{height:.9em;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden}
+.broll-cb-fill{height:100%;border-radius:99px}
+.broll-cb-fill-gold{background:#fbbf24}
+.broll-cb-fill-white{background:#fff}
+.broll-cb-fill-decline{background:#ef4444}
+.broll-cb-foot{font:600 clamp(13px,3.4vmin,26px)/1.3 'Anton',Arial,sans-serif;color:#cbd5e1;overflow-wrap:anywhere}
+.broll-cb-foot:empty{display:none}
+/* 2-4 bars (06/11/2026, đổi tên duel-bars -> compare-bars): hàng 3-4 ẨN
+   mặc định, chỉ hiện khi container mang class broll-cb-3 / broll-cb-4
+   (class này do {{count}} trong HTML điền, CSS không qua fill_placeholders
+   nên không dùng placeholder ở đây). Plan cũ không có count -> class
+   "broll-cb-" không khớp rule hiện nào -> đúng 2 bars như trước. */
+.broll-cb-row3,.broll-cb-row4{display:none}
+.broll-cb-3 .broll-cb-row3,.broll-cb-4 .broll-cb-row3,.broll-cb-4 .broll-cb-row4{display:flex}

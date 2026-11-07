@@ -1,0 +1,16 @@
+.broll-pd{position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35em;text-align:center;padding:140px 96px;background-color:#1C372A;background-image:linear-gradient(#2A4D3B 0,#2A4D3B 2px,transparent 2px,transparent 80px),linear-gradient(90deg,#2A4D3B 0,#2A4D3B 2px,transparent 2px,transparent 80px);background-size:80px 80px}
+
+.broll-pd-frame{width:528px;height:300px;border:4px solid #fbbf24;box-sizing:border-box;overflow:hidden;flex:none}
+.broll-pd-img{width:100%;height:100%;object-fit:cover;display:block}
+.broll-pd-label{font:800 clamp(16px,3.9vmin,30px)/1.25 'Anton',Arial,sans-serif;color:#fbbf24;overflow-wrap:anywhere}
+.broll-pd-big{font:900 clamp(44px,11.0vmin,100px)/1.1 'Anton',Arial,sans-serif;color:#fbbf24;overflow-wrap:anywhere}
+.broll-pd-arrow{width:0;height:0;border-left:34px solid transparent;border-right:34px solid transparent;border-top:52px solid #fbbf24;flex:none}
+.broll-pd-label:empty,.broll-pd-big:empty{display:none}
+/* Stage 06/11/2026: các lớp xuất hiện lần lượt (video reveal). visibility:hidden
+   thay vì display:none để bố cục KHÔNG nhảy khi lớp mới hiện — vị trí các
+   lớp đã hiện giữ nguyên qua mọi stage. Stage mặc định 6 = đủ lớp. */
+.broll-pd-stage-1 .broll-pd-label1,.broll-pd-stage-1 .broll-pd-big,.broll-pd-stage-1 .broll-pd-arrow,.broll-pd-stage-1 .broll-pd-frame2,.broll-pd-stage-1 .broll-pd-label2{visibility:hidden}
+.broll-pd-stage-2 .broll-pd-big,.broll-pd-stage-2 .broll-pd-arrow,.broll-pd-stage-2 .broll-pd-frame2,.broll-pd-stage-2 .broll-pd-label2{visibility:hidden}
+.broll-pd-stage-3 .broll-pd-arrow,.broll-pd-stage-3 .broll-pd-frame2,.broll-pd-stage-3 .broll-pd-label2{visibility:hidden}
+.broll-pd-stage-4 .broll-pd-frame2,.broll-pd-stage-4 .broll-pd-label2{visibility:hidden}
+.broll-pd-stage-5 .broll-pd-label2{visibility:hidden}

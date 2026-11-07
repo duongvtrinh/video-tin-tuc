@@ -1,0 +1,12 @@
+.broll-ph{position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35em;text-align:center;padding:140px 96px;background-color:#1C372A;background-image:linear-gradient(#2A4D3B 0,#2A4D3B 2px,transparent 2px,transparent 80px),linear-gradient(90deg,#2A4D3B 0,#2A4D3B 2px,transparent 2px,transparent 80px);background-size:80px 80px}
+
+.broll-ph-frame{width:528px;height:460px;border:4px solid #fbbf24;box-sizing:border-box;overflow:hidden;flex:none}
+.broll-ph-img{width:100%;height:100%;object-fit:cover;display:block}
+.broll-ph-big{font:900 clamp(44px,11.0vmin,100px)/1.1 'Anton',Arial,sans-serif;color:#fbbf24;overflow-wrap:anywhere}
+.broll-ph-label{font:800 clamp(18px,5.0vmin,40px)/1.2 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.04em;overflow-wrap:anywhere}
+.broll-ph-sub{font:600 clamp(13px,3.4vmin,26px)/1.25 'Anton',Arial,sans-serif;color:#cbd5e1;overflow-wrap:anywhere}
+.broll-ph-big:empty,.broll-ph-label:empty,.broll-ph-sub:empty{display:none}
+/* Stage: lớp xuất hiện lần lượt, visibility:hidden giữ bố cục không nhảy. */
+.broll-ph-stage-1 .broll-ph-big,.broll-ph-stage-1 .broll-ph-label,.broll-ph-stage-1 .broll-ph-sub{visibility:hidden}
+.broll-ph-stage-2 .broll-ph-label,.broll-ph-stage-2 .broll-ph-sub{visibility:hidden}
+.broll-ph-stage-3 .broll-ph-sub{visibility:hidden}

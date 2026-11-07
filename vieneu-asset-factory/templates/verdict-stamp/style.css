@@ -1,0 +1,5 @@
+.broll-vs{position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
+.broll-vs-red{--vs-ink:#b91c1c}
+.broll-vs-green{--vs-ink:#22c55e}
+.broll-vs-outer{border:4px solid var(--vs-ink);border-radius:14px;padding:6px}
+.broll-vs-inner{border:2px solid var(--vs-ink);border-radius:8px;padding:.2em .55em;font:900 clamp(28px,8.5vmin,64px)/1.15 'Anton',Arial,sans-serif;color:var(--vs-ink);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
