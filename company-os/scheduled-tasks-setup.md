@@ -25,12 +25,12 @@ tài khoản, không tự sinh ra khi clone repo.
 | scout-scan-1000 | 10:00 hàng ngày | Scout quét chủ đề + chấm điểm |
 | scout-scan-1400 | 14:00 hàng ngày | Scout quét chủ đề + chấm điểm |
 | scout-scan-1800 | 18:00 hàng ngày | Scout quét chủ đề + chấm điểm |
-| prod-pipeline-0600 | 06:00 hàng ngày | Pipeline nhận lô tối đa 5 chủ đề READY, sản xuất tuần tự Production → QA → Drive |
-| prod-pipeline-1000 | 10:00 hàng ngày | Pipeline nhận lô tối đa 5 chủ đề READY, sản xuất tuần tự |
-| prod-pipeline-1400 | 14:00 hàng ngày | Pipeline nhận lô tối đa 5 chủ đề READY, sản xuất tuần tự |
-| prod-pipeline-1800 | 18:00 hàng ngày | Pipeline nhận lô tối đa 5 chủ đề READY, sản xuất tuần tự |
+| prod-pipeline-0600 | 06:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY (tối đa 12 claim/ngày), sản xuất tuần tự Production → QA → Drive |
+| prod-pipeline-1000 | 10:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY, sản xuất tuần tự |
+| prod-pipeline-1400 | 14:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY, sản xuất tuần tự |
+| prod-pipeline-1800 | 18:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY, sản xuất tuần tự |
 | bot-hoc-hoi-2000 | 20:00 hàng ngày | Học-hỏi: rút bài học từ lỗi lặp lại có bằng chứng, cải tiến template/skill/SOP (đổi chuẩn thì chỉ đề xuất để CEO quyết) |
-| coo-scan-0600 | 06:00 hàng ngày | COO quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–H; không có dòng thì im lặng, không thông báo |
+| coo-scan-0600 | 06:00 hàng ngày | COO quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng, không thông báo |
 
 ## Cách tạo từng lịch (agent làm)
 
@@ -41,7 +41,7 @@ Với mỗi file mẫu trong `company-os/crons/daily/<id>.md`:
 2. Lấy phần body của file mẫu (sau dòng `---` thứ hai) làm body cho `cron.add`.
 3. Gọi `cron.add` với: `enabled: true`, `mode: task`,
    `owner: goal:vieneu-media-company-bootstrap` (goal bootstrap của chính tài
-   khoản này), `delivery` bỏ trống (mặc định về chat chính của tài khoản này).
+   khoản này), `delivery` = chat COO của tài khoản mới (lấy ID qua `chat.list`, KHÔNG copy UUID 2e9f544b-1dad-420a-a1b4-ed9463cc89d9 của chi nhánh này).
 4. Kiểm tra trước khi tạo xong: body đã thay hết các `{{...}}` chưa (grep `{{`
    phải = 0), còn UUID hay email lạ nào của chi nhánh khác không (grep UUID và
    `@vuachim` trong body phải = 0 — email khai báo của chính tài khoản này cũng
@@ -63,7 +63,7 @@ phòng của chi nhánh khác (hoặc gọi lỗi).
 | Trong file mẫu là `{{CHAT_ID_SCOUT_BAO}}` và `{{CHAT_ID_SCOUT_GROUP}}` (4 file scout-scan-*) | ID chat Scout - Báo / Scout - Group của tài khoản mới (xem bằng `chat.list`) |
 | Trong file mẫu là `{{CHAT_ID_SAN_XUAT}}` và `{{CHAT_ID_QA}}` (4 file prod-pipeline-*) | ID chat Sản xuất / Kỹ thuật QA của tài khoản mới (xem bằng `chat.list`) |
 | `owner: goal:vieneu-media-company-bootstrap` | Goal bootstrap của chính tài khoản mới (cùng slug nếu tài khoản đó theo đúng chuẩn này) |
-| `delivery` (chat chính) | Bỏ trống khi tạo — mặc định về chat chính của tài khoản mới |
+| `delivery` (chat COO) | Chat COO của tài khoản mới (lấy ID qua `chat.list`, KHÔNG copy UUID 2e9f544b-1dad-420a-a1b4-ed9463cc89d9 của chi nhánh này) |
 
 **Không phải thay:** ID workbook "Video HQ — Trụ sở Muse"
 (`1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`) và thư mục Drive
