@@ -12,7 +12,7 @@
 
 ## Hàng đợi Pending Scoring cũ
 
-- 10 chủ đề đang Pending Scoring trên Sheet cũ (tính đến sáng 07/11/2026) sẽ do 2 phòng Scout chấm trong ca đầu tiên sau khi cắt hẳn sang cấu trúc mới — không chờ tin nhắn Scoring, không giữ hàng đợi riêng.
+- 10 chủ đề Pending Scoring trên Sheet cũ (tính đến sáng 07/11/2026) đã được 2 phòng Scout chấm xong trong ca 10:00 07/11/2026 (tất cả APPROVED, quyết R4-07 C) — hàng đợi đã hết, không còn việc chờ chấm.
 
 ## Không dùng file này để làm gì
 

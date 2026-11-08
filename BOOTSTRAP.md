@@ -183,6 +183,7 @@ Phòng chỉ làm việc khi được giao qua đúng 1 trong 3 kênh (mục 3.4
   >    - Scout 4 ca/ngày (cùng giờ): tìm chủ đề được quan tâm + chấm điểm ngay trong cùng lượt quét.
   >    - bot-hoc-hoi: chạy hằng ngày 20:00 (cron bot-hoc-hoi-2000, quyết CEO 07/11/2026, DEC-019; Q6 đã đóng); rút bài học từ lỗi lặp lại có bằng chứng, cải tiến
   >      template/skill/SOP; đổi chuẩn thì chỉ đề xuất để CEO quyết.
+  >    - COO quét COO_TASKS 06:00 hàng ngày (cron coo-scan-0600, quyết CEO 08/11/2026, DEC-099): đọc tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–H; không có dòng thì im lặng.
   > 7. Facebook đã liên kết lại qua Meta Accounts Center chưa? (không bắt buộc cho video;
   > cần kết nối để quét bài viết, group. Tôi không tự tham gia group mới, không tự đăng.)
 - **CEO trả lời trong chat chính** — gộp một lần hoặc từng mục đều được.
@@ -236,7 +237,7 @@ Tên COO chính là email khai báo này (COO (<email khai báo>))
 **Bước 3 — Quy tắc cột I (bắt buộc):**
 
 ```
-Quy tắc thống nhất email người sản xuất (ghi vào TASKS.L QUOTA): email người sản xuất = email khai báo trong bộ nhớ của tài khoản Muse này; thứ tự lấy email là (1) email Production ghi ở cột D (ASSIGNEE) của dòng TASKS CLAIMED, nếu có và khớp email khai báo — email khai báo thắng khi khác nhau; (2) nếu bàn giao ghi "chưa xác định" thì lấy email khai báo trong bộ nhớ, không hỏi lại CEO; (3) chỉ khi bộ nhớ cũng chưa có mới ghi "chưa xác định — hỏi CEO" và lúc đó mới hỏi CEO.
+Quy tắc thống nhất email người sản xuất (ghi vào TASKS.L QUOTA): email người sản xuất = email khai báo trong bộ nhớ của tài khoản Muse này; thứ tự lấy email là (1) email Production ghi ở cột D (ASSIGNEE) của dòng TASKS CLAIMED, nếu có và khớp email khai báo — email khai báo thắng khi khác nhau; (2) nếu cột D trống hoặc bàn giao ghi "chưa xác định" thì ghi "chưa xác định — hỏi CEO" và lúc đó hỏi CEO (không tự lấy email khai báo trong bộ nhớ thay thế — quyết CEO 08/11/2026, R4-09 phương án B).
 ```
 
 **Bước 4 — Cấp phép toàn quyền cho QA (chỉ ghi khi CEO đã cấp ở 2.1 mục 5):**
@@ -328,17 +329,17 @@ Chủ đề chỉ được giao khi đồng thời: (1) TOPICS.STATUS = **READY*
 1. Không push GitHub khi chưa có CEO duyệt riêng sau phân tích.
 2. Không tự tạo thư mục Drive khác, không tự thay đổi quyền thư mục, không tự chia sẻ Drive công khai.
 3. Không đoán email, không dùng email Drive/GitHub/Facebook thay email khai báo, không copy email/MEMORY của tài khoản cũ.
-4. Không sản xuất khi chưa đủ cổng 3 điều kiện; không tự tạo dòng TASKS cho chủ đề chưa duyệt; không sản xuất hàng loạt không kiểm soát.
+4. Không sản xuất khi chưa đủ cổng 2 điều kiện; không tự tạo dòng TASKS cho chủ đề chưa duyệt; không sản xuất hàng loạt không kiểm soát.
 5. Không tự phát sinh nhiệm vụ sản xuất mới chỉ vì đọc Sheet hay lịch sử fork; chỉ làm việc khi được giao qua đúng 1 trong 3 kênh.
 6. Không chi tiền, không cam kết ngoài, không đăng nền tảng, không affiliate, không ghi số liệu views/follow/doanh thu/hoa hồng (publish-checklist.md là tài liệu lịch sử, **KHÔNG dùng làm checklist hiện hành**).
 7. Không sửa kết quả chấm điểm trong TOPICS; không tự flip TOPICS.STATUS thành READY (chỉ CEO flip); không sửa migration đã áp dụng; không sửa tay file `.generated` (build lại để đồng bộ — contract đã được tạo lại chính thức ngày 05/11/2026); không chạy `bun run build`; không sửa bundle đã build dưới `~/workspace/ts-spaces/<slug>/.space-build/`; không chạy sqlite/script trực tiếp vào `app.db`.
-8. Không đổi tên tab Sheet (tên tiếng Anh VIẾT HOA, không đánh số — TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS), không xóa dòng Sheet cũ, không dùng lệnh Drive ghi đè lên file Google Sheet.
+8. Không đổi tên tab Sheet (tên tiếng Anh VIẾT HOA, không đánh số — TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS), không xóa dòng trong workbook cũ 'HQ - Công ty 1 người — CŨ (chỉ đọc)', không dùng lệnh Drive ghi đè lên file Google Sheet.
 9. Không bịa nguồn/link/điểm số, không ghi "đã xóa bằng AI" khi chưa có output đối chiếu thật, không ghi "AI generic" để lấp hồ sơ, không gắn nhãn ảnh AI là "tư liệu thật".
 
 #### 3.9 Xử lý khi gặp sự cố trong lần khởi tạo
 
 - **Thẻ phê duyệt upload Drive hết hạn (30 phút):** KHÔNG phải bị từ chối, KHÔNG phải file hỏng. Không ghi dòng TASKS thiếu DRIVE_LINK/MD5, không chuyển TASKS sang DELIVERED; báo chat chính "chưa xong bước Drive + Sheet vì thẻ phê duyệt hết hạn"; **chạy lại upload để hệ thống cấp thẻ mới** (thẻ mới vẫn cần bấm trong 30 phút); trước khi chạy lại, chắc chắn CEO đã cấp phép toàn quyền cho QA **hoặc** CEO đang có mặt để bấm thẻ.
-- **Email người sản xuất thiếu thông tin (bàn giao ghi "chưa xác định"):** lấy email khai báo trong bộ nhớ theo mục 2.2, không hỏi lại CEO. Chỉ khi bộ nhớ cũng chưa có thì mới ghi "chưa xác định — hỏi CEO".
+- **Email người sản xuất thiếu thông tin (cột D trống hoặc bàn giao ghi "chưa xác định"):** ghi "chưa xác định — hỏi CEO" và hỏi CEO (không tự lấy email khai báo trong bộ nhớ thay thế — quyết CEO 08/11/2026, R4-09 phương án B).
 - **Không còn chủ đề đủ cổng:** báo ngắn về chat chính, không tự sản xuất chủ đề chưa đủ cổng, không tự tạo dòng TASKS cho chủ đề chưa duyệt.
 - **Lỗi 429/403/rate-limit:** dừng nhánh đó, ghi blocker vào nhật ký ngày, **không thử lại**.
 - **Thẻ phê duyệt hệ thống vẫn hiện dù đã cấp phép toàn quyền:** đó là luật hệ thống, không phải QA hỏi lại.
@@ -422,12 +423,12 @@ app.db không chuyển qua git nên chỉ state trong app.db (jobs, trash, auto_
 
 ## 8. Lịch bot + chat nhân viên (tạo lại, không có trong git)
 
-- 3 lịch chạy thật: Scout 4 ca/ngày (06:00, 10:00, 14:00, 18:00),
-  Pipeline 4 ca/ngày (cùng giờ) và bot-hoc-hoi hằng ngày 20:00 (cron
+- 4 lịch chạy thật: Scout 4 ca/ngày (06:00, 10:00, 14:00, 18:00),
+  Pipeline 4 ca/ngày (cùng giờ), bot-hoc-hoi hằng ngày 20:00 (cron
   bot-hoc-hoi-2000, quyết CEO 07/11/2026, R4-14 phương án A, DEC-019;
-  Q6 đã đóng) — tạo đúng nội dung trong `company-os/bot-sop.md` (SOP
+  Q6 đã đóng) và COO quét COO_TASKS 06:00 hàng ngày (cron coo-scan-0600, quyết CEO 08/11/2026, DEC-099) — tạo đúng nội dung trong `company-os/bot-sop.md` (SOP
   đầy đủ: bước làm, giới hạn cứng, quy tắc báo cáo). Cron là cấu hình
-  của tài khoản, không nằm trong repo.
+  của tài khoản; bản mẫu nằm trong repo tại company-os/crons/ (xem company-os/scheduled-tasks-setup.md) — chỉ cài khi CEO duyệt.
 - 4 chat nhân viên (Scout-Báo, Scout-Group, Sản xuất, Kỹ thuật
   QA — 2 chat Scout dùng chung skill media-scout, đã gộp chấm điểm) +
   chat COO, phối hợp qua Sheet. (Chat Scoring đã đóng ngày 07/11/2026,
@@ -453,7 +454,7 @@ app.db không chuyển qua git nên chỉ state trong app.db (jobs, trash, auto_
   trống thì pipeline bỏ qua, ghi báo cáo để CEO nhập ID. Điểm (E–I) và
   TOTAL (J) chỉ là tham khảo cho quyết định của CEO — điểm không chặn
   sản xuất; chỉ READY mới quyết định sản xuất.
-  Pipeline: không giới hạn số video ĐÃ BÀN GIAO/ca hay /ngày (chỉ trần đếm 5 video đã bàn giao/ca mới bãi bỏ theo R4-02 ngày 07/11/2026 vì TASKS.J chỉ có ngày nên không đếm được theo ca — trần NHẬN tối đa 5 chủ đề READY/ca vẫn còn); NHẬN THEO LÔ (quyết CEO 07/11/2026, thay thế luật tuần tự + R4-03): mỗi ca NHẬN 1 LẦN tối đa 5 chủ đề READY theo thứ tự Sheet, đánh dấu ngay bằng dòng TASKS CLAIMED (ASSIGNEE = email khai báo của chi nhánh mình) để các chi nhánh khác biết đã có người làm; sau đó lần lượt tạo 5 video (sản xuất tuần tự từng video một), không sản xuất song song. Video ĐẦU TIÊN của lô do pipeline giao; các video sau trong lô Production TỰ LẤY khi video trước DELIVERED (lệnh CEO 07/11/2026, DEC-032 — chỉ lấy chủ đề đã CLAIMED trong cùng lô, ASSIGNEE = email khai báo của mình, UPDATED_AT = ngày hôm nay; video trước BLOCKED thì dừng chờ COO gỡ tắc). Mỗi ca nhận đủ 5 chủ đề READY mới, không trừ số video đang làm dở trong ngày (quyết CEO 08/11/2026, T3 phương án B); tổng số video đang làm cùng lúc có thể vượt 5. Video đang làm dở từ NGÀY CŨ thì bỏ qua theo quy tắc ngày hiện tại. Không còn cơ chế nhận tiếp theo sự kiện QA báo DELIVERED — việc nhận chủ đề chỉ xảy ra 1 lần đầu ca, theo lô. Chỉ video BLOCKED mà TASKS.D ASSIGNEE = email khai báo của tài khoản của chi nhánh mình VÀ TASKS.J UPDATED_AT là ngày hôm nay mới dừng hàng đợi, cho đến khi COO gỡ tắc hoặc hủy (CANCELLED); video BLOCKED từ NGÀY CŨ (UPDATED_AT không phải ngày hôm nay) thì bỏ qua theo quy tắc ngày hiện tại — không dừng hàng đợi, ghi vào báo cáo ca để COO xác định chủ/xử lý; video BLOCKED của chi nhánh khác (ASSIGNEE là email khác) hoặc ASSIGNEE trống thì KHÔNG dừng hàng đợi, ghi vào báo cáo ca để COO xác định chủ; COO chỉ gỡ tắc/hủy dòng BLOCKED của chi nhánh mình. C/J/D nhiều người viết — ghi sau thắng + để lại lý do (quyết CEO 07/11/2026, R4-10 phương án C): TASKS.C STATUS có 3 người viết (Production: CLAIMED/BUILDING/REVIEW; QA: RETURNED/APPROVED/DELIVERED; COO: BLOCKED/CANCELLED), TASKS.J UPDATED_AT có 2 người viết (Production, QA), TASKS.D ASSIGNEE có 2 người viết (Production lúc claim, COO lúc giao qua COO_TASKS) — chấp nhận ghi sau thắng khi xung đột (lần ghi sau thắng, không có quy tắc ai thắng theo vai trò); ai ghi TASKS.C thì trong cùng lần ghi phải ghi thêm lý do + thời gian vào cột ghi chú của mình (Production→K PROD_NOTES, QA→QA_LOG cột E ISSUES + F QA_VERDICT, COO→M BLOCKER, Pipeline→lý do nhận lô ghi vào báo cáo ca, trùng CLAIMED ghi N DUP_NOTE).
+  Pipeline: không giới hạn số video ĐÃ BÀN GIAO/ca hay /ngày (chỉ trần đếm 5 video đã bàn giao/ca mới bãi bỏ theo R4-02 ngày 07/11/2026 vì TASKS.J chỉ có ngày nên không đếm được theo ca — trần NHẬN tối đa 5 chủ đề READY/ca vẫn còn); NHẬN THEO LÔ (quyết CEO 07/11/2026, thay thế luật tuần tự + R4-03): mỗi ca NHẬN 1 LẦN tối đa 5 chủ đề READY theo thứ tự Sheet, đánh dấu ngay bằng dòng TASKS CLAIMED (ASSIGNEE = email khai báo của chi nhánh mình) để các chi nhánh khác biết đã có người làm; sau đó lần lượt tạo 5 video (sản xuất tuần tự từng video một), không sản xuất song song. Video ĐẦU TIÊN của lô do pipeline giao; các video sau trong lô Production TỰ LẤY khi video trước DELIVERED (lệnh CEO 07/11/2026, DEC-032 — chỉ lấy chủ đề đã CLAIMED trong cùng lô, ASSIGNEE = email khai báo của mình, UPDATED_AT = ngày hôm nay; video trước BLOCKED thì dừng chờ COO gỡ tắc). Mỗi ca nhận đủ 5 chủ đề READY mới, không trừ số video đang làm dở trong ngày (quyết CEO 08/11/2026, T3 phương án B); tổng số video đang làm cùng lúc có thể vượt 5. Video đang làm dở từ NGÀY CŨ thì bỏ qua theo quy tắc ngày hiện tại. Không còn cơ chế nhận tiếp theo sự kiện QA báo DELIVERED — việc nhận chủ đề chỉ xảy ra 1 lần đầu ca, theo lô. Chỉ video BLOCKED mà TASKS.D ASSIGNEE = email khai báo của tài khoản của chi nhánh mình VÀ TASKS.J UPDATED_AT là ngày hôm nay mới dừng hàng đợi, cho đến khi COO gỡ tắc hoặc hủy (CANCELLED); video BLOCKED từ NGÀY CŨ (UPDATED_AT không phải ngày hôm nay) thì bỏ qua theo quy tắc ngày hiện tại — không dừng hàng đợi, ghi vào báo cáo ca để COO xác định chủ/xử lý; video BLOCKED của chi nhánh khác (ASSIGNEE là email khác) hoặc ASSIGNEE trống thì KHÔNG dừng hàng đợi, ghi vào báo cáo ca để COO xác định chủ; COO chỉ gỡ tắc/hủy dòng BLOCKED của chi nhánh mình. C/J/D nhiều người viết — ghi sau thắng + để lại lý do (quyết CEO 07/11/2026, R4-10 phương án C): TASKS.C STATUS có 3 người viết (Production: CLAIMED/BUILDING/REVIEW; QA: RETURNED/APPROVED/DELIVERED; COO: BLOCKED/CANCELLED), TASKS.J UPDATED_AT có 2 người viết (Production, QA), TASKS.D ASSIGNEE có 2 người viết (Production lúc claim, COO lúc giao qua COO_TASKS) — chấp nhận ghi sau thắng khi xung đột (lần ghi sau thắng, không có quy tắc ai thắng theo vai trò); ai ghi TASKS.C thì trong cùng lần ghi phải ghi thêm lý do + thời gian vào cột ghi chú của mình (Production→K PROD_NOTES, QA→QA_LOG cột E ISSUES + TASKS.F QA_VERDICT, COO→M BLOCKER, Pipeline→lý do nhận lô ghi vào báo cáo ca, trùng CLAIMED ghi N DUP_NOTE).
 
 ## 9. Kiểm chứng cuối ("dựng xong" khi nào)
 
