@@ -72,10 +72,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
   folderId `1bA21n3Y3YiY6HSjLUEFmxnJXLnjtSJGc`, đã cấp quyền anyone with
   link (writer, allowFileDiscovery=false) từ 05/11/2026. Không tự tạo thư
   mục khác, không tự đổi quyền thư mục.
-- Workbook cũ **"HQ - Công ty 1 người — CŨ (chỉ đọc)"**,
-  spreadsheetId `1P6DumLF_eIXmo7h8Qrpk-rpVy7xmqtf5ztVIFsiXZ3I`: CHỈ ĐỌC,
-  không ghi vào đó. Mọi luật cũ gắn với workbook này (cổng Approved + cột
-  O "Duyệt" + không có *-DRAFT) đã bãi bỏ.
+- Workbook cũ CHỈ ĐỌC (xem spec), không ghi vào đó. Mọi luật cũ gắn với workbook này (cổng Approved + cột O "Duyệt" + không có *-DRAFT) đã bãi bỏ.
 
 ## 3. Luật điều phối — cốt lõi
 
@@ -144,10 +141,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
   Production được bắt đầu video kế tiếp trong lô trong lúc video trước
   đang REVIEW chờ verdict (nới DEC-032 theo DEC-106, vẫn chỉ làm 1 video
   tại một thời điểm).
-- **Không giới hạn số video ĐÃ BÀN GIAO/ca hay /ngày** — trần đếm 5 video
-  đã bàn giao/ca đã bãi bỏ (DEC-072/C1) vì TASKS.J chỉ có ngày nên không
-  đếm được theo ca; chỉ trần NHẬN (3 chủ đề/ca) vẫn còn. DELIVERED trong
-  ngày chỉ để báo cáo.
+- **Không giới hạn số video ĐÃ BÀN GIAO/ca hay /ngày** — chỉ trần NHẬN (3 chủ đề/ca) vẫn còn. DELIVERED trong ngày chỉ để báo cáo.
 - **Quy tắc ngày hiện tại:** chỉ quan tâm ngày hiện tại; việc đang làm dở
   từ ngày cũ (CLAIMED/BUILDING/REVIEW/RETURNED/BLOCKED) thì bỏ qua, không
   chặn hàng đợi ngày hôm nay — không áp cho chủ đề READY (READY vẫn lấy

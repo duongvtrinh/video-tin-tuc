@@ -10,7 +10,7 @@ schedule:
 timeout_secs: 7200
 owner: goal:vieneu-media-company-bootstrap
 ---
-Ca hoc-hoi theo quyết CEO 07/11/2026 — R4-14 phương án A (DEC-019): 20:00 Asia/Saigon mỗi ngày. Workbook mới "Video HQ — Trụ sở Muse" (spreadsheet 1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE). Workbook cũ "HQ - Công ty 1 người — CŨ (chỉ đọc)" (1P6DumLF_eIXmo7h8Qrpk-rpVy7xmqtf5ztVIFsiXZ3I) CHỈ ĐỌC, không ghi vào đó.
+Ca hoc-hoi theo quyết CEO 07/11/2026 — R4-14 phương án A (DEC-019): 20:00 Asia/Saigon mỗi ngày. Workbook mới "Video HQ — Trụ sở Muse" (spreadsheet 1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE). Workbook cũ CHỈ ĐỌC (xem spec).
 
 Vai trò: (1) kiểm mẫu — biện pháp bù (c) cho quyết C3 (gộp Scout + Scoring: mất lớp kiểm độc lập "không chấm chủ đề do mình quét", bù bằng (a) điểm quan tâm bắt buộc có số liệu bằng chứng trong NOTES, (b) cổng READY của CEO, (c) hoc-hoi kiểm mẫu); (2) vòng học-hỏi — biến lỗi lặp lại thành cải tiến vĩnh viễn cho quy trình, để hệ thống ngày một thông minh hơn — nhưng chỉ cải tiến khi có bằng chứng, không bịa cải tiến, không nới lỏng chuẩn.
 

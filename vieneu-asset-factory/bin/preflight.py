@@ -17,9 +17,10 @@ với validate_project.py (cả hai: exit 1 khi và chỉ khi có lỗi chặn;
 cảnh báo không tính vào exit code):
 - CHẶN (exit 1): thiếu tts.json; part ID trùng (plan hoặc tts.json);
   part chưa có audio TTS / file audio không tồn tại / duration = 0;
-  scene chưa có ảnh (render sẽ DỪNG với RENDER-ERROR, A26); template không tồn
+  scene chưa có ảnh scene (ảnh đại diện của scene, dùng làm fill-in); template không tồn
   tại / meta.json hỏng / inputs không phải dict; thiếu input bắt buộc
-  của template; BGM đã chọn nhưng file không tồn tại; SFX đã chọn
+  của template; input template vượt maxLength (R4-41/DEC-049 — trước
+  đây chỉ cảnh báo); BGM đã chọn nhưng file không tồn tại; SFX đã chọn
   nhưng file không tồn tại (A26, 05/11/2026); tổng thời lượng
   audio = 0; scene thiếu nguồn media (mediaSource.source trống/thiếu)
   hoặc thiếu nhật ký tìm ảnh (media-log.json không có, hoặc scene
@@ -27,7 +28,12 @@ cảnh báo không tính vào exit code):
   ảnh thật, lệnh CEO 05/11/2026 (lựa chọn A20). Scene chỉ có nền
   xanh rêu kẻ ô (không có mediaSource) cũng chặn ở đây, vì nền xanh
   rêu không tính là ảnh. Miễn cửa provenance cho project test kỹ
-  thuật (pid bắt đầu bằng "test", vd test001 fixture).
+  thuật (pid bắt đầu bằng "test", vd test001 fixture). 2 part liền kề
+  chung 1 file visual — luật kề nhau, lệnh CEO 09/11/2026 (DEC-242,
+  Khối 4 Cách 1): chặn trước render; ngoại lệ 2 part ở 2 scene khác
+  nhau cùng dùng 1 file nền trung tính (nhận biết qua media-log danh
+  sách parts, classification "trung-tinh"); mỗi scene tối đa 1 part
+  dùng nền trung tính (DEC-244). (Ghi chú đối soát 09/11/2026: miễn trừ qua biên scene là phòng thủ — tên file b-roll của mỗi part là duy nhất theo (order, partIdx) nên 2 part khác scene không bao giờ resolve về cùng 1 file; việc dùng lại file nền qua các scene thực chất là copy cùng file nguồn vào 2 tên b-roll khác nhau nên preflight thấy 2 file khác nhau, không vi phạm.) Miễn cho project test như cửa A20.
   R4-57 (08/11/2026, DEC-066 A', port từ validate_project.py — chỉ
   hợp lệ SAU assemble nên không gọi nó trước render): thứ tự scene
   không tăng dần; part startSec không nối tiếp part trước (tiling,
@@ -40,11 +46,16 @@ cảnh báo không tính vào exit code):
   rộng ở part không template / có part fallback timing (WAV hỏng/mất
   hoặc thiếu entry norm_chunks); chưa chọn BGM; video dưới 120s hoặc trên
   180s (Production tự quyết độ dài); 0 SFX hoặc thiếu beat SFX
-  hook/móc lại/kết luận; input template vượt maxLength; template gợi ý
-  SFX nhưng plan chưa có broll.sfx.
+  hook/móc lại/kết luận; template gợi ý
+  SFX nhưng plan chưa có broll.sfx; media-log thiếu danh sách `parts`
+  (không kiểm được luật mỗi scene tối đa 1 nền trung tính); partId cũ
+  trong danh sách `parts` của media-log; part khai prompt AI nhưng
+  không có file ảnh b-roll; file b-roll video tồn tại nhưng ffprobe
+  không thấy video stream.
 """
 import json
 import re
+import subprocess
 import sys
 import unicodedata
 from pathlib import Path
@@ -109,6 +120,27 @@ _STAMP_APPEAR_STAGE = {
     ("photo-duo", "img2"): 5,
     ("photo-duo-h", "img2"): 2,
 }
+
+
+def _is_valid_video_broll(path) -> bool:
+    """Mp4 b-roll có dùng được không — mirror render_draft.py base_video
+    (F1, 09/11/2026, quyết định CEO): file phải tồn tại VÀ ffprobe thấy
+    video stream. mediaType KHÔNG phải điều kiện — mediaType chỉ là gợi
+    ý để AI tạo ảnh hay video; nếu ảnh/video lấy từ nguồn thực
+    (internet/mạng xã hội/stock) thì bỏ qua điều kiện mediaType, resolve
+    theo file thật trên đĩa. File hỏng (ffprobe không thấy stream) thì
+    render rơi về ảnh (B1) nên preflight cũng rơi về ảnh."""
+    if not path.exists():
+        return False
+    try:
+        r = subprocess.run(
+            ["ffprobe", "-v", "error", "-select_streams", "v:0",
+             "-show_entries", "stream=codec_type",
+             "-of", "csv=p=0", str(path)],
+            capture_output=True, text=True, timeout=30)
+        return r.returncode == 0 and "video" in r.stdout
+    except Exception:
+        return False
 
 
 def main() -> int:
@@ -200,9 +232,10 @@ def main() -> int:
             # côi 20261028165436_213948 (ảnh lệch quy ước tên factory nên
             # render cũng không tìm thấy) là preflight sẽ báo lỗi — đúng
             # hành vi mong muốn, không phải false positive.
-            errors.append(f"Scene {order} chưa có ảnh — render sẽ DỪNG với "
-                          f"RENDER-ERROR (thiếu ảnh), phải tạo ảnh "
-                          f"trước (generateImages: job AI hoặc card)")
+            errors.append(f"Scene {order} chưa có ảnh scene (ảnh đại diện "
+                          f"của scene, dùng làm fill-in) — phải tạo ảnh "
+                          f"scene trước khi render (generateImages: job AI "
+                          f"hoặc card)")
         elif _PIL_OK:
             # B10 (05/11/2026, lệnh CEO, lựa chọn A): ảnh tồn tại chưa
             # đủ — phải giải mã được hết (PIL .load()). File cắt dở
@@ -253,6 +286,26 @@ def main() -> int:
                     warnings.append(
                         f"Part {p['id']}: khai b-roll video nhưng không có "
                         f"file {bv.name} — render sẽ rơi về ảnh scene")
+            # F3 (09/11/2026, quyết định CEO): part khai prompt AI (cần
+            # ảnh riêng) nhưng không có file ảnh b-roll (và không có mp4)
+            # thì render rơi về ảnh scene lặng lẽ — cảnh báo để Production
+            # biết trước (đối xứng với cảnh báo thiếu mp4 ở trên). Part
+            # template dùng ảnh scene làm nền thì không có prompt nên
+            # không cảnh báo oan.
+            _prompt = br.get("prompt")
+            if isinstance(_prompt, str) and _prompt.strip():
+                _bi2 = next((q for ext in ("jpg", "png", "webp")
+                             for q in [build / "media" / "broll" /
+                                       f"broll_seg_{order}_part_{pi}_"
+                                       f"{rand6(pid, 'broll', str(order), str(pi))}.{ext}"]
+                             if q.exists()), None)
+                _bv2 = build / "media" / "broll" / (
+                    f"broll_seg_{order}_part_{pi}_"
+                    f"{rand6(pid, 'broll', str(order), str(pi))}.mp4")
+                if _bi2 is None and not _bv2.exists():
+                    warnings.append(
+                        f"Part {p['id']}: khai prompt AI nhưng không có file "
+                        f"ảnh b-roll — render sẽ rơi về ảnh scene")
             # B10 (05/11/2026, lệnh CEO, lựa chọn A): ảnh b-roll nếu có
             # mà giải mã không được thì LỖI — render sẽ fail giữa chừng
             # hoặc ra clip lỗi. Không có file thì không sao, render rơi
@@ -650,6 +703,9 @@ def main() -> int:
     # nên cảnh đã sửa không bị chặn oan. Miễn cho project test kỹ
     # thuật (pid bắt đầu bằng "test", vd test001 fixture) — các kiểm
     # tra khác vẫn chạy bình thường với project test.
+    # R3-34 (09/11/2026, rà soát lần 3): A20 là cửa tối thiểu — chỉ kiểm
+    # có nguồn + có từ khóa; `candidates`/`chosen` trong log do QA kiểm
+    # bằng tay, A20 không chặn khi log thiếu ứng viên/visual được chọn.
     if not pid.startswith("test"):
         _log_path = proj / "media-log.json"
         _log_scenes = {}
@@ -704,6 +760,188 @@ def main() -> int:
                               f"tiếng Việt đã thử tìm ảnh thật trước khi "
                               f"render")
 
+    # Luật kề nhau (lệnh CEO 09/11/2026, DEC-242, Khối 4 — Cách 1, Q3;
+    # đính chính DEC-244): 2 part liền kề (theo thứ tự phát toàn video,
+    # kể cả qua biên scene) không được chung 1 file visual — dùng đúng
+    # logic resolve của render (video b-roll > ảnh b-roll part > ảnh
+    # scene). Vi phạm thì CHẶN render (exit 1) như cửa A20. Miễn cho
+    # project test (pid "test*") như A20. Ngoại lệ: file nền được dùng
+    # lại ở scene khác — 2 part ở 2 scene khác nhau cùng dùng 1 file nền
+    # thì được chung file; trong cùng 1 scene thì không miễn (mỗi scene
+    # tối đa 1 part dùng nền trung tính, thường là part đầu — kiểm riêng
+    # ở dưới). Part nền trung tính nhận biết qua media-log.json danh
+    # sách `parts` (classification "trung-tinh" hoặc ghi chú "nền trung
+    # tính"). Thiếu danh sách parts thì không có ngoại lệ (kiểm chặt).
+    if not pid.startswith("test"):
+        _neutral_parts = set()
+        _parts_list = None
+        try:
+            _mlog = json.loads((proj / "media-log.json").read_text(encoding="utf-8"))
+            _parts_list = _mlog.get("parts")
+            for _e in (_parts_list or []):
+                if not isinstance(_e, dict) or not _e.get("partId"):
+                    continue
+                _txts = []
+                for _k in ("classification", "note", "ghi_chu"):
+                    _v = _e.get(_k)
+                    if isinstance(_v, str):
+                        _txts.append(_v)
+                _ch = _e.get("chosen")
+                if isinstance(_ch, dict):
+                    for _k in ("classification", "note", "ghi_chu"):
+                        _v = _ch.get(_k)
+                        if isinstance(_v, str):
+                            _txts.append(_v)
+                _joined = " ".join(_txts)
+                if "trung-tinh" in _joined or "nền trung tính" in _joined:
+                    _neutral_parts.add(_e["partId"])
+        except (OSError, json.JSONDecodeError):
+            pass
+        # DEC-244 (đối soát 09/11/2026): không có danh sách `parts` thì
+        # không kiểm được luật mỗi scene tối đa 1 nền trung tính — chỉ
+        # cảnh báo (không chặn) để QA kiểm bằng tay; chỉ cảnh báo khi
+        # plan có part dùng b-roll riêng (có nhật ký theo part mới kiểm
+        # được).
+        # R3-32 (09/11/2026, rà soát lần 3): chỉ cảnh báo khi có part thực
+        # sự có visual riêng — có `prompt` (AI), hoặc `mediaType`, hoặc có
+        # file b-roll trên đĩa (kể cả file nền trung tính đã copy vào
+        # build/media/broll/). Part chỉ có template (không prompt, không
+        # mediaType, không file b-roll) dùng ảnh scene làm nền nên không
+        # cần dòng log riêng — không cảnh báo (tránh nhiễu).
+        def _part_has_own_visual(_sc, _p, _pi):
+            _br = (_p or {}).get("broll") or {}
+            if not isinstance(_br, dict):
+                return False
+            if isinstance(_br.get("prompt"), str) and _br["prompt"].strip():
+                return True
+            if _br.get("mediaType"):
+                return True
+            _order = _sc.get("order")
+            _r6 = rand6(pid, "broll", str(_order), str(_pi))
+            if (build / "media" / "broll" /
+                    f"broll_seg_{_order}_part_{_pi}_{_r6}.mp4").exists():
+                return True
+            return any((build / "media" / "broll" /
+                        f"broll_seg_{_order}_part_{_pi}_{_r6}.{ext}").exists()
+                       for ext in ("jpg", "png", "webp"))
+        _has_part_broll = any(
+            _part_has_own_visual(_sc, _p, _pi)
+            for _sc in plan["scenes"]
+            for _pi, _p in enumerate(_sc["parts"], start=1)
+        )
+        if _has_part_broll and not _parts_list:
+            warnings.append("media-log.json không có danh sách `parts` (hoặc danh sách trống) mà plan có part dùng b-roll riêng — preflight không kiểm được luật mỗi scene tối đa 1 nền trung tính (DEC-244); QA kiểm bằng tay. Ghi dòng part vào media-log (classification 'trung-tinh' cho part dùng nền) rồi chạy lại preflight")
+        # F2 (09/11/2026, quyết định CEO): media-log `parts` có partId
+        # không có trong plan (dòng cũ sau khi đổi số part) thì preflight
+        # nhận sai part nền — chỉ cảnh báo (không chặn) để Production
+        # cập nhật lại partId trong media-log rồi chạy lại preflight.
+        if isinstance(_parts_list, list):
+            _plan_ids = {_p.get("id") for _sc in plan["scenes"]
+                         for _p in _sc["parts"] if isinstance(_p, dict)}
+            # R3-33 (09/11/2026, rà soát lần 3): chỉ cảnh báo partId cũ khi
+            # dòng đó được đánh dấu nền (classification/ghi chú chứa
+            # "trung-tinh" hoặc "nền trung tính") — chỉ dòng nền cũ mới ảnh
+            # hưởng nhận biết part nền; dòng nội dung cũ không ảnh hưởng
+            # đếm nền nên không cảnh báo (tránh nhiễu).
+            def _is_neutral_entry(_e):
+                _txts = []
+                for _k in ("classification", "note", "ghi_chu"):
+                    _v = _e.get(_k)
+                    if isinstance(_v, str):
+                        _txts.append(_v)
+                _ch = _e.get("chosen")
+                if isinstance(_ch, dict):
+                    for _k in ("classification", "note", "ghi_chu"):
+                        _v = _ch.get(_k)
+                        if isinstance(_v, str):
+                            _txts.append(_v)
+                _joined = " ".join(_txts)
+                return "trung-tinh" in _joined or "nền trung tính" in _joined
+            _stale = sorted({_e.get("partId") for _e in _parts_list
+                             if isinstance(_e, dict) and _e.get("partId")
+                             and _e.get("partId") not in _plan_ids
+                             and _is_neutral_entry(_e)})
+            if _stale:
+                warnings.append(
+                    "media-log.json danh sách `parts` có partId của dòng nền "
+                    f"không có trong plan ({', '.join(_stale)}) — dòng nền cũ "
+                    "sau khi đổi số part? Cập nhật lại partId trong "
+                    "media-log rồi chạy lại preflight (preflight nhận biết "
+                    "part nền theo partId)")
+        _resolved = []  # (partId, Path|None, order) theo thứ tự phát toàn video
+        for _sc in plan["scenes"]:
+            _order = _sc["order"]
+            _simg = next((q for ext in ("jpg", "png", "webp")
+                          for q in [build / "media" / "images" /
+                                    f"seg_{_order}_{rand6(pid, 'img', str(_order))}.{ext}"]
+                          if q.exists()), None)
+            for _pi, _p in enumerate(_sc["parts"], start=1):
+                _br = _p.get("broll") or {}
+                _vis = None
+                # F1 (09/11/2026, quyết định CEO): mediaType chỉ là gợi ý
+                # để AI tạo ảnh hay video; nếu ảnh/video lấy từ nguồn thực
+                # (internet/mạng xã hội/stock) thì bỏ qua điều kiện
+                # mediaType — resolve theo file thật trên đĩa, đúng như
+                # render (base_video). Không kiểm mediaType ở đây nữa.
+                _bv = build / "media" / "broll" / (
+                    f"broll_seg_{_order}_part_{_pi}_"
+                    f"{rand6(pid, 'broll', str(_order), str(_pi))}.mp4")
+                if _bv.exists():
+                    if _is_valid_video_broll(_bv):
+                        _vis = _bv
+                    else:
+                        # Mp4 tồn tại nhưng ffprobe không thấy video stream
+                        # — render rơi về ảnh (B1), preflight cũng vậy.
+                        warnings.append(
+                            f"Part {_p['id']}: file b-roll video {_bv.name} "
+                            f"tồn tại nhưng ffprobe không thấy video stream "
+                            f"— render sẽ rơi về ảnh scene")
+                if _vis is None:
+                    _bi = next((q for ext in ("jpg", "png", "webp")
+                                for q in [build / "media" / "broll" /
+                                          f"broll_seg_{_order}_part_{_pi}_"
+                                          f"{rand6(pid, 'broll', str(_order), str(_pi))}.{ext}"]
+                                if q.exists()), None)
+                    _vis = _bi if _bi is not None else _simg
+                _resolved.append((_p["id"], _vis, _order))
+        for (_id1, _v1, _o1), (_id2, _v2, _o2) in zip(_resolved, _resolved[1:]):
+            if _v1 is None or _v2 is None or _v1 != _v2:
+                continue
+            # Ngoại lệ: file nền được dùng lại ở scene khác — 2 part ở 2
+            # scene khác nhau cùng dùng 1 file nền thì được chung file.
+            # Trong cùng 1 scene thì không miễn (mỗi scene tối đa 1 part
+            # dùng nền trung tính — kiểm riêng ở dưới).
+            # (Ghi chú đối soát 09/11/2026: miễn trừ này là phòng thủ —
+            # tên file b-roll duy nhất theo part nên 2 part khác scene
+            # không bao giờ chung file; dùng lại file nền qua scene =
+            # copy vào 2 tên khác nhau nên không vi phạm.)
+            if _o1 != _o2 and _id1 in _neutral_parts and _id2 in _neutral_parts:
+                continue
+            errors.append(f"Luật kề nhau (DEC-242): part {_id1} và part "
+                          f"{_id2} dùng chung 1 file {_v1.name} — 2 part "
+                          f"liền kề không được chung 1 file visual. Đổi "
+                          f"visual cho 1 trong 2 part (visual khác trong "
+                          f"pool, AI trong trần, hoặc crop chi tiết hạn "
+                          f"chế) rồi chạy lại preflight")
+
+        # Mỗi scene tối đa 1 part dùng nền trung tính (quy tắc CEO
+        # 09/11/2026, DEC-244): nền thường nằm ở part đầu của scene hoặc
+        # không có; 2 part trở lên trong cùng 1 scene cùng dùng nền là
+        # vi phạm dù file có khác nhau.
+        _neutral_by_scene = {}
+        for _pid2, _v, _o in _resolved:
+            if _pid2 in _neutral_parts:
+                _neutral_by_scene.setdefault(_o, []).append(_pid2)
+        for _o, _pids in sorted(_neutral_by_scene.items()):
+            if len(_pids) > 1:
+                errors.append(f"Scene {_o} có {len(_pids)} part dùng nền "
+                              f"trung tính ({', '.join(_pids)}) — mỗi scene "
+                              f"tối đa 1 part dùng nền trung tính (thường "
+                              f"là part đầu của scene) hoặc không có (quy "
+                              f"tắc CEO 09/11/2026, DEC-244). Đổi visual "
+                              f"cho các part còn lại (visual nội dung trong "
+                              f"pool) rồi chạy lại preflight")
+
     # karaoke
     kj = build / "subtitles" / "karaoke.json"
     if not kj.exists():
@@ -747,6 +985,11 @@ def main() -> int:
     bgm = plan.get("bgm")
     if not bgm:
         warnings.append("Chưa chọn nhạc nền (BGM)")
+    elif not isinstance(bgm, dict):
+        # R3-31 (09/11/2026, rà soát lần 3): bgm không phải dict (vd chuỗi
+        # "track.mp3" do sửa tay plan) — trước đây bgm.get("file") crash
+        # AttributeError; nay báo lỗi rõ thay vì crash.
+        errors.append("BGM trong plan không phải dict (vd chuỗi tên file do sửa tay) — ghi BGM dạng dict {file: ...} hoặc bỏ chọn BGM")
     else:
         # B27 (06/11/2026, lệnh CEO, lựa chọn A): bgm có mà file rỗng/
         # thiếu thì CHẶN — trước đây FACTORY/"bgm"/"" chính là thư mục

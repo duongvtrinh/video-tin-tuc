@@ -53,7 +53,7 @@ Vai trò: Scout tự động (2 phòng: Scout-Báo + Scout-Group, mỗi phòng t
    tác bằng giật gân mà không có thông tin.
 5. Khử trùng: đọc TOPICS, TASKS và QA_LOG theo TIÊU ĐỀ/SỰ KIỆN (chủ đề chưa duyệt chưa có ID nên không khử trùng theo TOPIC_ID được; chủ đề đã có ID thì đối chiếu thêm theo ID). Trùng là cùng sự kiện/người/số liệu/câu chuyện dù wording khác, kể cả chủ đề đã làm trong 90 ngày với cùng góc. Chủ đề trùng thì ghi STATUS = DUPLICATE + tiêu đề (và ID nếu có) của chủ đề gốc vào NOTES, không tự ghi APPROVED. Đầu ca kiểm tra toàn vẹn (R7) trước khi ghi: chỉ đọc số dòng + ID lớn nhất (chỉ tính dòng đã có ID) để nắm trạng thái hiện tại (làm mốc cho ca sau). Số dòng giảm hoặc ID lớn nhất lùi KHÔNG dừng ca, KHÔNG báo cáo (quyết CEO 07/11/2026: làm việc bình thường, không quan tâm mất dòng, không báo cáo). Không thêm tab BASELINE hay file baseline.json. ID trống là bình thường, không phải lỗi.
 6. Ghi chủ đề mới vào TOPICS đã chấm xong trong một lần ghi, đúng thứ tự cột: TOPIC_ID ĐỂ TRỐNG (Scout không tự sinh ID — quyết CEO 07/11/2026, phương án E cho R4-04; chỉ CEO nhập TOPIC_ID khi duyệt/lật READY, bằng công cụ riêng bên ngoài, đảm bảo không trùng; chủ đề không duyệt thì tiếp tục bỏ trống), TITLE, SOURCE (tên nguồn + link nếu có), DISCOVERED (ngày hôm nay, dạng YYYY-MM-DD), HOT / AUDIENCE / FRESH / FEASIBLE / SOURCED (điểm theo thang 30+20+20+15+15=100), TOTAL, STATUS theo thang và cửa quan tâm (≥70 và quan tâm Hot + Khán giả ≥30 → APPROVED; 50–69 → HOLD; ≥70 nhưng quan tâm <30 → HOLD + tín hiệu chờ vào NOTES; <50 → REJECTED; trùng → DUPLICATE + tiêu đề (và ID nếu có) của chủ đề gốc vào NOTES), ANGLE (góc kể + vì sao thú vị, 2 câu), NOTES ("Bot lang thang tự động" + số liệu bằng chứng cho điểm quan tâm; "Nghi trùng <tiêu đề hoặc TOPIC-xxx nếu có ID>" nếu có). Điểm và TOTAL chỉ là THAM KHẢO cho quyết định của CEO — điểm không chặn sản xuất; chỉ READY mới quyết định sản xuất. Đọc lại tab sau khi ghi để xác nhận số dòng đã tăng đúng (R3 — đọc lại theo tiêu đề ngay trước khi ghi).
-7. Không có bàn giao Scoring: chat Scoring đã đóng (C3); chủ đề APPROVED chờ CEO flip READY (TOPICS.K APPROVED → READY) và CEO tự nhập TOPIC_ID khi flip (bằng công cụ riêng bên ngoài, đảm bảo không trùng). Không nhắn chat Scoring.
+7. Không có bàn giao Scoring: chat Scoring đã đóng (C3); chủ đề APPROVED chờ CEO flip READY (TOPICS.K APPROVED → READY) và CEO tự nhập TOPIC_ID khi flip (bằng công cụ riêng bên ngoài, đảm bảo không trùng).
 
 Giới hạn cứng: không đăng nền tảng, không gắn affiliate, không chi tiền,
 không push GitHub, không sửa Drive, không bịa nguồn/link/điểm/ngày,
@@ -109,7 +109,7 @@ Skill và quy trình: media-scout, media-video-production,
 media-video-tech-qa (phòng Scoring đã đóng ngày 07/11/2026 theo quyết
 C3; skill media-topic-scoring đã ngừng dùng), spec
 (company-os/google-sheet-spec.md) và bot-sop này. Workbook "Video HQ —
-Trụ sở Muse" (6 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS).
+Trụ sở Muse" (6 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS). Luật kề nhau + trần AI + nền trung tính (DEC-242/243/244, quy tắc CEO 09/11/2026): xem skill media-video-production, mục 'Luật kề nhau', và LOGIC.md (nguyên tắc 6, 7) — không nhắc lại ở đây.
 Cron này CHỈ ĐỌC Sheet + skill + nhật ký, KHÔNG ghi vào Sheet (không
 ghi TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS); mọi cải tiến áp dụng vào
 repo local thì KHÔNG push GitHub.

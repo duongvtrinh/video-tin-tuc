@@ -9,10 +9,10 @@ Thực tế kiểm chứng sau đó: bài Tuổi Trẻ 4/11 về đúng vụ vi�
 Từ nay, tìm ảnh thật là cửa CHẶN trước render, không phải khuyến nghị:
 
 1. Trước khi tạo bất kỳ ảnh nào, phải tìm ảnh thật cho từng cảnh bằng từ khóa TIẾNG VIỆT khớp kịch bản, ưu tiên bài báo về đúng vụ việc, rồi bài đăng mạng xã hội công khai, rồi tìm kiếm hình ảnh. Thử nhiều cụm từ khóa đồng nghĩa, không dừng ở cụm đầu tiên, không lấy mù top 1.
-2. Ghi nhật ký tìm ảnh cho mỗi cảnh vào bàn giao (broll-plan.json + media-log.json trong thư mục project): từ khóa đã thử, ứng viên tìm được (link + nguồn + tác giả nếu có), phân loại (dùng thẳng / AI xóa chữ giữ nguyên ảnh gốc / loại), và lý do loại nếu loại. Thiếu nhật ký này thì cảnh đó chưa đủ điều kiện render.
+2. Ghi nhật ký tìm ảnh cho mỗi cảnh vào bàn giao (broll-plan.json + media-log.json trong thư mục project): từ khóa đã thử, ứng viên tìm được (link + nguồn + tác giả nếu có), phân loại (dùng thẳng / AI xóa chữ giữ nguyên ảnh gốc / loại), và lý do loại nếu loại. Thiếu nhật ký này thì cảnh đó chưa đủ điều kiện render. Ngoài danh sách `scenes`, media-log.json có thêm danh sách `parts` — 1 dòng cho mỗi part có ảnh/video riêng (ghi `partId` thật, không để `partId` = `sceneId`); part dùng nền trung tính ghi `file` (file nền) + `classification` 'trung-tinh' + ghi chú 'nền trung tính cho template <tên>' + templateId (+ `chosen` ghi file + classification như các dòng part khác); part dùng nền không cần `keywordsTried`/`candidates` (file thư viện, không phải tìm) (quyết định CEO 09/11/2026, F7).
 3. Chỉ khi đã thử hết mà hoàn toàn không có ứng viên phù hợp mới được tạo AI từ prompt, và phải ghi rõ: "AI từ prompt, không có ảnh tham chiếu, đã thử các từ khóa: ..." — cấm ghi chung chung "AI generic" để lấp hồ sơ.
 4. Nền xanh rêu kẻ ô vuông (không chữ) KHÔNG thay thế ảnh. Nền này là nền chờ khi chưa có ảnh, không phải ảnh minh họa. Scene không có ảnh thật vẫn phải có ảnh nền (ảnh thật generic, ảnh gốc đã xử lý, hoặc AI từ prompt có ghi rõ lý do), không được render chỉ nền xanh rêu rồi gọi là "đã có ảnh". Ngoại lệ duy nhất: scene khai `cardImage` trỏ tới file thật tồn tại trong project thì CÓ ảnh — render dùng chính ảnh đó làm nền (không chữ, in BG-IMAGE-OK), không tính là thiếu ảnh. File không tồn tại, nằm ngoài project, hoặc mở không được → render in CARDIMAGE-MISSING rồi rơi về nền rêu + cờ `isMossGrid` → tính là thiếu ảnh như thường. (R4-43, 08/11/2026, DEC-051, phương án B: giữ ngoại lệ, chưa quyết giữ hay bỏ.)
-5. QA chặn: nếu media table ghi AI generic / nền xanh rêu kẻ ô vuông (không chữ) mà không kèm nhật ký tìm ảnh thật, QA TRẢ LẠI, không duyệt im lặng, dù các cửa kỹ thuật và nội dung khác đạt.
+5. QA chặn: nếu media table ghi 'AI từ prompt' / nền xanh rêu kẻ ô vuông (không chữ) mà không kèm nhật ký tìm ảnh thật, QA TRẢ LẠI, không duyệt im lặng, dù các cửa kỹ thuật và nội dung khác đạt. Nhãn 'AI generic' bị cấm ghi dưới mọi hình thức (xem mục 3).
 
 Ghi chú chuyển đổi 05/11/2026 (lệnh CEO): logic card chữ cũ đã được thay bằng nền xanh rêu kẻ ô, không chữ, trong `bin/render_scene_card.py` — nền xanh rêu đậm #1C372A, kẻ ô vuông 80px, không kicker, không headline, không dòng nguồn, không template overlay. Nền này vẫn KHÔNG thay thế ảnh, giống như card chữ cũ: scene chỉ có nền này vẫn tính là thiếu ảnh ở tầng hồ sơ/QA.
 6. Trình bày sai nguồn gốc là lỗi chặn: ảnh AI từ prompt mà bàn giao, caption hoặc plan ghi như ảnh thật (kể cả ghi mediaSource.source là tên một tờ báo/trang trong khi file thực chất là AI) thì QA TRẢ LẠI để ghi đúng "AI từ prompt, minh họa, không phải ảnh thật". Quyền trả lại này thuộc QA, không cần CEO quyết từng trường hợp.
@@ -91,6 +91,8 @@ skill Sản xuất cùng ngày.
    liệu đã kiểm chứng: giữ quy tắc chung chung 28/10/2026 (góc rộng,
    sau lưng/bóng mờ, bàn tay (chỉ khi là vật chứng, ví dụ bàn tay đang ký giấy tờ — không cận cảnh bàn tay để nhận diện người), vật chứng, ngoại thất, ghế trống; không cận
    mặt, không tạo chân dung người thật cụ thể). Quy tắc chung chung này chỉ áp dụng cho ảnh AI từ prompt; ảnh thật tìm được thì giữ nguyên theo mục 3, không ép về dạng chung chung. (Xem mục "Ranh giới AI cho nhân vật có tên" ngay dưới đây: nhóm A — nhân vật công chúng có nhiều thông tin công khai đã kiểm chứng — được tạo chân dung AI nếu cần thiết; nhóm B — thiếu thông tin — chỉ dùng hình chung chung; không chắc thì xếp nhóm B — sửa 05/11/2026, lựa chọn A15.)
+6. **Luật kề nhau (quy tắc CEO 09/11/2026, DEC-242 — E2, trần theo scene; đính chính DEC-244):** 2 part liền kề không lặp ảnh/video (ngoại lệ: 2 part ở 2 scene khác nhau cùng dùng 1 file nền trung tính thì được chung file; trong cùng 1 scene tối đa 1 part dùng nền trung tính); pool visual theo scene; crop chi tiết (hạn chế, chỉ khi không tìm được nguồn thật VÀ AI cũng không tạo được visual dùng được; vùng cắt có cạnh ngắn nhất ≥ 720px; tối đa 1 chi tiết/ảnh gốc; crop phải cho thấy nội dung khác hẳn; không cộng vào vế 'thật' của trần); trần AI ≤ thật tính theo scene (nền trung tính được cho là ảnh thật, mỗi scene tối đa 1 file nền); ảnh fill-in KHÔNG cộng vào vế 'thật' của trần (chỉ visual khớp nội dung + nền trung tính mới tính; fill-in đếm riêng) (quyết định CEO 09/11/2026, F5); fill-in đại diện — xem skill Production, mục 'Luật kề nhau'. Luật phân nhánh + cửa bối cảnh vẫn áp cho mọi ảnh riêng, crop chi tiết và ảnh đại diện như ảnh scene. Hệ quả của trần AI ≤ thật: scene có ảnh scene là AI thì bắt buộc phải có ít nhất 1 visual thật hoặc 1 nền trung tính trong scene (không thì AI > thật, vi phạm trần).
+7. **Ảnh nền trung tính cho part template (quy tắc CEO 09/11/2026; đính chính DEC-244):** chỉ template không có input ảnh `img`/`img1`/`img2` mới được dùng nền trung tính; **mỗi scene tối đa 1 part dùng nền trung tính** (thường là part đầu của scene) hoặc không có; nền phải trung tính thật sự (không người/địa danh/chữ/logo/dấu hiệu nước ngoài); **nền trung tính được cho là ảnh thật** (cộng vào vế thật của trần AI ≤ thật, tính theo scene); **cùng 1 file nền được dùng lại ở các scene khác nhau trong video** (trùng trong toàn bộ video, không trùng trong 1 scene); thư viện có file `neutral-bg.json` mô tả tường minh từng file (màu, họa tiết, mood, phù hợp template nào) để chọn đúng file phù hợp part; file nền từ thư viện đã duyệt (CEO duyệt từng file + mô tả) — xem skill Production, mục 'Luật kề nhau'. Nền do AI tạo vẫn ghi `classification` 'trung-tinh' (không ghi nhãn AI) và `promptRecord` vẫn lưu prompt đầy đủ — nền được cho là ảnh thật bất kể nguồn file.
 
 ## Ranh giới AI cho nhân vật có tên (chỉ áp cho AI từ prompt — sửa ngày 05/11/2026 theo lệnh CEO)
 
@@ -128,7 +130,7 @@ Luật này là nơi chuẩn cho ranh giới AI; các skill chỉ trỏ tới đ
   - Ảnh báo/mạng xã hội không logo/watermark/chữ → dùng thẳng kèm ghi
     nguồn, theo quyết định chịu rủi ro của CEO (mục 3).
   - Ảnh có logo/watermark/chữ, dấu hiệu agency → xử lý AI xóa chữ/watermark giữ nguyên ảnh gốc theo mục 4 (cắt khung trước nếu được; không cắt được thì AI tạo lại từ ảnh tham chiếu theo cách đã chốt ở mục 4), ghi URL ảnh gốc + ghi chú xử lý.
-  - Ảnh tìm được có tỷ lệ khác 9:16 → tự cắt về 720x1280, chọn cửa sổ crop bám đúng chủ thể chính của cảnh (không cắt mù giữa khung), soi lại sau khi cắt để chắc chủ thể không bị cắt đầu/cắt người.
+  - Ảnh tìm được có tỷ lệ khác 9:16: ảnh ngang → cắt thành vuông focus chủ thể chính bằng `bin/square_crop.py` (crop vuông giữa khung; pipeline chưa có model saliency nên cửa sổ vuông lấy giữa), soi lại sau khi cắt để chắc chủ thể không bị cắt đầu/cắt người; ảnh dọc khác tỉ lệ (vd 4:5) → cắt về 9:16 (luật CEO 1/11/2026, thay luật cắt 9:16 cũ).
   - Không có ứng viên nào phù hợp → tạo AI từ prompt kịch bản thuần,
     ghi rõ "AI từ prompt, không có ảnh tham chiếu".
 - **Video b-roll:** cùng quy trình; ứng viên video tự do phải có thời
@@ -140,7 +142,10 @@ Luật này là nơi chuẩn cho ranh giới AI; các skill chỉ trỏ tới đ
   `seg_<order>_<rand6>.jpg` (tính bằng `bin/filename.py`); video vào
   `build/media/broll/broll_seg_<order>_part_<pi>_<rand6>.mp4`, plan ghi
   `broll.mediaType="video"`, `keepAudio=false`, `sourceStartSec` nếu
-  cần cắt từ clip dài hơn.
+  cần cắt từ clip dài hơn. `mediaType` chỉ là gợi ý để AI tạo ảnh hay
+  video; nếu ảnh/video lấy từ nguồn thực thì preflight/render bỏ qua
+  `mediaType`, resolve theo file thật trên đĩa (quyết định CEO
+  09/11/2026, F1).
 
 ## Hồ sơ bàn giao cho QA (mỗi media, thiếu trường nào thì chưa đủ điều kiện render)
 

@@ -979,7 +979,16 @@ def main() -> int:
                     if _st.get("sfx"):
                         _specs.append((_st["sfx"], _st.get("on")))
                 for sfx, _on in _specs:
-                    f = sfx_dir / f"{sfx['id']}.mp3"
+                    # R3-23 (09/11/2026, rà soát lần 3): SFX dict thiếu khóa
+                    # `id` — trước đây đọc sfx['id'] trực tiếp nên crash
+                    # KeyError; nay báo lỗi rõ và dừng render.
+                    _sid = sfx.get("id") if isinstance(sfx, dict) else None
+                    if not (isinstance(_sid, str) and _sid.strip()):
+                        print(f"RENDER-ERROR {pid}: SFX trong plan thiếu khóa 'id' "
+                              f"(part={part.get('id')}) — ghi rõ id SFX trong plan",
+                              file=sys.stderr)
+                        return 1
+                    f = sfx_dir / f"{_sid}.mp3"
                     if not f.exists():
                         # B8 (05/11/2026, lệnh CEO, lựa chọn A): SFX khai trong
                         # plan nhưng file mp3 không tồn tại thì CHẶN như BGM
@@ -993,7 +1002,7 @@ def main() -> int:
                     pidx = tts_partidx.get(part.get("id"))
                     if pidx is None:
                         render_report.append(
-                            f"sfx-skip-id-la part={part.get('id')} sfx={sfx['id']} — "
+                            f"sfx-skip-id-la part={part.get('id')} sfx={_sid} — "
                             f"không khớp part nào trong tts.json, không tra được partIdx")
                         continue
                     at = pstart.get(pidx)
@@ -1017,7 +1026,7 @@ def main() -> int:
                         continue
                     _dur = _pend - _start
                     if _dur <= 0:
-                        print(f"SFX-SKIP {sfx['id']} part {pidx}: bắt đầu "
+                        print(f"SFX-SKIP {_sid} part {pidx}: bắt đầu "
                               f"{_start:.2f}s sau cuối part {_pend:.2f}s")
                         continue
                     # typing: thời gian gõ theo độ dài văn bản HIỂN THỊ trong
@@ -1025,11 +1034,11 @@ def main() -> int:
                     # đọc — đính chính CEO 31/10/2026 (bản loop trước đó hiểu
                     # sai: lấy thời gian part). Tốc độ 0.1s/ký tự (10 ký tự/
                     # giây, tính cả dấu cách); vẫn chặn trên bằng cuối part.
-                    if "typing" in sfx["id"]:
+                    if "typing" in _sid:
                         _txt = ((part.get("broll") or {}).get("inputs") or {}).get("text") or ""
                         if _txt:
                             _dur = min(_dur, len(_txt) * 0.1)
-                            print(f"SFX-TYPE {sfx['id']} part {pidx}: "
+                            print(f"SFX-TYPE {_sid} part {pidx}: "
                                   f"{len(_txt)} ký tự -> {_dur:.2f}s "
                                   f"(part còn {_pend - _start:.2f}s)")
                     # QA Chợ nổi 26/10/2026, lỗi 4: heavy_thud_slam ở volume 0.6
@@ -1038,7 +1047,7 @@ def main() -> int:
                     # tầng mix, bất kể plan khai cao hơn; limiter cuối (bên
                     # dưới) là lớp bảo vệ thứ hai để không bao giờ chạm trần.
                     _vol = float(sfx.get("volume", 0.6))
-                    if any(k in sfx["id"] for k in ("thud", "slam", "boom")):
+                    if any(k in _sid for k in ("thud", "slam", "boom")):
                         _vol = min(_vol, 0.4)
                     # Dedup (06/11/2026, sửa R4-42 07/11/2026 DEC-050):
                     # SFX của dấu trùng SFX của part (cùng id + cùng mốc
@@ -1046,12 +1055,12 @@ def main() -> int:
                     # nhau) thì mỗi dấu giữ tiếng riêng — không dedup.
                     # Dấu không có on (None) dedup như SFX part (hành vi
                     # cũ, an toàn).
-                    _key = (sfx["id"], int((at + float(sfx.get("offsetSec", 0))) * 1000))
+                    _key = (_sid, int((at + float(sfx.get("offsetSec", 0))) * 1000))
                     _seen_on = _seen_sfx.get(_key)
                     if _seen_on is not None and (
                             None in _seen_on or _on is None or _on in _seen_on):
                         render_report.append(
-                            f"sfx-trung-bo-qua part={part['id']} file={sfx['id']}")
+                            f"sfx-trung-bo-qua part={part['id']} file={_sid}")
                         continue
                     if _seen_on is None:
                         _seen_sfx[_key] = {_on}
@@ -1060,7 +1069,7 @@ def main() -> int:
                     sfx_events.append({"file": f,
                                        "ms": int((at + float(sfx.get("offsetSec", 0))) * 1000),
                                        "dur": round(_dur, 3),
-                                       "loop": "typing" in sfx["id"],
+                                       "loop": "typing" in _sid,
                                        "vol": _vol})
 
         out = proj / "export" / f"{pid}_preview.mp4"

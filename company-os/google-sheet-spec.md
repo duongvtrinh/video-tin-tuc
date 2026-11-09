@@ -1,4 +1,4 @@
-# Bảng điều phối — Công ty 1 người
+# Bảng điều phối — Video HQ — Trụ sở Muse
 
 Workbook: Video HQ — Trụ sở Muse (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`)
 
@@ -46,6 +46,8 @@ tiêu đề, không bao giờ bằng số dòng; R3 đọc lại theo ID ngay tr
 trống là bình thường, không phải lỗi.
 
 **C/J/D nhiều người viết — ghi sau thắng + để lại lý do (quyết CEO 07/11/2026, R4-10 phương án C):** TASKS.C STATUS có 3 người viết (Production: CLAIMED/BUILDING/REVIEW/BLOCKED — chỉ lỗi riêng video nhóm 1, lý do bắt buộc vào M; QA: RETURNED/APPROVED/DELIVERED; COO: BLOCKED/CANCELLED — chỉ COO được gỡ BLOCKED hoặc hủy), TASKS.J UPDATED_AT có 2 người viết (Production, QA), TASKS.D ASSIGNEE có 2 người viết (Production lúc claim, COO lúc giao qua COO_TASKS) — đây là ngoại lệ có chủ đích của R2, KHÔNG viết lại bảng theo 'một cột một người viết theo trạng thái' và KHÔNG sửa R2 thành 'tại một thời điểm'. Khi xung đột (vd video đang REVIEW: QA ghi C=APPROVED trong khi COO ghi C=BLOCKED), chấp nhận **ghi sau thắng** (last write wins) — lần ghi sau thắng, không có quy tắc ai thắng theo vai trò. Bù lại, ai ghi TASKS.C thì TRONG CÙNG LẦN GHI đó phải ghi thêm lý do + thời gian vào cột ghi chú của mình, để lần ghi sau còn lần ra được: Production → K PROD_NOTES (lý do + thời gian khi ghi C=CLAIMED/BUILDING/REVIEW; và M BLOCKER khi ghi C=BLOCKED); QA → QA_LOG cột E ISSUES ghi lý do + TASKS.F QA_VERDICT (RETURNED/APPROVED/DELIVERED; DELIVERED ghi thêm ký nhận + hạn mức vào L QUOTA như cũ, QA không ghi K); COO → M BLOCKER (lý do + thời gian khi ghi C=BLOCKED/CANCELLED); Pipeline (khi ghi C=CLAIMED lúc nhận lô) → lý do là ca nhận lô, ghi vào báo cáo ca (liệt kê TOPIC_ID đã nhận + giờ nhận); khi dừng vì trùng CLAIMED thì ghi N DUP_NOTE như luật A3/R4-05.
+
+Luật kề nhau + trần AI + nền trung tính (quy tắc CEO 09/11/2026, DEC-242/243/244): xem skill media-video-production, mục 'Luật kề nhau', và company-os/media-search/LOGIC.md (nguyên tắc 6, 7) — spec không nhắc lại chi tiết luật này, chỉ trỏ tới đó.
 
 ## §02 — Cổng sản xuất (READY) — duy nhất, không có ngoại lệ
 
