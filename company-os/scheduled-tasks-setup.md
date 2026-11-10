@@ -30,7 +30,7 @@ tài khoản, không tự sinh ra khi clone repo.
 | prod-pipeline-1400 | 14:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY, sản xuất tuần tự |
 | prod-pipeline-1800 | 18:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY, sản xuất tuần tự |
 | bot-hoc-hoi-2000 | 20:00 hàng ngày | Học-hỏi: rút bài học từ lỗi lặp lại có bằng chứng, cải tiến template/skill/SOP (đổi chuẩn thì chỉ đề xuất để CEO quyết) |
-| coo-scan-0600 | 06:00 hàng ngày | COO quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng, không thông báo |
+| coo-scan-0600 | 06:00 hàng ngày | COO điểm danh tại tab COO_CHECKIN (Bước 0) rồi quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng, không thông báo |
 
 ## Cách tạo từng lịch (agent làm)
 

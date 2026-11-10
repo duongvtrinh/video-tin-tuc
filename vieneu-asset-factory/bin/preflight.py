@@ -33,7 +33,11 @@ cảnh báo không tính vào exit code):
   Khối 4 Cách 1): chặn trước render; ngoại lệ 2 part ở 2 scene khác
   nhau cùng dùng 1 file nền trung tính (nhận biết qua media-log danh
   sách parts, classification "trung-tinh"); mỗi scene tối đa 1 part
-  dùng nền trung tính (DEC-244). (Ghi chú đối soát 09/11/2026: miễn trừ qua biên scene là phòng thủ — tên file b-roll của mỗi part là duy nhất theo (order, partIdx) nên 2 part khác scene không bao giờ resolve về cùng 1 file; việc dùng lại file nền qua các scene thực chất là copy cùng file nguồn vào 2 tên b-roll khác nhau nên preflight thấy 2 file khác nhau, không vi phạm.) Miễn cho project test như cửa A20.
+  dùng nền trung tính (DEC-244). Mỗi file visual nội dung chỉ xuất hiện
+  tối đa 2 lần trong toàn video (đếm theo nội dung md5, không đếm theo
+  tên file; trừ ảnh/video trung tính; fill-in tính vào trần; bookend
+  tính là 2 lần) — trần xuất hiện, lệnh CEO 09/11/2026 (DEC-245):
+  chặn trước render. (Ghi chú đối soát 09/11/2026: miễn trừ qua biên scene là phòng thủ — tên file b-roll của mỗi part là duy nhất theo (order, partIdx) nên 2 part khác scene không bao giờ resolve về cùng 1 file; việc dùng lại file nền qua các scene thực chất là copy cùng file nguồn vào 2 tên b-roll khác nhau nên preflight thấy 2 file khác nhau, không vi phạm.) Miễn cho project test như cửa A20.
   R4-57 (08/11/2026, DEC-066 A', port từ validate_project.py — chỉ
   hợp lệ SAU assemble nên không gọi nó trước render): thứ tự scene
   không tăng dần; part startSec không nối tiếp part trước (tiling,
@@ -53,6 +57,7 @@ cảnh báo không tính vào exit code):
   không có file ảnh b-roll; file b-roll video tồn tại nhưng ffprobe
   không thấy video stream.
 """
+import hashlib
 import json
 import re
 import subprocess
@@ -941,6 +946,45 @@ def main() -> int:
                               f"tắc CEO 09/11/2026, DEC-244). Đổi visual "
                               f"cho các part còn lại (visual nội dung trong "
                               f"pool) rồi chạy lại preflight")
+
+        # Trần xuất hiện tối đa 2 lần/video (quy tắc CEO 09/11/2026,
+        # DEC-245): mỗi file visual nội dung chỉ xuất hiện tối đa 2 lần
+        # trong toàn video. Đếm theo nội dung file (md5), không đếm theo
+        # tên file — cùng 1 nguồn copy thành 2 tên b-roll khác nhau thì
+        # vẫn tính là 1 file (người xem thấy cùng 1 hình). Trừ part nền
+        # trung tính (nền được miễn — dùng lại qua các scene không giới
+        # hạn). Fill-in tính vào trần như visual nội dung. Bookend (mở
+        # và đóng bằng cùng 1 file) tính là 2 lần — được phép, không vi
+        # phạm nếu file đó không xuất hiện thêm lần nào nữa. Vi phạm thì
+        # CHẶN render (exit 1) như luật kề nhau.
+        _md5_cache = {}
+
+        def _file_md5(_p):
+            _k = str(_p)
+            if _k not in _md5_cache:
+                _h = hashlib.md5()
+                with open(_p, "rb") as _f:
+                    for _c in iter(lambda: _f.read(1 << 20), b""):
+                        _h.update(_c)
+                _md5_cache[_k] = _h.hexdigest()
+            return _md5_cache[_k]
+
+        _appear = {}  # md5 -> [(partId, Path)]
+        for _pid3, _v3, _o3 in _resolved:
+            if _v3 is None or _pid3 in _neutral_parts:
+                continue
+            _appear.setdefault(_file_md5(_v3), []).append((_pid3, _v3))
+        for _m, _items in sorted(_appear.items()):
+            if len(_items) > 2:
+                _names = ", ".join(_pid for _pid, _ in _items)
+                errors.append(f"Trần xuất hiện tối đa 2 lần/video (DEC-245): "
+                              f"file {_items[0][1].name} xuất hiện "
+                              f"{len(_items)} lần ở các part {_names} — mỗi "
+                              f"file visual nội dung chỉ được xuất hiện tối "
+                              f"đa 2 lần trong 1 video (trừ ảnh/video trung "
+                              f"tính). Thay visual cho một số part (visual "
+                              f"khác trong pool, AI trong trần, hoặc crop "
+                              f"chi tiết hạn chế) rồi chạy lại preflight")
 
     # karaoke
     kj = build / "subtitles" / "karaoke.json"

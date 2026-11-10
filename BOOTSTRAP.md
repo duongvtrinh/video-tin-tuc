@@ -36,7 +36,7 @@ Muse GitHub App, KHÔNG BAO GIỜ chuyển repo sang public.
 - Tạo venv của factory và cài dependency (bắt buộc trước khi chạy script):
   `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`
   trong `vieneu-asset-factory/` (Pillow, numpy, weasyprint, underthesea,
-  websocket-client). Hệ thống cần thêm: `ffmpeg` và font Anton (templates
+  websocket-client, yt-dlp). Hệ thống cần thêm: `ffmpeg` và font Anton (templates
   dùng Anton — cài từ Google Fonts vào `~/.fonts` rồi `fc-cache`).
 - Quy tắc venv (bắt buộc): script factory (`karaoke.py`,
   `preflight.py`, `render_draft.py`...) chạy bằng venv của factory;
@@ -105,7 +105,7 @@ Khi một tài khoản Muse mới clone repo về, làm đúng 3 nhóm việc �
 | # | Kết nối | Dùng để làm gì | Kiểm chứng xong khi |
 | --- | --- | --- | --- |
 | 1 | **GitHub** — tài khoản `duongvtrinh` | Clone repo private `duongvtrinh/vieneu-media-company`, nhánh `main` | Đọc được repo, đúng nhánh `main`, repo vẫn private |
-| 2 | **Google Sheets** | Workbook vận hành `Video HQ — Trụ sở Muse` (ID `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`) — dùng workbook đang chạy, **không tạo mới, không ghi đè** | Đếm đủ 6 tab (TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS), tab COO_TASKS đúng 7 cột A–G, tab CEO_REPORTS đúng 9 cột A–I (xem mục 3.2) |
+| 2 | **Google Sheets** | Workbook vận hành `Video HQ — Trụ sở Muse` (ID `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`) — dùng workbook đang chạy, **không tạo mới, không ghi đè** | Đếm đủ 7 tab (TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN), tab COO_TASKS đúng 7 cột A–G, tab CEO_REPORTS đúng 9 cột A–I, tab COO_CHECKIN đúng 3 cột A–C (xem mục 3.2) |
 | 3 | **Google Drive** | Thư mục `Video Muse` (ID `1bA21n3Y3YiY6HSjLUEFmxnJXLnjtSJGc`) — chỉ bàn giao video đã QA duyệt lên đây | Mở được thư mục, thấy file TOPIC-232 đã bàn giao |
 | 4 | **Facebook** (chỉ khi làm việc Facebook) | Liên kết lại qua Meta Accounts Center | CEO xác nhận đã liên kết — `facebook-cli me` không chứng minh được |
 
@@ -182,7 +182,7 @@ Phòng chỉ làm việc khi được giao qua đúng 1 trong 3 kênh (mục 3.4
   >    - Scout 4 ca/ngày (cùng giờ): tìm chủ đề được quan tâm + chấm điểm ngay trong cùng lượt quét.
   >    - bot-hoc-hoi: chạy hằng ngày 20:00 (cron bot-hoc-hoi-2000, quyết CEO 07/11/2026, DEC-019; Q6 đã đóng); rút bài học từ lỗi lặp lại có bằng chứng, cải tiến
   >      template/skill/SOP; đổi chuẩn thì chỉ đề xuất để CEO quyết.
-  >    - COO quét COO_TASKS 06:00 hàng ngày (cron coo-scan-0600, quyết CEO 08/11/2026, DEC-099): đọc tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng. Đọc thêm CEO_REPORTS (Bước 6 trong body cron coo-scan-0600, quyết CEO 08/11/2026, DEC-112): phản hồi CEO mới từ 06:00 hôm qua tới nay, chuyển lời cho phòng liên quan hoặc tự thực hiện theo phản hồi.
+  >    - COO quét COO_TASKS 06:00 hàng ngày (cron coo-scan-0600, quyết CEO 08/11/2026, DEC-099): điểm danh tại tab COO_CHECKIN (Bước 0, lệnh CEO 09/11/2026) trước, rồi đọc tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng. Đọc thêm CEO_REPORTS (Bước 6 trong body cron coo-scan-0600, quyết CEO 08/11/2026, DEC-112): phản hồi CEO mới từ 06:00 hôm qua tới nay, chuyển lời cho phòng liên quan hoặc tự thực hiện theo phản hồi.
   >    - Cửa chặn hạn mức tuần (quyết CEO 09/11/2026, DEC-202): đầu ca đọc TASKS.L QUOTA mới nhất của chi nhánh — nếu token tuần đã đạt trên 95% thì dừng hẳn ca này (Scout không quét/chấm/ghi, pipeline claim 0 chủ đề READY mới; ca dừng hẳn, không báo cáo ca); khi hạn mức tuần được reset thì công ty hoạt động trở lại bình thường, không cần lệnh mở lại; token thêm là dự phòng, không dùng để sản xuất video.
   > 7. Facebook đã liên kết lại qua Meta Accounts Center chưa? (không bắt buộc cho video;
   > cần kết nối để quét bài viết, group. Tôi không tự tham gia group mới, không tự đăng.)
@@ -215,7 +215,7 @@ CEO cung cấp bằng cách **trả lời tin nhắn hỏi bổ sung của Chat 
 | # | Thông tin | Ghi chú |
 | --- | --- | --- |
 | 1 | **Email khai báo của tài khoản Muse này** (vd `006@vuachim.com`) | **BẮT BUỘC.** Chữ ký định danh duy nhất. Đối chiếu **cột B** tab COO_TASKS, làm email người sản xuất ghi vào TASKS.L QUOTA. Tên COO chính là email này. **Đây chính là định danh của chi nhánh** (mục 0): mọi phòng trong chi nhánh dùng chung email này khi báo cáo lên Sheet để ký nhận người hoàn thành công việc. |
-| 2 | **Workbook vận hành** — `Video HQ — Trụ sở Muse`, xác nhận dùng workbook đang chạy | 6 tab (TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS), tên tiếng Anh VIẾT HOA, không đánh số. Công ty khác thì tạo workbook mới từ spec — đúng 6 tab, bắt đầu trống. |
+| 2 | **Workbook vận hành** — `Video HQ — Trụ sở Muse`, xác nhận dùng workbook đang chạy | 7 tab (TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN), tên tiếng Anh VIẾT HOA, không đánh số. Công ty khác thì tạo workbook mới từ spec — đúng 7 tab, bắt đầu trống. |
 | 3 | **Thư mục Drive "Video Muse"** + quyền hiện tại | Chỉ bàn giao lên đúng thư mục này. **Không tự tạo thư mục khác, không tự thay đổi quyền.** Quyền anyone with link (nếu có) là do CEO cấp. |
 | 4 | **Repo GitHub** — `duongvtrinh/vieneu-media-company`, nhánh `main`, private | Clone đúng repo này. Đọc BOOTSTRAP + 4 skill trước khi làm việc. |
 | 5 | **Cấp phép toàn quyền cho QA hoàn tất bàn giao** (có hay không) | Bắt buộc trước lần upload Drive đầu tiên. Nếu chưa cấp: QA phải chắc CEO đang có mặt để bấm thẻ phê duyệt trong 30 phút. Nếu đã cấp: QA được chạy lại upload mà không hỏi lại trong chat — nhưng **thẻ phê duyệt của hệ thống vẫn hiện mỗi lần upload và vẫn cần bấm trong 30 phút**; cấp phép không tắt được thẻ hệ thống. |
@@ -292,7 +292,7 @@ coi như chưa khai báo xong — quay lại Bước 1, không đi tiếp.
 
 1. **Repo:** đúng `duongvtrinh/vieneu-media-company`, nhánh `main`, private; đã đọc BOOTSTRAP, spec, bot-sop, LOGIC và 4 skill; app-tao-video đúng 47 file.
 2. **Bộ nhớ:** đã có email khai báo (Bước 6 ở mục 2.2 đã qua). Chưa có thì dừng, báo COO.
-3. **Workbook:** đúng workbook "Video HQ — Trụ sở Muse", đủ 6 tab (TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS), tab COO_TASKS đúng **7 cột**: A ID, B Tài khoản Muse nhận việc (email), C Việc chính, D Phân việc chi tiết, E Trạng thái, F Thời gian hoàn thành, G Kết quả hoàn thành; tab CEO_REPORTS đúng **9 cột** A–I (REPORT_ID, DATE_REPORTED, ASSIGNEE_EMAIL, ISSUE, TRIED, NEEDS_DECISION, CEO_REPLY, APPLIED_BY, DATE). Không tạo workbook mới, không đổi tên tab, không xóa dòng cũ.
+3. **Workbook:** đúng workbook "Video HQ — Trụ sở Muse", đủ 7 tab (TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN), tab COO_TASKS đúng **7 cột**: A ID, B Tài khoản Muse nhận việc (email), C Việc chính, D Phân việc chi tiết, E Trạng thái, F Thời gian hoàn thành, G Kết quả hoàn thành; tab CEO_REPORTS đúng **9 cột** A–I (REPORT_ID, DATE_REPORTED, ASSIGNEE_EMAIL, ISSUE, TRIED, NEEDS_DECISION, CEO_REPLY, APPLIED_BY, DATE); tab COO_CHECKIN đúng **3 cột** A–C (ASSIGNEE_EMAIL, TOKENS_LEFT, DATE). Không tạo workbook mới, không đổi tên tab, không xóa dòng cũ.
 4. **Thư mục Drive:** đúng thư mục "Video Muse" theo 2.1 mục 3. Không tự tạo thư mục khác, không tự thay đổi quyền.
 5. **Tài sản nhị phân:** sfx đủ 8 file `.mp3`, bgm đủ 24 track + `README.md` + `bgm_catalog.json` (mục 1.3).
 6. **Lịch:** chưa tạo lịch nào trừ khi có dòng tab COO_TASKS giao hoặc CEO duyệt riêng (mục 1.7). Ca quét tab COO_TASKS đầu tiên là **06:00 Asia/Saigon** đầu ca; việc giao sau 06:00 đọc vào 06:00 hôm sau. Lệnh quét ngoại lệ ngoài 06:00 (lệnh trực tiếp của COO) được ghi vào CEO_REPORTS — lần quét đó vẫn theo đủ điều kiện nhận dòng.
@@ -301,14 +301,15 @@ coi như chưa khai báo xong — quay lại Bước 1, không đi tiếp.
 
 #### 3.3 Ca quét tab COO_TASKS — từng bước
 
-0. Cửa chặn hạn mức tuần (quyết CEO 09/11/2026, DEC-202): đầu ca đọc TASKS.L QUOTA mới nhất của chi nhánh — nếu token tuần đã đạt trên 95% thì dừng hẳn ca này (Scout không quét/chấm/ghi, pipeline claim 0 chủ đề READY mới; ca dừng hẳn, không báo cáo ca); khi hạn mức tuần được reset thì công ty hoạt động trở lại bình thường, không cần lệnh mở lại; token thêm là dự phòng, không dùng để sản xuất video.
-1. Đọc tab COO_TASKS đúng 1 lần lúc 06:00 +07 đầu ca (hoặc theo lệnh trực tiếp của COO ghi vào CEO_REPORTS).
-2. Chỉ nhận dòng thỏa **cả 3 điều kiện**: (a) cột **B** = email khai báo trong bộ nhớ; (b) cột **E** chưa phải "Hoàn thành"; (c) cột **F** còn trống. Dòng email khác thì bỏ qua ("không khớp email khai báo của mình").
-3. Ghi ID vào cột A **trước khi phân việc**: dạng `COO-YYYYMMDD-NN`. **Ngày trong ID lấy theo ngày COO đọc/nhận** (không còn cột ngày giao — đã bỏ hẳn 05/11/2026). Số thứ tự NN tính theo ngày đọc/nhận. Chưa có ID thì không phân việc.
-4. Chuyển E sang "Đang làm" ngay khi ghi ID. Cột E chỉ dùng 4 giá trị: Assigned / Đang làm / Hoàn thành / Tắc. "Blocked" **không phải** giá trị E tab COO_TASKS.
-5. Tự phân việc chi tiết ở cột D (phòng nào, việc gì, ID TASKS (TOPIC_ID) nào nếu có), tự giao cho các phòng qua chat, không chờ CEO, không hỏi lại trừ khi mơ hồ hoặc vượt phạm vi.
-6. Báo cáo trên cùng dòng khi xong: E = Hoàn thành, F = `YYYY-MM-DD HH:MM +07`, G = kết quả (viết ngắn + link bằng chứng; chỉ khi tắc mới ghi "cần CEO" trong G). Công thức hoàn thành thống nhất: **"Thiếu E, F hoặc G thì chưa xong."**
-7. **3 kênh giao việc duy nhất:** (1) chat chính — tính là lệnh của COO (lệnh CEO 08/11/2026, phương án B); (2) lịch bot đã được CEO duyệt (kể cả Pipeline); (3) COO qua tab COO_TASKS. Phòng không tự phát sinh nhiệm vụ sản xuất mới chỉ vì đọc Sheet hay lịch sử fork.
+0. Điểm danh đầu ca tại tab COO_CHECKIN (Bước 0 trong body cron coo-scan-0600, lệnh CEO 09/11/2026): ghi 1 dòng mới vào cuối tab (append, không sửa dòng cũ) gồm A ASSIGNEE_EMAIL = email khai báo, B TOKENS_LEFT = 'Tuần đã dùng X%, token thêm còn Y' lấy từ TASKS.L QUOTA mới nhất, C DATE = ngày hôm nay dạng YYYY-MM-DD; L không đọc được thì B = 'không đọc được', không bịa số. Chỉ 1 dòng/ngày; điểm danh làm mỗi ngày kể cả khi không có dòng COO_TASKS nào thỏa.
+1. Cửa chặn hạn mức tuần (quyết CEO 09/11/2026, DEC-202): đầu ca đọc TASKS.L QUOTA mới nhất của chi nhánh — nếu token tuần đã đạt trên 95% thì dừng hẳn ca này (Scout không quét/chấm/ghi, pipeline claim 0 chủ đề READY mới; ca dừng hẳn, không báo cáo ca); khi hạn mức tuần được reset thì công ty hoạt động trở lại bình thường, không cần lệnh mở lại; token thêm là dự phòng, không dùng để sản xuất video.
+2. Đọc tab COO_TASKS đúng 1 lần lúc 06:00 +07 đầu ca (hoặc theo lệnh trực tiếp của COO ghi vào CEO_REPORTS).
+3. Chỉ nhận dòng thỏa **cả 3 điều kiện**: (a) cột **B** = email khai báo trong bộ nhớ; (b) cột **E** chưa phải "Hoàn thành"; (c) cột **F** còn trống. Dòng email khác thì bỏ qua ("không khớp email khai báo của mình").
+4. Ghi ID vào cột A **trước khi phân việc**: dạng `COO-YYYYMMDD-NN`. **Ngày trong ID lấy theo ngày COO đọc/nhận** (không còn cột ngày giao — đã bỏ hẳn 05/11/2026). Số thứ tự NN tính theo ngày đọc/nhận. Chưa có ID thì không phân việc.
+5. Chuyển E sang "Đang làm" ngay khi ghi ID. Cột E chỉ dùng 4 giá trị: Assigned / Đang làm / Hoàn thành / Tắc. "Blocked" **không phải** giá trị E tab COO_TASKS.
+6. Tự phân việc chi tiết ở cột D (phòng nào, việc gì, ID TASKS (TOPIC_ID) nào nếu có), tự giao cho các phòng qua chat, không chờ CEO, không hỏi lại trừ khi mơ hồ hoặc vượt phạm vi.
+7. Báo cáo trên cùng dòng khi xong: E = Hoàn thành, F = `YYYY-MM-DD HH:MM +07`, G = kết quả (viết ngắn + link bằng chứng; chỉ khi tắc mới ghi "cần CEO" trong G). Công thức hoàn thành thống nhất: **"Thiếu E, F hoặc G thì chưa xong."**
+8. **3 kênh giao việc duy nhất:** (1) chat chính — tính là lệnh của COO (lệnh CEO 08/11/2026, phương án B); (2) lịch bot đã được CEO duyệt (kể cả Pipeline); (3) COO qua tab COO_TASKS. Phòng không tự phát sinh nhiệm vụ sản xuất mới chỉ vì đọc Sheet hay lịch sử fork.
 
 #### 3.4 Cổng sản xuất — đủ cả 2 mới được giao (cổng READY, từ 07/11/2026)
 
@@ -360,7 +361,7 @@ Chủ đề chỉ được giao khi đồng thời: (1) TOPICS.STATUS = **READY*
 5. Không tự phát sinh nhiệm vụ sản xuất mới chỉ vì đọc Sheet hay lịch sử fork; chỉ làm việc khi được giao qua đúng 1 trong 3 kênh.
 6. Không chi tiền, không cam kết ngoài, không đăng nền tảng, không affiliate, không ghi số liệu views/follow/doanh thu/hoa hồng (publish-checklist.md là tài liệu lịch sử, **KHÔNG dùng làm checklist hiện hành**).
 7. Không sửa kết quả chấm điểm trong TOPICS; không tự flip TOPICS.STATUS thành READY (chỉ CEO flip); không sửa migration đã áp dụng; không sửa tay file `.generated` (build lại để đồng bộ — contract đã được tạo lại chính thức ngày 05/11/2026); không chạy `bun run build`; không sửa bundle đã build dưới `~/workspace/ts-spaces/<slug>/.space-build/`; không chạy sqlite/script trực tiếp vào `app.db`.
-8. Không đổi tên tab Sheet (tên tiếng Anh VIẾT HOA, không đánh số — TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS), không xóa dòng trong Workbook cũ CHỈ ĐỌC (xem spec), không dùng lệnh Drive ghi đè lên file Google Sheet.
+8. Không đổi tên tab Sheet (tên tiếng Anh VIẾT HOA, không đánh số — TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN), không xóa dòng trong Workbook cũ CHỈ ĐỌC (xem spec), không dùng lệnh Drive ghi đè lên file Google Sheet.
 9. Không bịa nguồn/link/điểm số, không ghi "đã xóa bằng AI" khi chưa có output đối chiếu thật, không ghi "AI generic" để lấp hồ sơ, không gắn nhãn ảnh AI là "tư liệu thật".
 
 #### 3.9 Xử lý khi gặp sự cố trong lần khởi tạo
@@ -380,8 +381,8 @@ Chủ đề chỉ được giao khi đồng thời: (1) TOPICS.STATUS = **READY*
   `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`), không tạo mới,
   không ghi đè. Workbook cũ CHỈ ĐỌC (xem spec) (đã snapshot 07/11/2026).
 - Khác tài khoản: tạo workbook mới từ
-  `company-os/google-sheet-spec.md` — đúng 6 tab
-  (TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS), kèm dropdown
+  `company-os/google-sheet-spec.md` — đúng 7 tab
+  (TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN), kèm dropdown
   validation cho các cột STATUS/RESULT, bắt đầu trống, không chép
   dữ liệu cũ.
 - Tuyệt đối không dùng lệnh Drive ghi đè lên file Google Sheet.
@@ -490,7 +491,7 @@ app.db không chuyển qua git nên chỉ state trong app.db (jobs, trash, auto_
 
 - TTS sample ra WAV; factory scripts compile OK; ffmpeg OK; SFX mp3
   và bgm đã chép đủ (nếu render cần).
-- 4 skill đã đọc; Sheet mới "Video HQ — Trụ sở Muse" đủ 6 tab
+- 4 skill đã đọc; Sheet mới "Video HQ — Trụ sở Muse" đủ 7 tab
   (không chấp nhận Sheet cũ); thư mục Drive tìm thấy theo tên.
 - Dựng 1 video test bằng đúng pipeline (`PIPELINE.md`) → preflight
   ĐẠT, karaoke lines > 0 ở part không template, MP4 720x1280.

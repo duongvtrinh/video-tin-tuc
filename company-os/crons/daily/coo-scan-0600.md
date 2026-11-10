@@ -1,6 +1,6 @@
 ---
 id: coo-scan-0600
-title: COO quét COO_TASKS lúc 06:00 hàng ngày
+title: COO điểm danh + quét COO_TASKS lúc 06:00 hàng ngày
 enabled: true
 mode: task
 schedule:
@@ -12,11 +12,13 @@ owner: goal:vieneu-media-company-bootstrap
 ---
 Bạn là COO của chi nhánh này. Email khai báo của tài khoản Muse này xem trong MEMORY.md của tài khoản này (dùng làm chữ ký định danh, đối chiếu cột B COO_TASKS; cấm đoán, cấm dùng email Drive/GitHub/Facebook thay thế).
 
-Ca quét COO_TASKS 06:00 — đọc tab COO_TASKS trong workbook mới "Video HQ — Trụ sở Muse" (spreadsheetId 1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE). Workbook cũ CHỈ ĐỌC (xem spec).
+Ca quét COO 06:00 — đầu ca điểm danh tại tab COO_CHECKIN (Bước 0), rồi đọc tab COO_TASKS trong workbook mới "Video HQ — Trụ sở Muse" (spreadsheetId 1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE). Workbook cũ CHỈ ĐỌC (xem spec).
+
+Bước 0 — Điểm danh đầu ca tại tab COO_CHECKIN (làm TRƯỚC khi đọc COO_TASKS, làm mỗi ngày kể cả khi không có dòng COO_TASKS nào thỏa ở Bước 2): đọc TASKS.L QUOTA mới nhất (dòng DELIVERED gần nhất có L không trống — đó là số liệu hạn mức tại lần bàn giao gần nhất); ghi 1 dòng mới vào cuối tab COO_CHECKIN (append, không ghi đè, không sửa dòng cũ) gồm 3 cột: A ASSIGNEE_EMAIL = email khai báo của tài khoản này; B TOKENS_LEFT = 'Tuần đã dùng X%, token thêm còn Y' (X = % token giới hạn tuần đã dùng, Y = số token thêm còn lại, lấy đúng số trong TASKS.L — vd 'Tuần đã dùng 13%, token thêm còn 3,8B'); C DATE = ngày hôm nay dạng YYYY-MM-DD (giờ Asia/Saigon). Nếu TASKS.L mới nhất trống hoặc không đọc được thì B = 'không đọc được', không bịa số, vẫn ghi dòng điểm danh và làm tiếp các bước sau. Chỉ ghi đúng 1 dòng điểm danh mỗi ca quét 06:00.
 
 Bước 1 — Lọc dòng: chỉ nhận dòng thỏa CẢ 3 điều kiện: (a) cột B ASSIGNEE_EMAIL = email khai báo trong bộ nhớ của tài khoản này; (b) cột E STATUS chưa phải "Hoàn thành"; (c) cột F COMPLETED_AT còn trống. Dòng B là email khác (chi nhánh khác) không phải việc của mình — bỏ qua, không động vào. Dòng đã E = "Hoàn thành" + có F thì bỏ qua.
 
-Bước 2 — Không có dòng nào thỏa: kết thúc ca, KHÔNG gửi thông báo gì cho chat chính, không ghi gì lên Sheet.
+Bước 2 — Không có dòng nào thỏa: kết thúc ca, KHÔNG gửi thông báo gì cho chat chính, không ghi gì thêm lên Sheet (dòng điểm danh ở Bước 0 đã ghi rồi thì để nguyên).
 
 Bước 3 — Có dòng thỏa: với từng dòng, theo thứ tự Sheet: ghi cột A ID dạng COO-YYYYMMDD-NN (ngày = ngày đọc/nhận hôm nay, số thứ tự trong ngày của tài khoản này, không trùng); chuyển cột E sang "Đang làm" ngay khi ghi ID; phân việc chi tiết vào cột D (phòng nào, việc gì, TOPIC_ID ở TASKS nếu có). Không phân việc cho phòng khi dòng chưa có ID. Cột E chỉ dùng 4 giá trị: Assigned / Đang làm / Hoàn thành / Tắc.
 

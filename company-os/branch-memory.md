@@ -66,8 +66,8 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
   (mục 9).
 - Workbook vận hành: **"Video HQ — Trụ sở Muse"**,
   spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`, múi giờ
-  Asia/Saigon, 6 tab: TOPICS / TASKS / QA_LOG / DECISIONS / COO_TASKS /
-  CEO_REPORTS.
+  Asia/Saigon, 7 tab: TOPICS / TASKS / QA_LOG / DECISIONS / COO_TASKS /
+  CEO_REPORTS / COO_CHECKIN.
 - Thư mục Drive: **"Video Muse"**,
   folderId `1bA21n3Y3YiY6HSjLUEFmxnJXLnjtSJGc`, đã cấp quyền anyone with
   link (writer, allowFileDiscovery=false) từ 05/11/2026. Không tự tạo thư
@@ -270,7 +270,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 
 - CEO chỉ điền 2 ô: B ASSIGNEE_EMAIL (email tài khoản Muse nhận việc) +
   C TASK (việc chính). Cột A để trống.
-- COO đọc tab đúng 1 lần lúc 06:00 +07 đầu ca (lịch coo-scan-0600); việc
+- COO điểm danh tại tab COO_CHECKIN (Bước 0) rồi đọc tab đúng 1 lần lúc 06:00 +07 đầu ca (lịch coo-scan-0600); việc
   giao sau 06:00 đọc 06:00 hôm sau. Chỉ nhận dòng B = email khai báo của
   mình VÀ E chưa "Hoàn thành" VÀ F còn trống; không có dòng thì im lặng,
   không thông báo gì. Ngoại lệ: quét ngoài 06:00 chỉ khi có lệnh trực tiếp

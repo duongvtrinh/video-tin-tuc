@@ -2,7 +2,7 @@
 
 Workbook: Video HQ — Trụ sở Muse (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`)
 
-Tạo mới từ spec này thì tạo đủ 6 tab dưới đây với đúng tên tab và đúng
+Tạo mới từ spec này thì tạo đủ 7 tab dưới đây với đúng tên tab và đúng
 hàng tiêu đề, kèm dropdown validation cho TOPICS.K, TASKS.C, QA_LOG.D,
 COO_TASKS.E, CEO_REPORTS.H (APPLIED_BY — Sản xuất / Scout / kỹ thuật QA / COO); dữ liệu bắt đầu trống. Cùng tài khoản thì dùng tiếp workbook
 đang chạy, không tạo mới, không ghi đè. Workbook cũ "HQ - Công ty 1 người — CŨ (chỉ đọc)"
@@ -28,6 +28,7 @@ còn tab Media_Sources. Log thay đổi template/code sống ở nhật ký ngà
 | CEO | DECISIONS | Chỉ cột F CEO_DECISION + G DATE | Cột A–E |
 | COO | DECISIONS | Cột A DECISION_ID, B ISSUE, C OPTION_A, D OPTION_B (ghi nhận) + E COO_PROPOSAL | Cột F quyết định của CEO |
 | COO | COO_TASKS | A (ID), D, E, F, G — chỉ dòng có cột B = email khai báo của mình | Dòng có cột B là email khác |
+| COO | COO_CHECKIN | Ghi 1 dòng mới mỗi ngày lúc 06:00 (append, không sửa dòng cũ): A ASSIGNEE_EMAIL, B TOKENS_LEFT, C DATE | Không sửa/xóa dòng đã có; không ghi thêm dòng trong ngày |
 | CEO | CEO_REPORTS | G CEO_REPLY (ghi quyết định kèm ngày trả lời trong cùng ô G; chỉ ghi khi trả lời trên dòng COO đã gửi) | A–F, H, I |
 | COO | CEO_REPORTS | A–F khi gửi báo cáo mới (REPORT_ID, DATE_REPORTED, ASSIGNEE_EMAIL, ISSUE, TRIED, NEEDS_DECISION) | G, H, I |
 | Phòng thi hành (Sản xuất / Scout / kỹ thuật QA / COO) | CEO_REPORTS | H APPLIED_BY, I DATE — chỉ ghi khi G CEO_REPLY đã có giá trị (ghi ngay khi đọc, rồi thực thi ngay); phòng nào đọc trước ghi trước, đã có tên thì không ghi đè | A–G |
@@ -172,9 +173,7 @@ theo dõi kết quả hoàn thành (lệnh CEO 04/11/2026, rút gọn):
 - CEO chỉ ghi việc chính ở tab COO_TASKS, không ghi chi tiết: cột B email nhận việc, cột C Việc chính, cột A ID để trống. Ví dụ:
 CEO ghi dòng cho tài khoản abc@domail.com "Đổi lịch sản xuất video 6 giờ
 sáng thành 8 giờ sáng" — chỉ vậy thôi, COO sẽ tự ghi ID khi nhận việc. Cột "Ngày CEO giao" đã bỏ hẳn ngày 05/11/2026 theo lệnh CEO.
-- Mỗi ngày, COO đọc tab COO_TASKS đúng 1 lần lúc 06:00 +07 (đầu ca, lệnh
-CEO 05/11/2026): việc CEO giao sau 06:00 sẽ được đọc vào 06:00 sáng hôm
-sau. Chỉ đọc dòng chưa hoàn thành: cột B = email của mình VÀ cột E Trạng
+- Mỗi ngày, COO điểm danh tại tab COO_CHECKIN (Bước 0 của ca quét 06:00, lệnh CEO 09/11/2026) rồi đọc tab COO_TASKS đúng 1 lần lúc 06:00 +07 (đầu ca, lệnh CEO 05/11/2026): việc CEO giao sau 06:00 sẽ được đọc vào 06:00 sáng hôm sau. Chỉ đọc dòng chưa hoàn thành: cột B = email của mình VÀ cột E Trạng
 thái chưa phải "Hoàn thành" VÀ cột F Thời gian hoàn thành còn trống.
 Dòng đã E = "Hoàn thành" + có F thì bỏ qua. Chữ ký định danh (lệnh CEO 05/11/2026): cột B được đối chiếu với email khai báo đã lưu trong bộ nhớ của chính tài khoản Muse đó, không đối chiếu bằng email đăng nhập hệ thống (hệ thống không cho agent đọc email này). Tài khoản mới clone repo về phải khai báo email và lưu vào bộ nhớ của mình trước ca quét đầu tiên, tên COO chính là email khai báo đó; chưa có email khai báo thì không nhận dòng tab COO_TASKS nào, phải báo CEO qua CEO_REPORTS để CEO khai báo. Cột E chỉ dùng 4 giá trị:
 Assigned / Đang làm / Hoàn thành / Tắc; COO chuyển sang "Đang làm" ngay
@@ -215,7 +214,7 @@ thành 8 giờ sáng". Cột "Ngày CEO giao" đã bị bỏ hẳn ngày 05/11/2
 COO-YYYYMMDD-NN, vd COO-20261105-01, COO-20261105-02, số thứ tự trong
 ngày COO đọc/nhận của tài khoản đó, không trùng. Ngày trong ID lấy theo ngày COO đọc/nhận, không lấy theo ngày CEO giao (không còn cột ngày giao). Từ lúc đó trở đi, mọi nhắc tới nhiệm
 vụ đó đều dùng mã này.
-- COO đọc: mỗi ngày đúng 1 lần lúc 06:00 +07 đầu ca (lệnh CEO 05/11/2026), chỉ
+- COO đọc: mỗi ngày đúng 1 lần lúc 06:00 +07 đầu ca (lệnh CEO 05/11/2026) — trước đó COO điểm danh tại tab COO_CHECKIN (Bước 0, lệnh CEO 09/11/2026) — chỉ
 đọc dòng chưa hoàn thành có cột B =
 email của mình (đối chiếu bằng email khai báo trong bộ nhớ), cột E chưa phải "Hoàn thành" và cột F còn trống. Việc CEO giao sau 06:00
 được đọc vào 06:00 hôm sau. Dòng email khác thì bỏ
@@ -240,6 +239,10 @@ Tab này là kênh duy nhất COO báo cáo CEO và kênh duy nhất CEO ra lệ
 - Phòng thi hành (lệnh CEO 08/11/2026): APPLIED_BY (H) ghi tên phòng chức năng ĐẦU TIÊN đọc được lệnh của CEO (Sản xuất / Scout / kỹ thuật QA / COO, có dropdown); phòng đó ghi tên mình vào H ngay khi đọc và thực thi ngay lập tức, không chờ COO chuyển lời. Bất kỳ phòng chức năng nào đọc được lệnh đều có quyền thực hiện, không cần COO mới được đọc. Chỉ đọc lệnh có C ASSIGNEE_EMAIL = email khai báo của chi nhánh mình (chỉ trong giới hạn quản lý của công ty mình). Chỉ đọc và thực hiện các lệnh chưa thực hiện — APPLIED_BY (H) và DATE (I) đều trống; dòng đã có APPLIED_BY hoặc DATE thì đã có phòng khác đọc/thực thi, bỏ qua, không thực hiện lại. Phòng nào đọc trước ghi trước, đã có tên thì không ghi đè. DATE (I) ghi ngày phòng nhận lệnh. Dòng chưa có CEO_REPLY (G trống) là dòng đang chờ CEO.
 - Ai đọc phản hồi CEO (lệnh CEO 08/11/2026, DEC-112 phương án A; bổ sung lệnh CEO 08/11/2026): để phản hồi không bị bỏ sót, pipeline đọc CEO_REPORTS đầu mỗi ca (bước 2(g) trong body cron prod-pipeline — chỉ dòng của chi nhánh mình có CEO_REPLY mới từ ca trước tới nay, chuyển lời tới phòng liên quan kèm REPORT_ID, ghi vào báo cáo ca) và COO đọc thêm ở ca quét 06:00 (Bước 6 trong body cron coo-scan-0600 — phản hồi mới từ 06:00 hôm qua tới nay, chuyển lời hoặc tự thực hiện theo phản hồi). Cả hai chỉ đọc và chuyển lời, không ghi gì vào CEO_REPORTS; bất kỳ phòng chức năng nào đọc được lệnh đều có quyền thực hiện ngay lập tức, không cần COO mới được đọc; phòng vẫn áp dụng trực tiếp từ CEO_REPLY, không chờ chuyển lời mới làm. Chỉ đọc lệnh có C ASSIGNEE_EMAIL = email khai báo của chi nhánh mình. Chỉ đọc và thực hiện các lệnh chưa thực hiện — APPLIED_BY (H) và DATE (I) đều trống; dòng đã có APPLIED_BY hoặc DATE thì đã có phòng khác đọc/thực thi, bỏ qua, không thực hiện lại.
 - Cột H APPLIED_BY có dropdown 4 giá trị: Sản xuất / Scout / kỹ thuật QA / COO.
+
+### COO_CHECKIN — tab điểm danh đầu ca của COO, 3 cột (lệnh CEO 09/11/2026)
+ASSIGNEE_EMAIL | TOKENS_LEFT | DATE
+COO ghi 1 dòng mới mỗi ngày lúc 06:00 +07 đầu ca (Bước 0 của ca quét coo-scan-0600), append vào cuối tab COO_CHECKIN, không sửa/xóa dòng cũ: A ASSIGNEE_EMAIL = email khai báo của chi nhánh; B TOKENS_LEFT = 'Tuần đã dùng X%, token thêm còn Y' (X = % token giới hạn tuần đã dùng, Y = số token thêm còn lại, lấy đúng số trong TASKS.L QUOTA mới nhất — dòng DELIVERED gần nhất có L không trống); C DATE = ngày điểm danh dạng YYYY-MM-DD (giờ Asia/Saigon). Nếu TASKS.L mới nhất trống hoặc không đọc được thì B = 'không đọc được', không bịa số, vẫn ghi dòng điểm danh. Chỉ ghi đúng 1 dòng mỗi ca quét 06:00. Điểm danh làm mỗi ngày kể cả khi không có dòng COO_TASKS nào thỏa — ca không có việc vẫn có dòng điểm danh. Tab này không có dropdown. Không ai khác ghi vào tab này.
 
 ## Quy tắc leo thang lên CEO
 Chỉ leo thang khi: chi tiền, cam kết bên ngoài, thay đổi không đảo ngược,

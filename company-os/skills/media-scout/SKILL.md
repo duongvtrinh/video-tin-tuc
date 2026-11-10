@@ -41,7 +41,7 @@
 
 - Thứ tự đánh giá quan tâm (quy tắc CEO 03/11/2026): ƯU TIÊN LƯỢT BÌNH LUẬN trước, rồi mới xét lượt like — bài nhiều bình luận (thảo luận thật) xếp trên bài chỉ nhiều like. CLI groups posts chỉ sắp xếp theo reacts nên phải tự xếp lại theo comment_count rồi mới đến react_count; social.search phải đặt ranking engagement.
 
-- Tư liệu cho Sản xuất (quy tắc CEO 03/11/2026): với chủ đề nhiều người quan tâm, thu thập và ghi vào cột NOTES (dạng dòng ghi nhãn) để Sản xuất giảm tải tìm kiếm/xác thực: (a) URL bài báo + URL post Facebook của chủ đề; (b) URL ảnh/video từ các post Facebook đó; (c) tìm thêm bằng từ khóa cùng chủ đề trên Facebook (social.search / groups posts --query) và lưu URL ảnh/video của các bài cùng chủ đề; (d) tìm từ khóa trên internet (browser.search news) xem báo chí nói gì và lưu URL ảnh/video từ các bài báo đó. Chỉ lưu tư liệu KHÔNG trùng lặp — cùng một ảnh/video dùng lại ở nhiều nguồn thì bỏ, chỉ giữ khi khác góc chụp/quay. Mục đích: Production đọc dòng chủ đề là có ngay nguồn kiểm chứng + tư liệu ảnh/video để dựng, không phải tìm lại từ đầu.
+- Tư liệu cho Sản xuất (quy tắc CEO 03/11/2026): với chủ đề nhiều người quan tâm, thu thập và ghi vào cột NOTES (dạng dòng ghi nhãn) để Sản xuất giảm tải tìm kiếm/xác thực: (a) URL bài báo; (b) tìm từ khóa trên internet (browser.search news) xem báo chí nói gì và lưu URL bài viết và url ảnh/video từ các bài báo đó; (c) URL post Facebook của chủ đề; (d) tìm thêm bằng từ khóa cùng chủ đề trên Facebook (social.search / groups posts --query) và lưu URL các bài viết trên facebook cùng chủ đề (vì facebook cung cấp url ảnh đã mã hóa nên không cần lưu url ảnh, chỉ lưu url bài viết trên facebook). Mục đích: Production đọc dòng chủ đề là có ngay nguồn kiểm chứng + tư liệu ảnh/video để dựng, không phải tìm lại từ đầu.
 
 ## Ghi chủ đề + chấm trong cùng lượt (mới — gộp Scoring, C3)
 
@@ -85,11 +85,7 @@
 
 ## Loại chủ đề không ghi
 
-- Không ghi tin chưa kiểm chứng hoặc tin giả dù đang lan truyền mạnh.
-
-- Không ghi chủ đề chỉ hot vì drama cá nhân, gossip đời tư, quảng cáo/fan content không có câu chuyện, nội dung cổ vũ bạo lực/phạm pháp, hoặc nội dung chỉ hút tương tác bằng giật gân mà không có thông tin — dù tương tác cao.
-
-- Không ghi chủ đề đã làm trong 90 ngày với cùng một góc khai thác.
+- Không ghi chủ đề được chạy quảng cáo/fan, gameshow, stream, bán hàng.
 
 - Không ghi chủ đề không thể dựng thành video ngắn trong một ngày bằng công cụ hiện có.
 

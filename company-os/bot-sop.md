@@ -13,8 +13,8 @@ bot-hoc-hoi-2000) — xem mục bot-hoc-hoi cuối file.
 Workbook: "Video HQ — Trụ sở Muse" (spreadsheetId
 `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`; cùng tài khoản: dùng tiếp
 workbook đang chạy, không tạo mới, không ghi đè; khác tài khoản: tạo mới
-từ `company-os/google-sheet-spec.md` — đủ 6 tab: TOPICS, TASKS, QA_LOG,
-DECISIONS, COO_TASKS, CEO_REPORTS). Đọc/ghi Sheet bằng connector Google Sheets.
+từ `company-os/google-sheet-spec.md` — đủ 7 tab: TOPICS, TASKS, QA_LOG,
+DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN). Đọc/ghi Sheet bằng connector Google Sheets.
 Không sửa MEMORY.md trong ca bot; quan sát ghi vào nhật ký ngày.
 Pipeline thuộc lịch bot đã được CEO duyệt (kênh giao việc số 2 trong 3
 kênh duy nhất — xem BOOTSTRAP §8), không phải kênh riêng ngoài 3 kênh
@@ -87,7 +87,7 @@ leo thang mới, có blocker MỚI, HOẶC khi ca này không có chủ đề n�
 
 ## COO-SCAN — hằng ngày 06:00
 
-Vai trò: COO quét tab COO_TASKS 1 lần/ngày lúc 06:00 +07 đầu ca (cron coo-scan-0600, quyết CEO 08/11/2026, DEC-099). Đọc tab COO_TASKS, chỉ nhận dòng có cột B = email khai báo của chi nhánh mình và cột E chưa "Hoàn thành": ghi ID COO-YYYYMMDD-NN vào A, chuyển E sang "Đang làm", tự phân việc ở D, giao cho phòng qua chat, rồi xác nhận hoàn thành trên cùng dòng (E = Hoàn thành, F thời gian hoàn thành, G kết quả). Không có dòng thì im lặng. Đọc thêm CEO_REPORTS (Bước 6 trong body cron coo-scan-0600) theo DEC-112 (phản hồi CEO mới từ 06:00 hôm qua tới nay, chuyển lời cho phòng liên quan hoặc tự thực hiện theo phản hồi). Chi tiết đầy đủ: xem BOOTSTRAP §3.3 và spec mục COO_TASKS (cùng skill media-coo).
+Vai trò: COO điểm danh tại tab COO_CHECKIN (Bước 0, lệnh CEO 09/11/2026) rồi quét tab COO_TASKS 1 lần/ngày lúc 06:00 +07 đầu ca (cron coo-scan-0600, quyết CEO 08/11/2026, DEC-099). Đọc tab COO_TASKS, chỉ nhận dòng có cột B = email khai báo của chi nhánh mình và cột E chưa "Hoàn thành": ghi ID COO-YYYYMMDD-NN vào A, chuyển E sang "Đang làm", tự phân việc ở D, giao cho phòng qua chat, rồi xác nhận hoàn thành trên cùng dòng (E = Hoàn thành, F thời gian hoàn thành, G kết quả). Không có dòng thì im lặng. Đọc thêm CEO_REPORTS (Bước 6 trong body cron coo-scan-0600) theo DEC-112 (phản hồi CEO mới từ 06:00 hôm qua tới nay, chuyển lời cho phòng liên quan hoặc tự thực hiện theo phản hồi). Chi tiết đầy đủ: xem BOOTSTRAP §3.3 và spec mục COO_TASKS (cùng skill media-coo).
 
 Giới hạn cứng: không đăng nền tảng, không gắn affiliate, không chi tiền, không push GitHub, không sửa MEMORY.md. Gặp 429/403/rate-limit thì dừng nhánh đó, ghi blocker, không thử lại ẩu.
 
@@ -109,9 +109,9 @@ Skill và quy trình: media-scout, media-video-production,
 media-video-tech-qa (phòng Scoring đã đóng ngày 07/11/2026 theo quyết
 C3; skill media-topic-scoring đã ngừng dùng), spec
 (company-os/google-sheet-spec.md) và bot-sop này. Workbook "Video HQ —
-Trụ sở Muse" (6 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS). Luật kề nhau + trần AI + nền trung tính (DEC-242/243/244, quy tắc CEO 09/11/2026): xem skill media-video-production, mục 'Luật kề nhau', và LOGIC.md (nguyên tắc 6, 7) — không nhắc lại ở đây.
+Trụ sở Muse" (7 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN). Luật kề nhau + trần AI + nền trung tính (DEC-242/243/244, quy tắc CEO 09/11/2026): xem skill media-video-production, mục 'Luật kề nhau', và LOGIC.md (nguyên tắc 6, 7) — không nhắc lại ở đây.
 Cron này CHỈ ĐỌC Sheet + skill + nhật ký, KHÔNG ghi vào Sheet (không
-ghi TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS); mọi cải tiến áp dụng vào
+ghi TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS/COO_CHECKIN); mọi cải tiến áp dụng vào
 repo local thì KHÔNG push GitHub.
 
 1. Kiểm tra toàn vẹn đầu ca (R7): chỉ đọc số dòng + ID lớn nhất (chỉ
