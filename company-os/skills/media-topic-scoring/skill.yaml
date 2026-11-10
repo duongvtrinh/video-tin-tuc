@@ -1,5 +1,0 @@
-name: "media-topic-scoring"
-title: "Chấm điểm chủ đề video"
-description: "Chấm điểm 100 cho chủ đề video và loại trùng lặp hoặc chủ đề không thú vị."
-category: "Work and knowledge"
-include_in_prompt: false
