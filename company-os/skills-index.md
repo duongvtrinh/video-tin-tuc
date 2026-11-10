@@ -2,7 +2,6 @@
 
 - COO: media-coo — phân việc, theo dõi pipeline, leo thang lên CEO. File: ~/workspace/custom-skills/media-coo/SKILL.md
 - Scout: media-scout — quét báo, group, tìm kiếm, ghi chủ đề kèm nguồn. File: ~/workspace/custom-skills/media-scout/SKILL.md
-- Scoring: media-topic-scoring — ĐÃ ĐÓNG ngày 07/11/2026 theo quyết C3; mỗi phòng Scout tự chấm chủ đề của mình trong cùng lượt quét. File: ~/workspace/custom-skills/media-topic-scoring/SKILL.md
 - Sản xuất: media-video-production — kịch bản, giọng VieNeu TTS, dựng video chờ QA. File: ~/workspace/custom-skills/media-video-production/SKILL.md
 - Kỹ thuật: media-video-tech-qa — đánh giá thành phẩm, nâng cấp code, test lại. File: ~/workspace/custom-skills/media-video-tech-qa/SKILL.md
 - Kỹ thuật QA (nhận thêm): media-video-tech-qa — ngoài đánh giá thành phẩm và nâng cấp code, còn bàn giao video đã duyệt lên thư mục Drive "Video Muse" (đã được CEO cấp quyền anyone with link ngày 05/11/2026) và ghi link vào TASKS (H DRIVE_LINK, I MD5, L QUOTA) và QA_LOG.
@@ -10,5 +9,6 @@
 Đã giải thể 2026-10-26, skill đã xóa khỏi bộ skill (file đưa vào thùng rác, khôi phục được trong 30 ngày, không xóa dữ liệu Sheet):
 - Kinh doanh Affiliate: media-affiliate — đã giải thể, chức năng affiliate thuộc công ty kinh doanh khác.
 - Đăng tải / Phân tích: media-publish-analytics — đã giải thể, chức năng đăng nền tảng và phân tích thuộc công ty kinh doanh khác; bước bàn giao Drive + Sheet chuyển cho Kỹ thuật QA.
+- Chấm điểm chủ đề: media-topic-scoring — đã đóng ngày 07/11/2026 theo quyết C3 (gộp Scout + Scoring); file skill đã xóa ngày 11/11/2026 theo lệnh CEO (đưa vào thùng rác, khôi phục được trong 30 ngày). Công thức chấm đã chuyển nguyên vẹn sang skill media-scout.
 
 Quy tắc: agent không làm việc ngoài skill của mình. Việc ngoài skill phải chuyển cho đúng bộ phận qua TASKS (hoặc COO_TASKS khi cần COO phân việc), không tự làm chéo.

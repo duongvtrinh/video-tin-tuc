@@ -52,47 +52,68 @@ MOTIONS = ["zoom_in", "zoom_out", "pan_left", "pan_right", "pan_up", "pan_down"]
 # preview voicepart + 500ms (lớp sau phủ đè bằng fade-in, không wipe/slide
 # hay fade qua đen/trắng gây chớp nền). Motion từng clip vẫn ngẫu nhiên.
 XFADE_D = 0.5  # giây mỗi chuyển cảnh
+# BIÊN ĐỘ ZOOM ĐỘNG (CEO 10/11/2026, thay biên độ cố định 1,05x): tốc độ
+# zoom mục tiêu 0,8%/giây — part dài tự to biên độ lên để tốc độ chuyển
+# động tương đương nhau giữa các part, part ngắn giữ sàn 1,05x. Trần
+# 1,12x là lề an toàn (cắt 137px dọc, lề 140px). Không đo MAD, không
+# có mức — đây là mặc định cho mọi part.
+MOTION_RATE = 0.008  # 0,8%/giây
+MOTION_MIN_EXTRA = 0.05  # sàn: biên độ tối thiểu 5% (1,05x)
+MOTION_MAX_ZOOM = 1.12  # trần: zoom tối đa 1,12x (lề an toàn)
 
 
 def motion_vf(kind: str, W: int, H: int, frames: int) -> str:
     # SAFE-AREA MOTION (QA TOPIC-004, 2026-10-26): zoom/pan cũ 1.12 cắt tới
     # 10,7% ở một mép (77px ngang / 137px dọc ở 720x1280), vượt lề chữ
-    # 48px trái / 90px trên nên cắt headline cảnh 2, 3, 5. Zoom mới tối đa
-    # 1.05 chỉ cắt tối đa 4,8% ở một mép (34px ngang / 61px dọc), nhỏ hơn
+    # 48px trái / 90px trên nên cắt headline cảnh 2, 3, 5. Zoom sàn 1,05x
+    # chỉ cắt tối đa 4,8% ở một mép (34px ngang / 61px dọc), nhỏ hơn
     # lề an toàn mới của ảnh cảnh (96px trái, 140px trên), nên chữ không
     # bao giờ chạm mép dù motion pan đi hết hành trình.
     # SMOOTH MOTION (CEO 2026-10-27, sửa lag/giật): công thức zoom cũ dùng
     # biến tăng dần (zoom+0.0005/khung) bị reset ở mỗi khung đầu vào khi
     # d=1 với ảnh lặp, nên cảnh zoom gần như đứng yên (đo 6s: khung đầu
     # so với khung cuối khác 0,03). Công thức mới dùng vị trí tuyệt đối
-    # on/frames cho mọi kiểu motion, cộng easing smoothstep
-    # s=t*t*(3-2*t) để motion bắt đầu/kết thúc nhẹ, trải đều cả part,
-    # không dừng đột ngột ở 1,05. Ảnh nguồn phóng 4x thay vì 2x để bước
-    # cắt zoompan nhỏ hơn khi thu về khung đích, giảm giật từng bậc.
-    # Zoom tối đa vẫn 1,05, lề an toàn không đổi.
+    # on/frames cho mọi kiểu motion, tốc độ đều TUYẾN TÍNH s=t (CEO 2026-11-10,
+    # bỏ easing smoothstep): smoothstep có đạo hàm 0 ở đầu/cuối part, mà zoompan
+    # cắt theo pixel nguyên nên cửa sổ đứng yên ~10 khung đầu của lia và ~20 khung
+    # đầu của zoom blurfill rồi mới nhảy 1 pixel — nhìn giật. Tuyến tính thì cửa sổ
+    # dịch ngay từ khung đầu; xfade 0,5s đã làm mềm chuyển cảnh nên không cần easing.
+    # TMIX (CEO 2026-11-10): trộn 3 khung liên tiếp sau zoompan để làm phẳng nhịp
+    # MAD (bò 5 khung rồi nhảy) do bước thu nhỏ 3x gây ra; áp ở tầng clip nên phụ
+    # đề gắn sau vẫn nét.
+    # Ảnh nguồn phóng 4x thay vì 2x để bước cắt zoompan nhỏ hơn khi thu về khung
+    # đích, giảm giật từng bậc.
+    # BIÊN ĐỘ ĐỘNG (CEO 2026-11-10): biên độ = max(5%, 0,8% × thời lượng
+    # part), trần 1,12x. Part 4s → 1,05x; 8s → 1,064x; 11,3s → 1,09x;
+    # 15s → 1,12x. Lia tự to theo zoom (tầm lia = 1 - 1/zoom).
+    dur = frames / 30.0
+    extra = min(max(MOTION_MIN_EXTRA, MOTION_RATE * dur), MOTION_MAX_ZOOM - 1.0)
+    zmax = 1.0 + extra
+    z = f"{zmax:.4f}"
+    e = f"{extra:.4f}"
     t = f"(on/{frames})"
-    s = f"({t}*{t}*(3-2*{t}))"
+    s = t  # tuyến tính (CEO 2026-11-10): tốc độ đều, không còn đứng yên đầu part
     base = (f"scale={W * 4}:{H * 4}:force_original_aspect_ratio=increase,"
             f"crop={W * 4}:{H * 4}")
     if kind == "zoom_in":
-        zp = (f"zoompan=z='1+0.05*{s}':x='iw/2-(iw/zoom/2)':"
+        zp = (f"zoompan=z='1+{e}*{s}':x='iw/2-(iw/zoom/2)':"
               f"y='ih/2-(ih/zoom/2)':d=1:s={W}x{H}:fps=30")
     elif kind == "zoom_out":
-        zp = (f"zoompan=z='1.05-0.05*{s}':"
+        zp = (f"zoompan=z='{z}-{e}*{s}':"
               f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s={W}x{H}:fps=30")
     elif kind == "pan_right":
-        zp = (f"zoompan=z='1.05':x='(iw-iw/zoom)*{s}':"
+        zp = (f"zoompan=z='{z}':x='(iw-iw/zoom)*{s}':"
               f"y='ih/2-(ih/zoom/2)':d=1:s={W}x{H}:fps=30")
     elif kind == "pan_left":
-        zp = (f"zoompan=z='1.05':x='(iw-iw/zoom)*(1-{s})':"
+        zp = (f"zoompan=z='{z}':x='(iw-iw/zoom)*(1-{s})':"
               f"y='ih/2-(ih/zoom/2)':d=1:s={W}x{H}:fps=30")
     elif kind == "pan_down":
-        zp = (f"zoompan=z='1.05':x='iw/2-(iw/zoom/2)':"
+        zp = (f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':"
               f"y='(ih-ih/zoom)*{s}':d=1:s={W}x{H}:fps=30")
     else:  # pan_up
-        zp = (f"zoompan=z='1.05':x='iw/2-(iw/zoom/2)':"
+        zp = (f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':"
               f"y='(ih-ih/zoom)*(1-{s})':d=1:s={W}x{H}:fps=30")
-    return f"{base},{zp},setsar=1,format=yuv420p"
+    return f"{base},{zp},tmix=frames=3,setsar=1,format=yuv420p"
 
 
 def esc_filter_path(p: str) -> str:
@@ -140,33 +161,44 @@ def _media_dims(path, is_video):
         return None
 
 
-def _smoothstep_on(frames: int) -> str:
-    t = f"(on/{frames})"
-    return f"({t}*{t}*(3-2*{t}))"
+def _linear_on(frames: int) -> str:
+    # Tuyến tính (CEO 2026-11-10, thay smoothstep): tốc độ đều, cửa sổ dịch
+    # ngay từ khung đầu, không còn đứng yên ~20 khung đầu của zoom blurfill.
+    return f"(on/{frames})"
 
 
-def _smoothstep_n(frames: int) -> str:
+def _linear_n(frames: int) -> str:
     # crop không có biến 'on' của zoompan — dùng 'n' (số khung vào crop)
-    t = f"(n/{frames})"
-    return f"({t}*{t}*(3-2*{t}))"
+    # Tuyến tính (CEO 2026-11-10, thay smoothstep): xem _linear_on.
+    return f"(n/{frames})"
 
 
 def blurfill_image_vf(motion: str, W: int, H: int, frames: int) -> str:
     WH = W * 4 // 3
     y0 = (H - WH) // 2
-    s = _smoothstep_on(frames)
-    sn = _smoothstep_n(frames)
-    # zoompan trên ảnh vuông 720x720 rồi crop cửa sổ 3:4 (540x720):
+    s = _linear_on(frames)
+    sn = _linear_n(frames)
+    # Biên độ động như motion_vf (CEO 2026-11-10): sàn 1,05x, 0,8%/giây,
+    # trần 1,12x. Lia ngang đã trượt tối đa 360px nên không tăng thêm.
+    dur = frames / 30.0
+    extra = min(max(MOTION_MIN_EXTRA, MOTION_RATE * dur), MOTION_MAX_ZOOM - 1.0)
+    zmax = 1.0 + extra
+    z = f"{zmax:.4f}"
+    e = f"{extra:.4f}"
+    # zoompan trên ảnh vuông 2880x2880 rồi crop cửa sổ 3:4 (2160x2880)
+    # (CEO 2026-11-10: tăng từ 720 lên 2880 cho zoom/lia dọc để pan+zoom
+    # mượt hơn — chuỗi đứng yên dài nhất từ 5 khung xuống 1 khung; lia
+    # ngang giữ 1440 vì đã mượt):
     # zoom: cửa sổ cố định giữa; pan ngang: cửa sổ trượt trong ảnh
     # vuông; pan dọc: zoompan dịch y, cửa sổ giữ nguyên chiều cao.
     if motion == "zoom_in":
-        zp = (f"zoompan=z='1+0.05*{s}':x='iw/2-(iw/zoom/2)':"
-              f"y='ih/2-(ih/zoom/2)':d=1:s=720x720:fps=30")
-        win = "crop=540:720:x=90:y=0"
+        zp = (f"zoompan=z='1+{e}*{s}':x='iw/2-(iw/zoom/2)':"
+              f"y='ih/2-(ih/zoom/2)':d=1:s=2880x2880:fps=30")
+        win = "crop=2160:2880:x=360:y=0"
     elif motion == "zoom_out":
-        zp = (f"zoompan=z='1.05-0.05*{s}':"
-              f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=720x720:fps=30")
-        win = "crop=540:720:x=90:y=0"
+        zp = (f"zoompan=z='{z}-{e}*{s}':"
+              f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=2880x2880:fps=30")
+        win = "crop=2160:2880:x=360:y=0"
     elif motion == "pan_right":
         # TANG DO MIN (CEO 06/11/2026, giu crop): pan ngang truoc day dung
         # crop 540:720 o tang 720 voi x='2*trunc(90*sn)' — buoc nhay
@@ -175,26 +207,28 @@ def blurfill_image_vf(motion: str, W: int, H: int, frames: int) -> str:
         # — buoc nhay chi 1,33px tren man hinh, frame dau nhuc nhich tu
         # frame 3, round giu vi tri sat quy dao muot hon trunc. Giu x chan
         # (2*) cho yuv420p; x toi da 360, cua so 1080+360=1440 vua khit.
-        zp = (f"zoompan=z='1.05':x='iw/2-(iw/zoom/2)':"
+        zp = (f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':"
               f"y='ih/2-(ih/zoom/2)':d=1:s=1440x1440:fps=30")
         win = f"crop=1080:1440:x='2*round(180*{sn})':y=0"
     elif motion == "pan_left":
         # Nhu pan_right, chieu nguoc (xem ghi chu tren).
-        zp = (f"zoompan=z='1.05':x='iw/2-(iw/zoom/2)':"
+        zp = (f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':"
               f"y='ih/2-(ih/zoom/2)':d=1:s=1440x1440:fps=30")
         win = f"crop=1080:1440:x='2*round(180*(1-{sn}))':y=0"
     elif motion == "pan_down":
-        zp = (f"zoompan=z='1.05':x='iw/2-(iw/zoom/2)':"
-              f"y='(ih-ih/zoom)*{s}':d=1:s=720x720:fps=30")
-        win = "crop=540:720:x=90:y=0"
+        zp = (f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':"
+              f"y='(ih-ih/zoom)*{s}':d=1:s=2880x2880:fps=30")
+        win = "crop=2160:2880:x=360:y=0"
     else:  # pan_up
-        zp = (f"zoompan=z='1.05':x='iw/2-(iw/zoom/2)':"
-              f"y='(ih-ih/zoom)*(1-{s})':d=1:s=720x720:fps=30")
-        win = "crop=540:720:x=90:y=0"
+        zp = (f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':"
+              f"y='(ih-ih/zoom)*(1-{s})':d=1:s=2880x2880:fps=30")
+        win = "crop=2160:2880:x=360:y=0"
     bg = (f"scale={W}:{H}:force_original_aspect_ratio=increase,"
           f"crop={W}:{H},gblur=sigma=25,fps=30")
+    # TMIX (CEO 2026-11-10): trộn 3 khung liên tiếp sau scale để làm phẳng nhịp
+    # MAD; chỉ áp cho fg (ảnh chuyển động), nền blur tĩnh không cần.
     fg = (f"scale=2880:2880:force_original_aspect_ratio=increase,"
-          f"crop=2880:2880,{zp},{win},scale={W}:{WH},fps=30,setsar=1")
+          f"crop=2880:2880,{zp},{win},scale={W}:{WH},tmix=frames=3,fps=30,setsar=1")
     return (f"split[a][b];[a]{bg}[bg];[b]{fg}[fg];"
             f"[bg][fg]overlay=x=0:y={y0}")
 

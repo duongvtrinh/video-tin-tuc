@@ -31,13 +31,19 @@ cảnh báo không tính vào exit code):
   thuật (pid bắt đầu bằng "test", vd test001 fixture). 2 part liền kề
   chung 1 file visual — luật kề nhau, lệnh CEO 09/11/2026 (DEC-242,
   Khối 4 Cách 1): chặn trước render; ngoại lệ 2 part ở 2 scene khác
-  nhau cùng dùng 1 file nền trung tính (nhận biết qua media-log danh
-  sách parts, classification "trung-tinh"); mỗi scene tối đa 1 part
-  dùng nền trung tính (DEC-244). Mỗi file visual nội dung chỉ xuất hiện
+  nhau cùng dùng 1 file nền trung tính (nhận biết theo file thật —
+  trùng md5 với file trong thư viện neutral-bg/, hoặc qua media-log
+  danh sách parts, classification "trung-tinh"; A1 10/11/2026); mỗi
+  scene tối đa 1 part dùng nền trung tính (DEC-244). Mỗi file visual
+  nội dung chỉ xuất hiện
   tối đa 2 lần trong toàn video (đếm theo nội dung md5, không đếm theo
   tên file; trừ ảnh/video trung tính; fill-in tính vào trần; bookend
   tính là 2 lần) — trần xuất hiện, lệnh CEO 09/11/2026 (DEC-245):
-  chặn trước render. (Ghi chú đối soát 09/11/2026: miễn trừ qua biên scene là phòng thủ — tên file b-roll của mỗi part là duy nhất theo (order, partIdx) nên 2 part khác scene không bao giờ resolve về cùng 1 file; việc dùng lại file nền qua các scene thực chất là copy cùng file nguồn vào 2 tên b-roll khác nhau nên preflight thấy 2 file khác nhau, không vi phạm.) Miễn cho project test như cửa A20.
+  chặn trước render. Trần AI ≤ thật theo scene (DEC-244): mỗi scene
+  số file AI không được vượt số file thật (đếm theo file khác nhau,
+  md5; nền trung tính và ảnh giải thích tính vào vế thật; crop chi
+  tiết và fill-in không cộng vào vế thật) — C1 rà soát lần 9, quyết
+  CEO 10/11/2026 (phương án C1-A): chặn trước render. (Ghi chú đối soát 09/11/2026: miễn trừ qua biên scene là phòng thủ — tên file b-roll của mỗi part là duy nhất theo (order, partIdx) nên 2 part khác scene không bao giờ resolve về cùng 1 file; việc dùng lại file nền qua các scene thực chất là copy cùng file nguồn vào 2 tên b-roll khác nhau nên preflight thấy 2 file khác nhau, không vi phạm.) Miễn cho project test như cửa A20.
   R4-57 (08/11/2026, DEC-066 A', port từ validate_project.py — chỉ
   hợp lệ SAU assemble nên không gọi nó trước render): thứ tự scene
   không tăng dần; part startSec không nối tiếp part trước (tiling,
@@ -52,7 +58,8 @@ cảnh báo không tính vào exit code):
   180s (Production tự quyết độ dài); 0 SFX hoặc thiếu beat SFX
   hook/móc lại/kết luận; template gợi ý
   SFX nhưng plan chưa có broll.sfx; media-log thiếu danh sách `parts`
-  (không kiểm được luật mỗi scene tối đa 1 nền trung tính); partId cũ
+  (chỉ cảnh báo khi thư viện neutral-bg/ cũng không đọc được — nếu
+  đọc được thì nhận biết nền theo file thật, không cần nhãn); partId cũ
   trong danh sách `parts` của media-log; part khai prompt AI nhưng
   không có file ảnh b-roll; file b-roll video tồn tại nhưng ffprobe
   không thấy video stream.
@@ -776,7 +783,13 @@ def main() -> int:
     # tối đa 1 part dùng nền trung tính, thường là part đầu — kiểm riêng
     # ở dưới). Part nền trung tính nhận biết qua media-log.json danh
     # sách `parts` (classification "trung-tinh" hoặc ghi chú "nền trung
-    # tính"). Thiếu danh sách parts thì không có ngoại lệ (kiểm chặt).
+    # tính"). A1 (10/11/2026, quyết CEO): part nền còn nhận biết theo
+    # file thật — b-roll riêng của part mà trùng md5 với file trong thư
+    # viện neutral-bg/ thì cũng là part nền, không phụ thuộc nhãn trong
+    # media-log (xem bước mở rộng _neutral_parts sau khi resolve
+    # visual). Nhãn trong media-log vẫn được giữ làm đường nhận biết
+    # thứ hai. Thiếu cả danh sách parts lẫn thư viện thì không có ngoại
+    # lệ (kiểm chặt).
     if not pid.startswith("test"):
         _neutral_parts = set()
         _parts_list = None
@@ -802,6 +815,29 @@ def main() -> int:
                     _neutral_parts.add(_e["partId"])
         except (OSError, json.JSONDecodeError):
             pass
+        # A1 (10/11/2026, quyết CEO — sửa chặn oan nền trung tính): tập
+        # md5 của mọi file trong thư viện neutral-bg/ (FACTORY/
+        # neutral-bg/image + video). Dùng để nhận biết part nền theo
+        # file thật ở bước mở rộng _neutral_parts dưới đây — không phụ
+        # thuộc nhãn trong media-log. Thư viện thiếu/không đọc được thì
+        # tập rỗng — chỉ còn nhận biết bằng nhãn như trước, preflight
+        # không crash.
+        _neutral_lib_md5s = set()
+        try:
+            for _nd in (FACTORY / "neutral-bg" / "image",
+                        FACTORY / "neutral-bg" / "video"):
+                if not _nd.is_dir():
+                    continue
+                for _nf in _nd.iterdir():
+                    if not _nf.is_file():
+                        continue
+                    _h = hashlib.md5()
+                    with open(_nf, "rb") as _f:
+                        for _c in iter(lambda: _f.read(1 << 20), b""):
+                            _h.update(_c)
+                    _neutral_lib_md5s.add(_h.hexdigest())
+        except OSError:
+            _neutral_lib_md5s = set()
         # DEC-244 (đối soát 09/11/2026): không có danh sách `parts` thì
         # không kiểm được luật mỗi scene tối đa 1 nền trung tính — chỉ
         # cảnh báo (không chặn) để QA kiểm bằng tay; chỉ cảnh báo khi
@@ -834,8 +870,8 @@ def main() -> int:
             for _sc in plan["scenes"]
             for _pi, _p in enumerate(_sc["parts"], start=1)
         )
-        if _has_part_broll and not _parts_list:
-            warnings.append("media-log.json không có danh sách `parts` (hoặc danh sách trống) mà plan có part dùng b-roll riêng — preflight không kiểm được luật mỗi scene tối đa 1 nền trung tính (DEC-244); QA kiểm bằng tay. Ghi dòng part vào media-log (classification 'trung-tinh' cho part dùng nền) rồi chạy lại preflight")
+        if _has_part_broll and not _parts_list and not _neutral_lib_md5s:
+            warnings.append("media-log.json không có danh sách `parts` (hoặc danh sách trống) mà plan có part dùng b-roll riêng, và thư viện neutral-bg/ cũng không đọc được — preflight không kiểm được luật mỗi scene tối đa 1 nền trung tính (DEC-244); QA kiểm bằng tay. Ghi dòng part vào media-log (classification 'trung-tinh' cho part dùng nền) rồi chạy lại preflight")
         # F2 (09/11/2026, quyết định CEO): media-log `parts` có partId
         # không có trong plan (dòng cũ sau khi đổi số part) thì preflight
         # nhận sai part nền — chỉ cảnh báo (không chặn) để Production
@@ -873,6 +909,20 @@ def main() -> int:
                     "sau khi đổi số part? Cập nhật lại partId trong "
                     "media-log rồi chạy lại preflight (preflight nhận biết "
                     "part nền theo partId)")
+        # A1 (10/11/2026): hàm md5 dùng chung cho cả bước mở rộng
+        # _neutral_parts (dưới đây) và khối trần DEC-245 (cuối khối).
+        _md5_cache = {}
+
+        def _file_md5(_p):
+            _k = str(_p)
+            if _k not in _md5_cache:
+                _h = hashlib.md5()
+                with open(_p, "rb") as _f:
+                    for _c in iter(lambda: _f.read(1 << 20), b""):
+                        _h.update(_c)
+                _md5_cache[_k] = _h.hexdigest()
+            return _md5_cache[_k]
+
         _resolved = []  # (partId, Path|None, order) theo thứ tự phát toàn video
         for _sc in plan["scenes"]:
             _order = _sc["order"]
@@ -909,6 +959,23 @@ def main() -> int:
                                 if q.exists()), None)
                     _vis = _bi if _bi is not None else _simg
                 _resolved.append((_p["id"], _vis, _order))
+        # A1 (10/11/2026, quyết CEO): mở rộng _neutral_parts theo file
+        # thật — part nào resolve về b-roll riêng mà file đó trùng md5
+        # với file trong thư viện neutral-bg thì là part nền, dù
+        # media-log quên ghi nhãn 'trung-tinh'. Chỉ xét b-roll riêng
+        # của part (tên broll_seg_…), không xét ảnh scene — ảnh scene
+        # là visual của scene, không phải nền của part (tránh nhận sai
+        # cả scene là nền khi ảnh scene trùng file thư viện).
+        for _pid4, _v4, _o4 in _resolved:
+            if _v4 is None or _pid4 in _neutral_parts:
+                continue
+            if not _v4.name.startswith("broll_seg_"):
+                continue
+            try:
+                if _file_md5(_v4) in _neutral_lib_md5s:
+                    _neutral_parts.add(_pid4)
+            except OSError:
+                continue
         for (_id1, _v1, _o1), (_id2, _v2, _o2) in zip(_resolved, _resolved[1:]):
             if _v1 is None or _v2 is None or _v1 != _v2:
                 continue
@@ -957,18 +1024,6 @@ def main() -> int:
         # và đóng bằng cùng 1 file) tính là 2 lần — được phép, không vi
         # phạm nếu file đó không xuất hiện thêm lần nào nữa. Vi phạm thì
         # CHẶN render (exit 1) như luật kề nhau.
-        _md5_cache = {}
-
-        def _file_md5(_p):
-            _k = str(_p)
-            if _k not in _md5_cache:
-                _h = hashlib.md5()
-                with open(_p, "rb") as _f:
-                    for _c in iter(lambda: _f.read(1 << 20), b""):
-                        _h.update(_c)
-                _md5_cache[_k] = _h.hexdigest()
-            return _md5_cache[_k]
-
         _appear = {}  # md5 -> [(partId, Path)]
         for _pid3, _v3, _o3 in _resolved:
             if _v3 is None or _pid3 in _neutral_parts:
@@ -985,6 +1040,105 @@ def main() -> int:
                               f"tính). Thay visual cho một số part (visual "
                               f"khác trong pool, AI trong trần, hoặc crop "
                               f"chi tiết hạn chế) rồi chạy lại preflight")
+
+        # Trần AI ≤ thật theo scene (quy tắc CEO 09/11/2026, DEC-244;
+        # C1 rà soát lần 9, quyết CEO 10/11/2026, phương án C1-A): mỗi
+        # scene số file AI không được vượt số file thật. Đếm theo file
+        # khác nhau (md5), tính riêng theo từng vai trò như QA đếm tay
+        # (skill QA): vế thật = file thật nguyên khung + nền trung tính
+        # (kể cả ảnh giải thích Vector/Infographic/Concept Art — file
+        # thật tìm trên web, quyết CEO 10/11/2026, A2); crop chi tiết
+        # KHÔNG cộng vào vế thật (DEC-242); fill-in KHÔNG cộng vào vế
+        # thật (F5). Phân loại theo media-log danh sách `parts`
+        # (classification "ai"/"ai-tu-prompt" hoặc promptRecord = AI;
+        # "trung-tinh" = nền; ghi chú có "crop chi tiết" = crop;
+        # ghi chú có "fill-in" = fill-in; còn lại = thật); part không
+        # có dòng parts thì lấy phân loại ảnh scene từ media-log danh
+        # sách `scenes` (chosen.classification), và b-roll riêng không
+        # có dòng parts thì lấy theo broll.prompt trong plan (có prompt
+        # = AI, không prompt = thật). Thiếu phân loại cho 1 part/scene
+        # thì mặc định thật (tránh chặn oan) và QA kiểm lại bằng tay.
+        def _c1_classify_entry(_e):
+            if not isinstance(_e, dict):
+                return None
+            _txts = []
+            for _k in ("classification", "note", "ghi_chu"):
+                _v = _e.get(_k)
+                if isinstance(_v, str):
+                    _txts.append(_v)
+            _ch = _e.get("chosen")
+            if isinstance(_ch, dict):
+                for _k in ("classification", "note", "ghi_chu"):
+                    _v = _ch.get(_k)
+                    if isinstance(_v, str):
+                        _txts.append(_v)
+            _cls = _e.get("classification")
+            if isinstance(_ch, dict) and _ch.get("classification"):
+                _cls = _ch.get("classification")
+            if _cls in ("ai", "ai-tu-prompt") or _e.get("promptRecord") or (
+                    isinstance(_ch, dict) and _ch.get("promptRecord")):
+                return "ai"
+            _joined = " ".join(_txts)
+            if "trung-tinh" in _joined or "nền trung tính" in _joined:
+                return "neutral"
+            _low = _joined.lower()
+            if "crop chi tiết" in _low or "detail crop" in _low:
+                return "crop"
+            if "fill-in" in _low or "fill in" in _low:
+                return "fillin"
+            if _cls:
+                return "real"
+            return None
+
+        _c1_mlog = None
+        try:
+            _c1_mlog = _mlog
+        except NameError:
+            _c1_mlog = None
+        _part_cls = {}
+        for _e in (_parts_list or []):
+            if isinstance(_e, dict) and _e.get("partId"):
+                _part_cls[_e["partId"]] = _c1_classify_entry(_e)
+        _scene_cls = {}
+        if isinstance(_c1_mlog, dict):
+            for _s in (_c1_mlog.get("scenes") or []):
+                if not isinstance(_s, dict):
+                    continue
+                _sid = _s.get("sceneId") or ""
+                try:
+                    _so = int(str(_sid).rsplit("-", 1)[1])
+                except (ValueError, IndexError):
+                    continue
+                _sch = _s.get("chosen") or {}
+                _sc = _sch.get("classification") if isinstance(_sch, dict) else None
+                _scene_cls[_so] = "ai" if _sc in ("ai", "ai-tu-prompt") else "real"
+        _prompt_by_id = {}
+        for _sc2 in plan["scenes"]:
+            for _p2 in _sc2["parts"]:
+                _br2 = (_p2 or {}).get("broll") or {}
+                _prompt_by_id[_p2["id"]] = bool(
+                    isinstance(_br2.get("prompt"), str) and _br2["prompt"].strip())
+        _ai_by_scene = {}
+        _real_by_scene = {}
+        for _pid5, _v5, _o5 in _resolved:
+            if _v5 is None:
+                continue
+            _c5 = _part_cls.get(_pid5)
+            if _c5 is None:
+                if _v5.name.startswith("broll_seg_"):
+                    _c5 = "ai" if _prompt_by_id.get(_pid5) else "real"
+                else:
+                    _c5 = _scene_cls.get(_o5, "real")
+            if _c5 == "ai":
+                _ai_by_scene.setdefault(_o5, set()).add(_file_md5(_v5))
+            elif _c5 in ("real", "neutral"):
+                _real_by_scene.setdefault(_o5, set()).add(_file_md5(_v5))
+            # crop / fill-in: không cộng vào vế nào
+        for _o6 in sorted(set(list(_ai_by_scene) + list(_real_by_scene))):
+            _na = len(_ai_by_scene.get(_o6, set()))
+            _nr = len(_real_by_scene.get(_o6, set()))
+            if _na > _nr:
+                errors.append(f"Trần AI ≤ thật theo scene (DEC-244): Scene {_o6} có {_na} file AI nhưng chỉ {_nr} file thật — mỗi scene số file AI không được vượt số file thật (ảnh giải thích Vector/Infographic/Concept Art và nền trung tính tính vào vế thật; crop chi tiết và fill-in không cộng vào vế thật). Thay 1 file AI bằng visual thật trong pool (ảnh thật, ảnh giải thích, hoặc nền trung tính nếu scene chưa dùng nền) rồi chạy lại preflight")
 
     # karaoke
     kj = build / "subtitles" / "karaoke.json"

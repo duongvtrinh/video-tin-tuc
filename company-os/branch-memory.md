@@ -372,13 +372,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
   Sau khi sửa voiceText/voice/speed của part nào thì XÓA WAV của part đó
   trước khi chạy lại TTS; sau khi tách/gộp/đánh lại số part thì XÓA TOÀN
   BỘ WAV của scene bị ảnh hưởng (cả part files lẫn voice_seg).
-- **Đo motion trước khi nộp QA lần đầu (bắt buộc):** trích khung PNG
-  lossless ở 2fps, đo MAD từng part; part không dùng template photo-* mà
-  có chuỗi đứng yên >5s thì tách part / đổi motion / đổi ảnh trước khi nộp,
-  không chờ QA trả; cấm đo bằng JPEG. Mô phỏng dãy motion (RNG
-  `motion-{pid}`) TRƯỚC khi TTS/render để tránh combo rủi ro (zoom trên
-  ảnh dải hẹp / ảnh tương phản thấp dài >5s).
-- **Móc lại ở ~50% video** (dải đã duyệt 44,9–56,1%): lên kế hoạch từ đầu,
+- **Móc lại ở ~50% video** (dải đã duyệt 44,9–59,9%): lên kế hoạch từ đầu,
   QA trả lại nếu ngoài dải.
 - Kiểm tra mẫu cấm TRÊN FILE CUỐI (script.json/plan) sau MỖI lần sửa
   voiceText, không chỉ lúc tạo plan lần đầu (bản kiểm tra trong

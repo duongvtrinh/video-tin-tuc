@@ -14,7 +14,7 @@ Ca hoc-hoi theo quyết CEO 07/11/2026 — R4-14 phương án A (DEC-019): 20:00
 
 Vai trò: (1) kiểm mẫu — biện pháp bù (c) cho quyết C3 (gộp Scout + Scoring: mất lớp kiểm độc lập "không chấm chủ đề do mình quét", bù bằng (a) điểm quan tâm bắt buộc có số liệu bằng chứng trong NOTES, (b) cổng READY của CEO, (c) hoc-hoi kiểm mẫu); (2) vòng học-hỏi — biến lỗi lặp lại thành cải tiến vĩnh viễn cho quy trình, để hệ thống ngày một thông minh hơn — nhưng chỉ cải tiến khi có bằng chứng, không bịa cải tiến, không nới lỏng chuẩn.
 
-Cron này CHỈ ĐỌC Sheet + skill + nhật ký, KHÔNG ghi vào Sheet (không ghi TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS); chỉ báo cáo về chat COO. Mọi cải tiến áp dụng vào repo local thì KHÔNG push GitHub.
+Cron này CHỈ ĐỌC Sheet + skill + nhật ký, KHÔNG ghi vào Sheet (không ghi TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS/COO_CHECKIN); chỉ báo cáo về chat COO. Mọi cải tiến áp dụng vào repo local thì KHÔNG push GitHub.
 
 Tab/cột mới — tham chiếu bằng TOPIC_ID khi đã có; chủ đề chưa có ID thì tham chiếu tạm bằng tiêu đề, không bao giờ bằng số dòng (R1):
 - TOPICS (13 cột A–M; cột N APPROVED_AT đã bỏ theo quyết CEO 07/11/2026, R4-20 phương án B): A TOPIC_ID (khoá — ĐỂ TRỐNG khi ghi mới; CEO nhập khi duyệt/lật READY), B TITLE, C SOURCE, D DISCOVERED, E–I điểm (HOT 30 / AUDIENCE 20 / FRESH 20 / FEASIBLE 15 / SOURCED 15), J TOTAL, K STATUS (dropdown: NEW / APPROVED / READY / HOLD / REJECTED / DUPLICATE), L ANGLE, M NOTES.

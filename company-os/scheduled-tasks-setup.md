@@ -61,7 +61,7 @@ phòng của chi nhánh khác (hoặc gọi lỗi).
 | Trong file mẫu | Thay bằng gì ở tài khoản mới |
 | --- | --- |
 | Trong file mẫu là `{{CHAT_ID_SCOUT_BAO}}` và `{{CHAT_ID_SCOUT_GROUP}}` (4 file scout-scan-*) | ID chat Scout - Báo / Scout - Group của tài khoản mới (xem bằng `chat.list`) |
-| Trong file mẫu là `{{CHAT_ID_SAN_XUAT}}` và `{{CHAT_ID_QA}}` (4 file prod-pipeline-*) | ID chat Sản xuất / Kỹ thuật QA của tài khoản mới (xem bằng `chat.list`) |
+| Trong file mẫu là `{{CHAT_ID_SAN_XUAT}}`, `{{CHAT_ID_QA}}` và `{{CHAT_ID_COO}}` (4 file prod-pipeline-*) | ID chat Sản xuất / Kỹ thuật QA / COO của tài khoản mới (xem bằng `chat.list`) |
 | `owner: goal:vieneu-media-company-bootstrap` | Goal bootstrap của chính tài khoản mới (cùng slug nếu tài khoản đó theo đúng chuẩn này) |
 | `delivery` (chat COO) | Chat COO của tài khoản mới (lấy ID qua `chat.list`, KHÔNG copy UUID 2e9f544b-1dad-420a-a1b4-ed9463cc89d9 của chi nhánh này) |
 
@@ -74,7 +74,7 @@ mình; cấm đoán, cấm dùng email Drive/GitHub/Facebook thay thế.
 
 ## Bảo trì bản mẫu (để khỏi lệch)
 
-- **Body trong file mẫu phải giống hệt body của lịch đang chạy, trừ 4 placeholder
+- **Body trong file mẫu phải giống hệt body của lịch đang chạy, trừ 5 placeholder
   ID chat phòng** (xem bảng trên): khi diff, chỉ các dòng chứa placeholder ở mỗi
   file scout-scan-*/prod-pipeline-* được phép khác; mọi dòng khác phải giống hệt.
   Frontmatter thì khác — bản mẫu bỏ `delivery` và `metadata` vốn là của riêng
