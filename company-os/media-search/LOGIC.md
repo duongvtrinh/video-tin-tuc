@@ -190,3 +190,8 @@ Luật này là nơi chuẩn cho ranh giới AI; các skill chỉ trỏ tới đ
   bắt buộc, video ưu tiên thời lượng gần voice part.
 - Điều chỉnh tối 29/10/2026 (lệnh CEO, chất lượng tạo ảnh AI của Muse quá tệ): nhánh phái sinh đổi từ "tạo ảnh AI mới tương tự" sang "AI chỉ xóa chữ/watermark, giữ nguyên ảnh gốc"; kết quả vẫn là ảnh gốc nên mang cùng trạng thái bản quyền như ảnh dùng thẳng, thuộc quyết định chịu rủi ro của CEO (có khiếu nại thì gỡ/thay ngay). [ĐÃ BÃI BỎ — vế "chủ thể riêng tư vẫn không được giữ nguyên mà dùng AI từ prompt minh họa chung chung": vế này đã bị lần điều chỉnh thứ hai cùng tối 29/10/2026 (bullet cuối mục này) bãi bỏ; không áp cho video mới.]
 - Điều chỉnh tối 29/10/2026 (lệnh CEO, lần 2, bãi bỏ ranh giới loại trừ cá nhân riêng tư giữ lại trước đó cùng buổi tối): ảnh của cá nhân riêng tư cũng giữ nguyên như mọi ảnh khác — chỉ xóa chữ/watermark nếu có; ảnh tìm được có tỷ lệ khác thì tự cắt về đúng tỷ lệ cần dùng (720x1280 dọc 9:16), khi cắt phải focus đúng chủ thể chính của cảnh, soi lại sau khi cắt; quy tắc chung chung chỉ còn áp dụng cho ảnh AI từ prompt, không áp dụng cho ảnh thật tìm được.
+
+
+## Nguồn credential cho API stock (quyết CEO 11/11/2026)
+
+`search_media.py` lấy key Pixabay/Pexels theo thứ tự: (1) biến môi trường `PIXABAY_API_KEY` / `PEXELS_API_KEY` nếu có; (2) không có thì đi đường Secure Vault qua helper của connector `custom.pixabay` / `custom.pexels` (nguồn báo là `pixabay (vault)` / `pexels (vault)`). **Chuẩn vận hành chính thức của công ty là đường vault** — không đặt key qua biến môi trường trong vận hành thật; env chỉ dùng tạm khi gỡ lỗi và phải gỡ ngay sau đó, vì env thắng thầm lặng trước vault và làm mọi kiểm tra phía vault báo bình thường trong khi key thật đang dùng là key env.
