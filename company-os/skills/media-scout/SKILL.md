@@ -8,9 +8,9 @@
 
 ## Cửa chặn hạn mức tuần — công ty tạm dừng (quyết CEO 09/11/2026, DEC-202)
 
-- Đầu mỗi ca, đọc TASKS.L QUOTA mới nhất của chi nhánh: nếu token tuần đã đạt trên 95% thì công ty tạm thời dừng hoạt động — Scout KHÔNG quét, KHÔNG chấm, KHÔNG ghi chủ đề mới trong ca đó (ca dừng hẳn, không phải ca trống), KHÔNG báo cáo ca. Token thêm là khoản dự phòng cho việc khác, không dùng để sản xuất video (DEC-201). Ngoại lệ: cron coo-scan-0600 và bot-hoc-hoi-2000 không thuộc diện dừng (DEC-202).
+- Đầu mỗi ca, đọc dòng điểm danh mới nhất của chính chi nhánh mình tại tab COO_CHECKIN (dòng có ASSIGNEE_EMAIL = email khai báo của tài khoản này; lấy % tuần đã dùng dạng số trong cột TOKENS_LEFT — nguồn chuẩn duy nhất cho cửa chặn theo quyết CEO 11/11/2026; TASKS.L QUOTA chỉ là hồ sơ lúc bàn giao, không dùng để quyết chặn): nếu token tuần đã đạt trên 95% thì công ty tạm thời dừng hoạt động — Scout KHÔNG quét, KHÔNG chấm, KHÔNG ghi chủ đề mới trong ca đó (ca dừng hẳn, không phải ca trống), KHÔNG báo cáo ca. Token thêm là khoản dự phòng cho việc khác, không dùng để sản xuất video (DEC-201). Ngoại lệ: cron coo-scan-0600 và bot-hoc-hoi-2000 không thuộc diện dừng (DEC-202).
 - Cửa chặn này là tạm thời: khi hạn mức tuần được reset thì công ty hoạt động trở lại bình thường — ca sau reset chạy lại như thường, không cần lệnh mở lại.
-- Nếu không đọc được quota thì ghi "không đọc được" vào báo cáo ca và vẫn quét tiếp.
+- Nếu không có dòng điểm danh nào của chi nhánh hoặc không đọc được % trong TOKENS_LEFT thì ghi "không đọc được" vào báo cáo ca và vẫn quét tiếp.
 
 ## Sheet mới — TOPICS (A–M)
 
