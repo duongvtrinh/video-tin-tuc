@@ -1,6 +1,6 @@
 # Cài bộ lịch mẫu (scheduled tasks) cho tài khoản Muse mới
 
-Bộ lịch mẫu của công ty: 10 lịch chạy thật (xem bảng dưới). File này + thư mục
+Bộ lịch mẫu của công ty: 4 lịch chạy thật (xem bảng dưới). Từ 11/11/2026, Scout và Sản xuất chỉ chạy 1 ca 06:00/ngày (trước đây mỗi loại 4 ca/ngày). File này + thư mục
 `company-os/crons/daily/` là **bản mẫu dùng chung**, nằm trong repo để mọi chi nhánh
 (tài khoản Muse) đều cài được cùng một chuẩn. Cấu hình lịch đang chạy là của từng
 tài khoản, không tự sinh ra khi clone repo.
@@ -10,25 +10,19 @@ tài khoản, không tự sinh ra khi clone repo.
 - **Mặc định KHÔNG tạo lịch nào** khi clone repo xong (BOOTSTRAP §1.7 — chỉ tạo
   khi CEO duyệt riêng).
 - CEO nói **"cài bộ lịch mẫu"** (một lần duyệt cho cả bộ, hoặc duyệt riêng từng
-  lịch) thì agent của tài khoản mới tạo 10 lịch bằng `cron.add` theo đúng các
+  lịch) thì agent của tài khoản mới tạo 4 lịch bằng `cron.add` theo đúng các
   file mẫu dưới đây. Không tự cài khi chưa có lệnh CEO.
 - Sau khi cài, CEO đổi giờ chạy / tên lịch / nội dung qua chat chính, agent sửa
   bằng `cron.update` (ghi lại toàn bộ body đã sửa). **Sửa file `.md` trong
   `company-os/crons/` hay trong thư mục crons của tài khoản KHÔNG đổi được lịch
   đang chạy** — các file đó chỉ là bản sao/bản mẫu.
 
-## Bảng 10 lịch mẫu
+## Bảng 4 lịch mẫu
 
 | ID | Giờ chạy (+07) | Việc chính |
 | --- | --- | --- |
 | scout-scan-0600 | 06:00 hàng ngày | Scout quét chủ đề + chấm điểm ngay trong cùng lượt quét |
-| scout-scan-1000 | 10:00 hàng ngày | Scout quét chủ đề + chấm điểm |
-| scout-scan-1400 | 14:00 hàng ngày | Scout quét chủ đề + chấm điểm |
-| scout-scan-1800 | 18:00 hàng ngày | Scout quét chủ đề + chấm điểm |
-| prod-pipeline-0600 | 06:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY (tối đa 12 claim/ngày), sản xuất tuần tự Production → QA → Drive |
-| prod-pipeline-1000 | 10:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY, sản xuất tuần tự |
-| prod-pipeline-1400 | 14:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY, sản xuất tuần tự |
-| prod-pipeline-1800 | 18:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY, sản xuất tuần tự |
+| prod-pipeline-0600 | 06:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY (tối đa 3 claim/ngày — 1 ca duy nhất), sản xuất tuần tự Production → QA → Drive |
 | bot-hoc-hoi-2000 | 20:00 hàng ngày | Học-hỏi: rút bài học từ lỗi lặp lại có bằng chứng, cải tiến template/skill/SOP (đổi chuẩn thì chỉ đề xuất để CEO quyết) |
 | coo-scan-0600 | 06:00 hàng ngày | COO điểm danh tại tab COO_CHECKIN (Bước 0) rồi quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng, không thông báo |
 
@@ -48,7 +42,7 @@ Với mỗi file mẫu trong `company-os/crons/daily/<id>.md`:
    không hardcode trong body, agent đọc từ MEMORY.md). Copy nguyên văn file mẫu
    mà chưa thay placeholder thì lịch sẽ gọi nhầm phòng của chi nhánh khác (hoặc
    gọi lỗi) — không được tạo khi còn placeholder.
-5. Kiểm tra lại bằng `cron.view` (đọc lại body) và `cron.list` (đủ 10 lịch, đều
+5. Kiểm tra lại bằng `cron.view` (đọc lại body) và `cron.list` (đủ 4 lịch, đều
    enabled).
 
 ## Những chỗ phải thay trước khi tạo (theo tài khoản mới)
@@ -60,8 +54,8 @@ phòng của chi nhánh khác (hoặc gọi lỗi).
 
 | Trong file mẫu | Thay bằng gì ở tài khoản mới |
 | --- | --- |
-| Trong file mẫu là `{{CHAT_ID_SCOUT_BAO}}` và `{{CHAT_ID_SCOUT_GROUP}}` (4 file scout-scan-*) | ID chat Scout - Báo / Scout - Group của tài khoản mới (xem bằng `chat.list`) |
-| Trong file mẫu là `{{CHAT_ID_SAN_XUAT}}`, `{{CHAT_ID_QA}}` và `{{CHAT_ID_COO}}` (4 file prod-pipeline-*) | ID chat Sản xuất / Kỹ thuật QA / COO của tài khoản mới (xem bằng `chat.list`) |
+| Trong file mẫu là `{{CHAT_ID_SCOUT_BAO}}` và `{{CHAT_ID_SCOUT_GROUP}}` (file scout-scan-0600) | ID chat Scout - Báo / Scout - Group của tài khoản mới (xem bằng `chat.list`) |
+| Trong file mẫu là `{{CHAT_ID_SAN_XUAT}}`, `{{CHAT_ID_QA}}` và `{{CHAT_ID_COO}}` (file prod-pipeline-0600) | ID chat Sản xuất / Kỹ thuật QA / COO của tài khoản mới (xem bằng `chat.list`) |
 | `owner: goal:vieneu-media-company-bootstrap` | Goal bootstrap của chính tài khoản mới (cùng slug nếu tài khoản đó theo đúng chuẩn này) |
 | `delivery` (chat COO) | Chat COO của tài khoản mới (lấy ID qua `chat.list`, KHÔNG copy UUID 2e9f544b-1dad-420a-a1b4-ed9463cc89d9 của chi nhánh này) |
 
@@ -76,7 +70,7 @@ mình; cấm đoán, cấm dùng email Drive/GitHub/Facebook thay thế.
 
 - **Body trong file mẫu phải giống hệt body của lịch đang chạy, trừ 5 placeholder
   ID chat phòng** (xem bảng trên): khi diff, chỉ các dòng chứa placeholder ở mỗi
-  file scout-scan-*/prod-pipeline-* được phép khác; mọi dòng khác phải giống hệt.
+  file scout-scan-0600/prod-pipeline-0600 được phép khác; mọi dòng khác phải giống hệt.
   Frontmatter thì khác — bản mẫu bỏ `delivery` và `metadata` vốn là của riêng
   từng tài khoản.
 - Mỗi khi sửa body một lịch đang chạy bằng `cron.update` (vd các đợt L7/L10/L13
