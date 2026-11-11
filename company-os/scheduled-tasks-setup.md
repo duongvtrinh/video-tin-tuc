@@ -1,6 +1,6 @@
 # Cài bộ lịch mẫu (scheduled tasks) cho tài khoản Muse mới
 
-Bộ lịch mẫu của công ty: 4 lịch chạy thật (xem bảng dưới). Từ 11/11/2026, Scout và Sản xuất chỉ chạy 1 ca 06:00/ngày (trước đây mỗi loại 4 ca/ngày). File này + thư mục
+Bộ lịch mẫu của công ty: 4 lịch chạy thật (xem bảng dưới). Scout và Sản xuất chạy ca 06:00 hàng ngày. File này + thư mục
 `company-os/crons/daily/` là **bản mẫu dùng chung**, nằm trong repo để mọi chi nhánh
 (tài khoản Muse) đều cài được cùng một chuẩn. Cấu hình lịch đang chạy là của từng
 tài khoản, không tự sinh ra khi clone repo.
@@ -22,7 +22,7 @@ tài khoản, không tự sinh ra khi clone repo.
 | ID | Giờ chạy (+07) | Việc chính |
 | --- | --- | --- |
 | scout-scan-0600 | 06:00 hàng ngày | Scout quét chủ đề + chấm điểm ngay trong cùng lượt quét |
-| prod-pipeline-0600 | 06:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY (tối đa 3 claim/ngày — 1 ca duy nhất), sản xuất tuần tự Production → QA → Drive |
+| prod-pipeline-0600 | 06:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY, sản xuất tuần tự Production → QA → Drive |
 | bot-hoc-hoi-2000 | 20:00 hàng ngày | Học-hỏi: rút bài học từ lỗi lặp lại có bằng chứng, cải tiến template/skill/SOP (đổi chuẩn thì chỉ đề xuất để CEO quyết) |
 | coo-scan-0600 | 06:00 hàng ngày | COO điểm danh tại tab COO_CHECKIN (Bước 0) rồi quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng, không thông báo |
 
