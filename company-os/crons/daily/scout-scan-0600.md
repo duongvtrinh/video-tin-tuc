@@ -10,7 +10,7 @@ schedule:
 timeout_secs: 7200
 owner: goal:vieneu-media-company-bootstrap
 ---
-Ca quét chủ đề theo lịch Scout mới (quyết CEO 07/11/2026 — C2, C3; ID do CEO nhập, phương án E cho R4-04): 06:00 Asia/Saigon mỗi ngày, cùng các ca 10:00, 14:00, 18:00 — tổng 4 ca/ngày. Workbook mới "Video HQ — Trụ sở Muse" (spreadsheet 1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE). Workbook cũ CHỈ ĐỌC (xem spec).
+Ca quét chủ đề theo lịch Scout mới (quyết CEO 07/11/2026 — C2, C3; ID do CEO nhập, phương án E cho R4-04): 06:00 Asia/Saigon mỗi ngày — ca Scout duy nhất trong ngày (quyết CEO 11/11/2026: đổi từ 4 ca/ngày 06:00/10:00/14:00/18:00 xuống 1 ca/ngày). Workbook mới "Video HQ — Trụ sở Muse" (spreadsheet 1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE). Workbook cũ CHỈ ĐỌC (xem spec).
 
 Tab/cột mới — tham chiếu bằng TOPIC_ID khi đã có; chủ đề chưa có ID thì tham chiếu tạm bằng tiêu đề, không bao giờ bằng số dòng (R1):
 - TOPICS (13 cột A–M; cột N APPROVED_AT đã bỏ theo quyết CEO 07/11/2026, R4-20 phương án B): A TOPIC_ID (khoá — ĐỂ TRỐNG khi ghi mới; CEO nhập khi duyệt/lật READY), B TITLE, C SOURCE, D DISCOVERED, E–I điểm (HOT 30 / AUDIENCE 20 / FRESH 20 / FEASIBLE 15 / SOURCED 15), J TOTAL, K STATUS (dropdown: NEW / APPROVED / READY / HOLD / REJECTED / DUPLICATE), L ANGLE, M NOTES.
