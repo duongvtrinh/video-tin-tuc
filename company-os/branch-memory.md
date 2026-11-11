@@ -8,7 +8,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 - Đây là **bản tóm tắt đã đúc kết**, không thay thế tài liệu chuẩn. Luật đầy
   đủ nằm ở `BOOTSTRAP.md`, `company-os/google-sheet-spec.md`,
   `company-os/bot-sop.md`, 4 skill trong `company-os/skills/` (Production,
-  QA, Scout, COO) và body 10 lịch cron trong `company-os/crons/daily/`.
+  QA, Scout, COO) và body 4 lịch cron trong `company-os/crons/daily/`.
   Khi hai bên lệch nhau, tài liệu chuẩn thắng; khi luật đổi, cập nhật file
   này trong cùng lần đổi.
 - Lịch sử quyết định đầy đủ nằm ở tab **DECISIONS** trong workbook dùng
@@ -121,12 +121,12 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 
 ## 5. Pipeline — nhận theo lô
 
-- Scout và Pipeline mỗi bên 4 ca/ngày lúc 06:00 / 10:00 / 14:00 / 18:00
-  Asia/Saigon.
+- Scout và Pipeline mỗi bên 1 ca/ngày lúc 06:00 Asia/Saigon (quyết CEO
+  11/11/2026 — trước đây mỗi bên 4 ca/ngày lúc 06:00 / 10:00 / 14:00 / 18:00).
 - Mỗi ca pipeline NHẬN 1 LẦN tối đa **3 chủ đề READY mới** theo thứ tự
   Sheet, đánh dấu ngay bằng dòng TASKS STATUS=CLAIMED (ASSIGNEE = email
   khai báo của chi nhánh mình), rồi lần lượt tạo và bàn giao từng video
-  trong lô (sản xuất tuần tự, không song song). Tối đa 12 claim/ngày.
+  trong lô (sản xuất tuần tự, không song song). Tối đa 3 claim/ngày (1 ca duy nhất).
   Lịch sử trần: 5 (DEC-078/T3-B) → 4 (DEC-102, 08/11/2026 11:18) → 3
   (DEC-199, 09/11/2026, hiệu lực từ ca 06:00 09/11/2026). Luật đổi trần
   không hồi tố (DEC-116): trần mới chỉ áp cho ca claim sau thời điểm đổi;
@@ -410,14 +410,13 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 - CEO_REPORTS 9 cột A–I: G = CEO_REPLY, H = APPLIED_BY, I = DATE (mục 8).
 - Múi giờ workbook: Asia/Saigon. Mọi dropdown strict.
 
-## 13. Lịch bot (10 lịch công ty)
+## 13. Lịch bot (4 lịch công ty)
 
-- 4 Scout (06:00/10:00/14:00/18:00) + 4 Pipeline (06:00/10:00/14:00/
-  18:00) + hoc-hoi 20:00 (chỉ đọc Sheet, cải tiến repo ở local, không
+- 1 Scout (06:00) + 1 Pipeline (06:00) + hoc-hoi 20:00 (chỉ đọc Sheet, cải tiến repo ở local, không
   push) + coo-scan 06:00 (mục 8). Tất cả daily, múi giờ Asia/Saigon, báo
   cáo về chat COO (delivery về chat COO).
-- ID lịch: prod-pipeline-0600/1000/1400/1800, scout-scan-0600/1000/1400/
-  1800, coo-scan-0600, bot-hoc-hoi-2000; owner goal:
+- ID lịch: prod-pipeline-0600, scout-scan-0600, coo-scan-0600,
+  bot-hoc-hoi-2000; owner goal:
   vieneu-media-company-bootstrap.
 - Bộ mẫu trong `company-os/crons/daily/` + hướng dẫn
   `company-os/scheduled-tasks-setup.md`: body mẫu giống body lịch đang chạy
@@ -505,7 +504,7 @@ xác định" và dừng đúng bước cần nó, không đoán.
 5. Cấp phép toàn quyền cho QA (để QA hoàn tất bàn giao Drive mà không hỏi
    lại trong chat; thẻ hệ thống vẫn hiện mỗi lần upload và cần bấm trong
    30 phút).
-6. Lịch bot (10 lịch mục 13 — chỉ cài khi CEO nói "cài bộ lịch mẫu").
+6. Lịch bot (4 lịch mục 13 — chỉ cài khi CEO nói "cài bộ lịch mẫu").
 7. Facebook (chỉ khi công ty có nhu cầu — tài khoản/mục đích do CEO nói).
 8. Ngưỡng inline voice — ĐÃ QUYẾT: 10.000.000 byte (file trên 10 MB đi
    đường chunked download; chỉ thông báo, không hỏi). Đã kiểm chứng 09/11/2026: code getMediaUrl = 10.000.000 byte, khớp quyết định.
