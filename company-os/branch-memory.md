@@ -121,12 +121,11 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 
 ## 5. Pipeline — nhận theo lô
 
-- Scout và Pipeline mỗi bên 1 ca/ngày lúc 06:00 Asia/Saigon (quyết CEO
-  11/11/2026 — trước đây mỗi bên 4 ca/ngày lúc 06:00 / 10:00 / 14:00 / 18:00).
+- Scout và Pipeline chạy lúc 06:00 Asia/Saigon hàng ngày.
 - Mỗi ca pipeline NHẬN 1 LẦN tối đa **3 chủ đề READY mới** theo thứ tự
   Sheet, đánh dấu ngay bằng dòng TASKS STATUS=CLAIMED (ASSIGNEE = email
   khai báo của chi nhánh mình), rồi lần lượt tạo và bàn giao từng video
-  trong lô (sản xuất tuần tự, không song song). Tối đa 3 claim/ngày (1 ca duy nhất).
+  trong lô (sản xuất tuần tự, không song song).
   Lịch sử trần: 5 (DEC-078/T3-B) → 4 (DEC-102, 08/11/2026 11:18) → 3
   (DEC-199, 09/11/2026, hiệu lực từ ca 06:00 09/11/2026). Luật đổi trần
   không hồi tố (DEC-116): trần mới chỉ áp cho ca claim sau thời điểm đổi;
@@ -151,8 +150,8 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
   là ngày trước ngày hôm nay để COO quyết giữ/bỏ từng video; giữ thì phòng
   cập nhật J sang ngày hôm nay khi chạm vào ("nhận lại"), bỏ thì COO ghi
   CANCELLED.
-- **Cửa chặn hạn mức (DEC-156, sửa theo DEC-201, mở rộng toàn công ty theo DEC-202):** đầu ca đọc TASKS.L QUOTA
-  mới nhất của chi nhánh — nếu token tuần đã đạt trên 95% thì claim 0 chủ
+- **Cửa chặn hạn mức (DEC-156, sửa theo DEC-201, mở rộng toàn công ty theo DEC-202):** đầu ca đọc dòng điểm danh COO_CHECKIN mới nhất
+  của chi nhánh (TOKENS_LEFT, % tuần đã dùng dạng số — nguồn chuẩn duy nhất cho cửa chặn theo quyết CEO 11/11/2026) — nếu token tuần đã đạt trên 95% thì claim 0 chủ
   đề READY mới trong ca đó (chặn tạo video mới, không cần báo cáo), chỉ để
   video đang làm dở hoàn thành; token thêm là khoản dự phòng cho việc khác,
   không dùng để sản xuất video; nếu không đọc được quota thì ghi "không
@@ -230,7 +229,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 - Scout KHÔNG BAO GIỜ ghi READY. TOPIC_ID để trống khi ghi mới; khử trùng
   theo tiêu đề/sự kiện. Mỗi ca báo cáo về chat COO (ca trống cũng báo 1
   dòng).
-- **Cửa chặn hạn mức (DEC-202):** đầu ca đọc TASKS.L QUOTA mới nhất — nếu token tuần đã đạt trên 95% thì công ty tạm thời dừng hoạt động: Scout KHÔNG quét, KHÔNG chấm, KHÔNG ghi chủ đề mới trong ca đó (ca dừng hẳn, không phải ca trống), KHÔNG báo cáo ca. Khi hạn mức tuần được reset thì hoạt động trở lại bình thường, không cần lệnh mở lại. Không đọc được quota thì ghi "không đọc được" vào báo cáo ca và vẫn quét tiếp.
+- **Cửa chặn hạn mức (DEC-202):** đầu ca đọc dòng điểm danh COO_CHECKIN mới nhất (TOKENS_LEFT, % dạng số — nguồn chuẩn theo quyết CEO 11/11/2026) — nếu token tuần đã đạt trên 95% thì công ty tạm thời dừng hoạt động: Scout KHÔNG quét, KHÔNG chấm, KHÔNG ghi chủ đề mới trong ca đó (ca dừng hẳn, không phải ca trống), KHÔNG báo cáo ca. Khi hạn mức tuần được reset thì hoạt động trở lại bình thường, không cần lệnh mở lại. Không đọc được quota thì ghi "không đọc được" vào báo cáo ca và vẫn quét tiếp.
 - **Điểm chỉ là gợi ý, không can thiệp quyết định duyệt của CEO; nội dung
   chủ đề mới là yếu tố CEO dùng để quyết định duyệt. Chỉ trạng thái READY
   mới quyết định có sản xuất video hay không.**
@@ -412,17 +411,17 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 
 ## 13. Lịch bot (4 lịch công ty)
 
-- 1 Scout (06:00) + 1 Pipeline (06:00) + hoc-hoi 20:00 (chỉ đọc Sheet, cải tiến repo ở local, không
-  push) + coo-scan 06:00 (mục 8). Tất cả daily, múi giờ Asia/Saigon, báo
+- 1 Scout (06:00) + 1 Pipeline (06:00) + hoc-hoi 20:00 (đọc Sheet + improvement-log.md, xuất mục log ĐỀ XUẤT về chat COO; không tự sửa file chuẩn, không push — quyết CEO 11/11/2026) + coo-scan 06:00 (mục 8). Tất cả daily, múi giờ Asia/Saigon, báo
   cáo về chat COO (delivery về chat COO).
 - ID lịch: prod-pipeline-0600, scout-scan-0600, coo-scan-0600,
-  bot-hoc-hoi-2000; owner goal:
-  vieneu-media-company-bootstrap.
+  bot-hoc-hoi-2000.
+  Owner goal trong file mẫu (mặc định chung): vieneu-media-company-bootstrap.
+  Owner goal thật của chi nhánh này: vieneu-media-company-repo-setup — cả 4 lịch đang chạy đều thuộc goal này.
 - Bộ mẫu trong `company-os/crons/daily/` + hướng dẫn
   `company-os/scheduled-tasks-setup.md`: body mẫu giống body lịch đang chạy
-  trừ 4 placeholder `{{CHAT_ID_SCOUT_BAO}}`, `{{CHAT_ID_SCOUT_GROUP}}`,
-  `{{CHAT_ID_SAN_XUAT}}`, `{{CHAT_ID_QA}}`. **Không copy nguyên văn:**
-  thay 4 ID chat phòng theo tài khoản mới qua `chat.list`, kiểm tra trước
+  trừ 5 placeholder `{{CHAT_ID_SCOUT_BAO}}`, `{{CHAT_ID_SCOUT_GROUP}}`,
+  `{{CHAT_ID_SAN_XUAT}}`, `{{CHAT_ID_QA}}`, `{{CHAT_ID_COO}}`. **Không copy nguyên văn:**
+  thay 5 ID chat phòng theo tài khoản mới qua `chat.list`, kiểm tra trước
   khi tạo (grep `{{` = 0, grep UUID/@vuachim = 0). Không tự cài lịch khi
   clone — chỉ cài khi CEO nói "cài bộ lịch mẫu".
 - Sửa lịch chỉ qua `cron.update` (body đầy đủ đã sửa); file `.md` dưới
