@@ -1,6 +1,6 @@
 # Cài bộ lịch mẫu (scheduled tasks) cho tài khoản Muse mới
 
-Bộ lịch mẫu của công ty: 4 lịch chạy thật (xem bảng dưới). Scout và Sản xuất chạy ca 06:00 hàng ngày. File này + thư mục
+Bộ lịch mẫu của công ty: 5 lịch chạy thật (xem bảng dưới). Scout chạy ca 06:00 hàng ngày; COO chạy ca 03:00 hàng ngày (dời từ 06:00 theo quyết CEO 13/11/2026, DEC-262); Sản xuất (pipeline) chạy 2 ca/ngày: 05:00 và 14:00 (mỗi ca đăng ký ở Bước 0 rồi nhận ca ở Bước 4, lệch 5 phút — gộp chung 1 lịch/ca theo quyết CEO 13/11/2026, DEC-259/DEC-260/DEC-261). File này + thư mục
 `company-os/crons/daily/` là **bản mẫu dùng chung**, nằm trong repo để mọi chi nhánh
 (tài khoản Muse) đều cài được cùng một chuẩn. Cấu hình lịch đang chạy là của từng
 tài khoản, không tự sinh ra khi clone repo.
@@ -10,21 +10,23 @@ tài khoản, không tự sinh ra khi clone repo.
 - **Mặc định KHÔNG tạo lịch nào** khi clone repo xong (BOOTSTRAP §1.7 — chỉ tạo
   khi CEO duyệt riêng).
 - CEO nói **"cài bộ lịch mẫu"** (một lần duyệt cho cả bộ, hoặc duyệt riêng từng
-  lịch) thì agent của tài khoản mới tạo 4 lịch bằng `cron.add` theo đúng các
+  lịch) thì agent của tài khoản mới tạo 5 lịch bằng `cron.add` theo đúng các
   file mẫu dưới đây. Không tự cài khi chưa có lệnh CEO.
 - Sau khi cài, CEO đổi giờ chạy / tên lịch / nội dung qua chat chính, agent sửa
   bằng `cron.update` (ghi lại toàn bộ body đã sửa). **Sửa file `.md` trong
   `company-os/crons/` hay trong thư mục crons của tài khoản KHÔNG đổi được lịch
   đang chạy** — các file đó chỉ là bản sao/bản mẫu.
+- **Quy tắc nhân bản ca sản xuất (lệnh CEO 13/11/2026, DEC-259 — thay DEC-258):** khi thêm ca sản xuất mới trong ngày, mỗi ca chỉ cần 1 lịch: prod-pipeline-HHMM chạy lúc T (Bước 0 đăng ký ca lúc T, Bước 4 nhận ca lúc T+5; lệch 5 phút giữ nguyên dưới dạng chờ bên trong lịch). **Không phân biệt ca chính/ca phụ — mọi ca dùng cùng một mẫu.** Ca hiện tại: 2 ca/ngày — prod-pipeline-0500 chạy 05:00 (Bước 0 đăng ký ca 05:00, Bước 4 nhận ca 05:05) + prod-pipeline-1400 chạy 14:00 (Bước 0 đăng ký ca 14:00, Bước 4 nhận ca 14:05). coo-scan (điểm danh + quét COO_TASKS) không tham gia đăng ký ca ở bất kỳ ca nào. Khi nhân bản, phải cập nhật luật khớp ca trong skill Production + body pipeline + spec SHIFT_CHECKIN (hạng/lô/ký nhận/đóng cửa tính theo dòng đăng ký CỦA CA ĐÓ — dòng đăng ký gần nhất trước giờ nhận ca, cột D còn trống; với 2 ca/ngày, khớp theo cửa sổ ca — REG_TIME < 12:00 cho ca sáng, ≥ 12:00 cho ca chiều; đóng cửa chỉ clear các dòng của ca đó) và ghi DEC.
 
-## Bảng 4 lịch mẫu
+## Bảng 5 lịch mẫu
 
 | ID | Giờ chạy (+07) | Việc chính |
 | --- | --- | --- |
 | scout-scan-0600 | 06:00 hàng ngày | Scout quét chủ đề + chấm điểm ngay trong cùng lượt quét |
-| prod-pipeline-0600 | 06:00 hàng ngày | Pipeline nhận lô tối đa 3 chủ đề READY, sản xuất tuần tự Production → QA → Drive |
+| prod-pipeline-0500 | 05:00 hàng ngày | Pipeline ca đầu ngày: đăng ký ca 05:00 (Bước 0) rồi nhận ca 05:05 (Bước 4), nhận lô tối đa 3 chủ đề READY theo thứ tự đăng ký ca (tab SHIFT_CHECKIN), sản xuất tuần tự Production → QA → Drive |
+| prod-pipeline-1400 | 14:00 hàng ngày | Pipeline ca chiều: đăng ký ca 14:00 (Bước 0) rồi nhận ca 14:05 (Bước 4), nhận lô tối đa 3 chủ đề READY theo thứ tự đăng ký ca trong cửa sổ chiều (REG_TIME ≥ 12:00), sản xuất tuần tự Production → QA → Drive |
 | bot-hoc-hoi-2000 | 20:00 hàng ngày | Học-hỏi: rút bài học từ lỗi lặp lại có bằng chứng, cải tiến template/skill/SOP (đổi chuẩn thì chỉ đề xuất để CEO quyết) |
-| coo-scan-0600 | 06:00 hàng ngày | COO điểm danh tại tab COO_CHECKIN (Bước 0) rồi quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng, không thông báo |
+| coo-scan-0300 | 03:00 hàng ngày | COO điểm danh tại tab COO_CHECKIN (Bước 0), rồi quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng, không thông báo |
 
 ## Cách tạo từng lịch (agent làm)
 
@@ -42,7 +44,7 @@ Với mỗi file mẫu trong `company-os/crons/daily/<id>.md`:
    không hardcode trong body, agent đọc từ MEMORY.md). Copy nguyên văn file mẫu
    mà chưa thay placeholder thì lịch sẽ gọi nhầm phòng của chi nhánh khác (hoặc
    gọi lỗi) — không được tạo khi còn placeholder.
-5. Kiểm tra lại bằng `cron.view` (đọc lại body) và `cron.list` (đủ 4 lịch, đều
+5. Kiểm tra lại bằng `cron.view` (đọc lại body) và `cron.list` (đủ 5 lịch, đều
    enabled).
 
 ## Những chỗ phải thay trước khi tạo (theo tài khoản mới)
@@ -55,7 +57,7 @@ phòng của chi nhánh khác (hoặc gọi lỗi).
 | Trong file mẫu | Thay bằng gì ở tài khoản mới |
 | --- | --- |
 | Trong file mẫu là `{{CHAT_ID_SCOUT_BAO}}` và `{{CHAT_ID_SCOUT_GROUP}}` (file scout-scan-0600) | ID chat Scout - Báo / Scout - Group của tài khoản mới (xem bằng `chat.list`) |
-| Trong file mẫu là `{{CHAT_ID_SAN_XUAT}}`, `{{CHAT_ID_QA}}` và `{{CHAT_ID_COO}}` (file prod-pipeline-0600) | ID chat Sản xuất / Kỹ thuật QA / COO của tài khoản mới (xem bằng `chat.list`) |
+| Trong file mẫu là `{{CHAT_ID_SAN_XUAT}}`, `{{CHAT_ID_QA}}` và `{{CHAT_ID_COO}}` (file prod-pipeline-0500 / prod-pipeline-1400) | ID chat Sản xuất / Kỹ thuật QA / COO của tài khoản mới (xem bằng `chat.list`) |
 | `owner: goal:vieneu-media-company-bootstrap` | Goal bootstrap của chính tài khoản mới (cùng slug nếu tài khoản đó theo đúng chuẩn này) |
 | `delivery` (chat COO) | Chat COO của tài khoản mới (lấy ID qua `chat.list`, KHÔNG copy UUID 2e9f544b-1dad-420a-a1b4-ed9463cc89d9 của chi nhánh này) |
 
@@ -70,7 +72,7 @@ mình; cấm đoán, cấm dùng email Drive/GitHub/Facebook thay thế.
 
 - **Body trong file mẫu phải giống hệt body của lịch đang chạy, trừ 5 placeholder
   ID chat phòng** (xem bảng trên): khi diff, chỉ các dòng chứa placeholder ở mỗi
-  file scout-scan-0600/prod-pipeline-0600 được phép khác; mọi dòng khác phải giống hệt.
+  file scout-scan-0600/prod-pipeline-0500/prod-pipeline-1400 được phép khác; mọi dòng khác phải giống hệt.
   Frontmatter thì khác — bản mẫu bỏ `delivery` và `metadata` vốn là của riêng
   từng tài khoản.
 - Mỗi khi sửa body một lịch đang chạy bằng `cron.update` (vd các đợt L7/L10/L13

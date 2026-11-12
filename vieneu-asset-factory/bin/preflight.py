@@ -17,13 +17,16 @@ với validate_project.py (cả hai: exit 1 khi và chỉ khi có lỗi chặn;
 cảnh báo không tính vào exit code):
 - CHẶN (exit 1): thiếu tts.json; part ID trùng (plan hoặc tts.json);
   part chưa có audio TTS / file audio không tồn tại / duration = 0;
-  scene chưa có ảnh scene (ảnh đại diện của scene, dùng làm fill-in); template không tồn
+  scene còn part chưa có ảnh/video riêng mà thiếu ảnh cảnh chung (luật CEO
+  12/11/2026: cảnh mà mọi part đã có ảnh/video thì KHÔNG cần ảnh cảnh chung);
+  ảnh cảnh chung hoặc part s1p1 (part đầu video) là nền trung tính
+  (12/11/2026); template không tồn
   tại / meta.json hỏng / inputs không phải dict; thiếu input bắt buộc
   của template; input template vượt maxLength (R4-41/DEC-049 — trước
   đây chỉ cảnh báo); BGM đã chọn nhưng file không tồn tại; SFX đã chọn
   nhưng file không tồn tại (A26, 05/11/2026); tổng thời lượng
-  audio = 0; scene thiếu nguồn media (mediaSource.source trống/thiếu)
-  hoặc thiếu nhật ký tìm ảnh (media-log.json không có, hoặc scene
+  audio = 0; scene (có ảnh cảnh chung) thiếu nguồn media (mediaSource.source
+  trống/thiếu) hoặc thiếu nhật ký tìm ảnh (media-log.json không có, hoặc scene
   không có mục nhật ký, hoặc keywordsTried trống/thiếu) — cửa chặn
   ảnh thật, lệnh CEO 05/11/2026 (lựa chọn A20). Scene chỉ có nền
   xanh rêu kẻ ô (không có mediaSource) cũng chặn ở đây, vì nền xanh
@@ -155,6 +158,28 @@ def _is_valid_video_broll(path) -> bool:
         return False
 
 
+def _part_own_file(build, pid, order, pi) -> bool:
+    """Part có ảnh/video riêng = có file b-roll riêng của part (mp4 hợp lệ
+    hoặc jpg/png/webp). Luật CEO 12/11/2026 (ảnh/video cho cảnh chung)."""
+    r6 = rand6(pid, "broll", str(order), str(pi))
+    d = build / "media" / "broll"
+    mp4 = d / f"broll_seg_{order}_part_{pi}_{r6}.mp4"
+    if mp4.exists() and _is_valid_video_broll(mp4):
+        return True
+    return any((d / f"broll_seg_{order}_part_{pi}_{r6}.{ext}").exists()
+               for ext in ("jpg", "png", "webp"))
+
+
+def _scene_needs_scene_image(build, pid, sc) -> bool:
+    """Luật CEO 12/11/2026: cảnh mà MỌI part đều có ảnh/video riêng (kể cả
+    cảnh chỉ có 1 part đã có ảnh/video) thì KHÔNG cần ảnh/video cho cảnh
+    chung — nó bị part che hoàn toàn. Cảnh còn ít nhất 1 part chưa có
+    ảnh/video riêng thì cần ảnh cảnh chung (part đó rơi về ảnh cảnh)."""
+    order = sc["order"]
+    return not all(_part_own_file(build, pid, order, pi)
+                   for pi, _p in enumerate(sc["parts"], start=1))
+
+
 def main() -> int:
     pid = sys.argv[1]
     proj = FACTORY / "projects" / pid
@@ -244,10 +269,18 @@ def main() -> int:
             # côi 20261028165436_213948 (ảnh lệch quy ước tên factory nên
             # render cũng không tìm thấy) là preflight sẽ báo lỗi — đúng
             # hành vi mong muốn, không phải false positive.
-            errors.append(f"Scene {order} chưa có ảnh scene (ảnh đại diện "
-                          f"của scene, dùng làm fill-in) — phải tạo ảnh "
-                          f"scene trước khi render (generateImages: job AI "
-                          f"hoặc card)")
+            # Luật CEO 12/11/2026: chỉ chặn khi cảnh còn part chưa có
+            # ảnh/video riêng (part đó rơi về ảnh cảnh chung). Cảnh mà mọi
+            # part đã có ảnh/video riêng không cần ảnh cảnh chung.
+            if _scene_needs_scene_image(build, pid, sc):
+                errors.append(f"Scene {order} còn part chưa có ảnh/video "
+                              f"riêng nhưng thiếu ảnh cảnh chung — luật "
+                              f"12/11/2026: cảnh có part không-ảnh thì lấy "
+                              f"1 ảnh/video của part đại diện làm ảnh cảnh "
+                              f"chung; cảnh không part nào có ảnh/video thì "
+                              f"phải tìm ảnh thật cho cảnh chung (không nền "
+                              f"đen, không nền trung tính); cảnh mà mọi part "
+                              f"đã có ảnh/video thì không cần")
         elif _PIL_OK:
             # B10 (05/11/2026, lệnh CEO, lựa chọn A): ảnh tồn tại chưa
             # đủ — phải giải mã được hết (PIL .load()). File cắt dở
@@ -745,6 +778,18 @@ def main() -> int:
                             _log_scenes[_e["sceneId"]] = _e
         for sc in plan["scenes"]:
             order = sc["order"]
+            # Luật CEO 12/11/2026: cảnh mọi part đã có ảnh/video riêng và
+            # không có ảnh cảnh chung thật (không file, hoặc chỉ là nền rêu
+            # giữ chỗ) thì không cần nguồn/nhật ký cấp cảnh — hồ sơ nằm ở
+            # dòng `parts` của media-log. Cảnh đã có ảnh cảnh chung thật
+            # vẫn phải đủ nguồn + nhật ký như cũ.
+            _has_simg0 = any(
+                (build / "media" / "images" /
+                 f"seg_{order}_{rand6(pid, 'img', str(order))}.{_x}").exists()
+                for _x in ("jpg", "png", "webp"))
+            if (not _scene_needs_scene_image(build, pid, sc)
+                    and (not _has_simg0 or sc.get("isMossGrid"))):
+                continue
             if sc.get("isMossGrid"):
                 errors.append(f"Scene {order} là nền xanh rêu kẻ ô vuông "
                               f"(isMossGrid=true) — chưa có ảnh thật/AI: nền "
@@ -976,6 +1021,55 @@ def main() -> int:
                     _neutral_parts.add(_pid4)
             except OSError:
                 continue
+        # Luật CEO 12/11/2026: (a) part s1p1 (part đầu tiên của scene đầu
+        # tiên) KHÔNG BAO GIỜ dùng ảnh/video trung tính — phải là ảnh/video
+        # thật đúng chủ đề (báo chí, mạng xã hội, Google ảnh); (b) ảnh/video
+        # cảnh chung KHÔNG BAO GIỜ là ảnh/video trung tính (trùng md5 với
+        # file thư viện neutral-bg/, hoặc nhật ký cảnh ghi 'trung-tinh').
+        try:
+            _first_pid = plan["scenes"][0]["parts"][0]["id"]
+        except (IndexError, KeyError, TypeError):
+            _first_pid = None
+        if _first_pid and _first_pid in _neutral_parts:
+            errors.append(f"Part {_first_pid} (part đầu tiên của video) dùng "
+                          f"ảnh/video trung tính — luật 12/11/2026 cấm: part "
+                          f"đầu phải là ảnh/video thật đúng chủ đề (báo chí, "
+                          f"mạng xã hội, Google ảnh), không lấy từ thư viện "
+                          f"neutral-bg/")
+
+        def _n9(_e):
+            if not isinstance(_e, dict):
+                return False
+            _t = []
+            for _k in ("classification", "note", "ghi_chu"):
+                if isinstance(_e.get(_k), str):
+                    _t.append(_e[_k])
+            _c = _e.get("chosen")
+            if isinstance(_c, dict):
+                for _k in ("classification", "note", "ghi_chu"):
+                    if isinstance(_c.get(_k), str):
+                        _t.append(_c[_k])
+            _j = " ".join(_t)
+            return "trung-tinh" in _j or "nền trung tính" in _j
+
+        for _sc9 in plan["scenes"]:
+            _o9 = _sc9["order"]
+            _simg9 = next((q for ext in ("jpg", "png", "webp")
+                           for q in [build / "media" / "images" /
+                                     f"seg_{_o9}_{rand6(pid, 'img', str(_o9))}.{ext}"]
+                           if q.exists()), None)
+            _neu9 = _n9(_log_scenes.get(_sc9.get("id")))
+            if _simg9 is not None and not _neu9 and _neutral_lib_md5s:
+                try:
+                    _neu9 = _file_md5(_simg9) in _neutral_lib_md5s
+                except OSError:
+                    _neu9 = False
+            if _neu9:
+                errors.append(f"Scene {_o9}: ảnh/video cảnh chung là nền "
+                              f"trung tính — luật 12/11/2026 cấm: ảnh cảnh "
+                              f"chung phải là ảnh thật đúng chủ đề (báo "
+                              f"chí, mạng xã hội, Google ảnh), không phải "
+                              f"nền thư viện neutral-bg/")
         for (_id1, _v1, _o1), (_id2, _v2, _o2) in zip(_resolved, _resolved[1:]):
             if _v1 is None or _v2 is None or _v1 != _v2:
                 continue

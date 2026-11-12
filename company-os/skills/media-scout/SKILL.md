@@ -1,16 +1,17 @@
 # Quét trend làm video (Sheet mới "Video HQ — Trụ sở Muse")
 
+> **Email khai báo của chi nhánh (bổ sung 12/11/2026, sau sự cố TOPIC-345):** email khai báo của chi nhánh là email đã lưu trong MEMORY.md của tài khoản này — dùng đúng email đó để tìm dòng điểm danh của chính chi nhánh mình ở tab COO_CHECKIN (ASSIGNEE_EMAIL) và mọi chỗ khác cần email chi nhánh. Nguồn chuẩn của giá trị này là MEMORY.md của tài khoản này (ghi chú này chỉ nhắc quy tắc, không ghi giá trị cụ thể). KHÔNG dùng email khác thấy trong Sheet: workbook dùng chung nhiều chi nhánh, các dòng mang email khác là của chi nhánh khác. Tiền lệ: 12/11 Production ghi nhầm email của chi nhánh khác vào TASKS dòng 127 (TOPIC-345) vì chỉ thấy các dòng của chi nhánh đó ở đầu tab TASKS — đã sửa lại đúng email.
+
 **Đã kích hoạt từ GĐ2 (07/11/2026, cắt hẳn sang Sheet mới). Thay thế skill media-scout cũ.**
 
 - Workbook mới: "Video HQ — Trụ sở Muse" (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`). Workbook cũ "HQ - Công ty 1 người — CŨ (chỉ đọc)" chỉ đọc, KHÔNG ghi.
 - Hai phòng Scout giữ tách riêng: Scout - Báo và Scout - Group, mỗi phòng quét nguồn của mình và TỰ CHẤM chủ đề của mình trong cùng lượt quét (quyết định CEO C3, 07/11/2026: gộp Scout + Scoring, ĐÓNG chat Scoring — không còn hàng đợi Pending Scoring, không nhắn Scoring nữa).
 - Tab duy nhất ghi vào: TOPICS. Không ghi vào tab nào khác.
 
-## Cửa chặn hạn mức tuần — công ty tạm dừng (quyết CEO 09/11/2026, DEC-202)
+## Cửa chặn hạn mức tuần — công ty tạm dừng (quyết CEO 09/11/2026, DEC-202; kiểm tra trực tiếp theo quyết CEO 13/11/2026, DEC-263)
 
-- Đầu mỗi ca, đọc dòng điểm danh mới nhất của chính chi nhánh mình tại tab COO_CHECKIN (dòng có ASSIGNEE_EMAIL = email khai báo của tài khoản này; lấy % tuần đã dùng dạng số trong cột TOKENS_LEFT — nguồn chuẩn duy nhất cho cửa chặn theo quyết CEO 11/11/2026; TASKS.L QUOTA chỉ là hồ sơ lúc bàn giao, không dùng để quyết chặn): nếu token tuần đã đạt trên 95% thì công ty tạm thời dừng hoạt động — Scout KHÔNG quét, KHÔNG chấm, KHÔNG ghi chủ đề mới trong ca đó (ca dừng hẳn, không phải ca trống), KHÔNG báo cáo ca. Token thêm là khoản dự phòng cho việc khác, không dùng để sản xuất video (DEC-201). Ngoại lệ: cron coo-scan-0600 và bot-hoc-hoi-2000 không thuộc diện dừng (DEC-202).
-- Cửa chặn này là tạm thời: khi hạn mức tuần được reset thì công ty hoạt động trở lại bình thường — ca sau reset chạy lại như thường, không cần lệnh mở lại.
-- Nếu không có dòng điểm danh nào của chi nhánh hoặc không đọc được % trong TOKENS_LEFT thì ghi "không đọc được" vào báo cáo ca và vẫn quét tiếp.
+- Đầu mỗi ca, chạy lệnh subscription-status status, đọc % tuần đã dùng trong dòng 'Usage: N% of ... weekly limit' (N = % hạn mức tuần đã dùng; token thêm còn lại xem dòng 'Additional tokens'): nếu N ≥ 95% thì công ty tạm thời dừng hoạt động — Scout KHÔNG quét, KHÔNG chấm, KHÔNG ghi chủ đề mới trong ca đó (ca dừng hẳn, không phải ca trống), KHÔNG báo cáo ca. Token thêm là khoản dự phòng cho việc khác, không dùng để sản xuất video (DEC-201). Nếu lệnh không đọc được N thì dùng số Sheet dự phòng: dòng điểm danh COO_CHECKIN mới nhất của chính chi nhánh mình (dòng có ASSIGNEE_EMAIL = email khai báo của tài khoản này; % trong cột TOKENS_LEFT), nếu không có thì TASKS.L QUOTA mới nhất (dòng DELIVERED gần nhất có L không trống). Ngoại lệ: cron coo-scan-0300 và bot-hoc-hoi-2000 không thuộc diện dừng (DEC-202).
+- Cửa chặn này là tạm thời: khi hạn mức tuần được reset thì công ty hoạt động trở lại bình thường — ca sau reset chạy lại như thường, không cần lệnh mở lại (số trực tiếp tự hạ sau reset, không cần chờ dòng Sheet mới).
 
 ## Sheet mới — TOPICS (A–M)
 
@@ -100,6 +101,8 @@
 - KHÔNG nhắn chat Scoring — chat đã đóng (C3). Chủ đề mới nằm trong TOPICS; COO xem trong báo cáo ca pipeline gần nhất.
 - Cuối ca LUÔN báo ngắn cho chat COO (kể cả ca trống): số chủ đề mới trong ca + danh sách tiêu đề và STATUS từng chủ đề (TOPIC_ID nếu đã có, vd chủ đề chấm lại; chủ đề mới ghi trong ca chưa có ID nên báo bằng tiêu đề). Ca trống (không có chủ đề mới) thì báo 1 dòng ngắn 'ca X: không có chủ đề mới' — KHÔNG im lặng. Ca 06:00 báo cáo NGAY lúc 06:00 (ngoại lệ khung proactivity 06:30–21:30 — quyết CEO 07/11/2026, R4-15 phương án A, DEC-020: COO cần biết kết quả ca đầu ngày để điều phối và báo cáo CEO qua CEO_REPORTS khi cần ra quyết định).
 - Giữ nguyên dòng đã ghi và không sửa điểm số hay kết quả chấm điểm (trừ trường hợp sửa có dữ kiện mới ở mục trên).
+- **Khi nhắc tới cửa quan tâm (trong báo cáo ca, NOTES, hoặc bàn giao), ghi đúng nguyên văn:** "Cửa quan tâm (lệnh CEO 29/10/2026): Hot + Khán giả ≥ 30/50, xét TRƯỚC tổng ≥ 70; tổng ≥ 70 nhưng quan tâm < 30 → Hold." KHÔNG viết "Khán giả ≥ 30/50" — Khán giả tối đa chỉ 20 điểm nên không thể tự nó ≥ 30. (Bổ sung chi nhánh live 12/11/2026 — ca học hỏi 11/11/2026: tin giao việc của Scout đã ghi sai cửa này ở các lô 191–196 (03/11), ca 15:00 06/11, ca 03:00 và 19:00 09/11, lô 339–344 (10/11) và lô 345–350 (11/11); Scoring đều đính chính và áp đúng luật nên chưa điểm nào sai. Chat Scoring nay đã đóng — Scout tự chấm trong cùng lượt, chỉ cần chép nguyên văn trên, không diễn đạt lại.)
+
 
 ## Available connectors
 
