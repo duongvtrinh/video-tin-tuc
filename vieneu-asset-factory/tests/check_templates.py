@@ -62,7 +62,7 @@ def placeholder(tid, msg):
 
 
 manifest = []
-templates = sorted(p for p in (FACTORY / "templates").iterdir() if p.is_dir())
+templates = sorted(p for p in (FACTORY / "templates").iterdir() if p.is_dir() and not p.name.startswith("_"))
 for tdir in templates:
     tid = tdir.name
     meta = json.loads((tdir / "meta.json").read_text(encoding="utf-8"))
@@ -109,7 +109,7 @@ for tdir in templates:
     png.unlink(missing_ok=True)
 
 # Contact sheets: 5 cols, tile 240 wide + 24px id header
-ids = [p.name for p in sorted((FACTORY / "templates").iterdir()) if p.is_dir()]
+ids = [p.name for p in sorted((FACTORY / "templates").iterdir()) if p.is_dir() and not p.name.startswith("_")]
 tiles = []
 for tid in ids:
     fr = Image.open(FRAMES / f"{tid}.jpg")

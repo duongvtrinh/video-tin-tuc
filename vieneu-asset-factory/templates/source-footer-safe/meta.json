@@ -1,31 +1,13 @@
 {
-  "schemaVersion": 1,
-  "id": "source-footer-safe",
-  "name": "Dòng nguồn an toàn lề phải",
-  "version": "1.4.0",
-  "mode": "overlay",
   "background": "transparent",
   "category": "source",
   "description": "Dòng nguồn cuối cảnh, đã sửa sau lỗi QA Hormuz 26/10/2026: footer cũ dài 629px ở cỡ 26px, cộng lề trái 96px thành 725px, vượt khung 720px và mất chữ 6 của 2026. Template này bắt buộc ngắt dòng nguồn thành tối đa 3 dòng ngắn, mỗi dòng đo trước không vượt 528px (khung 720 trừ lề trái/phải 96px), để lề phải luôn >=96px kể cả sau motion zoom 1.05 (cắt tối đa 34px). Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8).",
-  "whenToUse": [
-    "Ghi nguồn cuối mỗi cảnh video tin tức dọc 720x1280",
-    "Nguồn dài gồm nhiều báo, ngày tháng"
-  ],
-  "notFor": [
-    "Dòng nguồn một dòng dài không ngắt",
-    "Chữ nguồn vượt 528px ở cỡ chữ đã chọn"
-  ],
-  "supportedAspectRatios": [
-    "9:16"
-  ],
-  "safeZone": {
-    "x": 0.133,
-    "y": 0.109,
-    "width": 0.733,
-    "height": 0.8,
-    "avoidSubtitleBottomPercent": 24,
-    "avoidTopUiPercent": 10
+  "exampleInputs": {
+    "label": "Nguồn",
+    "text": "Arab News, Anadolu, Manila Times, Mathrubhumi — 25-26/10/2026"
   },
+  "hidesSubs": true,
+  "id": "source-footer-safe",
   "inputs": {
     "text": {
       "type": "string",
@@ -39,18 +21,54 @@
     },
     "accent": {
       "type": "enum",
-      "default": "gold"
+      "default": "gold",
+      "values": [
+        "gold",
+        "red",
+        "cyan",
+        "green",
+        "pink",
+        "purple",
+        "orange",
+        "white",
+        "violet"
+      ]
     },
     "position": {
       "type": "enum",
-      "default": "bottom"
+      "default": "bottom",
+      "values": [
+        "top",
+        "center",
+        "bottom",
+        "left",
+        "right"
+      ],
+      "noEffect": true
     }
   },
-  "exampleInputs": {
-    "label": "Nguồn",
-    "text": "Arab News, Anadolu, Manila Times, Mathrubhumi — 25-26/10/2026"
+  "mode": "overlay",
+  "name": "Dòng nguồn an toàn lề phải",
+  "neutralBgEligible": true,
+  "notFor": [
+    "Dòng nguồn một dòng dài không ngắt",
+    "Chữ nguồn vượt 528px ở cỡ chữ đã chọn"
+  ],
+  "placement": "subtitle-bottom",
+  "safeZone": {
+    "x": 0.133,
+    "y": 0.109,
+    "width": 0.733,
+    "height": 0.8,
+    "avoidSubtitleBottomPercent": 24,
+    "avoidTopUiPercent": 10
   },
+  "schemaVersion": 1,
+  "specVersion": 2,
   "status": "active",
+  "supportedAspectRatios": [
+    "9:16"
+  ],
   "tags": [
     "nguồn",
     "footer",
@@ -59,5 +77,9 @@
   "themes": [
     "general"
   ],
-  "hidesSubs": true
+  "version": "1.4.0",
+  "whenToUse": [
+    "Ghi nguồn cuối mỗi cảnh video tin tức dọc 720x1280",
+    "Nguồn dài gồm nhiều báo, ngày tháng"
+  ]
 }

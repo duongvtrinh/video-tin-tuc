@@ -1051,7 +1051,7 @@ def main() -> int:
                     # sau, riser 3.0s trên part móc lại 1.7s lấn ~1s. Cắt đuôi
                     # file theo cuối part, fade-out 0.05s tránh click ở điểm
                     # cắt; SFX bắt đầu sau cuối part thì bỏ luôn.
-                    _start = at + float(sfx.get("offsetSec", 0))
+                    _start = max(0.0, at + float(sfx.get("offsetSec", 0)))  # kẹp >=0: adelay âm làm ffmpeg lỗi (section-title offset -0.2 ở part đầu video, đã đo 11/11/2026)
                     _pend = pend.get(pidx)
                     if _pend is None:
                         render_report.append(
@@ -1089,7 +1089,7 @@ def main() -> int:
                     # nhau) thì mỗi dấu giữ tiếng riêng — không dedup.
                     # Dấu không có on (None) dedup như SFX part (hành vi
                     # cũ, an toàn).
-                    _key = (_sid, int((at + float(sfx.get("offsetSec", 0))) * 1000))
+                    _key = (_sid, int(max(0.0, at + float(sfx.get("offsetSec", 0))) * 1000))
                     _seen_on = _seen_sfx.get(_key)
                     if _seen_on is not None and (
                             None in _seen_on or _on is None or _on in _seen_on):
@@ -1101,7 +1101,7 @@ def main() -> int:
                     else:
                         _seen_on.add(_on)
                     sfx_events.append({"file": f,
-                                       "ms": int((at + float(sfx.get("offsetSec", 0))) * 1000),
+                                       "ms": int(max(0.0, at + float(sfx.get("offsetSec", 0))) * 1000),
                                        "dur": round(_dur, 3),
                                        "loop": "typing" in _sid,
                                        "vol": _vol})

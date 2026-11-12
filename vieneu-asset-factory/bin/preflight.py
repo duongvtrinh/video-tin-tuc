@@ -77,6 +77,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from filename import check_plan, img_decode_error, rand6  # noqa: E402
+import meta_check  # noqa: E402  (kiểm giá trị input theo meta: maxItems/enum/số/pattern/constraints)
 
 
 def _norm(s: str) -> str:
@@ -319,6 +320,15 @@ def main() -> int:
                         errors.append(
                             f"Part {p['id']}: SFX '{_sid}' không tồn tại "
                             f"({_sf.name} trong thư mục sfx) — render sẽ thiếu tiếng này")
+            # F11 (bước 2, 13/11/2026): SFX volume ngoài (0,1] là lỗi; SFX nặng
+            # (thud/slam/boom) > 0.4 bị mixer cắt thầm lặng về 0.4 -> cảnh báo.
+            _sfx_pf = br.get("sfx")
+            if isinstance(_sfx_pf, dict):
+                _vol = _sfx_pf.get("volume", 0.6)
+                if not isinstance(_vol, (int, float)) or not (0 < _vol <= 1):
+                    errors.append(f"Part {p['id']}: sfx.volume '{_vol}' phải trong (0,1]")
+                elif any(k in str(_sfx_pf.get("id")) for k in ("thud", "slam", "boom")) and _vol > 0.4:
+                    warnings.append(f"Part {p['id']}: sfx nặng {_sfx_pf.get('id')} volume {_vol} > 0.4 — mixer sẽ cắt về 0.4")
             # Sửa đợt B 01/11/2026 (chỉ warning): part khai b-roll video
             # nhưng không có file mp4 thì render rơi về ảnh scene lặng lẽ
             # (base_video trả None). Cảnh báo để Production biết trước,
@@ -403,17 +413,13 @@ def main() -> int:
                                     errors.append(
                                         f"Part {p['id']}: thiếu input bắt buộc "
                                         f"'{name}' của {br['templateId']}")
-                            # R4-41 (07/11/2026, DEC-049, phương án A):
-                            # input vượt maxLength thì FAIL — trước đây chỉ
-                            # warn với input bắt buộc, không kiểm input
-                            # tùy chọn; khớp validate_project.py:200.
-                            ml = idef.get("maxLength")
-                            if ml:
-                                _v = (br.get("inputs") or {}).get(name, "")
-                                if len(str(_v)) > ml:
-                                    errors.append(
-                                        f"Part {p['id']}: '{name}' dài "
-                                        f"{len(str(_v))}>{ml} ký tự")
+                            # 11/11/2026: dùng meta_check — maxLength của input danh sách
+                            # (items) tính MỖI DÒNG (trước đây tính cả khối nên ví dụ chuẩn của
+                            # checklist bị chặn oan), thêm maxItems, enum values, min/max, pattern.
+                            for _msg in meta_check.check_input_value(
+                                    name, idef, (br.get("inputs") or {}).get(name, "")):
+                                errors.append(
+                                    f"Part {p['id']}: {_msg} ({br['templateId']})")
                             # 06/11/2026 (photo-duo): input ảnh (meta
                             # type=image) phải trỏ tới file thật trong
                             # project — thiếu file thì template render ra
@@ -461,6 +467,9 @@ def main() -> int:
                                         errors.append(
                                             f"Part {p['id']}: '{_n}' dài "
                                             f"{len(str(_v))}>{_ml} ký tự")
+                    # 13/11/2026 (F2): ràng buộc meta (requiredWhen/sum) — vd share-bar tổng pct = 100.
+                    for _msg in meta_check.check_constraints(meta, br.get("inputs") or {}):
+                        errors.append(f"Part {p['id']}: {_msg} ({br['templateId']})")
                     # Sửa 29/10/2026 (code-fix, audit D-L6): render chỉ đọc
                     # SFX từ plan, không bao giờ đọc meta template. Nếu
                     # template gợi ý SFX mà plan chưa copy thì SFX đó mất

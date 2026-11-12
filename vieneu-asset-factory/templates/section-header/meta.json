@@ -10,6 +10,7 @@
     "subline": "9 tháng đầu năm, theo Cục Du lịch Quốc gia",
     "title": "KHÁCH QUỐC TẾ ĐẾN VIỆT NAM"
   },
+  "hidesSubs": true,
   "id": "section-header",
   "inputs": {
     "subline": {
@@ -25,6 +26,7 @@
   },
   "mode": "overlay",
   "name": "Tiêu đề cụm số liệu / Section header",
+  "neutralBgEligible": true,
   "notFor": [
     "Tiêu đề toàn cảnh (dùng section-title)",
     "Beat chỉ có một con số (dùng stat-counter)"
@@ -34,6 +36,7 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "bottom",
     "type": "enum"
@@ -44,6 +47,7 @@
     "offsetSec": 0,
     "volume": 0.6
   },
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "9:16",
@@ -64,6 +68,5 @@
   "whenToUse": [
     "Mở đầu một cụm số liệu trước khi thả các con số",
     "Chuyển sang một nhóm số liệu mới trong cùng video"
-  ],
-  "hidesSubs": true
+  ]
 }

@@ -1,0 +1,94 @@
+{
+  "background": "transparent",
+  "capability": [
+    "số liệu",
+    "xu hướng",
+    "tăng giảm"
+  ],
+  "category": "stat",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-11-12",
+      "note": "Tạo mới."
+    }
+  ],
+  "description": "Một mức thay đổi (%, điểm, giá) kèm mũi tên tăng ▲ / giảm ▼ / đi ngang — người xem hiểu hướng và độ lớn trong nửa giây. Màu theo hướng: tăng xanh lá #22C55E, giảm đỏ #EF4444, đi ngang vàng #FBBF24 (đúng quy ước bảng điện VN).",
+  "exampleInputs": {
+    "label": "VN-Index tuần này",
+    "value": "+3,2%",
+    "dir": "up",
+    "sub": "so với tuần trước"
+  },
+  "exampleVariants": {
+    "down": {
+      "label": "Giá cà phê",
+      "value": "-12,5%",
+      "dir": "down",
+      "sub": "sau 3 phiên liên tiếp"
+    }
+  },
+  "hidesSubs": true,
+  "id": "trend-badge",
+  "inputs": {
+    "label": {
+      "type": "string",
+      "maxLength": 28,
+      "required": true
+    },
+    "value": {
+      "type": "string",
+      "maxLength": 8,
+      "required": true
+    },
+    "dir": {
+      "type": "enum",
+      "values": [
+        "up",
+        "down",
+        "flat"
+      ],
+      "default": "up"
+    },
+    "sub": {
+      "type": "string",
+      "maxLength": 44
+    }
+  },
+  "maxStage": 1,
+  "mode": "overlay",
+  "name": "Huy hiệu xu hướng / Trend Badge",
+  "neutralBgEligible": true,
+  "notFor": [
+    "Con số tĩnh không có chiều thay đổi (dùng stat-counter)",
+    "Nhiều chỉ số cùng lúc (dùng market-ticker)",
+    "So sánh hai giá trị đối đầu (dùng dual-stat)"
+  ],
+  "performance": {
+    "maxDomNodes": 12,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "placement": "subtitle-bottom",
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "punch_impact",
+    "offsetSec": 0,
+    "volume": 0.55
+  },
+  "specVersion": 2,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16"
+  ],
+  "themes": [
+    "general",
+    "economy",
+    "tech"
+  ],
+  "version": "1.0.0",
+  "whenToUse": [
+    "Một con số CHỈ SỰ THAY ĐỔI có hướng rõ: tăng/giảm %, lên/xuống điểm, lãi/lỗ",
+    "Câu có động từ tăng, giảm, lao dốc, bứt phá kèm số cụ thể"
+  ]
+}

@@ -18,6 +18,7 @@
     "label": "TIN NÓNG",
     "text": "Nga tuyên bố ngừng bắn đơn phương 72 giờ"
   },
+  "hidesSubs": true,
   "id": "breaking-banner",
   "inputs": {
     "label": {
@@ -33,6 +34,7 @@
   },
   "mode": "overlay",
   "name": "Banner tin nóng",
+  "neutralBgEligible": true,
   "notFor": [
     "Tin không khẩn cấp",
     "Text quá dài"
@@ -42,12 +44,18 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "bottom",
     "type": "enum"
   },
   "schemaVersion": 1,
-  "sfx": "whoosh_fast",
+  "sfx": {
+    "id": "whoosh_fast",
+    "offsetSec": 0,
+    "volume": 0.6
+  },
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "16:9",
@@ -67,6 +75,5 @@
   "whenToUse": [
     "Tin vừa xảy ra, cần gây chú ý ngay",
     "Tuyên bố khẩn cấp"
-  ],
-  "hidesSubs": true
+  ]
 }

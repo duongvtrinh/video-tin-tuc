@@ -73,7 +73,7 @@ Ngay sau khi clone xong và kiểm tra môi trường xong, **chat chính chủ 
 | --- | --- | --- |
 | 10 | Ngưỡng inline voice | 10.000.000 byte — file lớn hơn đi đường tải theo đoạn (quyết 05/11/2026) |
 | 11 | Đường dẫn factory | Đã ghi sẵn trong repo (core.ts tự phân giải) — tài khoản mới không sửa đường dẫn |
-| 12 | Cửa chặn hạn mức tuần | Đầu ca đọc dòng điểm danh mới nhất của chính chi nhánh mình tại tab COO_CHECKIN (dòng có ASSIGNEE_EMAIL = email khai báo của tài khoản này; lấy % tuần đã dùng dạng số trong cột TOKENS_LEFT — nguồn chuẩn duy nhất cho cửa chặn theo quyết CEO 11/11/2026; TASKS.L QUOTA chỉ là hồ sơ lúc bàn giao, không dùng để quyết chặn); token tuần trên 95% thì Scout dừng hẳn ca (không quét/chấm/ghi, không báo cáo ca), Pipeline nhận 0 chủ đề READY mới (báo cáo ca vẫn làm cho video đang dở). Ca quét COO_TASKS được miễn cửa chặn này. Reset hạn mức thì hoạt động lại bình thường, không cần lệnh mở lại (DEC-202) |
+| 12 | Cửa chặn hạn mức tuần | Đầu ca chạy lệnh subscription-status status, đọc % tuần đã dùng trực tiếp trong dòng 'Usage: N% of ... weekly limit' (quyết CEO 13/11/2026, DEC-263 — thay DEC-202); N ≥ 95% thì Scout dừng hẳn ca (không quét/chấm/ghi, không báo cáo ca), Pipeline nhận 0 chủ đề READY mới (báo cáo ca vẫn làm cho video đang dở). Ca quét COO_TASKS được miễn cửa chặn này. Nếu lệnh không đọc được N thì dùng số Sheet dự phòng (dòng COO_CHECKIN mới nhất của chính chi nhánh, rồi TASKS.L QUOTA). TASKS.L và COO_CHECKIN chỉ còn là bản ghi để CEO kiểm tra. Reset hạn mức thì số trực tiếp tự hạ, hoạt động lại bình thường, không cần lệnh mở lại |
 
 ### B2. Ghi vào bộ nhớ của chính tài khoản — mẫu câu bắt buộc
 

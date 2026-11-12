@@ -21,6 +21,7 @@
     "text": "Xem xong mới hiểu vì sao giá vàng tăng phi mã",
     "user": "@chung_khoan_moi_ngay"
   },
+  "hidesSubs": true,
   "id": "social-comment",
   "inputs": {
     "likes": {
@@ -46,6 +47,7 @@
   },
   "mode": "overlay",
   "name": "Bình luận viral",
+  "neutralBgEligible": true,
   "notFor": [
     "Bình luận quá dài",
     "Nội dung nhạy cảm chưa kiểm chứng"
@@ -55,12 +57,14 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "center",
     "type": "enum"
   },
   "schemaVersion": 1,
   "sfx": null,
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "16:9",
@@ -74,12 +78,12 @@
     "trending"
   ],
   "themes": [
-    "general"
+    "general",
+    "crime"
   ],
   "version": "1.5.0",
   "whenToUse": [
     "Trích bình luận viral liên quan chủ đề",
     "Thể hiện dư luận mạng xã hội"
-  ],
-  "hidesSubs": true
+  ]
 }

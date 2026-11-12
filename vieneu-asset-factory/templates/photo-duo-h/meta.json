@@ -1,123 +1,132 @@
 {
- "accent": {
-  "default": "gold",
-  "type": "enum"
- },
- "animation": {
-  "default": "none",
-  "type": "enum"
- },
- "background": "opaque",
- "capability": [
-  "ảnh minh họa",
-  "so sánh",
-  "đối đầu"
- ],
- "category": "photo",
- "description": "Hai nhân vật/đối tượng đặt cạnh nhau để so sánh trực diện, theo ngôn ngữ reel Vietnam Business News: tiêu đề trắng, 2 ảnh trong khung viền vàng xếp ngang với chữ VS vàng ở giữa, nhãn tên vàng dưới mỗi ảnh, dòng kết luận vàng nghiêng + chú thích xám phía dưới. Khung ảnh 232x155 đúng tỉ lệ 3:2 của ảnh nguồn nên gần như không cắt. Ảnh là input kiểu image; Production cắt ảnh trước về tỉ lệ khung. Stage 1-4 cho video reveal (1: tiêu đề + ảnh 1, 2: +ảnh 2 và VS, 3: +nhãn tên, 4: +kết luận và chú thích); lớp chưa tới lượt ẩn bằng visibility:hidden nên bố cục không nhảy; mặc định stage 4. Không animation (đường render tĩnh). ĐỔI NỀN 06/11/2026: nền navy sao → xanh rêu kẻ ô vuông chuẩn (#1C372A, ô 80px, kẻ #2A4D3B 2px), thống nhất bộ màu với các template khác.",
- "exampleInputs": {
-  "foot": "Phe Cộng hòa thua ngay trên sân nhà",
-  "img1": "build/media/images/musk.jpg",
-  "img2": "build/media/images/paxton.jpg",
-  "label1": "ELON MUSK",
-  "label2": "KEN PAXTON",
-  "stage": "4",
-  "title": "ĐỐI ĐẦU TEXAS",
-  "verdict": "168 TRIỆU USD VẪN THUA"
- },
- "hidesSubs": true,
- "id": "photo-duo-h",
- "inputs": {
-  "foot": {
-   "maxLength": 60,
-   "required": false,
-   "type": "string"
+  "accent": {
+    "default": "gold",
+    "type": "enum"
   },
-  "img1": {
-   "required": true,
-   "type": "image"
+  "animation": {
+    "default": "none",
+    "type": "enum"
   },
-  "img2": {
-   "required": true,
-   "type": "image"
+  "background": "opaque",
+  "capability": [
+    "ảnh minh họa",
+    "so sánh",
+    "đối đầu"
+  ],
+  "category": "photo",
+  "description": "Hai nhân vật/đối tượng đặt cạnh nhau để so sánh trực diện, theo ngôn ngữ reel Vietnam Business News: tiêu đề trắng, 2 ảnh trong khung viền vàng xếp ngang với chữ VS vàng ở giữa, nhãn tên vàng dưới mỗi ảnh, dòng kết luận vàng nghiêng + chú thích xám phía dưới. Khung ảnh 232x155 đúng tỉ lệ 3:2 của ảnh nguồn nên gần như không cắt. Ảnh là input kiểu image; Production cắt ảnh trước về tỉ lệ khung. Stage 1-4 cho video reveal (1: tiêu đề + ảnh 1, 2: +ảnh 2 và VS, 3: +nhãn tên, 4: +kết luận và chú thích); lớp chưa tới lượt ẩn bằng visibility:hidden nên bố cục không nhảy; mặc định stage 4. Không animation (đường render tĩnh). ĐỔI NỀN 06/11/2026: nền navy sao → xanh rêu kẻ ô vuông chuẩn (#1C372A, ô 80px, kẻ #2A4D3B 2px), thống nhất bộ màu với các template khác.",
+  "exampleInputs": {
+    "foot": "Phe Cộng hòa thua ngay trên sân nhà",
+    "img1": "build/media/images/musk.jpg",
+    "img2": "build/media/images/paxton.jpg",
+    "label1": "ELON MUSK",
+    "label2": "KEN PAXTON",
+    "stage": "4",
+    "title": "ĐỐI ĐẦU TEXAS",
+    "verdict": "168 TRIỆU USD VẪN THUA"
   },
-  "label1": {
-   "maxLength": 20,
-   "required": true,
-   "type": "string"
+  "hidesSubs": true,
+  "id": "photo-duo-h",
+  "inputs": {
+    "foot": {
+      "maxLength": 60,
+      "required": false,
+      "type": "string"
+    },
+    "img1": {
+      "required": true,
+      "type": "image"
+    },
+    "img2": {
+      "required": true,
+      "type": "image"
+    },
+    "label1": {
+      "maxLength": 20,
+      "required": true,
+      "type": "string"
+    },
+    "label2": {
+      "maxLength": 20,
+      "required": true,
+      "type": "string"
+    },
+    "stage": {
+      "default": "4",
+      "type": "enum",
+      "values": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ]
+    },
+    "title": {
+      "maxLength": 40,
+      "required": true,
+      "type": "string"
+    },
+    "verdict": {
+      "maxLength": 40,
+      "required": false,
+      "type": "string"
+    }
   },
-  "label2": {
-   "maxLength": 20,
-   "required": true,
-   "type": "string"
+  "maxStage": 4,
+  "mode": "fullscreen",
+  "name": "Hai ảnh đối đầu ngang / Photo Duo Horizontal",
+  "neutralBgEligible": false,
+  "notFor": [
+    "Hai ảnh xếp dọc theo dòng chảy (dùng photo-duo)",
+    "Một nhân vật duy nhất (dùng photo-hero)",
+    "So sánh bằng số liệu thuần không cần ảnh (dùng compare-bars hoặc versus-split)"
+  ],
+  "performance": {
+    "maxDomNodes": 14,
+    "usesExternalAssets": true,
+    "usesFilters": false
   },
-  "stage": {
-   "default": "4",
-   "type": "enum"
+  "placement": "full-stage",
+  "position": {
+    "default": "full-stage",
+    "type": "enum"
   },
-  "title": {
-   "maxLength": 40,
-   "required": true,
-   "type": "string"
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "boom_sub_impact",
+    "offsetSec": 0,
+    "volume": 0.4
   },
-  "verdict": {
-   "maxLength": 40,
-   "required": false,
-   "type": "string"
-  }
- },
- "maxStage": 4,
- "mode": "fullscreen",
- "name": "Hai ảnh đối đầu ngang / Photo Duo Horizontal",
- "notFor": [
-  "Hai ảnh xếp dọc theo dòng chảy (dùng photo-duo)",
-  "Một nhân vật duy nhất (dùng photo-hero)",
-  "So sánh bằng số liệu thuần không cần ảnh (dùng compare-bars hoặc versus-split)"
- ],
- "performance": {
-  "maxDomNodes": 14,
-  "usesExternalAssets": true,
-  "usesFilters": false
- },
- "position": {
-  "default": "full-stage",
-  "type": "enum"
- },
- "schemaVersion": 1,
- "sfx": {
-  "id": "boom_sub_impact",
-  "offsetSec": 0,
-  "volume": 0.4
- },
- "status": "active",
- "supportedAspectRatios": [
-  "9:16"
- ],
- "tags": [
-  "ảnh",
-  "đối đầu",
-  "so sánh"
- ],
- "themes": [
-  "general"
- ],
- "version": "1.3.0",
- "whenToUse": [
-  "Beat đối đầu trực diện 2 bên: ai thắng, ai thua, ai mạnh hơn",
-  "Cần người xem so sánh 2 gương mặt/cái tên trong một khung hình"
- ],
- "videoSlots": {
-  "img1": {
-   "x": 115,
-   "y": 475,
-   "w": 224,
-   "h": 147
+  "specVersion": 2,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16"
+  ],
+  "tags": [
+    "ảnh",
+    "đối đầu",
+    "so sánh"
+  ],
+  "themes": [
+    "general"
+  ],
+  "version": "1.3.0",
+  "videoSlots": {
+    "img1": {
+      "x": 115,
+      "y": 475,
+      "w": 224,
+      "h": 147
+    },
+    "img2": {
+      "x": 405,
+      "y": 475,
+      "w": 224,
+      "h": 147
+    }
   },
-  "img2": {
-   "x": 405,
-   "y": 475,
-   "w": 224,
-   "h": 147
-  }
- }
+  "whenToUse": [
+    "Beat đối đầu trực diện 2 bên: ai thắng, ai thua, ai mạnh hơn",
+    "Cần người xem so sánh 2 gương mặt/cái tên trong một khung hình"
+  ]
 }

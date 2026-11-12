@@ -5,7 +5,7 @@
     "đối chiếu"
   ],
   "category": "stat",
-  "description": "Hai con số đối chiếu trong một thẻ (tăng vs giảm, thiệt hại vs hưởng lợi, kế hoạch vs thực tế). Mẫu mới QA 30/10/2026: beat hai số trước đây phải nhét gượng vào stat-counter (số chính + sublabel, ví dụ TOPIC-045 '215 MÃ GIẢM / CHỈ 97 MÃ TĂNG'), nay có mẫu riêng với vạch chia và số thứ hai màu trắng. Thẻ 528px (720−2×96) căn giữa như stat-counter 1.1.0. Mỗi value nên ≤5 ký tự ở 9:16 để không tràn nửa thẻ. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
+  "description": "Hai con số đối chiếu trong một thẻ (tăng vs giảm, thiệt hại vs hưởng lợi, kế hoạch vs thực tế). Mẫu mới QA 30/10/2026: beat hai số trước đây phải nhét gượng vào stat-counter (số chính + sublabel, ví dụ TOPIC-045 '215 MÃ GIẢM / CHỈ 97 MÃ TĂNG'), nay có mẫu riêng với vạch chia và số thứ hai màu trắng. Thẻ 528px (720−2×96) căn giữa như stat-counter 1.1.0. Mỗi value nên ≤5 ký tự ở 9:16 để không tràn nửa thẻ. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px. Sửa 06/11/2026 (dual-stat 1.6.0, ca học hỏi 20:22): nhãn xuống dòng trong nửa thẻ của nó — đổi .broll-dual-side sang block (bỏ flex column + align-items:center làm nhãn co-rút-theo-nội-dung và tràn vạch chia thay vì xuống dòng), value/label thành display:block, nhãn margin-top .15em + text-align:center + overflow-wrap:break-word. Bằng chứng: TOPIC-051 (30/10/2026, nhãn 16 ký tự chồng glyph, bị TRẢ LẠI — tái hiện được với font fallback trước đợt chuyển Anton 30/10; với Anton hiện tại nhãn 16 ký tự vừa trong cột) và TOPIC-249 v2 (06/11/2026, labelA 27 ký tự tràn cột che chữ BÁN, v2 bị loại — lỗi còn tái hiện với Anton). Kiểm chứng render thật bằng font Anton (3 case: 051 / 249-v2 / nhãn ngắn): trước sửa 2/3 PASS (249-v2: 607 pixel trắng trong vùng vạch ±17px, nhãn tràn tới mép thẻ), sau sửa 3/3 PASS (0 pixel tràn, nhãn dài xuống 2 dòng), nhãn ngắn giữ nguyên hình dạng (cùng chiều rộng, lệch cao 2px, mép value lệch 0px). Cảnh báo preflight maxLength 24 ký tự giữ nguyên làm điểm dừng cứng.",
   "exampleInputs": {
     "labelA": "MÃ GIẢM",
     "labelB": "MÃ TĂNG",
@@ -13,6 +13,7 @@
     "valueA": "215",
     "valueB": "97"
   },
+  "hidesSubs": true,
   "id": "dual-stat",
   "inputs": {
     "labelA": {
@@ -43,6 +44,7 @@
   },
   "mode": "overlay",
   "name": "Hai số đối chiếu / Dual stat",
+  "neutralBgEligible": true,
   "notFor": [
     "Beat chỉ có một con số (dùng stat-counter)",
     "Nhiều hơn hai con số trong cùng beat",
@@ -54,12 +56,14 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "schemaVersion": 1,
   "sfx": {
     "id": "heavy_thud_slam",
     "offsetSec": 0,
     "volume": 0.35
   },
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "9:16",
@@ -74,12 +78,12 @@
   ],
   "themes": [
     "general",
-    "economy"
+    "economy",
+    "sports"
   ],
-  "version": "1.5.0",
+  "version": "1.6.0",
   "whenToUse": [
     "Beat đối chiếu đúng hai con số (tăng vs giảm, thiệt hại vs hưởng lợi, kế hoạch vs thực tế)",
     "Cần người xem nhớ cả hai số cùng lúc, không chỉ một số chính"
-  ],
-  "hidesSubs": true
+  ]
 }

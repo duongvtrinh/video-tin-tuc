@@ -1,77 +1,89 @@
 {
- "accent": {
-  "default": "gold",
-  "type": "enum"
- },
- "animation": {
-  "default": "none",
-  "type": "enum"
- },
- "background": "transparent",
- "capability": [
-  "phán quyết",
-  "kết quả"
- ],
- "category": "text",
- "description": "Con dấu đóng lên ảnh/video: khung 2 viền bo nhẹ, chữ in hoa 1-3 từ, nghiêng 15° như dấu đóng tay. Màu mực theo bối cảnh: xanh lục (chiến thắng, đạt) / đỏ thẫm (thua cuộc, cấm, hết hàng, tử hình, chung thân). Nghiêng -15° (trái) / 0° (thẳng) / +15° (phải) qua input tilt — xoay bằng CSS transform trực tiếp trong template (WeasyPrint 70.0 hỗ trợ rotate, đã kiểm chứng 06/11/2026; cơ chế xoay PIL rotateInput đã gỡ cùng ngày theo lệnh đơn giản hoá của CEO). Chữ và viền cùng một màu mực, nền trong suốt. Dùng cho beat phán quyết/kết luận cần đóng dấu lên hình. Ngoài dùng trực tiếp làm templateId của một part, còn dùng làm lớp phủ tùy chọn qua trường broll.stamp của bất kỳ part nào có template: dấu đóng VÀO LỚP ẢNH/VIDEO (tâm ô ảnh được chọn qua stamp.on, đo từ khung viền vàng trên PNG template đã render; mặc định ô ảnh đầu tiên; template không có khung ảnh đo được thì rơi về giữa khung; part không template thì dùng verdict-stamp làm templateId).",
- "exampleInputs": {
-  "text": "TỬ HÌNH",
-  "tilt": "-15",
-  "tone": "red"
- },
- "hidesSubs": true,
- "id": "verdict-stamp",
- "inputs": {
-  "text": {
-   "maxLength": 14,
-   "required": true,
-   "type": "string"
+  "accent": {
+    "default": "gold",
+    "type": "enum"
   },
-  "tilt": {
-   "default": "-15",
-   "type": "enum"
+  "animation": {
+    "default": "none",
+    "type": "enum"
   },
-  "tone": {
-   "default": "red",
-   "type": "enum"
-  }
- },
- "maxStage": 1,
- "mode": "overlay",
- "name": "Con dấu phán quyết / Verdict Stamp",
- "notFor": [
-  "Chữ dài hơn 3 từ (dùng keyword-block)",
-  "Cần nền đục sau chữ (dùng strike-verdict hoặc compare-bars)"
- ],
- "performance": {
-  "maxDomNodes": 6,
-  "usesExternalAssets": false,
-  "usesFilters": false
- },
- "position": {
-  "default": "center",
-  "type": "enum"
- },
- "schemaVersion": 1,
- "sfx": {
-  "id": "heavy_thud_slam",
-  "offsetSec": 0,
-  "volume": 0.35
- },
- "status": "active",
- "supportedAspectRatios": [
-  "9:16"
- ],
- "tags": [
-  "con dấu",
-  "phán quyết",
-  "kết quả"
- ],
- "themes": [
-  "general"
- ],
- "version": "1.0.0",
- "whenToUse": [
-  "Beat cần đóng dấu kết quả lên ảnh/video: thắng/thua, cấm/cho phép, hết hàng/còn hàng, mức án"
- ]
+  "background": "transparent",
+  "capability": [
+    "phán quyết",
+    "kết quả"
+  ],
+  "category": "text",
+  "description": "Con dấu đóng lên ảnh/video: khung 2 viền bo nhẹ, chữ in hoa 1-3 từ, nghiêng 15° như dấu đóng tay. Màu mực theo bối cảnh: xanh lục (chiến thắng, đạt) / đỏ thẫm (thua cuộc, cấm, hết hàng, tử hình, chung thân). Nghiêng -15° (trái) / 0° (thẳng) / +15° (phải) qua input tilt — xoay bằng CSS transform trực tiếp trong template (WeasyPrint 70.0 hỗ trợ rotate, đã kiểm chứng 06/11/2026; cơ chế xoay PIL rotateInput đã gỡ cùng ngày theo lệnh đơn giản hoá của CEO). Chữ và viền cùng một màu mực, nền trong suốt. Dùng cho beat phán quyết/kết luận cần đóng dấu lên hình. Ngoài dùng trực tiếp làm templateId của một part, còn dùng làm lớp phủ tùy chọn qua trường broll.stamp của bất kỳ part nào có template: dấu đóng VÀO LỚP ẢNH/VIDEO (tâm ô ảnh được chọn qua stamp.on, đo từ khung viền vàng trên PNG template đã render; mặc định ô ảnh đầu tiên; template không có khung ảnh đo được thì rơi về giữa khung; part không template thì dùng verdict-stamp làm templateId).",
+  "exampleInputs": {
+    "text": "TỬ HÌNH",
+    "tilt": "-15",
+    "tone": "red"
+  },
+  "hidesSubs": true,
+  "id": "verdict-stamp",
+  "inputs": {
+    "text": {
+      "maxLength": 14,
+      "required": true,
+      "type": "string"
+    },
+    "tilt": {
+      "default": "-15",
+      "type": "enum",
+      "values": [
+        "-15",
+        "0",
+        "15"
+      ]
+    },
+    "tone": {
+      "default": "red",
+      "type": "enum",
+      "values": [
+        "green",
+        "red"
+      ]
+    }
+  },
+  "mode": "overlay",
+  "name": "Con dấu phán quyết / Verdict Stamp",
+  "neutralBgEligible": true,
+  "notFor": [
+    "Chữ dài hơn 3 từ (dùng keyword-block)",
+    "Cần nền đục sau chữ (dùng strike-verdict hoặc compare-bars)"
+  ],
+  "performance": {
+    "maxDomNodes": 6,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "placement": "subtitle-bottom",
+  "position": {
+    "default": "center",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "heavy_thud_slam",
+    "offsetSec": 0,
+    "volume": 0.35
+  },
+  "specVersion": 2,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16"
+  ],
+  "tags": [
+    "con dấu",
+    "phán quyết",
+    "kết quả"
+  ],
+  "themes": [
+    "general",
+    "crime"
+  ],
+  "version": "1.0.0",
+  "whenToUse": [
+    "Beat cần đóng dấu kết quả lên ảnh/video: thắng/thua, cấm/cho phép, hết hàng/còn hàng, mức án"
+  ]
 }

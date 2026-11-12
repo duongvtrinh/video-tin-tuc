@@ -26,6 +26,7 @@
     "title": "DÂN MẠNG BÀN GÌ KHI VÀNG ĐỎ SÀN?",
     "user": "Người dùng mạng xã hội"
   },
+  "hidesSubs": true,
   "id": "comment-frame",
   "inputs": {
     "avatar": {
@@ -71,6 +72,7 @@
   },
   "mode": "overlay",
   "name": "Khung bình luận tâm sự",
+  "neutralBgEligible": true,
   "notFor": [
     "Bình luận dài quá 300 ký tự",
     "Nội dung chưa kiểm chứng hoặc nhạy cảm",
@@ -81,12 +83,14 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "bottom",
     "type": "enum"
   },
   "schemaVersion": 1,
   "sfx": null,
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "9:16"
@@ -100,12 +104,12 @@
   ],
   "themes": [
     "general",
-    "economy"
+    "economy",
+    "crime"
   ],
   "version": "1.6.0",
   "whenToUse": [
     "Video kể chuyện bằng bình luận mạng xã hội, mỗi thẻ hiển thị lâu và được đọc thành tiếng",
     "Cần khung thương hiệu trên/dưới xuyên suốt kiểu reel tâm sự"
-  ],
-  "hidesSubs": true
+  ]
 }

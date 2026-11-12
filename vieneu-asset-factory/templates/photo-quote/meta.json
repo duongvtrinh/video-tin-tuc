@@ -1,99 +1,108 @@
 {
- "schemaVersion": 1,
- "background": "opaque",
- "category": "photo",
- "maxStage": 4,
- "mode": "fullscreen",
- "supportedAspectRatios": [
-  "9:16"
- ],
- "hidesSubs": true,
- "status": "active",
- "themes": [
-  "general"
- ],
- "accent": {
-  "default": "gold",
-  "type": "enum"
- },
- "animation": {
-  "default": "none",
-  "type": "enum"
- },
- "position": {
-  "default": "full-stage",
-  "type": "enum"
- },
- "performance": {
-  "maxDomNodes": 10,
-  "usesExternalAssets": true,
-  "usesFilters": false
- },
- "id": "photo-quote",
- "name": "Thẻ ảnh đa năng / Photo Quote",
- "version": "1.1.0",
- "description": "Thẻ ảnh đa năng cho mọi beat tin tức: một ảnh lớn trong khung viền vàng + nhãn kicker vàng + tiêu đề trắng lớn + dòng phụ xám, trên nền xanh rêu kẻ ô vuông (#1C372A, ô 80px, kẻ #2A4D3B) (không logo thương hiệu). Dùng được cho bất kỳ câu chuyện nào có ảnh + tiêu đề. Ảnh là input kiểu image; Production cắt ảnh trước về tỉ lệ khung 528x380. Khung ảnh đặt absolute cố định nên ô video (100,204,520,372) không dịch theo độ dài chữ; ô ảnh nhận cả video (.mp4). Stage 1-4 cho video reveal qua broll.reveal (1: ảnh, 2: +kicker, 3: +tiêu đề, 4: +dòng phụ); lớp chưa tới lượt ẩn bằng visibility:hidden nên bố cục không nhảy; mặc định stage 4. Không animation (đường render tĩnh). ĐỔI NỀN 06/11/2026: nền navy sao → xanh rêu kẻ ô vuông chuẩn (#1C372A, ô 80px, kẻ #2A4D3B 2px), thống nhất bộ màu với các template khác.",
- "whenToUse": [
-  "Beat tin tức chung: một ảnh + một tiêu đề + một dòng phụ — dùng được cho mọi chủ đề",
-  "Trích dẫn lời nói: headline = câu trích nguyên văn, subline = tên nguồn, kicker tuỳ chọn"
- ],
- "notFor": [
-  "Một người gắn với một con số then chốt (dùng photo-hero)",
-  "Hai ảnh đối đầu (dùng photo-duo-h)"
- ],
- "inputs": {
-  "img": {
-   "required": true,
-   "type": "image"
+  "accent": {
+    "default": "gold",
+    "type": "enum"
   },
-  "kicker": {
-   "maxLength": 20,
-   "required": false,
-   "type": "string"
+  "animation": {
+    "default": "none",
+    "type": "enum"
   },
-  "headline": {
-   "maxLength": 48,
-   "required": true,
-   "type": "string"
+  "background": "opaque",
+  "capability": [
+    "ảnh minh họa",
+    "tiêu đề",
+    "câu chuyện"
+  ],
+  "category": "photo",
+  "description": "Thẻ ảnh đa năng cho mọi beat tin tức: một ảnh lớn trong khung viền vàng + nhãn kicker vàng + tiêu đề trắng lớn + dòng phụ xám, trên nền xanh rêu kẻ ô vuông (#1C372A, ô 80px, kẻ #2A4D3B) (không logo thương hiệu). Dùng được cho bất kỳ câu chuyện nào có ảnh + tiêu đề. Ảnh là input kiểu image; Production cắt ảnh trước về tỉ lệ khung 528x380. Khung ảnh đặt absolute cố định nên ô video (100,204,520,372) không dịch theo độ dài chữ; ô ảnh nhận cả video (.mp4). Stage 1-4 cho video reveal qua broll.reveal (1: ảnh, 2: +kicker, 3: +tiêu đề, 4: +dòng phụ); lớp chưa tới lượt ẩn bằng visibility:hidden nên bố cục không nhảy; mặc định stage 4. Không animation (đường render tĩnh). ĐỔI NỀN 06/11/2026: nền navy sao → xanh rêu kẻ ô vuông chuẩn (#1C372A, ô 80px, kẻ #2A4D3B 2px), thống nhất bộ màu với các template khác.",
+  "exampleInputs": {
+    "img": "build/media/images/musk.jpg",
+    "kicker": "TIN NÓNG",
+    "headline": "TEXAS CHUYỂN XANH SAU 94 NĂM",
+    "subline": "Thành trì của đảng Cộng hòa sụp đổ trong đêm bầu cử",
+    "stage": "4"
   },
-  "subline": {
-   "maxLength": 80,
-   "required": false,
-   "type": "string"
+  "hidesSubs": true,
+  "id": "photo-quote",
+  "inputs": {
+    "img": {
+      "required": true,
+      "type": "image"
+    },
+    "kicker": {
+      "maxLength": 20,
+      "required": false,
+      "type": "string"
+    },
+    "headline": {
+      "maxLength": 48,
+      "required": true,
+      "type": "string"
+    },
+    "subline": {
+      "maxLength": 80,
+      "required": false,
+      "type": "string"
+    },
+    "stage": {
+      "default": "4",
+      "type": "enum",
+      "values": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ]
+    }
   },
-  "stage": {
-   "default": "4",
-   "type": "enum"
-  }
- },
- "videoSlots": {
-  "img": {
-   "x": 100,
-   "y": 204,
-   "w": 520,
-   "h": 372
-  }
- },
- "sfx": {
-  "id": "whoosh_fast",
-  "offsetSec": 0,
-  "volume": 0.6
- },
- "exampleInputs": {
-  "img": "build/media/images/musk.jpg",
-  "kicker": "TIN NÓNG",
-  "headline": "TEXAS CHUYỂN XANH SAU 94 NĂM",
-  "subline": "Thành trì của đảng Cộng hòa sụp đổ trong đêm bầu cử",
-  "stage": "4"
- },
- "capability": [
-  "ảnh minh họa",
-  "tiêu đề",
-  "câu chuyện"
- ],
- "tags": [
-  "ảnh",
-  "tiêu đề",
-  "đa năng"
- ]
+  "maxStage": 4,
+  "mode": "fullscreen",
+  "name": "Thẻ ảnh đa năng / Photo Quote",
+  "neutralBgEligible": false,
+  "notFor": [
+    "Một người gắn với một con số then chốt (dùng photo-hero)",
+    "Hai ảnh đối đầu (dùng photo-duo-h)"
+  ],
+  "performance": {
+    "maxDomNodes": 10,
+    "usesExternalAssets": true,
+    "usesFilters": false
+  },
+  "placement": "full-stage",
+  "position": {
+    "default": "full-stage",
+    "type": "enum"
+  },
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "whoosh_fast",
+    "offsetSec": 0,
+    "volume": 0.6
+  },
+  "specVersion": 2,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16"
+  ],
+  "tags": [
+    "ảnh",
+    "tiêu đề",
+    "đa năng"
+  ],
+  "themes": [
+    "general"
+  ],
+  "version": "1.1.0",
+  "videoSlots": {
+    "img": {
+      "x": 100,
+      "y": 204,
+      "w": 520,
+      "h": 372
+    }
+  },
+  "whenToUse": [
+    "Beat tin tức chung: một ảnh + một tiêu đề + một dòng phụ — dùng được cho mọi chủ đề",
+    "Trích dẫn lời nói: headline = câu trích nguyên văn, subline = tên nguồn, kicker tuỳ chọn"
+  ]
 }

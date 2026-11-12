@@ -34,7 +34,7 @@ Học thuyết: Xem `EDITORIAL_DOCTRINE.md` v3.1.
      - Đoạn 1 (`"đạn dược,"`): `templateId: "cutaway-standard"`, `inputs: {}` (không chữ to che hình), `sfx: {"id": "whoosh_fast", "offsetSec": 0.0, "volume": 0.7}`, `keywords: ["đạn dược quân sự", "kho đạn pháo"]`.
      - Đoạn 2 (`"tên lửa,"`): `templateId: "cutaway-standard"`, `inputs: {}`, `sfx: {"id": "whoosh_fast", "offsetSec": 0.0, "volume": 0.7}`, `keywords: ["tên lửa hành trình", "phóng tên lửa"]`.
      - Đoạn 3 (`"xe bọc thép"`): `templateId: "cutaway-standard"`, `inputs: {}`, `sfx: {"id": "whoosh_fast", "offsetSec": 0.0, "volume": 0.7}`, `keywords: ["xe bọc thép chiến đấu", "xe tăng thiết giáp"]`.
-     - Đoạn 4 (`"và hệ thống phòng không."`): `templateId: "cutaway-standard"`, `inputs: {}`, `sfx: {"id": "heavy_thud_slam", "offsetSec": 0.0, "volume": 0.75}`, `keywords: ["hệ thống phòng không", "radar phòng không"]`.
+     - Đoạn 4 (`"và hệ thống phòng không."`): `templateId: "cutaway-standard"`, `inputs: {}` (không chữ to che hình), `sfx: {"id": "heavy_thud_slam", "offsetSec": 0.0, "volume": 0.35}`, `keywords: ["hệ thống phòng không", "radar phòng không"]`.
      *(Món cuối cùng dùng SFX nặng hơn như `heavy_thud_slam` để chốt hạ chuỗi liệt kê).*
 - **Hiệu quả thị giác:** Các B-roll xuất hiện liên tiếp chớp nhoáng theo nhịp đọc của phát thanh viên. Người xem nhìn thấy chuỗi tư liệu thật đổi liên tục, tạo cảm giác phim tài liệu cực kỳ đắt giá, chuyên nghiệp như BBC/Discovery.
 
@@ -50,12 +50,12 @@ Học thuyết: Xem `EDITORIAL_DOCTRINE.md` v3.1.
 
 ### 3. Câu hỏi Mở đầu / Triết lý Gợi mở (`typewriter-reveal`)
 - **Bối cảnh:** Câu hỏi mở đầu tạo tò mò, lời dẫn nhập sâu sắc.
-- **Quy tắc:** Chỉ nội dung chính (`text`) có hiệu ứng gõ chữ, nhãn chính/phụ nếu có dùng hiệu ứng fade/slide phù hợp. Tự ẩn sau khi gõ xong tối đa 3 giây.
+- **Quy tắc:** Chỉ nội dung chính (`text`) có hiệu ứng gõ chữ, nhãn chính/phụ nếu có dùng hiệu ứng fade/slide phù hợp.
 - **SFX:** `typing_fast.mp3` (+0.1s).
 
 ### 4. Luận điểm Chính (`thesis-marker`) & Trích dẫn (`quote-card`)
 - **Bối cảnh:** Khẳng định luận điểm quan trọng hoặc trích nguyên văn câu nói của nhân vật.
-- **Quy tắc:** Cộng thêm **500ms** thời gian chờ trước khi chuyển sang câu tiếp theo để tạo điểm nhấn trong video đọc liên tục.
+- **Quy tắc:** Thời gian chờ sau part này theo luật nghỉ nhấn CHỐT 04/11/2026 (pauseAfterMs = 2000ms cho part chia đoạn, part liền trước = 1000ms).
 - **SFX:** `paper_rip.mp3`.
 
 ### 5. Từ khóa Dồn dập / Thực thể Nổi bật (`keyword-burst`)
@@ -71,8 +71,9 @@ Học thuyết: Xem `EDITORIAL_DOCTRINE.md` v3.1.
 
 ## 3. Thời gian Hiển thị Văn bản
 
-- **Thời gian hiển thị nội dung văn bản của tất cả các template không quá 3.0 giây kể từ thời điểm kết thúc hiệu ứng.**
-- Khi chữ cuối cùng hiển thị xong, đếm 3 giây là tự ẩn toàn bộ, không để văn bản chiếm không gian video. Video ưu tiên hình ảnh, chữ chỉ là yếu tố phụ tăng tính biểu đạt và nhấn mạnh.
+(Đã bỏ — CEO 13/11/2026, DEC-267: luật "chữ tối đa 3,0 giây, tự ẩn sau 3 giây" không khớp
+engine — chữ ở suốt part, không có cơ chế tự ẩn. Thời lượng chữ theo độ dài part, xem
+`docs/TEXT_DENSITY_RULES.md`.)
 
 ---
 
@@ -85,55 +86,14 @@ Học thuyết: Xem `EDITORIAL_DOCTRINE.md` v3.1.
 
 ---
 
-## 5. Cấu trúc Scene JSON Xuất ra
+## 5. Định dạng kế hoạch xuất ra (broll-plan.json)
 
-```json
-{
-  "scene_id": 4,
-  "start_time": 27.0,
-  "end_time": 34.5,
-  "transcript": "Chiến tranh kéo dài buộc các nước châu Âu phải tăng ngân sách quân sự, bổ sung đạn dược, tên lửa, xe bọc thép và hệ thống phòng không.",
-  "energy_level": "high",
-  "template_id": "keyword-burst",
-  "template_timing": {
-    "offset_sec": 2.2,
-    "duration_sec": 1.4
-  },
-  "template_data": {
-    "text": "NGÂN SÁCH QUÂN SỰ",
-    "sublabel": "TĂNG TỐC"
-  },
-  "visual_beats": [
-    {
-      "beat_start": 27.0,
-      "beat_end": 29.5,
-      "visual_role": "primary_action",
-      "shot_scale": "wide",
-      "search_queries": ["NATO military base aerial dawn", "european armed forces training wide"],
-      "camera_motion": "push_in_fast",
-      "sfx": null
-    },
-    {
-      "beat_start": 29.5,
-      "beat_end": 31.8,
-      "visual_role": "concrete_action",
-      "shot_scale": "medium_action",
-      "search_queries": ["main battle tank firing dust cloud", "artillery battery firing"],
-      "camera_motion": "pan_right",
-      "sfx": {"file": "punch_impact.mp3", "offset": 0.0, "volume": 0.75}
-    },
-    {
-      "beat_start": 31.8,
-      "beat_end": 34.5,
-      "visual_role": "close_up_detail",
-      "shot_scale": "extreme_close_up",
-      "search_queries": ["missile launch smoke thrust closeup", "radar dish spinning fast"],
-      "camera_motion": "shake_impact",
-      "sfx": {"file": "boom_sub_impact.mp3", "offset": 0.2, "volume": 0.7}
-    }
-  ]
-}
-```
+(Đã bỏ — bước 2, 13/11/2026: mục "Cấu trúc Scene JSON" cũ đã bỏ vì không code nào đọc
+Scene JSON — director không xuất JSON đó. Định dạng thật là `broll-plan.json` của Production
+(xem skill media-video-production + `bin/check_plan`): mỗi scene có `parts`, mỗi part có
+`voiceText` + `broll` (`templateId`, `inputs`, `sfx`, `stamps`). Danh sách template hiện có:
+`docs/TEMPLATE_CATALOG.md`. Ví dụ `camera_motion` cũ (`push_in_fast`, `shake_impact`) đã bỏ
+theo DEC-269 — engine tĩnh chỉ làm Ken Burns, xuất hiện đúng lúc, cắt cứng.)
 
 ## 6. Giọng đọc riêng từng Part & Mood nhạc nền
 
@@ -156,15 +116,18 @@ economy=xanh lá, history=gold.
 
 | Chủ đề | Template ưu tiên |
 |---|---|
-| Tin tức / Thời sự | breaking-banner (tin nóng), headline-banner, news-ticker, lower-third, quote-card |
-| Chiến tranh | tactical-banner, alert-flash, battle-tally, versus-split, map-route, date-stamp |
+| Tin tức / Thời sự | breaking-banner (tin nóng), hook-title-card, clip-caption, lower-third-pro, quote-card |
+| Chiến tranh | tactical-banner, breaking-banner, compare-bars, versus-split, map-route, date-stamp |
 | Thể thao | scoreboard, podium-rank, versus-split, stat-counter, keyword-burst |
-| Tài chính / Kinh tế | market-ticker, trend-badge, stat-counter, checklist, news-ticker |
+| Tài chính / Kinh tế | market-ticker, dual-stat, stat-counter, checklist |
 | Trending / MXH | poll-vote, social-comment, keyword-burst, typewriter-reveal |
 | Lịch sử | timeline-strip, date-stamp, map-route, source-citation, quote-card |
 
 Template mới (2026-10-24): `market-ticker` (3 chỉ số + dir up/down),
 `poll-vote` (2 phương án + pct %), `breaking-banner` (strip tin nóng),
 `social-comment` (bình luận viral + user/platform/likes).
-Template từ drafts đã kích hoạt: `scoreboard`, `podium-rank`, `trend-badge`,
-`tactical-banner`, `battle-tally`, `map-route`, `timeline-strip`, `source-citation`.
+Template từ drafts đã kích hoạt: `scoreboard`, `podium-rank`,
+`tactical-banner`, `map-route`, `timeline-strip`, `source-citation`.
+(Ghi chú 13/11/2026: 2 tên template từng ghi ở đây nhưng chưa tồn tại đã gỡ
+khỏi ma trận — tên huy hiệu xu hướng sẽ thêm ở bước sau sau khi render kiểm
+chứng, tên đối đầu còn lại thay bằng `compare-bars`.)

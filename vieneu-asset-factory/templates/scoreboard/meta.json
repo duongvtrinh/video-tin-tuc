@@ -1,34 +1,14 @@
 {
-  "schemaVersion": 1,
-  "id": "scoreboard",
-  "name": "Bảng tỷ số / Scoreboard",
-  "version": "1.5.0",
-  "mode": "overlay",
   "background": "transparent",
   "category": "stat",
   "description": "Bảng tỷ số thể thao: tên hai đội/cá nhân và tỷ số khổng lồ ở giữa, ánh neon cyan. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
-  "whenToUse": [
-    "Công bố tỷ số trận đấu, kết quả đối đầu",
-    "So sánh điểm số 2 bên"
-  ],
-  "notFor": [
-    "Xếp hạng nhiều hơn 2 (dùng podium-rank)",
-    "Không có tỷ số cụ thể"
-  ],
-  "supportedAspectRatios": [
-    "9:16",
-    "16:9",
-    "1:1",
-    "4:3"
-  ],
-  "safeZone": {
-    "x": 0.06,
-    "y": 0.12,
-    "width": 0.88,
-    "height": 0.64,
-    "avoidSubtitleBottomPercent": 24,
-    "avoidTopUiPercent": 10
+  "exampleInputs": {
+    "label": "CHUNG KẾT",
+    "text": "VIỆT NAM — THÁI LAN",
+    "value": "3 - 1"
   },
+  "hidesSubs": true,
+  "id": "scoreboard",
   "inputs": {
     "label": {
       "type": "string",
@@ -47,36 +27,89 @@
     },
     "accent": {
       "type": "enum",
-      "default": "cyan"
+      "default": "cyan",
+      "values": [
+        "gold",
+        "red",
+        "cyan",
+        "green",
+        "pink",
+        "purple",
+        "orange",
+        "white",
+        "violet"
+      ]
     },
     "position": {
       "type": "enum",
-      "default": "bottom"
+      "default": "bottom",
+      "values": [
+        "top",
+        "center",
+        "bottom",
+        "left",
+        "right"
+      ],
+      "noEffect": true
     },
     "animation": {
       "type": "enum",
-      "default": "fade"
+      "default": "fade",
+      "values": [
+        "none",
+        "fade",
+        "flash",
+        "slide-up",
+        "slide-left",
+        "slide-right",
+        "pop",
+        "wipe"
+      ],
+      "noEffect": true
     }
   },
-  "themes": [
-    "general",
-    "sports"
+  "mode": "overlay",
+  "name": "Bảng tỷ số / Scoreboard",
+  "neutralBgEligible": true,
+  "notFor": [
+    "Xếp hạng nhiều hơn 2 (dùng podium-rank)",
+    "Không có tỷ số cụ thể"
   ],
   "performance": {
     "maxDomNodes": 24,
     "usesFilters": false,
     "usesExternalAssets": false
   },
+  "placement": "subtitle-bottom",
+  "safeZone": {
+    "x": 0.06,
+    "y": 0.12,
+    "width": 0.88,
+    "height": 0.64,
+    "avoidSubtitleBottomPercent": 24,
+    "avoidTopUiPercent": 10
+  },
+  "schemaVersion": 1,
   "sfx": {
     "id": "whoosh_fast",
     "offsetSec": 0,
     "volume": 0.7
   },
-  "exampleInputs": {
-    "label": "CHUNG KẾT",
-    "text": "VIỆT NAM — THÁI LAN",
-    "value": "3 - 1"
-  },
+  "specVersion": 2,
   "status": "active",
-  "hidesSubs": true
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "themes": [
+    "general",
+    "sports"
+  ],
+  "version": "1.5.0",
+  "whenToUse": [
+    "Công bố tỷ số trận đấu, kết quả đối đầu",
+    "So sánh điểm số 2 bên"
+  ]
 }

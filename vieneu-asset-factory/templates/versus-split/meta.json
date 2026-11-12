@@ -1,26 +1,18 @@
 {
-  "schemaVersion": 1,
-  "id": "versus-split",
-  "name": "Đối đầu / Versus",
-  "version": "1.5.0",
-  "mode": "fullscreen",
   "background": "opaque",
+  "capability": [
+    "đối lập",
+    "so sánh"
+  ],
   "category": "transition",
   "description": "Màn hình chia đôi hai phe/hai khái niệm với chữ VS ở giữa. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
-  "whenToUse": [
-    "So sánh hai bên giao tranh",
-    "Đối lập hai quan điểm hoặc hai lựa chọn"
-  ],
-  "notFor": [
-    "Chỉ có một đối tượng",
-    "Câu không mang tính so sánh"
-  ],
-  "supportedAspectRatios": [
-    "9:16",
-    "16:9",
-    "1:1",
-    "4:3"
-  ],
+  "exampleInputs": {
+    "text": "Đại Việt",
+    "label": "Nguyên Mông",
+    "sublabel": "Bạch Đằng, 1288"
+  },
+  "hidesSubs": true,
+  "id": "versus-split",
   "inputs": {
     "text": {
       "type": "string",
@@ -39,32 +31,74 @@
     },
     "accent": {
       "type": "enum",
-      "default": "gold"
+      "default": "gold",
+      "values": [
+        "gold",
+        "red",
+        "cyan",
+        "green",
+        "pink",
+        "purple",
+        "orange",
+        "white",
+        "violet"
+      ]
     },
     "position": {
       "type": "enum",
-      "default": "center"
+      "default": "center",
+      "values": [
+        "top",
+        "center",
+        "bottom",
+        "left",
+        "right"
+      ],
+      "noEffect": true
     },
     "animation": {
       "type": "enum",
-      "default": "wipe"
+      "default": "wipe",
+      "values": [
+        "none",
+        "fade",
+        "flash",
+        "slide-up",
+        "slide-left",
+        "slide-right",
+        "pop",
+        "wipe"
+      ],
+      "noEffect": true
     }
   },
-  "sfx": {
-    "id": "boom_sub_impact",
-    "offsetSec": 0,
-    "volume": 0.4
-  },
-  "exampleInputs": {
-    "text": "Đại Việt",
-    "label": "Nguyên Mông",
-    "sublabel": "Bạch Đằng, 1288"
-  },
+  "mode": "fullscreen",
+  "name": "Đối đầu / Versus",
+  "neutralBgEligible": true,
+  "notFor": [
+    "Chỉ có một đối tượng",
+    "Câu không mang tính so sánh"
+  ],
   "performance": {
     "maxDomNodes": 24,
     "usesFilters": false,
     "usesExternalAssets": false
   },
+  "placement": "full-stage",
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "boom_sub_impact",
+    "offsetSec": 0,
+    "volume": 0.4
+  },
+  "specVersion": 2,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
   "tags": [
     "versus",
     "so sánh"
@@ -74,10 +108,9 @@
     "sports",
     "war"
   ],
-  "status": "active",
-  "capability": [
-    "đối lập",
-    "so sánh"
-  ],
-  "hidesSubs": true
+  "version": "1.5.0",
+  "whenToUse": [
+    "So sánh hai bên giao tranh",
+    "Đối lập hai quan điểm hoặc hai lựa chọn"
+  ]
 }

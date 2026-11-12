@@ -26,15 +26,15 @@ Chỉ các beat nhấn mạnh sau đây (khớp với `whenToUse` của từng t
 
 | Beat | Template điển hình |
 |---|---|
-| Con số then chốt cần người xem nhớ (đúng một con số) | `stat-counter`, `trend-badge` |
+| Con số then chốt cần người xem nhớ (đúng một con số) | `stat-counter` |
 | Mốc thời gian, sự kiện | `date-stamp`, `timeline-strip` |
 | Trích dẫn nguyên văn | `quote-card` |
 | Luận điểm khẳng định | `thesis-marker` |
-| Đối đầu A vs B | `versus-split`, `battle-tally` |
+| Đối đầu A vs B | `versus-split`, `compare-bars` |
 | Tỉ số, bảng xếp hạng | `scoreboard`, `podium-rank` |
 | Mở chương, mở video | `section-title`, `breaking-banner` |
 | Câu hỏi mở đầu, đặt vấn đề | `typewriter-reveal` |
-| Từ khóa dồn dập, thực thể nổi bật | `keyword-burst`, `keyword-emphasis` |
+| Từ khóa dồn dập, thực thể nổi bật | `keyword-burst`, `keyword-block` |
 | Thăm dò, bình luận viral | `poll-vote`, `social-comment` |
 | Nguồn trích dẫn | `source-citation` |
 
@@ -67,9 +67,9 @@ nhưng chỉ áp dụng cho các part đã qua được §0 và §1.
 
 ## 4. Tương tác với phụ đề — lý do thứ hai để giữ chữ thưa
 
-- Part có template chữ thật sẽ bị ẩn phụ đề karaoke (`subsHidden`) để tránh chen chữ,
-  trừ đúng 2 template khai `"hidesSubs": false` trong `meta.json` là `clip-caption`
-  và `story-title`.
+- Part có template chữ thật sẽ bị ẩn phụ đề karaoke (`subsHidden`) để tránh chen chữ.
+  Từ 31/10/2026, mọi template đều khai `"hidesSubs": true` (42/42) — ngoại lệ
+  `clip-caption`/`story-title` đã bỏ, không còn template nào giữ phụ đề khi có chữ.
 - Hệ quả: gắn chữ tràn lan không chỉ làm màn hình rối mà còn làm mất phụ đề ở hầu
   hết video. Giữ chữ thưa cũng là giữ phụ đề.
 

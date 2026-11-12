@@ -27,6 +27,7 @@
     "w3": "15",
     "w4": ""
   },
+  "hidesSubs": true,
   "id": "bar-chart",
   "inputs": {
     "foot": {
@@ -61,19 +62,43 @@
     },
     "tone1": {
       "default": "money",
-      "type": "enum"
+      "type": "enum",
+      "values": [
+        "money",
+        "volume",
+        "decline",
+        "mild"
+      ]
     },
     "tone2": {
       "default": "money",
-      "type": "enum"
+      "type": "enum",
+      "values": [
+        "money",
+        "volume",
+        "decline",
+        "mild"
+      ]
     },
     "tone3": {
       "default": "money",
-      "type": "enum"
+      "type": "enum",
+      "values": [
+        "money",
+        "volume",
+        "decline",
+        "mild"
+      ]
     },
     "tone4": {
       "default": "money",
-      "type": "enum"
+      "type": "enum",
+      "values": [
+        "money",
+        "volume",
+        "decline",
+        "mild"
+      ]
     },
     "value1": {
       "maxLength": 14,
@@ -98,26 +123,39 @@
     "w1": {
       "maxLength": 3,
       "required": true,
-      "type": "string"
+      "type": "string",
+      "min": 0,
+      "max": 100,
+      "integer": true
     },
     "w2": {
       "maxLength": 3,
       "required": true,
-      "type": "string"
+      "type": "string",
+      "min": 0,
+      "max": 100,
+      "integer": true
     },
     "w3": {
       "maxLength": 3,
       "required": false,
-      "type": "string"
+      "type": "string",
+      "min": 0,
+      "max": 100,
+      "integer": true
     },
     "w4": {
       "maxLength": 3,
       "required": false,
-      "type": "string"
+      "type": "string",
+      "min": 0,
+      "max": 100,
+      "integer": true
     }
   },
   "mode": "overlay",
   "name": "Biểu đồ cột / Bar chart",
+  "neutralBgEligible": true,
   "notFor": [
     "Chỉ một con số (dùng stat-counter)",
     "Hai số đối chiếu (dùng dual-stat)",
@@ -128,6 +166,7 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "center",
     "type": "enum"
@@ -138,6 +177,7 @@
     "offsetSec": 0,
     "volume": 0.35
   },
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "9:16",
@@ -152,12 +192,14 @@
   ],
   "themes": [
     "general",
-    "economy"
+    "economy",
+    "tech",
+    "science",
+    "sports"
   ],
   "version": "1.5.0",
   "whenToUse": [
     "So sánh mức tăng/giảm của 2-4 đối tượng (chỉ số, thị trường, doanh thu)",
     "Cần người xem thấy chênh lệch bằng mắt, không chỉ đọc số"
-  ],
-  "hidesSubs": true
+  ]
 }

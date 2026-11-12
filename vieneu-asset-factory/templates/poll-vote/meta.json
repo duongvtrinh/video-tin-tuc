@@ -22,6 +22,7 @@
     "pct2": "32%",
     "question": "Có nên cấm xe xăng trong nội đô?"
   },
+  "hidesSubs": true,
   "id": "poll-vote",
   "inputs": {
     "opt1": {
@@ -36,13 +37,23 @@
     },
     "pct1": {
       "maxLength": 5,
+      "pattern": "(100|[1-9]?\\d)%",
+      "patternHint": "số 0-100 kèm dấu %, vd 68% — dùng làm width CSS nên thiếu % thì thanh bar mất kích thước",
       "required": true,
-      "type": "string"
+      "type": "string",
+      "min": 0,
+      "max": 100,
+      "integer": true
     },
     "pct2": {
       "maxLength": 5,
+      "pattern": "(100|[1-9]?\\d)%",
+      "patternHint": "số 0-100 kèm dấu %, vd 68% — dùng làm width CSS nên thiếu % thì thanh bar mất kích thước",
       "required": true,
-      "type": "string"
+      "type": "string",
+      "min": 0,
+      "max": 100,
+      "integer": true
     },
     "question": {
       "maxLength": 80,
@@ -52,6 +63,7 @@
   },
   "mode": "overlay",
   "name": "Thăm dò ý kiến",
+  "neutralBgEligible": true,
   "notFor": [
     "Quá 2 phương án",
     "Không có số liệu %"
@@ -61,12 +73,14 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "center",
     "type": "enum"
   },
   "schemaVersion": 1,
   "sfx": null,
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "16:9",
@@ -80,12 +94,12 @@
     "ý kiến"
   ],
   "themes": [
-    "general"
+    "general",
+    "sports"
   ],
   "version": "1.5.0",
   "whenToUse": [
     "Kết quả khảo sát, thăm dò dư luận",
     "So sánh 2 luồng ý kiến"
-  ],
-  "hidesSubs": true
+  ]
 }

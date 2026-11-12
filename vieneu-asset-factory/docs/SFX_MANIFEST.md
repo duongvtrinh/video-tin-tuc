@@ -1,9 +1,6 @@
 # Hiệu ứng âm thanh (SFX) — manifest
 
-8 file MP3 hiệu ứng KHÔNG nằm trong repo này (công cụ đẩy snapshot chỉ nhận
-file UTF-8, không nhận file nhị phân). Bản khôi phục đã kiểm chứng:
-thư mục Drive "sfx" (đủ 8 file, kiểm chứng 03/11/2026) — tải về vào
-`vieneu-asset-factory/sfx/` trước khi render cần SFX. Tổng 292KB.
+8 file MP3 hiệu ứng đã nằm trong repo (`vieneu-asset-factory/sfx/`, đẩy 04/11/2026 qua giao diện web sau khi CEO duyệt); Drive chỉ còn là bản backup. Tổng 292KB.
 
 ## Cách app dùng
 

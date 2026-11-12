@@ -150,12 +150,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
   là ngày trước ngày hôm nay để COO quyết giữ/bỏ từng video; giữ thì phòng
   cập nhật J sang ngày hôm nay khi chạm vào ("nhận lại"), bỏ thì COO ghi
   CANCELLED.
-- **Cửa chặn hạn mức (DEC-156, sửa theo DEC-201, mở rộng toàn công ty theo DEC-202):** đầu ca đọc dòng điểm danh COO_CHECKIN mới nhất
-  của chi nhánh (TOKENS_LEFT, % tuần đã dùng dạng số — nguồn chuẩn duy nhất cho cửa chặn theo quyết CEO 11/11/2026) — nếu token tuần đã đạt trên 95% thì claim 0 chủ
-  đề READY mới trong ca đó (chặn tạo video mới, không cần báo cáo), chỉ để
-  video đang làm dở hoàn thành; token thêm là khoản dự phòng cho việc khác,
-  không dùng để sản xuất video; nếu không đọc được quota thì ghi "không
-  đọc được" vào báo cáo ca và vẫn đi tiếp. Cửa chặn này áp dụng toàn công ty (quyết CEO 09/11/2026, DEC-202): Scout cũng dừng quét/chấm/ghi chủ đề khi token tuần trên 95% (ca dừng hẳn, không báo cáo ca); khi hạn mức tuần được reset thì công ty hoạt động trở lại bình thường, không cần lệnh mở lại.
+- **Cửa chặn hạn mức (DEC-263 — thay DEC-156/DEC-201/DEC-202):** đầu ca chạy lệnh subscription-status status, đọc % tuần đã dùng trực tiếp trong dòng 'Usage: N% of ... weekly limit' — nếu N ≥ 95% thì claim 0 chủ đề READY mới trong ca đó (chặn tạo video mới, không cần báo cáo), chỉ để video đang làm dở hoàn thành; token thêm là khoản dự phòng cho việc khác, không dùng để sản xuất video; nếu lệnh không đọc được N thì dùng số Sheet dự phòng (dòng COO_CHECKIN mới nhất của chính chi nhánh, rồi TASKS.L QUOTA); nếu cả hai đều không đọc được thì ghi "không đọc được" vào báo cáo ca và vẫn đi tiếp. Cửa chặn này áp dụng toàn công ty: Scout cũng dừng quét/chấm/ghi chủ đề khi N ≥ 95% (ca dừng hẳn, không báo cáo ca); khi hạn mức tuần được reset thì số trực tiếp tự hạ, công ty hoạt động trở lại bình thường, không cần lệnh mở lại. TASKS.L và COO_CHECKIN chỉ còn là bản ghi để CEO kiểm tra.
 - **BLOCKED — phân loại rồi bỏ qua trong-lô (DEC-104):** dòng TASKS ở
   BLOCKED có ASSIGNEE = email khai báo của chi nhánh mình và UPDATED_AT
   là ngày hôm nay thì pipeline đọc M BLOCKER và phân loại theo mã 2 ký tự
@@ -229,7 +224,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 - Scout KHÔNG BAO GIỜ ghi READY. TOPIC_ID để trống khi ghi mới; khử trùng
   theo tiêu đề/sự kiện. Mỗi ca báo cáo về chat COO (ca trống cũng báo 1
   dòng).
-- **Cửa chặn hạn mức (DEC-202):** đầu ca đọc dòng điểm danh COO_CHECKIN mới nhất (TOKENS_LEFT, % dạng số — nguồn chuẩn theo quyết CEO 11/11/2026) — nếu token tuần đã đạt trên 95% thì công ty tạm thời dừng hoạt động: Scout KHÔNG quét, KHÔNG chấm, KHÔNG ghi chủ đề mới trong ca đó (ca dừng hẳn, không phải ca trống), KHÔNG báo cáo ca. Khi hạn mức tuần được reset thì hoạt động trở lại bình thường, không cần lệnh mở lại. Không đọc được quota thì ghi "không đọc được" vào báo cáo ca và vẫn quét tiếp.
+- **Cửa chặn hạn mức (DEC-263 — thay DEC-202):** đầu ca chạy lệnh subscription-status status, đọc % tuần đã dùng trực tiếp trong dòng 'Usage: N% of ... weekly limit' — nếu N ≥ 95% thì công ty tạm thời dừng hoạt động: Scout KHÔNG quét, KHÔNG chấm, KHÔNG ghi chủ đề mới trong ca đó (ca dừng hẳn, không phải ca trống), KHÔNG báo cáo ca. Khi hạn mức tuần được reset thì số trực tiếp tự hạ, hoạt động trở lại bình thường, không cần lệnh mở lại. Nếu lệnh không đọc được N thì dùng số Sheet dự phòng (dòng COO_CHECKIN mới nhất của chính chi nhánh, rồi TASKS.L QUOTA); nếu cả hai đều không đọc được thì ghi "không đọc được" vào báo cáo ca và vẫn quét tiếp. TASKS.L và COO_CHECKIN chỉ còn là bản ghi để CEO kiểm tra.
 - **Điểm chỉ là gợi ý, không can thiệp quyết định duyệt của CEO; nội dung
   chủ đề mới là yếu tố CEO dùng để quyết định duyệt. Chỉ trạng thái READY
   mới quyết định có sản xuất video hay không.**

@@ -1,0 +1,8 @@
+.broll-sf{display:flex;flex-direction:column;gap:0;padding:.8em 1.3em .9em;border-radius:8px;background:rgba(28,55,42,.85);border-top:.14em solid var(--broll-accent);text-align:left;box-sizing:border-box;width:100%;max-width:528px}
+.broll-sf-title{font:800 clamp(18px,4.3vmin,36px)/1.25 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.04em;overflow-wrap:anywhere;margin-bottom:.15em}
+.broll-sf-step{display:flex;align-items:center;gap:.7em;position:relative;padding:.2em 0;font-size:clamp(16px,4.3vmin,34px)}
+.broll-sf-step4{display:none}
+.broll-sf-4 .broll-sf-step4{display:flex}
+.broll-sf-num{display:flex;align-items:center;justify-content:center;flex:none;position:relative;width:1.8em;height:1.8em;border-radius:50%;background:var(--broll-accent);color:#080a10;font:900 1em/1 'Anton',Arial,sans-serif}
+.broll-sf-text{flex:1;font:800 clamp(15px,3.9vmin,30px)/1.2 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;overflow-wrap:anywhere}
+.broll-sf-step2::before,.broll-sf-step3::before,.broll-sf-step4::before{content:"";position:absolute;left:.9em;top:-.2em;width:.2em;height:.4em;margin-left:-.1em;background:rgba(255,255,255,.35)}

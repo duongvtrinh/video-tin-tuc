@@ -27,10 +27,13 @@
      + **Không thêm nhãn phụ chung chung không có ý nghĩa:** Nhãn phụ (`sublabel`) chỉ được phép thêm nếu nó có ý nghĩa rõ ràng và thực sự bổ sung ý nghĩa cho nội dung chính (như số liệu, tỷ lệ %, mốc thời gian, địa danh, thuộc tính then chốt). Nếu không có thông tin bổ sung rõ ràng và có ý nghĩa thì **bắt buộc bỏ trống** (`""`), phần tử rỗng sẽ tự ẩn trên video.
    - Không chép lại nguyên cả câu thoại dài lên màn hình nếu không cần thiết; chữ xuất hiện để cô đọng ý chính, nhấn mạnh trực quan.
 
-5. **Giới hạn thời gian hiển thị chữ (Tối đa 3s sau hiệu ứng):**
-   - Thời gian hiển thị nội dung văn bản của tất cả các template không quá **3.0 giây** kể từ thời điểm kết thúc hiệu ứng. Khi chữ hiển thị đầy đủ, đếm 3 giây là tự ẩn để trả lại không gian cho hình ảnh.
-   - Riêng với template gõ chữ (`typewriter-reveal`), chỉ có nội dung chính có hiệu ứng gõ chữ, nhãn chính/phụ dùng hiệu ứng khác phù hợp.
-   - Đối với template Luận điểm chính (`thesis-marker`), cộng thêm **500ms** thời gian chờ trước khi chuyển qua câu tiếp theo để tạo điểm nhấn trong video đọc liên tục.
+5. **(Đã bỏ — CEO 13/11/2026, DEC-267):** Luật "chữ tối đa 3,0 giây, tự ẩn sau 3 giây" đã bỏ
+   vì không khớp thực tế: engine render mỗi part thành 1 ảnh tĩnh duy nhất, chữ ở suốt part,
+   không có cơ chế tự ẩn giữa part. Logic tạo video hiện tại (chữ ở suốt part, part ngắn thì
+   chữ ngắn) là đúng. Thời lượng chữ theo độ dài part (xem `docs/TEXT_DENSITY_RULES.md`); thời
+   gian chờ sau part chia đoạn (vd `thesis-marker`) theo luật nghỉ nhấn CHỐT 04/11/2026
+   (pauseAfterMs = 2000ms). Riêng hiệu ứng gõ chữ: chỉ nội dung chính của `typewriter-reveal`
+   có hiệu ứng gõ chữ, nhãn chính/phụ dùng hiệu ứng khác phù hợp.
 
 6. **CHIẾN LƯỢC 1: Chuỗi liệt kê dồn dập (Rapid-Fire Enumeration Montage) [ƯU TIÊN HÀNG ĐẦU]:**
    - Một video editor chuyên nghiệp **không bao giờ ngắt câu thuần túy ở dấu chấm câu**. Dấu chấm câu chỉ là quy ước ngữ pháp, còn nhịp dựng phim phụ thuộc vào **thực thể trực quan**, **mạch cảm xúc** và **nhịp thở hình ảnh**.
@@ -46,7 +49,7 @@
         + Đoạn 1: `"đạn dược,"` $\rightarrow$ `templateId: "cutaway-standard"`, `inputs: {}` (không chữ che màn hình), `sfx: {"id": "whoosh_fast", "offsetSec": 0.0, "volume": 0.7}`, `keywords: ["đạn dược quân sự", "kho đạn pháo"]`.
         + Đoạn 2: `"tên lửa,"` $\rightarrow$ `templateId: "cutaway-standard"`, `inputs: {}`, `sfx: {"id": "whoosh_fast", "offsetSec": 0.0, "volume": 0.7}`, `keywords: ["tên lửa hành trình", "phóng tên lửa"]`.
         + Đoạn 3: `"xe bọc thép"` $\rightarrow$ `templateId: "cutaway-standard"`, `inputs: {}`, `sfx: {"id": "whoosh_fast", "offsetSec": 0.0, "volume": 0.7}`, `keywords: ["xe bọc thép chiến đấu", "xe tăng thiết giáp"]`.
-        + Đoạn 4: `"và hệ thống phòng không."` $\rightarrow$ `templateId: "cutaway-standard"`, `inputs: {}`, `sfx: {"id": "heavy_thud_slam", "offsetSec": 0.0, "volume": 0.75}`, `keywords: ["hệ thống phòng không", "radar phòng không"]`.
+        + Đoạn 4: `"và hệ thống phòng không."` $\rightarrow$ `templateId: "cutaway-standard"`, `inputs: {}`, `sfx: {"id": "heavy_thud_slam", "offsetSec": 0.0, "volume": 0.35}`, `keywords: ["hệ thống phòng không", "radar phòng không"]`.
         *(Món cuối cùng dùng SFX nặng hơn như `heavy_thud_slam` để chốt hạ chuỗi liệt kê).*
    - **Hiệu quả thị giác**: Các B-roll xuất hiện liên tiếp chớp nhoáng theo nhịp đọc của phát thanh viên. Người xem nhìn thấy chuỗi hình ảnh/video tư liệu thật đổi liên tục, tạo cảm giác phim tài liệu cực kỳ đắt giá, chuyên nghiệp như BBC/Discovery.
 
@@ -65,14 +68,17 @@
 
 ## 3. Âm thanh và Ma trận SFX (Sound Design Matrix)
 
-Mọi hiệu ứng thị giác và chuyển cảnh đều được đồng bộ với 8 file âm thanh chuẩn trong thư viện `data/sfx/`:
-1. **Chuyển chương (`section-title`):** `cinematic_riser.mp3` tại $t - 0.8s$ (-6dB) + `heavy_thud_slam.mp3` tại $t + 0.05s$ (0dB).
-2. **Câu hỏi mở đầu (`typewriter-reveal`):** `typing_fast.mp3` tại $t + 0.1s$ (-5dB).
-3. **Băng giấy luận điểm (`thesis-marker`, `quote-card`):** `paper_rip.mp3` tại thời điểm thẻ xuất hiện (-3dB).
+Mọi hiệu ứng thị giác và chuyển cảnh đều được đồng bộ với 8 file âm thanh chuẩn trong thư viện `data/sfx/`. Volume ghi theo **tuyến tính (0–1)**, không dùng dB. Quy ước: **1 SFX/part trong plan** — beat cần 2 tiếng (vd riser + thud ở section-title) thì tách thành 2 part (riser ở part trước, thud ở part này), không ghi 2 SFX vào cùng 1 part. SFX nặng (thud/slam/boom) mixer cắt về **0.4** bất kể plan khai cao hơn — ví dụ ghi **0.35**.
+
+Bảng quy đổi dB → tuyến tính (để đọc tài liệu cũ): 0dB = 1.0 · −2dB ≈ 0.79 · −3dB ≈ 0.71 · −5dB ≈ 0.56 · −6dB ≈ 0.5 · −8dB ≈ 0.4.
+
+1. **Chuyển chương (`section-title`):** `heavy_thud_slam.mp3` tại $t + 0.05s$ (0.35). (Riser `cinematic_riser.mp3` nếu cần thì đặt ở part trước, không gộp vào part này.)
+2. **Câu hỏi mở đầu (`typewriter-reveal`):** `typing_fast.mp3` tại $t + 0.1s$ (0.56).
+3. **Băng giấy luận điểm (`thesis-marker`, `quote-card`):** `paper_rip.mp3` tại thời điểm thẻ xuất hiện (0.71).
 4. **Nhãn từ khóa dập nhanh (`keyword-burst`):** `punch_impact.mp3` (nếu có 2 tag: nhân đôi tại $t=0.05s$ và $t=0.38s$).
-5. **HUD / Dữ liệu / Bản đồ (`tactical-banner`, `stat-counter`):** `radar_glitch.mp3` (-5dB).
-6. **Chuyển cảnh nhanh giữa 2 visual beats:** `whoosh_fast.mp3` (-8dB).
-7. **Cao trào / Cháy nổ / Đại cảnh chấn động:** `boom_sub_impact.mp3` (-2dB).
+5. **HUD / Dữ liệu / Bản đồ (`tactical-banner`, `stat-counter`):** `radar_glitch.mp3` (0.56).
+6. **Chuyển cảnh nhanh giữa 2 visual beats:** `whoosh_fast.mp3` (0.4).
+7. **Cao trào / Cháy nổ / Đại cảnh chấn động:** `boom_sub_impact.mp3` (0.35 — SFX nặng, mixer cắt về 0.4).
 
 ---
 

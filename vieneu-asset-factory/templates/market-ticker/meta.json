@@ -30,6 +30,7 @@
     "value2": "238",
     "value3": "92"
   },
+  "hidesSubs": true,
   "id": "market-ticker",
   "inputs": {
     "change1": {
@@ -49,27 +50,27 @@
     },
     "dir1": {
       "default": "up",
-      "enum": [
+      "type": "enum",
+      "values": [
         "up",
         "down"
-      ],
-      "type": "enum"
+      ]
     },
     "dir2": {
       "default": "up",
-      "enum": [
+      "type": "enum",
+      "values": [
         "up",
         "down"
-      ],
-      "type": "enum"
+      ]
     },
     "dir3": {
       "default": "up",
-      "enum": [
+      "type": "enum",
+      "values": [
         "up",
         "down"
-      ],
-      "type": "enum"
+      ]
     },
     "label": {
       "maxLength": 40,
@@ -109,6 +110,7 @@
   },
   "mode": "overlay",
   "name": "Bảng thị trường",
+  "neutralBgEligible": true,
   "notFor": [
     "Quá 3 chỉ số",
     "Số liệu không chắc chắn"
@@ -118,12 +120,14 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "center",
     "type": "enum"
   },
   "schemaVersion": 1,
   "sfx": null,
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "16:9",
@@ -144,6 +148,5 @@
   "whenToUse": [
     "Chỉ số VN-Index, HNX, giá vàng, dầu, tỷ giá",
     "So sánh tăng/giảm trong ngày"
-  ],
-  "hidesSubs": true
+  ]
 }

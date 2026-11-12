@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "description": "NGUỒN CHUẨN DUY NHẤT (trong repo) cho màu, thang cỡ chữ, SFX và giới hạn của template. Thay cho PALETTE.md / TYPE.md vốn nằm ngoài repo (~/workspace/company-os/template-palette-20261031, template-type-scale-20261031). Loader bỏ qua file bắt đầu bằng '_'. Sửa chuẩn = sửa file này, rồi chạy bin/validate_templates.py.",
+  "accents": {
+    "gold": "#FBBF24", "red": "#EF4444", "cyan": "#22D3EE", "green": "#22C55E",
+    "pink": "#F472B6", "purple": "#A78BFA", "orange": "#FB923C", "white": "#FFFFFF"
+  },
+  "accentAliases": { "violet": "purple" },
+  "palette": {
+    "ink": "#080A10",
+    "text": ["#FFFFFF", "#CBD5E1", "#94A3B8"],
+    "redDeep": "#7F1D1D",
+    "black": "#000000",
+    "moss": { "bg": "#1C372A", "grid": "#2A4D3B" }
+  },
+  "paletteExceptions": {
+    "_note": "Màu ngoài bảng được CHẤP NHẬN CÓ CHỦ ĐÍCH (QA 30/10/2026: versus-split 2 phe, comment-frame thẻ trắng, tactical-banner maroon; CEO 13/11/2026 DEC-265: verdict-stamp #b91c1c).",
+    "versus-split": ["#06080d", "#0b1224", "#10131a", "#1b2a4a", "#240b0b", "#4a1b1b"],
+    "comment-frame": ["#0f2030", "#111111", "#666666"],
+    "tactical-banner": ["#0b0b0c", "#280608"],
+    "verdict-stamp": ["#b91c1c"]
+  },
+  "knownDeviations": {
+    "_note": "NỢ KỸ THUẬT đã biết, chưa có quyết định chuẩn — validator chỉ CẢNH BÁO, không chặn. Xóa mục khi đã sửa hoặc khi CEO nâng thành ngoại lệ chính thức. (13/11/2026, DEC-265: cả 2 nợ cũ — verdict-stamp #b91c1c và hook-title-card 7.0vmin — đã được CEO nâng thành ngoại lệ chính thức, dời sang paletteExceptions / typeScaleExceptions.)",
+    "colors": {},
+    "fontVmin": {}
+  },
+  "typeScaleVmin": [2.5, 2.8, 3.4, 3.9, 4.3, 5.0, 6.5, 8.5, 11.0, 15.0, 23.1],
+  "typeScaleExceptions": {
+    "_note": "Cỡ ngoài thang được CHẤP NHẬN CÓ CHỦ ĐÍCH: versus-split 7.5vmin (ngang); hook-title-card 7.0vmin (CEO 13/11/2026, DEC-265).",
+    "versus-split": [7.5],
+    "hook-title-card": [7.0]
+  },
+  "sfx": {
+    "files": {
+      "boom_sub_impact": { "class": "heavy" },
+      "heavy_thud_slam": { "class": "heavy" },
+      "cinematic_riser": { "class": "normal" },
+      "paper_rip": { "class": "normal" },
+      "punch_impact": { "class": "normal" },
+      "radar_glitch": { "class": "normal" },
+      "typing_fast": { "class": "normal" },
+      "whoosh_fast": { "class": "normal" }
+    },
+    "heavyKeywords": ["thud", "slam", "boom"],
+    "heavyVolumeCap": 0.4,
+    "limiterCeiling": 0.89,
+    "note": "Cap 0.4 cho SFX nặng do render_draft.py áp thầm lặng ở tầng mix (lỗi Chợ nổi 26/10/2026). Plan/meta khai cao hơn vẫn bị cắt — validator cảnh báo để người viết biết."
+  },
+  "limits": { "maxStampsPerPart": 3, "descriptionSoftMaxChars": 400 }
+}

@@ -1,11 +1,6 @@
 # Thư viện nhạc nền (BGM) — manifest
 
-24 track Kevin MacLeod, CC-BY 4.0, chia 8 mood (mỗi mood 3 track). File MP3 KHÔNG
-nằm trong repo này (công cụ đẩy snapshot chỉ nhận file UTF-8) và CHƯA CÓ bản
-Drive (kiểm chứng 03/11/2026: không tìm thấy bgm_catalog.json trên Drive) — Muse cũ
-phải tải thư mục bgm/ (kèm bgm_catalog.json) lên Drive trước, Muse mới tải về vào
-`vieneu-asset-factory/bgm/`; nếu chưa có, select_bgm.py exit 2 và preflight báo
-"BGM không tồn tại" (không crash mù, không lặng lẽ). Tổng ~170MB, mỗi file 3,8–12MB.
+24 track Kevin MacLeod, CC-BY 4.0, chia 8 mood (mỗi mood 3 track). File MP3 đã nằm trong repo (`vieneu-asset-factory/bgm/`, đẩy 04/11/2026 qua giao diện web sau khi CEO duyệt); Drive chỉ còn là bản backup. Nếu chưa có file, select_bgm.py exit 2 và preflight báo "BGM không tồn tại" (không crash mù, không lặng lẽ). Tổng ~170MB, mỗi file 3,8–12MB.
 
 ## License & ghi công
 

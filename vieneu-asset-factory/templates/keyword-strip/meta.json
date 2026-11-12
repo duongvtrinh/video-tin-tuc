@@ -12,6 +12,7 @@
     "box3": "LƯƠNG THỰC",
     "head": "Ba lĩnh vực chịu ảnh hưởng"
   },
+  "hidesSubs": true,
   "id": "keyword-strip",
   "inputs": {
     "box1": {
@@ -37,8 +38,9 @@
   },
   "mode": "overlay",
   "name": "Dải từ khóa / Keyword strip",
+  "neutralBgEligible": true,
   "notFor": [
-    "Một từ khóa duy nhất (dùng keyword-emphasis)",
+    "Một từ khóa duy nhất (dùng keyword-burst)",
     "Từ khóa cực lớn chốt ý (dùng keyword-burst)",
     "Quá 3 từ khóa (chia thành nhiều cảnh)"
   ],
@@ -47,6 +49,7 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "center",
     "type": "enum"
@@ -57,6 +60,7 @@
     "offsetSec": 0,
     "volume": 0.7
   },
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "9:16",
@@ -75,6 +79,5 @@
   "whenToUse": [
     "Liệt kê 2-3 từ khóa song song trong một beat (lĩnh vực, đối tượng, hệ quả)",
     "Cần người xem nhớ một nhóm khái niệm cùng lúc"
-  ],
-  "hidesSubs": true
+  ]
 }

@@ -1,0 +1,136 @@
+{
+  "accent": {
+    "type": "enum",
+    "default": "gold"
+  },
+  "background": "transparent",
+  "capability": [
+    "quy trình",
+    "các bước",
+    "thứ tự"
+  ],
+  "category": "list",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-11-12",
+      "note": "Tạo mới."
+    }
+  ],
+  "constraints": [
+    {
+      "type": "requiredWhen",
+      "countKey": "count",
+      "keysByCount": {
+        "4": [
+          "step4"
+        ]
+      }
+    }
+  ],
+  "description": "Quy trình 3-4 bước đánh số, nối nhau bằng vạch dọc: bước 1 → 2 → 3 (→ 4). Khác checklist (danh sách ý ngang hàng, có dấu tích) và timeline (mốc THỜI GIAN có niên đại).",
+  "exampleInputs": {
+    "title": "Cách chip AI được tạo ra",
+    "count": "3",
+    "step1": "Thiết kế kiến trúc chip",
+    "step2": "In wafer tại nhà máy",
+    "step3": "Đóng gói và kiểm thử"
+  },
+  "exampleVariants": {
+    "4steps": {
+      "title": "Quy trình xin giấy phép",
+      "count": "4",
+      "step1": "Nộp hồ sơ trực tuyến",
+      "step2": "Thẩm định tại sở",
+      "step3": "Bổ sung nếu thiếu",
+      "step4": "Nhận kết quả"
+    }
+  },
+  "hidesSubs": true,
+  "id": "step-flow",
+  "inputs": {
+    "title": {
+      "type": "string",
+      "maxLength": 36,
+      "required": true
+    },
+    "count": {
+      "type": "enum",
+      "values": [
+        "3",
+        "4"
+      ],
+      "default": "3"
+    },
+    "step1": {
+      "type": "string",
+      "maxLength": 34,
+      "required": true
+    },
+    "step2": {
+      "type": "string",
+      "maxLength": 34,
+      "required": true
+    },
+    "step3": {
+      "type": "string",
+      "maxLength": 34,
+      "required": true
+    },
+    "step4": {
+      "type": "string",
+      "maxLength": 34
+    },
+    "accent": {
+      "type": "enum",
+      "values": [
+        "gold",
+        "red",
+        "cyan",
+        "green",
+        "pink",
+        "purple",
+        "orange",
+        "white",
+        "violet"
+      ],
+      "default": "gold"
+    }
+  },
+  "maxStage": 1,
+  "mode": "overlay",
+  "name": "Quy trình từng bước / Step Flow",
+  "neutralBgEligible": true,
+  "notFor": [
+    "Danh sách ý song song không có thứ tự (dùng checklist)",
+    "Các mốc theo năm/ngày (dùng timeline-strip hoặc timeline-horizontal)",
+    "Tuyến đường địa lý (dùng map-route)"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "placement": "subtitle-bottom",
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "whoosh_fast",
+    "offsetSec": 0,
+    "volume": 0.5
+  },
+  "specVersion": 2,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16"
+  ],
+  "themes": [
+    "general",
+    "tech",
+    "science"
+  ],
+  "version": "1.0.0",
+  "whenToUse": [
+    "Giải thích quy trình/cơ chế có THỨ TỰ: xin cấp phép, cách hoạt động, các giai đoạn xử lý",
+    "Câu có 'đầu tiên… sau đó… cuối cùng' hoặc các bước đánh số"
+  ]
+}

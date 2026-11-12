@@ -9,6 +9,7 @@
   "exampleInputs": {
     "text": "Căng thẳng biên giới thành tổn thất kinh tế"
   },
+  "hidesSubs": true,
   "id": "section-caption",
   "inputs": {
     "text": {
@@ -19,6 +20,7 @@
   },
   "mode": "overlay",
   "name": "Caption kết đoạn / Section caption",
+  "neutralBgEligible": true,
   "notFor": [
     "Câu dài giải thích (dùng section-title hoặc quote-card)",
     "Chữ nguồn (dùng source-footer-safe)"
@@ -28,6 +30,7 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "bottom",
     "type": "enum"
@@ -38,6 +41,7 @@
     "offsetSec": 0,
     "volume": 0.6
   },
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "9:16",
@@ -58,6 +62,5 @@
   "whenToUse": [
     "Chốt một đoạn bằng một câu kết luận ngắn trước khi chuyển cảnh",
     "Tóm tắt hệ quả của cụm số liệu vừa nêu"
-  ],
-  "hidesSubs": true
+  ]
 }

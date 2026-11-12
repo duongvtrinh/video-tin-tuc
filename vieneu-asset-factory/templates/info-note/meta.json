@@ -10,6 +10,7 @@
     "info": "IPO tại Thượng Hải · tháng 8/2026",
     "name": "CÔNG TY CÔNG NGHỆ A"
   },
+  "hidesSubs": true,
   "id": "info-note",
   "inputs": {
     "info": {
@@ -25,6 +26,7 @@
   },
   "mode": "overlay",
   "name": "Thẻ chú thích nhỏ / Info note",
+  "neutralBgEligible": true,
   "notFor": [
     "Ghi nguồn (dùng source-footer-safe)",
     "Thông tin dài giải thích (dùng quote-card hoặc section-title)"
@@ -34,11 +36,13 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "bottom",
     "type": "enum"
   },
   "schemaVersion": 1,
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "9:16",
@@ -53,12 +57,14 @@
   ],
   "themes": [
     "general",
-    "economy"
+    "economy",
+    "tech",
+    "science",
+    "crime"
   ],
   "version": "1.4.0",
   "whenToUse": [
     "Giới thiệu nhanh một thực thể khi nhắc tên lần đầu (công ty, tổ chức, nhân vật) kèm một dòng thông tin phụ",
     "Chú thích nhỏ không đáng một thẻ số liệu riêng"
-  ],
-  "hidesSubs": true
+  ]
 }

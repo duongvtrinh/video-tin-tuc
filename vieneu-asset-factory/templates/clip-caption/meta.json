@@ -36,6 +36,7 @@
   },
   "mode": "overlay",
   "name": "Tiêu đề clip tranh cãi",
+  "neutralBgEligible": true,
   "notFor": [
     "Tiêu đề dài quá 40 ký tự",
     "Tóm tắt dài quá 200 ký tự",
@@ -46,12 +47,14 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "edge-bottom",
   "position": {
     "default": "bottom",
     "type": "enum"
   },
   "schemaVersion": 1,
   "sfx": null,
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "9:16"

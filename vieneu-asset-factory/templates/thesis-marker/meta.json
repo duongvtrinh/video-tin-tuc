@@ -1,36 +1,19 @@
 {
-  "schemaVersion": 1,
-  "id": "thesis-marker",
-  "name": "Luận điểm chính / Thesis Marker",
-  "version": "1.5.0",
-  "mode": "fullscreen",
   "background": "opaque",
+  "capability": [
+    "luận điểm",
+    "cột mốc"
+  ],
   "category": "title",
   "description": "Hiển thị cột mốc luận điểm quan trọng (#1, #2...) kèm tiêu đề luận điểm rút gọn, tạo bước chuyển kịch tính. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8). Chuẩn hóa cỡ chữ 31/10/2026 (lệnh CEO): preferred vmin về thang chuẩn (micro 2.5, small 2.8, body 3.4, label-lg 3.9, title 4.3, title-lg 5.0, display 6.5, keyword 8.5, paired 11.0, hero 15.0, score 23.1); giữ nguyên min/max px, line-height, em, px.",
-  "whenToUse": [
-    "Mở đầu một luận điểm then chốt (vd: 'Điểm đầu tiên...', 'Nguyên nhân thứ hai...')",
-    "Chuyển sang ý phân tích mới trong video tài liệu, kinh tế, chính luận",
-    "Tạo nhịp ngắt trang trọng phân tầng nội dung"
-  ],
-  "notFor": [
-    "Các câu kể lể thông thường",
-    "Đoạn có nhiều chi tiết vụn vặt không phải luận điểm chính",
-    "Nhiều dòng văn bản dài dòng"
-  ],
-  "supportedAspectRatios": [
-    "9:16",
-    "16:9",
-    "1:1",
-    "4:3"
-  ],
-  "safeZone": {
-    "x": 0.08,
-    "y": 0.12,
-    "width": 0.84,
-    "height": 0.68,
-    "avoidSubtitleBottomPercent": 20,
-    "avoidTopUiPercent": 10
+  "exampleInputs": {
+    "value": "#1",
+    "label": "",
+    "text": "Chi Phí Quốc Phòng",
+    "sublabel": "Gánh nặng ngân sách đè nặng lên nền kinh tế"
   },
+  "hidesSubs": true,
+  "id": "thesis-marker",
   "inputs": {
     "value": {
       "type": "string",
@@ -63,7 +46,8 @@
         "violet",
         "white",
         "orange",
-        "pink"
+        "pink",
+        "purple"
       ]
     },
     "position": {
@@ -75,7 +59,8 @@
         "bottom",
         "left",
         "right"
-      ]
+      ],
+      "noEffect": true
     },
     "animation": {
       "type": "enum",
@@ -88,14 +73,46 @@
         "pop",
         "wipe",
         "none"
-      ]
+      ],
+      "noEffect": true
     }
   },
+  "mode": "fullscreen",
+  "name": "Luận điểm chính / Thesis Marker",
+  "neutralBgEligible": true,
+  "notFor": [
+    "Các câu kể lể thông thường",
+    "Đoạn có nhiều chi tiết vụn vặt không phải luận điểm chính",
+    "Nhiều dòng văn bản dài dòng"
+  ],
   "performance": {
     "maxDomNodes": 18,
     "usesFilters": false,
     "usesExternalAssets": false
   },
+  "placement": "full-stage",
+  "safeZone": {
+    "x": 0.08,
+    "y": 0.12,
+    "width": 0.84,
+    "height": 0.68,
+    "avoidSubtitleBottomPercent": 20,
+    "avoidTopUiPercent": 10
+  },
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "heavy_thud_slam",
+    "offsetSec": 0.0,
+    "volume": 0.4
+  },
+  "specVersion": 2,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
   "tags": [
     "luận điểm",
     "thesis",
@@ -104,24 +121,17 @@
     "tiêu đề",
     "fullscreen"
   ],
-  "sfx": {
-    "id": "heavy_thud_slam",
-    "offsetSec": 0.0,
-    "volume": 0.4
-  },
-  "exampleInputs": {
-    "value": "#1",
-    "label": "",
-    "text": "Chi Phí Quốc Phòng",
-    "sublabel": "Gánh nặng ngân sách đè nặng lên nền kinh tế"
-  },
   "themes": [
-    "general"
+    "general",
+    "war",
+    "economy",
+    "history",
+    "crime"
   ],
-  "status": "active",
-  "capability": [
-    "luận điểm",
-    "cột mốc"
-  ],
-  "hidesSubs": true
+  "version": "1.5.0",
+  "whenToUse": [
+    "Mở đầu một luận điểm then chốt (vd: 'Điểm đầu tiên...', 'Nguyên nhân thứ hai...')",
+    "Chuyển sang ý phân tích mới trong video tài liệu, kinh tế, chính luận",
+    "Tạo nhịp ngắt trang trọng phân tầng nội dung"
+  ]
 }

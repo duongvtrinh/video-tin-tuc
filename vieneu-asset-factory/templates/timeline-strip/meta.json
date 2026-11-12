@@ -1,34 +1,17 @@
 {
-  "schemaVersion": 1,
-  "id": "timeline-strip",
-  "name": "Dải niên đại / Timeline",
-  "version": "1.4.0",
-  "mode": "overlay",
   "background": "transparent",
   "category": "list",
   "description": "Dải mốc thời gian dạng timeline dọc: các niên đại nối nhau bằng đường kẻ vàng, mỗi mốc một chấm tròn. Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8).",
-  "whenToUse": [
-    "Liệt kê các mốc thời gian, triều đại, sự kiện theo trình tự",
-    "Tóm tắt diễn biến nhiều năm trong một cảnh"
-  ],
-  "notFor": [
-    "Chỉ có 1 mốc thời gian duy nhất (dùng date-stamp)",
-    "Quá 5 mốc (chia thành nhiều cảnh)"
-  ],
-  "supportedAspectRatios": [
-    "9:16",
-    "16:9",
-    "1:1",
-    "4:3"
-  ],
-  "safeZone": {
-    "x": 0.06,
-    "y": 0.12,
-    "width": 0.88,
-    "height": 0.64,
-    "avoidSubtitleBottomPercent": 24,
-    "avoidTopUiPercent": 10
+  "exampleInputs": {
+    "label": "TRIỀU TRẦN",
+    "items": [
+      "1225 — Trần Thủ Độ lập triều Trần",
+      "1285 — Chiến thắng Chương Dương",
+      "1288 — Đại thắng Bạch Đằng"
+    ]
   },
+  "hidesSubs": true,
+  "id": "timeline-strip",
   "inputs": {
     "label": {
       "type": "string",
@@ -38,43 +21,95 @@
     "items": {
       "type": "string",
       "required": true,
-      "maxItems": 5
+      "maxItems": 5,
+      "maxLength": 64
     },
     "accent": {
       "type": "enum",
-      "default": "gold"
+      "default": "gold",
+      "values": [
+        "gold",
+        "red",
+        "cyan",
+        "green",
+        "pink",
+        "purple",
+        "orange",
+        "white",
+        "violet"
+      ]
     },
     "position": {
       "type": "enum",
-      "default": "left"
+      "default": "left",
+      "values": [
+        "top",
+        "center",
+        "bottom",
+        "left",
+        "right"
+      ],
+      "noEffect": true
     },
     "animation": {
       "type": "enum",
-      "default": "stagger"
+      "default": "stagger",
+      "values": [
+        "none",
+        "fade",
+        "flash",
+        "slide-up",
+        "slide-left",
+        "slide-right",
+        "pop",
+        "wipe"
+      ],
+      "noEffect": true
     }
   },
-  "themes": [
-    "general",
-    "history"
+  "mode": "overlay",
+  "name": "Dải niên đại / Timeline",
+  "neutralBgEligible": true,
+  "notFor": [
+    "Chỉ có 1 mốc thời gian duy nhất (dùng date-stamp)",
+    "Quá 5 mốc (chia thành nhiều cảnh)"
   ],
   "performance": {
     "maxDomNodes": 24,
     "usesFilters": false,
     "usesExternalAssets": false
   },
+  "placement": "subtitle-bottom",
+  "safeZone": {
+    "x": 0.06,
+    "y": 0.12,
+    "width": 0.88,
+    "height": 0.64,
+    "avoidSubtitleBottomPercent": 24,
+    "avoidTopUiPercent": 10
+  },
+  "schemaVersion": 1,
   "sfx": {
     "id": "whoosh_fast",
     "offsetSec": 0,
     "volume": 0.6
   },
-  "exampleInputs": {
-    "label": "TRIỀU TRẦN",
-    "items": [
-      "1225 — Trần Thủ Độ lập triều Trần",
-      "1285 — Chiến thắng Chương Dương",
-      "1288 — Đại thắng Bạch Đằng"
-    ]
-  },
+  "specVersion": 2,
   "status": "active",
-  "hidesSubs": true
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
+  "themes": [
+    "general",
+    "history",
+    "crime"
+  ],
+  "version": "1.4.0",
+  "whenToUse": [
+    "Liệt kê các mốc thời gian, triều đại, sự kiện theo trình tự",
+    "Tóm tắt diễn biến nhiều năm trong một cảnh"
+  ]
 }

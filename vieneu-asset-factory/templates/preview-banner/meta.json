@@ -9,11 +9,20 @@
   "exampleInputs": {
     "text": "Huy động 1 vạn nhân công làm việc ngày đêm, để thi công tuyến đường sắt 350km/h Bến Thành - Cần Giờ, VinSpeed muốn thế giới phải trầm trồ với Việt Nam"
   },
+  "hidesSubs": true,
   "id": "preview-banner",
   "inputs": {
     "position": {
       "default": "bottom",
-      "type": "enum"
+      "type": "enum",
+      "values": [
+        "top",
+        "center",
+        "bottom",
+        "left",
+        "right"
+      ],
+      "noEffect": true
     },
     "text": {
       "maxLength": 160,
@@ -23,6 +32,7 @@
   },
   "mode": "overlay",
   "name": "Banner preview / Preview Banner",
+  "neutralBgEligible": true,
   "notFor": [
     "Liệt kê nhiều ý (mỗi beat phân tích dùng keyword-block riêng)",
     "Câu quá dài quá 160 ký tự"
@@ -32,12 +42,18 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "flush-bottom",
+  "position": {
+    "default": "bottom",
+    "type": "enum"
+  },
   "schemaVersion": 1,
   "sfx": {
     "id": "whoosh_fast",
     "offsetSec": 0,
     "volume": 0.6
   },
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "9:16",
@@ -56,10 +72,5 @@
   "version": "1.2.0",
   "whenToUse": [
     "Beat preview sau hook: nêu vấn đề + nội dung chính trước khi đi sâu"
-  ],
-  "position": {
-    "default": "bottom",
-    "type": "enum"
-  },
-  "hidesSubs": true
+  ]
 }

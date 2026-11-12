@@ -347,15 +347,10 @@ def main() -> int:
             if tid and tid != "none":
                 inputs = br.get("inputs") or {}
                 if any(isinstance(v, str) and v.strip() for v in inputs.values()):
-                    hides = True
-                    try:
-                        meta = json.loads((FACTORY / "templates" / tid / "meta.json").read_text(encoding="utf-8"))
-                        if meta.get("hidesSubs") is False:
-                            hides = False
-                    except Exception:
-                        pass
-                    if hides:
-                        hide_subs.add(pt["id"])
+                    # 13/11/2026: mọi template đều hidesSubs=true (42/42) — ngoại lệ
+                    # clip-caption/story-title đã bỏ 31/10/2026; nhánh kiểm
+                    # hidesSubs is False là code chết, gỡ.
+                    hide_subs.add(pt["id"])
     inp = json.loads((proj / "input.json").read_text(encoding="utf-8"))
     # Mặc định 9:16 khi thiếu field (chốt Giai đoạn 4).
     wide = inp.get("aspectRatio", "9:16") != "9:16"

@@ -15,12 +15,14 @@
     ],
     "label": "TIẾN ĐỘ DỰ ÁN"
   },
+  "hidesSubs": true,
   "id": "timeline-horizontal",
   "inputs": {
     "items": {
       "maxItems": 5,
       "required": true,
-      "type": "string"
+      "type": "string",
+      "maxLength": 36
     },
     "label": {
       "maxLength": 40,
@@ -30,6 +32,7 @@
   },
   "mode": "overlay",
   "name": "Trục thời gian ngang / Timeline horizontal",
+  "neutralBgEligible": true,
   "notFor": [
     "Chỉ có 1 mốc (dùng date-stamp)",
     "Quá 5 mốc (chia thành nhiều cảnh)",
@@ -40,6 +43,7 @@
     "usesExternalAssets": false,
     "usesFilters": false
   },
+  "placement": "subtitle-bottom",
   "position": {
     "default": "center",
     "type": "enum"
@@ -50,6 +54,7 @@
     "offsetSec": 0,
     "volume": 0.6
   },
+  "specVersion": 2,
   "status": "active",
   "supportedAspectRatios": [
     "9:16",
@@ -65,12 +70,12 @@
   "themes": [
     "general",
     "history",
-    "economy"
+    "economy",
+    "science"
   ],
   "version": "1.5.0",
   "whenToUse": [
     "Diễn biến theo thời gian với 2-5 mốc ngắn (tiến độ dự án, lộ trình, lịch trình)",
     "Cần người xem thấy trình tự ngang thay vì liệt kê dọc"
-  ],
-  "hidesSubs": true
+  ]
 }

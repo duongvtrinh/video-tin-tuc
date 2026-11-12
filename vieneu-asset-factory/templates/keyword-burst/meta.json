@@ -1,26 +1,17 @@
 {
-  "schemaVersion": 1,
-  "id": "keyword-burst",
-  "name": "Từ khóa lớn / Keyword burst",
-  "version": "1.3.0",
-  "mode": "overlay",
   "background": "transparent",
+  "capability": [
+    "từ khóa",
+    "nhấn mạnh"
+  ],
   "category": "keyword",
   "description": "Một từ hoặc cụm từ cực lớn giữa màn hình để chốt ý (có thể nhấn **từ khóa**). Gỡ animation CSS 31/10/2026 (lệnh CEO): render video chỉ dùng đường tĩnh, keyframes không bao giờ chạy nên gỡ để tránh nhầm lẫn; look tĩnh không đổi. Chuẩn hóa màu 31/10/2026 (lệnh CEO): màu nhấn theo bảng chuẩn (vàng #FBBF24, đỏ #EF4444, cyan #22D3EE, xanh lá #22C55E, hồng #F472B6), nền tối về mực #080A10 giữ nguyên alpha, chữ gom 3 nấc trắng (#FFFFFF/#CBD5E1/#94A3B8).",
-  "whenToUse": [
-    "Chốt ý bằng một từ/cụm từ",
-    "Nhịp nhấn mạnh trong câu kể nhanh"
-  ],
-  "notFor": [
-    "Câu dài",
-    "Nhiều hơn 4 từ"
-  ],
-  "supportedAspectRatios": [
-    "9:16",
-    "16:9",
-    "1:1",
-    "4:3"
-  ],
+  "exampleInputs": {
+    "text": "Một **trận quyết chiến**",
+    "sublabel": "1288"
+  },
+  "hidesSubs": true,
+  "id": "keyword-burst",
   "inputs": {
     "text": {
       "type": "string",
@@ -34,43 +25,87 @@
     },
     "accent": {
       "type": "enum",
-      "default": "gold"
+      "default": "gold",
+      "values": [
+        "gold",
+        "red",
+        "cyan",
+        "green",
+        "pink",
+        "purple",
+        "orange",
+        "white",
+        "violet"
+      ]
     },
     "position": {
       "type": "enum",
-      "default": "center"
+      "default": "center",
+      "values": [
+        "top",
+        "center",
+        "bottom",
+        "left",
+        "right"
+      ],
+      "noEffect": true
     },
     "animation": {
       "type": "enum",
-      "default": "pop"
+      "default": "pop",
+      "values": [
+        "none",
+        "fade",
+        "flash",
+        "slide-up",
+        "slide-left",
+        "slide-right",
+        "pop",
+        "wipe"
+      ],
+      "noEffect": true
     }
   },
-  "sfx": {
-    "id": "punch_impact",
-    "offsetSec": 0,
-    "volume": 0.8
-  },
-  "exampleInputs": {
-    "text": "Một **trận quyết chiến**",
-    "sublabel": "1288"
-  },
+  "mode": "overlay",
+  "name": "Từ khóa lớn / Keyword burst",
+  "neutralBgEligible": true,
+  "notFor": [
+    "Câu dài",
+    "Nhiều hơn 4 từ"
+  ],
   "performance": {
     "maxDomNodes": 24,
     "usesFilters": false,
     "usesExternalAssets": false
   },
+  "placement": "subtitle-bottom",
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "punch_impact",
+    "offsetSec": 0,
+    "volume": 0.8
+  },
+  "specVersion": 2,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16",
+    "16:9",
+    "1:1",
+    "4:3"
+  ],
   "tags": [
     "từ khóa",
     "nhấn mạnh"
   ],
   "themes": [
     "general",
-    "sports"
+    "sports",
+    "tech",
+    "crime"
   ],
-  "status": "active",
-  "capability": [
-    "từ khóa",
-    "nhấn mạnh"
-  ],
-  "hidesSubs": true
+  "version": "1.3.0",
+  "whenToUse": [
+    "Chốt ý bằng một từ/cụm từ",
+    "Nhịp nhấn mạnh trong câu kể nhanh"
+  ]
 }

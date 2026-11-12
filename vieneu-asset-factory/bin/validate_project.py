@@ -44,6 +44,9 @@ import unicodedata
 import zipfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent))
+import meta_check  # noqa: E402
+
 _SYMLINK_FACTORY = Path.home() / "workspace" / "asset-factory"
 # May goc giu symlink cu (khong doi hanh vi); ban clone monorepo
 # khong co symlink thi resolve tu vi tri file script (bin/../).
@@ -197,9 +200,8 @@ def main() -> int:
                     for ik, idef in meta.get("inputs", {}).items():
                         if idef.get("required") and not inputs.get(ik):
                             err(f"part {p.get('id')}: thiếu input bắt buộc '{ik}' của {tid}")
-                        ml = idef.get("maxLength")
-                        if ml and inputs.get(ik) and len(str(inputs[ik])) > ml:
-                            err(f"part {p.get('id')}: input '{ik}' dài quá {ml} ký tự")
+                        for _m in meta_check.check_input_value(ik, idef, inputs.get(ik)):
+                            err(f"part {p.get('id')}: {_m}")
                     sfx = br.get("sfx")
                     if sfx and sfx.get("id") not in sfx_ids:
                         err(f"part {p.get('id')}: sfx id lạ: {sfx.get('id')}")

@@ -34,7 +34,12 @@ ACCENT_HEX = {
     "pink": "#F472B6",
     "purple": "#A78BFA",
     "orange": "#FB923C",
+    "white": "#FFFFFF",
 }
+
+# meta/skill từng khai 'violet' nhưng bảng chỉ có 'purple' -> rơi thầm lặng về vàng
+# (đã đo 11/11/2026). Alias giữ tương thích mọi plan cũ.
+ACCENT_ALIASES = {"violet": "purple"}
 
 
 def resolve_accent(template_id: str, inputs: dict) -> str:
@@ -44,6 +49,7 @@ def resolve_accent(template_id: str, inputs: dict) -> str:
     vàng #FBBF24. Trước D4, mọi đường đều gán cứng vàng nên accent
     trong meta (vd breaking-banner đỏ) không bao giờ có tác dụng."""
     name = (inputs or {}).get("accent")
+    name = ACCENT_ALIASES.get(name, name) if isinstance(name, str) else name
     if isinstance(name, str) and name in ACCENT_HEX:
         return ACCENT_HEX[name]
     try:
@@ -51,6 +57,7 @@ def resolve_accent(template_id: str, inputs: dict) -> str:
             (FACTORY / "templates" / template_id / "meta.json").read_text(
                 encoding="utf-8"))
         default = (meta.get("accent") or {}).get("default")
+        default = ACCENT_ALIASES.get(default, default) if isinstance(default, str) else default
         if isinstance(default, str) and default in ACCENT_HEX:
             return ACCENT_HEX[default]
     except Exception:

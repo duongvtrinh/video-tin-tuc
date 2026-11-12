@@ -1,0 +1,216 @@
+{
+  "accent": {
+    "type": "enum",
+    "default": "gold"
+  },
+  "background": "transparent",
+  "capability": [
+    "số liệu",
+    "cơ cấu",
+    "tỷ trọng"
+  ],
+  "category": "stat",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-11-12",
+      "note": "Tạo mới."
+    }
+  ],
+  "constraints": [
+    {
+      "type": "requiredWhen",
+      "countKey": "count",
+      "keysByCount": {
+        "3": [
+          "label3",
+          "pct3"
+        ],
+        "4": [
+          "label3",
+          "pct3",
+          "label4",
+          "pct4"
+        ]
+      }
+    },
+    {
+      "type": "sum",
+      "countKey": "count",
+      "keysByCount": {
+        "2": [
+          "pct1",
+          "pct2"
+        ],
+        "3": [
+          "pct1",
+          "pct2",
+          "pct3"
+        ],
+        "4": [
+          "pct1",
+          "pct2",
+          "pct3",
+          "pct4"
+        ]
+      },
+      "equals": 100,
+      "tolerance": 1
+    }
+  ],
+  "description": "Một thanh ngang chia 2-4 phần theo tỷ trọng (tổng 100%) kèm chú giải màu và phần trăm. Trả lời câu hỏi 'chiếm bao nhiêu phần' — khác compare-bars (so giá trị tuyệt đối từng thanh) và poll-vote (kết quả bỏ phiếu). Tổng pct phải bằng 100 (±1) — meta.constraints do preflight kiểm.",
+  "exampleInputs": {
+    "title": "Cơ cấu nguồn điện 2025",
+    "count": "3",
+    "label1": "Nhiệt điện",
+    "pct1": "48",
+    "label2": "Thủy điện",
+    "pct2": "32",
+    "label3": "Năng lượng tái tạo",
+    "pct3": "20",
+    "foot": "Nguồn: số liệu minh họa"
+  },
+  "exampleVariants": {
+    "2parts": {
+      "title": "Tỷ lệ phiếu",
+      "count": "2",
+      "label1": "Thuận",
+      "pct1": "72",
+      "label2": "Chống",
+      "pct2": "28"
+    },
+    "4parts": {
+      "title": "Thị phần điện thoại",
+      "count": "4",
+      "label1": "Hãng A",
+      "pct1": "38",
+      "label2": "Hãng B",
+      "pct2": "27",
+      "label3": "Hãng C",
+      "pct3": "22",
+      "label4": "Khác",
+      "pct4": "13"
+    }
+  },
+  "hidesSubs": true,
+  "id": "share-bar",
+  "inputs": {
+    "title": {
+      "type": "string",
+      "maxLength": 40,
+      "required": true
+    },
+    "count": {
+      "type": "enum",
+      "values": [
+        "2",
+        "3",
+        "4"
+      ],
+      "default": "3"
+    },
+    "label1": {
+      "type": "string",
+      "maxLength": 22,
+      "required": true
+    },
+    "pct1": {
+      "type": "string",
+      "maxLength": 3,
+      "required": true,
+      "min": 0,
+      "max": 100,
+      "integer": true
+    },
+    "label2": {
+      "type": "string",
+      "maxLength": 22,
+      "required": true
+    },
+    "pct2": {
+      "type": "string",
+      "maxLength": 3,
+      "required": true,
+      "min": 0,
+      "max": 100,
+      "integer": true
+    },
+    "label3": {
+      "type": "string",
+      "maxLength": 22
+    },
+    "pct3": {
+      "type": "string",
+      "maxLength": 3,
+      "min": 0,
+      "max": 100,
+      "integer": true
+    },
+    "label4": {
+      "type": "string",
+      "maxLength": 22
+    },
+    "pct4": {
+      "type": "string",
+      "maxLength": 3,
+      "min": 0,
+      "max": 100,
+      "integer": true
+    },
+    "foot": {
+      "type": "string",
+      "maxLength": 48
+    },
+    "accent": {
+      "type": "enum",
+      "values": [
+        "gold",
+        "red",
+        "cyan",
+        "green",
+        "pink",
+        "purple",
+        "orange",
+        "white",
+        "violet"
+      ],
+      "default": "gold"
+    }
+  },
+  "maxStage": 1,
+  "mode": "overlay",
+  "name": "Thanh cơ cấu / Share Bar",
+  "neutralBgEligible": true,
+  "notFor": [
+    "So sánh giá trị tuyệt đối giữa các đối tượng (dùng compare-bars)",
+    "Kết quả bình chọn hai phương án (dùng poll-vote)",
+    "Một con số tỷ lệ duy nhất (dùng stat-counter)"
+  ],
+  "performance": {
+    "maxDomNodes": 24,
+    "usesExternalAssets": false,
+    "usesFilters": false
+  },
+  "placement": "subtitle-bottom",
+  "schemaVersion": 1,
+  "sfx": {
+    "id": "heavy_thud_slam",
+    "offsetSec": 0,
+    "volume": 0.35
+  },
+  "specVersion": 2,
+  "status": "active",
+  "supportedAspectRatios": [
+    "9:16"
+  ],
+  "themes": [
+    "general",
+    "economy",
+    "science"
+  ],
+  "version": "1.0.0",
+  "whenToUse": [
+    "Cơ cấu/thị phần/tỷ lệ các phần của MỘT tổng thể: 60% – 30% – 10%",
+    "Phân bổ ngân sách, nguồn gốc, thành phần, phiếu thuận/chống/trắng"
+  ]
+}
