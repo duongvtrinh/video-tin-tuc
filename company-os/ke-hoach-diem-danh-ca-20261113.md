@@ -24,7 +24,7 @@ Tên tab đề xuất: **SHIFT_CHECKIN** (tên ngắn, đúng chức năng; ch�
 
 | Cột | Tên cột | Định dạng | Ai ghi | Ghi chú |
 |-----|---------|-----------|--------|---------|
-| A | BRANCH_EMAIL | email đầy đủ của chi nhánh, vd `branch@example.com` | COO (lúc đăng ký) | Chữ ký định danh, đúng luật email đầy đủ (quyết BBB 12/11). Không dùng mã rút gọn. |
+| A | BRANCH_EMAIL | email đầy đủ của chi nhánh, vd `branch@example.com` | COO (lúc đăng ký) | Chữ ký định danh, đúng luật email đầy đủ (quyết DEC-264). Không dùng mã rút gọn. |
 | B | REG_DATE | `YYYY-MM-DD` (giờ Asia/Saigon) | COO | Ngày đăng ký ca. |
 | C | REG_TIME | `HH:MM:SS` (giờ Asia/Saigon) | COO | Giờ COO ghi lúc append. Chỉ là bản ghi đọc được; **thứ tự đăng ký lấy theo THỨ TỰ DÒNG, không lấy theo cột này** (xem mục 7.1). |
 | D | HANDOVER_SIGNOFF | chuỗi ký nhận (mục 5) hoặc trống | Sản xuất (lúc nhận ca) | Trống = chưa ký nhận. COO để trống khi đăng ký. |

@@ -288,8 +288,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 
 ### CEO_REPORTS — 9 cột A–I, kênh leo thang COO → CEO + lệnh CEO
 
-- A REPORT_ID (dạng RPT-YYYYMMDD-BBB-NN, BBB = 3 số đầu email khai báo,
-  vd 123; COO ghi A–F), B DATE_REPORTED, C ASSIGNEE_EMAIL, D ISSUE,
+- A REPORT_ID (dạng RPT-YYYYMMDD-mail@domain.com-NN, mail@domain.com = email khai báo đầy đủ của chi nhánh; COO ghi A–F), B DATE_REPORTED, C ASSIGNEE_EMAIL, D ISSUE,
   E TRIED, F NEEDS_DECISION, G CEO_REPLY, H APPLIED_BY, I DATE.
 - COO chỉ ghi 1 dòng khi vấn đề nghiêm trọng (DEC-111): vượt quyền COO
   VÀ đã thử mọi cách trong thẩm quyền (chi tiền, cam kết ngoài, thay đổi
