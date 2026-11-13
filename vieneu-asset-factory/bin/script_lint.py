@@ -107,6 +107,7 @@ QUOTE_SPAN = re.compile(r"“[^”]*”|\"[^\"]*\"|«[^»]*»")
 SPEECH_TAIL = re.compile(r"\b(nói|kể|hỏi|viết|đáp|khai|thốt lên|cho biết|trả lời)\s*:\s*.*$")
 NUMWORD = r"(?:một|hai|ba|bốn|năm|sáu|bảy|tám|chín|mười)"
 HEADING_BAD_NUM = re.compile(r"#\s*(\d|" + NUMWORD + r"\b)|luận điểm (\d|" + NUMWORD + r"\b)")
+LIST_ARGS = re.compile(r"đi qua\s+(?:\d|" + NUMWORD + r"\b)\s+(chuyện|luận điểm|điểm|vấn đề|phần|nội dung)")  # §3.2: liệt kê luận điểm (CEO 14/11/2026)
 LABEL_HEADINGS = {"TỔNG QUAN", "TÁC ĐỘNG", "KẾT LUẬN"}  # §3.4 ví dụ cấm
 LABEL_LIKE = {"BỐI CẢNH", "GIỚI THIỆU", "NGUYÊN NHÂN", "HẬU QUẢ", "DIỄN BIẾN", "NHẬN ĐỊNH", "ĐÁNH GIÁ", "MỞ ĐẦU"}
 MINH = re.compile(r"(?<!một )(?<!tự )(?<!riêng )\bmình\b")
@@ -274,10 +275,17 @@ def lint(text: str, facts: str | None = None) -> tuple[list[Finding], dict]:
     _body_low = " ".join(spoken(s) for _, s in _plain)
     n_minh = len(MINH.findall(_body_low))
     if n_minh > 3:
-        findings.append(Finding("CẢNH BÁO", "X3", 0, f"'mình' xuất hiện {n_minh} lần; doctrine §1 cho tối đa 3 lần cả bài, chỉ dùng ở chỗ dẫn đường ('Mình đi qua ba chuyện…')."))
+        findings.append(Finding("CẢNH BÁO", "X3", 0, f"'mình' xuất hiện {n_minh} lần; doctrine §1 cho tối đa 3 lần cả bài, chỉ dùng ở chỗ dẫn đường tự nhiên (không liệt kê số luận điểm — cấm 'Mình đi qua ba chuyện/luận điểm', xem §3.2)."))
     n_ban = len(BAN_RE.findall(_body_low))
     if n_ban > 2:
         findings.append(Finding("CẢNH BÁO", "X4", 0, f"'bạn' xuất hiện {n_ban} lần; doctrine §1 cho tối đa 2 lần cả bài (không tính 'các bạn' đã cấm riêng ở X2)."))
+
+    # -------- liệt kê luận điểm (§3.2 doctrine; CEO 14/11/2026) — cấm đếm số
+    # luận điểm sẽ trình bày ("đi qua ba chuyện/luận điểm", "đi qua hai luận
+    # điểm"...). Chỉ CẢNH BÁO (bộ lọc thô); QA là cửa cuối.
+    for i, s in _plain:
+        if LIST_ARGS.search(spoken(s)):
+            findings.append(Finding("CẢNH BÁO", "L1", i, "§3.2/luật 14/11: câu liệt kê luận điểm ('đi qua N chuyện/luận điểm'). Dẫn vào vấn đề bằng câu khẳng định có thông tin, không đếm số luận điểm.", s.strip()[:90]))
 
     # -------- từ văn viết (Phụ lục B; nhóm 1, 13/11/2026): gom theo từ, chỉ cảnh báo,
     # kèm từ thay. Thay cho W1 mật độ đã gỡ ở I13 (ngưỡng không có trong doctrine).

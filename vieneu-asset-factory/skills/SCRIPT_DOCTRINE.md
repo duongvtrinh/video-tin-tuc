@@ -36,7 +36,7 @@ Mỗi kịch bản có MỘT người kể, giữ nguyên từ câu đầu tới
   - nhận xét ngắn có căn cứ ngay sau một con số: "Nghe thì nhỏ.", "Con số này chưa đo ở đâu."
   - tự sửa cho chính xác: "Nói đúng hơn là…"
   - **nói thẳng chỗ chưa biết**: "Hồ sơ không nói khoản này ai chịu." (chỉ khi dữ kiện thật sự không có)
-- Xưng hô: không xưng "tôi". "Mình" tối đa 3 lần cả bài, dùng ở chỗ dẫn đường ("Mình đi qua ba chuyện…").
+- Xưng hô: không xưng "tôi". "Mình" tối đa 3 lần cả bài, dùng ở chỗ dẫn đường tự nhiên — nhưng KHÔNG dùng để liệt kê số luận điểm (cấm "Mình đi qua ba chuyện/luận điểm", xem §3.2).
   "Bạn" tối đa 2 lần. Cấm "các bạn", "quý vị", "hôm nay chúng ta", "bạn có biết".
 - Tiểu từ khẩu ngữ (nhé, nhỉ, đấy, nha): cấm, trừ khi giọng riêng của kênh khai báo khác.
 
@@ -99,8 +99,7 @@ Ràng buộc đi kèm:
 - `script_lint.py`: K3 (LỖI) nếu câu đầu có chữ số/%/ngày tháng/số chữ + đơn vị lớn; K4 (CẢNH BÁO) nếu số chữ + đơn vị thời gian/đếm. Lint không phân loại dạng; chọn dạng là việc của người viết.
 
 ### 3.2 Preview là lời hứa, không phải mục lục
-1-2 câu, nói như dẫn đường: *"Mình đi qua ba chuyện: 120 tỷ đồng đó mua được gì, vì sao cầu chậm 4 tháng, và
-con số giảm 30% ùn tắc là lời hứa của ai."* Ba chuyện, mỗi chuyện là một mẩu tò mò có thật; không số liệu râu ria.
+1-2 câu, nói như lời hứa/dẫn vào vấn đề tự nhiên: *"Cầu 120 tỷ đã xong, phà đã ngừng chạy — nhưng tiền đó mua được gì, vì sao chậm 4 tháng, và con số giảm 30% ùn tắc là lời hứa của ai."* Mỗi ý là một mẩu tò mò có thật; không số liệu râu ria. CẤM liệt kê/đếm số luận điểm (CEO 14/11/2026): cấm "Mình đi qua ba chuyện/luận điểm", "Mình đi qua hai luận điểm", "Có ba điểm", "Chúng ta sẽ xem ba vấn đề", và mọi câu thông báo số luận điểm sẽ trình bày.
 Không viết "Bài viết/video này sẽ…", "Chúng ta sẽ cùng…".
 
 ### 3.3 Vòng mở (open loop)
@@ -192,7 +191,7 @@ Ngoài lớp: **bộ ba trừu tượng** ("A, B và C" toàn danh từ trừu t
 | | Trước (mùi AI) | Sau |
 |---|---|---|
 | Câu mở đầu + câu 2 | Trong bối cảnh Hà Nội ngày càng phát triển, hạ tầng giao thông luôn đóng vai trò quan trọng. | Cầu qua sông Y đã xong, phà đã ngừng chạy, còn lời hứa bớt kẹt xe thì chưa ai đo. Từ 0 giờ ngày 3/11, phà qua sông Y ngừng chạy. Mỗi ngày nó chở khoảng 4.000 lượt xe máy. |
-| Preview | Hãy cùng tìm hiểu về dự án, những khó khăn và tác động của nó. | Mình đi qua ba chuyện: 120 tỷ đồng mua được gì, vì sao cầu chậm 4 tháng, và con số 30% là lời hứa của ai. |
+| Preview | Hãy cùng tìm hiểu về dự án, những khó khăn và tác động của nó. | Cầu 120 tỷ đã xong, phà đã ngừng chạy — nhưng tiền đó mua được gì, vì sao chậm 4 tháng, và con số 30% là lời hứa của ai. |
 | Cầu nối | Nhưng câu chuyện chưa dừng lại ở đó. Điều đáng nói là tiến độ. | Kế hoạch là 10 tháng. Làm hết 14. |
 | Tính từ → chi tiết | Việc chờ phà gây bất tiện rất lớn cho người dân. | Theo chủ đầu tư, mỗi lượt qua sông phải chờ trung bình khoảng 25 phút. |
 | Văn viết → nói | Dự án được chủ đầu tư tiến hành nhằm giải quyết tình trạng ùn tắc. | Chủ đầu tư làm cầu để gỡ ùn tắc. |
