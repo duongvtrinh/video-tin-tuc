@@ -1,6 +1,6 @@
-# Bảng điều phối — Video HQ — Trụ sở Muse
+# Bảng điều phối — Video HQ — Tin Tức
 
-Workbook: Video HQ — Trụ sở Muse (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`)
+Workbook: Video HQ — Tin Tức (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`)
 
 Tạo mới từ spec này thì tạo đủ 8 tab dưới đây với đúng tên tab và đúng
 hàng tiêu đề, kèm dropdown validation cho TOPICS.K, TASKS.C, QA_LOG.D,
@@ -201,6 +201,8 @@ CEO 08/11/2026, DEC-107 phương án A). Sau lần trả thứ 3 Production dừ
 
 ### DECISIONS — chỉ CEO quyết
 DECISION_ID | ISSUE | OPTION_A | OPTION_B | COO_PROPOSAL | CEO_DECISION | DATE
+
+**Quy tắc ghi DECISIONS không xung đột (lệnh CEO 13/11/2026, hòa giải DECISIONS):** khi ghi một quyết định mới vào DECISIONS, BẮT BUỘC đọc lại các quyết định cũ cùng chủ đề/luật TRƯỚC khi ghi. Nếu quyết định mới thay thế hoặc sửa một quyết định cũ (cùng luật, kết quả khác): (1) trong dòng mới ghi rõ quyết định cũ nào bị thay thế (vd "Thay thế DEC-xxx"); (2) append (chỉ thêm, không xóa/sửa chữ gốc) vào cột F CEO_DECISION của dòng cũ một ghi chú: "⛔ ĐÃ BỊ THAY THẾ bởi DEC-xxx (ngày): <nội dung ngắn>. Luật hiện hành: <DEC hiện hành>." — nếu chỉ thay thế một phần (vd chỉ đổi phương pháp, ngưỡng giữ nguyên) thì ghi rõ "PHƯƠNG PHÁP ĐÃ BỊ THAY THẾ... ngưỡng giữ nguyên"; (3) không bao giờ để một dòng đã bị thay thế mà không có ghi chú — dòng cũ không ghi chú là một mâu thuẫn đang hoạt động (ai đọc riêng dòng cũ sẽ làm sai); (4) điền DATE (cột G, YYYY-MM-DD) cho mọi dòng mới; dòng trống đã giữ số (vd DEC-248..256 giữ cho X-01..X-08+BBB) thì điền khi quyết định được ra, nếu quyết định không bao giờ ra (vd X-05/X-07) thì ghi rõ là không có quyết định đó, không để trống lặng lẽ.
 
 ### COO_TASKS — tab nhiệm vụ riêng cho COO, 7 cột (lệnh CEO 04/11/2026, bỏ cột "Ngày CEO giao" ngày 05/11/2026; bỏ cột DEADLINE ngày 08/11/2026)
 > **Nhãn cột trên workbook thật (đã kiểm chứng 11/11/2026):** 7 cột của tab này dùng khóa tiếng Anh — ID, ASSIGNEE_EMAIL, TASK, DETAIL, STATUS, COMPLETED_AT, RESULT — đúng thứ tự và ý nghĩa như mô tả tiếng Việt dưới đây; nhãn tiếng Việt trong spec là bản dịch ý nghĩa. Mọi tham chiếu vận hành theo vị trí cột A–G.

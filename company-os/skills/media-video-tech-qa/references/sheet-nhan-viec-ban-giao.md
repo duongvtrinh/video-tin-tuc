@@ -7,7 +7,7 @@
 <!-- nguồn: SKILL.md cũ dòng 5-30 -->
 ## Sheet mới — đọc trước khi chấm (Đang áp dụng từ 07/11/2026 — GĐ2)
 
-- Workbook mới: "Video HQ — Trụ sở Muse" (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`). Workbook cũ "HQ - Công ty 1 người — CŨ (chỉ đọc)" chỉ đọc, KHÔNG ghi.
+- Workbook mới: "Video HQ — Tin Tức" (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`). Workbook cũ "HQ - Công ty 1 người — CŨ (chỉ đọc)" chỉ đọc, KHÔNG ghi.
 - Tab chạm tới: TASKS (trạng thái hiện tại của video) + QA_LOG (lịch sử verdict). Hồ sơ media sống trong `broll-plan.json` + `media-log.json` của project; DRIVE_LINK + MD5 + STATUS=DELIVERED ghi vào TASKS.
 - QA_LOG (A–F): VIDEO_ID, VERSION, DATE, RESULT (dropdown APPROVED/RETURNED), ISSUES, REPO_NOTE. Append-only (R5): chỉ ghi thêm, không sửa, không xoá. Ghi sai thì ghi dòng đính chính mới, ghi rõ "đính chính dòng ngày X".
 - TASKS (A–O): TOPIC_ID, TITLE, STATUS (dropdown CLAIMED/BUILDING/REVIEW/RETURNED/APPROVED/DELIVERED/BLOCKED/CANCELLED), ASSIGNEE, DRAFT_LINK, QA_VERDICT, RETURNS, DRIVE_LINK, MD5, UPDATED_AT, PROD_NOTES, QUOTA, BLOCKER, DUP_NOTE, FACEBOOK (cột O do bên khác quản lý, QA không ghi). QA chỉ ghi các cột của mình (xem dưới).

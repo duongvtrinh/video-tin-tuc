@@ -3,7 +3,7 @@
 > **Cách dùng.** Đọc LÕI này mỗi ca. Mở đúng tệp trong `references/` khi chạm chủ đề tương ứng (bảng §4). Lõi là bản tóm lược có
 > mục lục; **tệp tham chiếu là nguyên văn từ SKILL.md cũ (216KB, 453 dòng), không mất chữ nào** (`references/verify_split.py` chứng minh).
 > Lõi và tham chiếu lệch nhau → tham chiếu thắng, ghi vào báo cáo ca để COO sửa lõi. Quyết định mới → sửa tham chiếu trước, lõi sau.
-> Workbook: "Video HQ — Trụ sở Muse" (ID `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`), chỉ chạm tab TOPICS (CHỈ ĐỌC), TASKS và
+> Workbook: "Video HQ — Tin Tức" (ID `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`), chỉ chạm tab TOPICS (CHỈ ĐỌC), TASKS và
 > SHIFT_CHECKIN (điểm danh nhận ca — chỉ ghi cột D HANDOVER_SIGNOFF dòng của mình).
 
 ## 1. Bất biến — vi phạm là lỗi, không có ngoại lệ tự suy

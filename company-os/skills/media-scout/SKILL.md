@@ -1,10 +1,10 @@
-# Quét trend làm video (Sheet mới "Video HQ — Trụ sở Muse")
+# Quét trend làm video (Sheet mới "Video HQ — Tin Tức")
 
 > **Email khai báo của chi nhánh (bổ sung 12/11/2026, sau sự cố TOPIC-345):** email khai báo của chi nhánh là email đã lưu trong MEMORY.md của tài khoản này — dùng đúng email đó để tìm dòng điểm danh của chính chi nhánh mình ở tab COO_CHECKIN (ASSIGNEE_EMAIL) và mọi chỗ khác cần email chi nhánh. Nguồn chuẩn của giá trị này là MEMORY.md của tài khoản này (ghi chú này chỉ nhắc quy tắc, không ghi giá trị cụ thể). KHÔNG dùng email khác thấy trong Sheet: workbook dùng chung nhiều chi nhánh, các dòng mang email khác là của chi nhánh khác. Tiền lệ: 12/11 Production ghi nhầm email của chi nhánh khác vào TASKS dòng 127 (TOPIC-345) vì chỉ thấy các dòng của chi nhánh đó ở đầu tab TASKS — đã sửa lại đúng email.
 
 **Đã kích hoạt từ GĐ2 (07/11/2026, cắt hẳn sang Sheet mới). Thay thế skill media-scout cũ.**
 
-- Workbook mới: "Video HQ — Trụ sở Muse" (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`). Workbook cũ "HQ - Công ty 1 người — CŨ (chỉ đọc)" chỉ đọc, KHÔNG ghi.
+- Workbook mới: "Video HQ — Tin Tức" (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`). Workbook cũ "HQ - Công ty 1 người — CŨ (chỉ đọc)" chỉ đọc, KHÔNG ghi.
 - Hai phòng Scout giữ tách riêng: Scout - Báo và Scout - Group, mỗi phòng quét nguồn của mình và TỰ CHẤM chủ đề của mình trong cùng lượt quét (quyết định CEO C3, 07/11/2026: gộp Scout + Scoring, ĐÓNG chat Scoring — không còn hàng đợi Pending Scoring, không nhắn Scoring nữa).
 - Tab duy nhất ghi vào: TOPICS. Không ghi vào tab nào khác.
 

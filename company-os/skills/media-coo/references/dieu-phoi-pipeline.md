@@ -3,7 +3,7 @@
 <!-- nguồn: SKILL.md cũ dòng 65-78 -->
 ## Nhận việc và phân việc
 
-- Đọc tab TASKS trong workbook "Video HQ — Trụ sở Muse" trước khi phân việc mới.
+- Đọc tab TASKS trong workbook "Video HQ — Tin Tức" trước khi phân việc mới.
 
 - Chỉ giao việc khi đã có định nghĩa xong, chủ sở hữu, người kiểm tra và deadline.
 

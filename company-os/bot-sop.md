@@ -10,7 +10,7 @@ của tài khoản; bản mẫu nằm trong repo tại company-os/crons/ (xem co
 Asia/Saigon (quyết CEO 07/11/2026, R4-14 phương án A, DEC-019; cron
 bot-hoc-hoi-2000) — xem mục bot-hoc-hoi cuối file.
 
-Workbook: "Video HQ — Trụ sở Muse" (spreadsheetId
+Workbook: "Video HQ — Tin Tức" (spreadsheetId
 `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`; cùng tài khoản: dùng tiếp
 workbook đang chạy, không tạo mới, không ghi đè; khác tài khoản: tạo mới
 từ `company-os/google-sheet-spec.md` — đủ 7 tab: TOPICS, TASKS, QA_LOG,
@@ -110,8 +110,7 @@ không nới lỏng chuẩn.
 Skill và quy trình: media-scout, media-video-production,
 media-video-tech-qa (phòng Scoring đã đóng ngày 07/11/2026 theo quyết
 C3; skill media-topic-scoring đã ngừng dùng), spec
-(company-os/google-sheet-spec.md) và bot-sop này. Workbook "Video HQ —
-Trụ sở Muse" (7 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN). Luật kề nhau + trần AI + nền trung tính (DEC-242/243/244, quy tắc CEO 09/11/2026): xem skill media-video-production, mục 'Luật kề nhau', và LOGIC.md (nguyên tắc 6, 7) — không nhắc lại ở đây.
+(company-os/google-sheet-spec.md) và bot-sop này. Workbook "Video HQ — Tin Tức" (7 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN). Luật kề nhau + trần AI + nền trung tính (DEC-242/243/244, quy tắc CEO 09/11/2026): xem skill media-video-production, mục 'Luật kề nhau', và LOGIC.md (nguyên tắc 6, 7) — không nhắc lại ở đây.
 Cron này CHỈ ĐỌC Sheet + skill + nhật ký, KHÔNG ghi vào Sheet (không
 ghi TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS/COO_CHECKIN); mọi vấn đề/cải tiến ghi vào company-os/improvement-log.md theo bước 5–6; KHÔNG tự sửa file chuẩn, KHÔNG push GitHub.
 

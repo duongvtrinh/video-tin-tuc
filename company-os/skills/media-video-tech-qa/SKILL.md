@@ -3,7 +3,7 @@
 > **Cách dùng.** Đọc LÕI này mỗi ca. Mở đúng tệp trong `references/` khi chạm chủ đề tương ứng (bảng §4). Lõi là bản tóm lược có
 > mục lục; **tệp tham chiếu là nguyên văn từ SKILL.md cũ (66.954 byte, 207 dòng), không mất chữ nào** (`references/verify_split.py` chứng minh).
 > Lõi và tham chiếu lệch nhau → tham chiếu thắng, ghi vào báo cáo ca để COO sửa lõi. Quyết định mới → sửa tham chiếu trước, lõi sau.
-> Workbook: "Video HQ — Trụ sở Muse" (ID `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`), chỉ chạm tab TASKS và QA_LOG (ghi verdict),
+> Workbook: "Video HQ — Tin Tức" (ID `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`), chỉ chạm tab TASKS và QA_LOG (ghi verdict),
 > COO_TASKS (đọc lệnh COO), CEO_REPORTS (chỉ đọc lệnh CEO — DEC-114).
 
 ## 1. Bất biến — vi phạm là lỗi, không có ngoại lệ tự suy

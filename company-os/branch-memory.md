@@ -64,7 +64,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 - Repo (private, giữ private): `duongvtrinh/vieneu-media-company`,
   nhánh `main`. Đẩy lên GitHub chỉ sau khi CEO đọc phân tích và duyệt riêng
   (mục 9).
-- Workbook vận hành: **"Video HQ — Trụ sở Muse"**,
+- Workbook vận hành: **"Video HQ — Tin Tức"**,
   spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`, múi giờ
   Asia/Saigon, 7 tab: TOPICS / TASKS / QA_LOG / DECISIONS / COO_TASKS /
   CEO_REPORTS / COO_CHECKIN.

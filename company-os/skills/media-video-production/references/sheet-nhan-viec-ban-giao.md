@@ -7,7 +7,7 @@
 <!-- nguồn: SKILL.md cũ dòng 7-18 -->
 ## Sheet mới — đọc trước khi làm (Đang áp dụng từ 07/11/2026 — GĐ2)
 
-- Workbook mới: "Video HQ — Trụ sở Muse" (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`). Workbook cũ "HQ - Công ty 1 người — CŨ (chỉ đọc)" chỉ đọc, KHÔNG ghi.
+- Workbook mới: "Video HQ — Tin Tức" (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`). Workbook cũ "HQ - Công ty 1 người — CŨ (chỉ đọc)" chỉ đọc, KHÔNG ghi.
 - Tab chạm tới: TOPICS (chủ đề + điểm + duyệt), TASKS (việc làm video) và SHIFT_CHECKIN (điểm danh nhận ca — chỉ ghi cột D HANDOVER_SIGNOFF dòng của mình). Hồ sơ media sống trong `broll-plan.json` + `media-log.json` của project; DRIVE_LINK + MD5 + STATUS=DELIVERED ghi vào TASKS.
 - TOPICS (A–M): TOPIC_ID, TITLE, SOURCE, DISCOVERED, HOT, AUDIENCE, FRESH, FEASIBLE, SOURCED, TOTAL, STATUS (dropdown NEW/APPROVED/READY/HOLD/REJECTED/DUPLICATE), ANGLE, NOTES. Production CHỈ ĐỌC TOPICS — không ghi vào TOPICS.
 - TASKS (A–O): TOPIC_ID, TITLE, STATUS (dropdown CLAIMED/BUILDING/REVIEW/RETURNED/APPROVED/DELIVERED/BLOCKED/CANCELLED), ASSIGNEE, DRAFT_LINK, QA_VERDICT, RETURNS, DRIVE_LINK, MD5, UPDATED_AT, PROD_NOTES, QUOTA, BLOCKER, DUP_NOTE, FACEBOOK (cột O do bên khác quản lý, Production không ghi). Production chỉ ghi các cột của mình (xem dưới).
