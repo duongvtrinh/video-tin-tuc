@@ -3,7 +3,7 @@
 # - /health OK -> im lặng, exit 0.
 # - /health lỗi -> cài lại unit (nếu /etc mất sau khi thay máy) + restart service, chờ, kiểm tra lại.
 # - Vẫn lỗi -> kill tiến trình lạ chiếm cổng 8000 rồi restart lần nữa.
-# - Vẫn lỗi -> ghi log + exit 1 (cron báo chat chính).
+# - Vẫn lỗi -> ghi log + exit 1 (cron báo chat COO).
 # Chỉ chạm TTS, không chạm việc khác. Log: <thư mục chứa script>/tts-watchdog.log
 # Đường dẫn suy ra từ vị trí của chính script (SCRIPT_DIR) nên chạy đúng
 # cả ở ~/workspace/company-os/ (máy hiện tại) lẫn ở bản clone mới của

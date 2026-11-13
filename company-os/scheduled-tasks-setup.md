@@ -1,6 +1,6 @@
 # Cài bộ lịch mẫu (scheduled tasks) cho tài khoản Muse mới
 
-Bộ lịch mẫu của công ty: 7 lịch chạy thật (xem bảng dưới). Scout chạy 2 ca/ngày: 04:00 và 13:00; COO chạy ca 03:00 hàng ngày (dời từ 06:00 theo quyết CEO 13/11/2026, DEC-262); Sản xuất (pipeline) chạy 2 ca/ngày: 05:00 và 14:00 (mỗi ca đăng ký ở Bước 0 rồi nhận ca ở Bước 4, lệch 5 phút — gộp chung 1 lịch/ca theo quyết CEO 13/11/2026, DEC-259/DEC-260/DEC-261); **giám sát TTS (tts-watchdog) chạy mỗi 30 phút (thêm 13/11/2026 — kiểm tra /health, tự cài lại unit + restart khi lỗi, chỉ báo chat chính khi đã restart hoặc vẫn không lên)**. File này + thư mục
+Bộ lịch mẫu của công ty: 7 lịch chạy thật (xem bảng dưới). Scout chạy 2 ca/ngày: 04:00 và 13:00; COO chạy ca 03:00 hàng ngày (dời từ 06:00 theo quyết CEO 13/11/2026, DEC-262); Sản xuất (pipeline) chạy 2 ca/ngày: 05:00 và 14:00 (mỗi ca đăng ký ở Bước 0 rồi nhận ca ở Bước 4, lệch 5 phút — gộp chung 1 lịch/ca theo quyết CEO 13/11/2026, DEC-259/DEC-260/DEC-261); **giám sát TTS (tts-watchdog) chạy mỗi 30 phút (thêm 13/11/2026 — kiểm tra /health, tự cài lại unit + restart khi lỗi, chỉ báo chat COO khi đã restart hoặc vẫn không lên)**. File này + thư mục
 `company-os/crons/daily/` là **bản mẫu dùng chung**, nằm trong repo để mọi chi nhánh
 (tài khoản Muse) đều cài được cùng một chuẩn. Cấu hình lịch đang chạy là của từng
 tài khoản, không tự sinh ra khi clone repo. Lưu ý: 7 file mẫu trong
@@ -35,7 +35,7 @@ của từng tài khoản (riêng tts-watchdog nằm ở `crons/minutely/` vì l
 | prod-pipeline-1400 | 14:00 hàng ngày | Pipeline ca chiều: đăng ký ca 14:00 (Bước 0) rồi nhận ca 14:05 (Bước 4), nhận lô tối đa 3 chủ đề READY theo thứ tự đăng ký ca trong cửa sổ chiều (REG_TIME ≥ 12:00), sản xuất tuần tự Production → QA → Drive |
 | bot-hoc-hoi-2000 | 20:00 hàng ngày | Học-hỏi: rút bài học từ lỗi lặp lại có bằng chứng, cải tiến template/skill/SOP (đổi chuẩn thì chỉ đề xuất để CEO quyết) |
 | coo-scan-0300 | 03:00 hàng ngày | COO điểm danh tại tab COO_CHECKIN (Bước 0), rồi quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng, không thông báo |
-| tts-watchdog | mỗi 30 phút | Giám sát server TTS: kiểm tra /health (cổng 8000); lỗi thì cài lại unit systemd từ bản chuẩn + restart tối đa 2 lần (lần 2 dọn tiến trình chiếm cổng 8000); khỏe thì im lặng, chỉ báo chat chính khi đã phải restart hoặc vẫn không lên |
+| tts-watchdog | mỗi 30 phút | Giám sát server TTS: kiểm tra /health (cổng 8000); lỗi thì cài lại unit systemd từ bản chuẩn + restart tối đa 2 lần (lần 2 dọn tiến trình chiếm cổng 8000); khỏe thì im lặng, chỉ báo chat COO khi đã phải restart hoặc vẫn không lên |
 
 ## Cài dịch vụ TTS để tự chạy lại khi Muse khởi động lại
 
@@ -101,7 +101,7 @@ Với mỗi file mẫu trong `company-os/crons/daily/<id>.md`:
 2. Lấy phần body của file mẫu (sau dòng `---` thứ hai) làm body cho `cron.add`.
 3. Gọi `cron.add` với: `enabled: true`, `mode: task`,
    `owner: goal:vieneu-media-company-bootstrap` (goal bootstrap của chính tài
-   khoản này), `delivery` = chat COO của tài khoản mới (lấy ID qua `chat.list`, KHÔNG copy UUID {{CHAT_ID_COO}} của chi nhánh này) — **trừ tts-watchdog: `delivery` = chat chính của tài khoản mới** (lịch này báo CEO trực tiếp khi TTS sập, không qua COO).
+   khoản này), `delivery` = chat COO của tài khoản mới (lấy ID qua `chat.list`, KHÔNG copy UUID {{CHAT_ID_COO}} của chi nhánh này) — kể cả tts-watchdog (COO là người quản lý điều hành trực tiếp, nhận và xử lý khi TTS sập; quyết CEO 14/11/2026).
 4. Kiểm tra trước khi tạo xong: body đã thay hết các `{{...}}` chưa (grep `{{`
    phải = 0), còn UUID hay email lạ nào của chi nhánh khác không (grep UUID và
    `@vuachim` trong body phải = 0 — email khai báo của chính tài khoản này cũng
@@ -126,7 +126,7 @@ phòng của chi nhánh khác (hoặc gọi lỗi).
 | Trong file mẫu là `{{MA_CHI_NHANH}}` (file bot-hoc-hoi-2000, 1 chỗ — ví dụ ID mục `IMP-...-{{MA_CHI_NHANH}}-...`) | Mã chi nhánh = phần trước @ của email khai báo của tài khoản mới |
 | `owner: goal:vieneu-media-company-bootstrap` | Goal bootstrap của chính tài khoản mới (cùng slug nếu tài khoản đó theo đúng chuẩn này) |
 | `delivery` (chat COO) | Chat COO của tài khoản mới (lấy ID qua `chat.list`, KHÔNG copy UUID {{CHAT_ID_COO}} của chi nhánh này) |
-| `delivery` của tts-watchdog (không nằm trong file mẫu — file mẫu bỏ delivery theo lệ chung) | ID chat chính của tài khoản mới (xem bằng `chat.list`); 6 lịch còn lại dùng chat COO |
+| `delivery` của tts-watchdog (không nằm trong file mẫu — file mẫu bỏ delivery theo lệ chung) | ID chat COO của tài khoản mới (xem bằng `chat.list`), như 6 lịch còn lại |
 
 **Không phải thay:** ID workbook "Video HQ — Tin Tức"
 (`1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`) và thư mục Drive

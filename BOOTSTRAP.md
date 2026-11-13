@@ -13,7 +13,7 @@ Hai loại việc phải tách bạch:
 - **Cài máy** (Phần C) là việc kỹ thuật thuần túy: lấy repo về, cài thư viện, tải model, dựng lại ứng dụng và chạy kiểm chứng. Tiêu chí xong rõ ràng, làm một mạch tới khi đạt.
 - **Kết nối + kích hoạt vận hành** (Phần D và E) là việc cần CEO trả lời hoặc xác nhận: khai báo định danh, kết nối Google/GitHub/Facebook/kho key, tạo chat nhân viên, tạo lịch bot. Làm sau cài máy, không chặn cài máy.
 
-Sáu quy tắc áp dụng cho toàn bộ tài liệu:
+Bảy quy tắc áp dụng cho toàn bộ tài liệu:
 
 1. Mỗi con số hoặc sự kiện chỉ ghi ở một chỗ duy nhất; các phần khác trỏ về chỗ đó, không ghi lặp con số của mình.
 2. Đối chiếu file theo danh sách chuẩn (manifest) và sổ đăng ký, không theo số đếm cứng. Số file thay đổi hợp lệ khi có migration hoặc file mới được đăng ký đúng quy trình.
@@ -21,6 +21,7 @@ Sáu quy tắc áp dụng cho toàn bộ tài liệu:
 4. **Sửa repo phải hỏi trước.** Trước khi đẩy file lên repo hoặc sửa bất cứ thứ gì trên repo, agent phải hỏi ý kiến CEO trong chat chính và chờ duyệt — kể cả khi nội dung sửa đã được CEO ra lệnh. Sau khi đẩy, báo lại mã commit và kiểm chứng trực tiếp trên repo.
 5. **Tạo xong phải kiểm chứng trạng thái thật.** Biên nhận "đã tạo" (lịch, kết nối, connector) không phải bằng chứng nó đang chạy: phải đọc lại trạng thái thật (lịch có enabled không, lần chạy kế tiếp là khi nào; kết nối có gọi được một lệnh đọc thật không) rồi mới báo xong.
 6. Bước nào kiểm chứng không đạt thì dừng đúng bước đó, ghi lại lệnh và kết quả, rồi báo CEO. Không tự chế cách khác, không bỏ qua kiểm chứng, không đoán thông tin còn thiếu — thông tin chưa có thì dùng giá trị mặc định ở Phần B và đi tiếp.
+7. **COO có toàn quyền điều phối hoạt động của chi nhánh (quyết CEO 14/11/2026).** COO là người quản lý điều hành trực tiếp của chi nhánh: tự quyết mọi việc vận hành trong thẩm quyền — điều phối Scout/Sản xuất/QA, giao việc qua COO_TASKS/chat, giao lại, quyết BLOCKED/CANCELLED, quyết giữ/bỏ lô cũ, xử lý tắc — mà không hỏi CEO. Chỉ khi COO không thể điều phối được (việc vượt thẩm quyền, hoặc đã thử mọi cách trong thẩm quyền mà vẫn không gỡ được) mới gửi báo cáo cho CEO qua tab CEO_REPORTS, theo DEC-111 (các trường hợp vượt quyền xem skill `media-coo`, quy tắc 4 và 11). Vấn đề COO điều phối được thì không gửi CEO_REPORTS.
 
 ## Phần A — Mẫu tin nhắn mở đầu CEO gửi trước khi bắt đầu
 
@@ -236,7 +237,7 @@ Làm đủ mục B2 (Bước 1–6) ngay khi CEO trả lời. Đây là điều 
 
 ### E2. Tạo 5 chat nhân viên
 
-Tạo và gửi lệnh nhận phòng cho từng chat: **Scout - Báo** và **Scout - Group** (cùng skill `media-scout`), **Sản xuất** (`media-video-production`), **Kỹ thuật QA** (`media-video-tech-qa`), **COO** (`media-coo`). Nội dung nhận phòng tối thiểu: vai trò + skill của phòng; ID workbook và ID thư mục Drive (lấy ở Bảng A — không ghi lặp con số ở đây, trỏ về Bảng A); email khai báo đọc từ bộ nhớ; và quy tắc kênh giao việc — phòng chỉ làm việc khi được giao qua một trong ba kênh: (1) chat chính, (2) COO qua tab COO_TASKS, (3) lịch bot đã được CEO duyệt.
+Tạo và gửi lệnh nhận phòng cho từng chat: **Scout - Báo** và **Scout - Group** (cùng skill `media-scout`), **Sản xuất** (`media-video-production`), **Kỹ thuật QA** (`media-video-tech-qa`), **COO** (`media-coo`). Nội dung nhận phòng tối thiểu: vai trò + skill của phòng; ID workbook và ID thư mục Drive (lấy ở Bảng A — không ghi lặp con số ở đây, trỏ về Bảng A); email khai báo đọc từ bộ nhớ; và quy tắc kênh giao việc — phòng chỉ làm việc khi được giao qua một trong ba kênh: (1) chat chính, (2) COO qua tab COO_TASKS, (3) lịch bot đã được CEO duyệt. Riêng chat COO, lệnh nhận phòng phải ghi rõ quyền này: COO có toàn quyền điều phối hoạt động của chi nhánh (quy tắc 7) — tự quyết mọi việc vận hành trong thẩm quyền, không hỏi CEO; chỉ gửi báo cáo cho CEO qua tab CEO_REPORTS khi không thể điều phối được (theo DEC-111).
 
 ### E3. Quyền bàn giao của QA
 
@@ -244,7 +245,7 @@ Nếu CEO đã cấp ở Bảng A mục 5, ghi Bước 4 của B2 vào bộ nh�
 
 ### E4. Bộ lịch bot — tạo đủ bộ và kiểm chứng trạng thái thật
 
-**Bộ lịch hiện hành** (chốt ngày 11/11/2026, bổ sung tts-watchdog ngày 13/11/2026 — chi tiết đầy đủ ở `company-os/scheduled-tasks-setup.md`, tài liệu đó là chuẩn cho riêng việc lịch; mục này chỉ tóm các điểm không được sai). Tất cả chạy hằng ngày, múi giờ `Asia/Saigon`, kết quả báo về chat COO (trừ tts-watchdog báo về chat chính), owner là goal bootstrap của chính tài khoản này. Trước khi tạo lịch, tạo goal bootstrap của tài khoản này (slug `vieneu-media-company-bootstrap`, tên "VieNeu Media Company Bootstrap") — goal này làm owner cho cả 7 lịch (xem `scheduled-tasks-setup.md` mục "Cách tạo từng lịch", bước 0). Chưa có goal thì chưa tạo lịch.
+**Bộ lịch hiện hành** (chốt ngày 11/11/2026, bổ sung tts-watchdog ngày 13/11/2026 — chi tiết đầy đủ ở `company-os/scheduled-tasks-setup.md`, tài liệu đó là chuẩn cho riêng việc lịch; mục này chỉ tóm các điểm không được sai). Tất cả chạy hằng ngày, múi giờ `Asia/Saigon`, kết quả báo về chat COO, owner là goal bootstrap của chính tài khoản này. Trước khi tạo lịch, tạo goal bootstrap của tài khoản này (slug `vieneu-media-company-bootstrap`, tên "VieNeu Media Company Bootstrap") — goal này làm owner cho cả 7 lịch (xem `scheduled-tasks-setup.md` mục "Cách tạo từng lịch", bước 0). Chưa có goal thì chưa tạo lịch.
 
 | ID lịch | Giờ chạy | Việc chính |
 | --- | --- | --- |
@@ -254,7 +255,7 @@ Nếu CEO đã cấp ở Bảng A mục 5, ghi Bước 4 của B2 vào bộ nh�
 | scout-scan-1300 | 13:00 | Scout quét chủ đề + chấm điểm ngay trong cùng lượt quét (ca chiều) |
 | prod-pipeline-1400 | 14:00 | Pipeline nhận 1 lô tối đa 3 chủ đề READY mỗi ca, sản xuất tuần tự Production → QA → bàn giao Drive |
 | bot-hoc-hoi-2000 | 20:00 | Học-hỏi: rút bài học từ lỗi lặp lại có bằng chứng, cải tiến template/skill/SOP (đổi chuẩn chỉ đề xuất để CEO quyết) |
-| tts-watchdog | mỗi 30 phút | Giám sát server TTS: kiểm tra /health (cổng 8000); lỗi thì cài lại unit systemd từ bản chuẩn + restart tối đa 2 lần; khỏe thì im lặng, chỉ báo chat chính khi đã phải restart hoặc vẫn không lên |
+| tts-watchdog | mỗi 30 phút | Giám sát server TTS: kiểm tra /health (cổng 8000); lỗi thì cài lại unit systemd từ bản chuẩn + restart tối đa 2 lần; khỏe thì im lặng, chỉ báo chat COO khi đã phải restart hoặc vẫn không lên |
 
 ### E5. Kiểm chứng trước ca quét COO_TASKS đầu tiên — đủ 7 điểm
 
@@ -306,7 +307,7 @@ Thiếu 1 điểm bắt buộc thì dừng ca quét, báo CEO:
 
 1. Khai báo: B2 Bước 1–6 hoàn tất và tự kiểm tra đạt.
 2. Kết nối: D1–D5 kiểm chứng thật đạt (Drive/Sheets gồm cả kích hoạt bằng dữ liệu thử; stock đạt ở mức `search_stock` trọn đường hoặc ghi rõ "chưa xác định" nếu CEO chưa cấp key; Facebook đăng nhập thử đạt hoặc CEO chưa yêu cầu).
-3. Chat nhân viên: đủ 5 chat, đã nhận phòng (E2); quyền QA đúng như CEO cấp (E3).
+3. Chat nhân viên: đủ 5 chat, đã nhận phòng (E2 — lệnh nhận phòng COO ghi rõ toàn quyền điều phối, quy tắc 7); quyền QA đúng như CEO cấp (E3).
 4. Lịch bot: nếu CEO duyệt bật — đủ bộ theo E4 và đã qua kiểm chứng trạng thái thật; nếu chưa duyệt — ghi rõ "lịch đang tắt theo mặc định".
 5. Kiểm chứng 7 điểm ở E5 đạt, sẵn sàng cho ca quét COO_TASKS đầu tiên.
 
@@ -314,4 +315,4 @@ Thiếu mục nào thì báo đúng mục đó chưa đạt, kèm lệnh và k�
 
 ---
 
-*Ghi chú soạn bản: v3 đã tích hợp 15 quyết định kiểm toán ngày 11/11/2026 (nguồn hạn mức chuẩn COO_CHECKIN, mốc leo thang TASKS.N, mốc 2 buổi sáng cho lô cũ, file improvement-log dùng chung, health TTS đầu ca). v3 hợp nhất bản gốc (501 dòng, lưu tại BOOTSTRAP-legacy-2026-11-11.md), bản v2 (214 dòng, đã duyệt 11/11/2026) và các quyết định + sự cố ngày 11/11/2026. Bản này là BOOTSTRAP.md trong repo kể từ đợt thay ngày 11/11/2026. Đợt sửa 14/11/2026 (kiểm tra cài mới): đã làm xong script check-prereqs.sh, install.sh cho TTS và file manifest của app (không còn là đề xuất); đề xuất còn chờ duyệt duy nhất là sửa dl_facebook_video.py tự tìm yt-dlp theo sys.executable.*
+*Ghi chú soạn bản: v3 đã tích hợp 15 quyết định kiểm toán ngày 11/11/2026 (nguồn hạn mức chuẩn COO_CHECKIN, mốc leo thang TASKS.N, mốc 2 buổi sáng cho lô cũ, file improvement-log dùng chung, health TTS đầu ca). v3 hợp nhất bản gốc (501 dòng, lưu tại BOOTSTRAP-legacy-2026-11-11.md), bản v2 (214 dòng, đã duyệt 11/11/2026) và các quyết định + sự cố ngày 11/11/2026. Bản này là BOOTSTRAP.md trong repo kể từ đợt thay ngày 11/11/2026. Đợt sửa 14/11/2026 (kiểm tra cài mới): đã làm xong script check-prereqs.sh, install.sh cho TTS và file manifest của app (không còn là đề xuất); đề xuất còn chờ duyệt duy nhất là sửa dl_facebook_video.py tự tìm yt-dlp theo sys.executable. Đợt sửa 14/11/2026 (quyền COO, quyết CEO): thêm quy tắc 7 — COO có toàn quyền điều phối hoạt động chi nhánh, chỉ leo thang lên CEO qua tab CEO_REPORTS khi không thể điều phối được (DEC-111); lệnh nhận phòng COO ở E2 ghi rõ quyền này.*
