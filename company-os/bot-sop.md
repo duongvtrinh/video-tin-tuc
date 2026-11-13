@@ -115,6 +115,8 @@ Trụ sở Muse" (7 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORT
 Cron này CHỈ ĐỌC Sheet + skill + nhật ký, KHÔNG ghi vào Sheet (không
 ghi TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS/COO_CHECKIN); mọi vấn đề/cải tiến ghi vào company-os/improvement-log.md theo bước 5–6; KHÔNG tự sửa file chuẩn, KHÔNG push GitHub.
 
+0. Đồng bộ log học hỏi chéo (quyết CEO 13/11/2026 — học hỏi chéo): đầu ca, kéo bản company-os/improvement-log.md trên repo (GitHub API get_file_contents, repo duongvtrinh/video-tin-tuc, nhánh main) và hợp nhất mọi dòng IMP chưa có trong bản local vào bản local (chỉ thêm, không sửa/xóa dòng đã có). Sau đó mới đọc log local để đề xuất (bước 3) — để thấy được bài học của các chi nhánh khác và không đề xuất trùng mục đã có. Nếu không kéo được log repo (lỗi mạng/API) thì ghi blocker và dùng bản local tiếp, không dừng ca.
+
 1. Kiểm tra toàn vẹn đầu ca (R7): chỉ đọc số dòng + ID lớn nhất (chỉ
    tính các dòng ĐÃ CÓ ID) của TOPICS và TASKS để nắm trạng thái hiện
    tại (làm mốc cho ca sau). Số dòng giảm hoặc ID lớn nhất (đã có) lùi
