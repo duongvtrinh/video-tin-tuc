@@ -15,6 +15,11 @@
       "version": "1.0.0",
       "date": "2026-11-12",
       "note": "Tạo mới."
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-11-13",
+      "note": "Đổi nền thẻ: rêu trong rgba(28,55,42,.85) → mực trong rgba(8,10,16,.68), chung mức chuẩn với nhóm mực trong (CEO 13/11/2026)."
     }
   ],
   "constraints": [
@@ -128,7 +133,7 @@
     "tech",
     "science"
   ],
-  "version": "1.0.0",
+  "version": "1.1.0",
   "whenToUse": [
     "Giải thích quy trình/cơ chế có THỨ TỰ: xin cấp phép, cách hoạt động, các giai đoạn xử lý",
     "Câu có 'đầu tiên… sau đó… cuối cùng' hoặc các bước đánh số"

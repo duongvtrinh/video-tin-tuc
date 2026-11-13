@@ -1,0 +1,5 @@
+name: "thumbnail-xep-lop"
+title: "Thumbnail xếp lớp 9:16 chừa chỗ chèn chữ"
+description: "Tạo ảnh thumbnail tin tức kiểu lớp xếp chồng, tỉ lệ 9:16, nhân vật lệch một bên, 1/4 dưới là nền trơn để chèn tiêu đề sau."
+category: "Work and knowledge"
+include_in_prompt: false

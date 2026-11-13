@@ -128,10 +128,15 @@
     "history",
     "crime"
   ],
-  "version": "1.5.0",
+  "version": "1.6.0",
   "whenToUse": [
     "Mở đầu một luận điểm then chốt (vd: 'Điểm đầu tiên...', 'Nguyên nhân thứ hai...')",
     "Chuyển sang ý phân tích mới trong video tài liệu, kinh tế, chính luận",
     "Tạo nhịp ngắt trang trọng phân tầng nội dung"
-  ]
+  ],
+  "changelog": {
+    "version": "1.6.0",
+    "date": "2026-11-13",
+    "note": "Giảm nền (CEO 13/11/2026): gradient mực rgba(8,10,16,.98/.97) → rgba(8,10,16,.90)."
+  }
 }

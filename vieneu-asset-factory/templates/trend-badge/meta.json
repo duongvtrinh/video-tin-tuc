@@ -11,6 +11,11 @@
       "version": "1.0.0",
       "date": "2026-11-12",
       "note": "Tạo mới."
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-11-13",
+      "note": "Đổi nền thẻ: rêu trong rgba(28,55,42,.85) → mực trong rgba(8,10,16,.68), chung mức chuẩn với nhóm mực trong (CEO 13/11/2026)."
     }
   ],
   "description": "Một mức thay đổi (%, điểm, giá) kèm mũi tên tăng ▲ / giảm ▼ / đi ngang — người xem hiểu hướng và độ lớn trong nửa giây. Màu theo hướng: tăng xanh lá #22C55E, giảm đỏ #EF4444, đi ngang vàng #FBBF24 (đúng quy ước bảng điện VN).",
@@ -86,7 +91,7 @@
     "economy",
     "tech"
   ],
-  "version": "1.0.0",
+  "version": "1.1.0",
   "whenToUse": [
     "Một con số CHỈ SỰ THAY ĐỔI có hướng rõ: tăng/giảm %, lên/xuống điểm, lãi/lỗ",
     "Câu có động từ tăng, giảm, lao dốc, bứt phá kèm số cụ thể"

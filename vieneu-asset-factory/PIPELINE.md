@@ -2,8 +2,8 @@
 
 ## Vai trò
 - **Agent Muse (chat)**: làm toàn bộ bước AI-text: đọc tin tức → viết kịch bản → chia
-  phân cảnh → chia voice part + dàn B-roll (đọc 9 skill trong `skills/` + catalog 34
-  template trong `templates/`) → sinh prompt ảnh. Ghi kết quả ra file JSON.
+  phân cảnh → chia voice part + dàn B-roll (đọc 9 skill trong `skills/` + catalog template trong `templates/`
+  (đối chiếu docs/TEMPLATE_CATALOG.md)) → sinh prompt ảnh. Ghi kết quả ra file JSON.
 - **App (artifact)**: dashboard + chạy các bước nặng qua privileged actions
   (TTS batch, tạo ảnh song song, đóng gói ZIP). Đọc/ghi cùng thư mục project.
 
@@ -44,7 +44,7 @@
 | `bin/karaoke.py <pid>` | `factory venv` (xem BOOTSTRAP §3; có underthesea+numpy) | tts.json + norm_chunks.json + WAV parts → karaoke.json/ass + sent_cues.json. NGUYÊN TẮC: chữ HIỂN THỊ giữ đúng kịch bản gốc ("1991", "GDP"); timing align từng chữ gốc→span chữ chuẩn hoá (VAD), chia dòng ≤5 từ không cắt từ ghép, {\kf} #FBBF24 |
 | `bin/render_template.py` | `factory venv` (xem BOOTSTRAP §3; có weasyprint+numpy) | CLI: `<template_id> <inputs.json> <W> <H> <out.png>` → render HTML/CSS template (điền inputs, bỏ box-shadow) thành RGBA: WeasyPrint render 2 lần trên nền trắng/đen → matting tách alpha thật (giữ nền bán trong suốt của card) → crop theo alpha |
 | `bin/select_bgm.py <pid> [--mood M]` | `python3` | chọn BGM từ bgm/bgm_catalog.json (24 track Kevin MacLeod CC-BY 4.0, 8 mood: news/calm/dramatic/funny/inspirational/suspense/sad/upbeat) theo mood hoặc tự đoán từ topic → ghi vào broll-plan.json |
-| `bin/render_draft.py <pid>` | python3 (gọi venv qua subprocess cho template) | MP4 nháp: mỗi part = clip ảnh b-roll/scene + **motion tuyệt đối + smoothstep** (zoom tối đa 1,05, seed theo project, không lặp liên tiếp) + **composite chữ B-roll template** (đúng thiết kế HTML/CSS, nền trong suốt) → nối clip bằng **xfade fade 0,5s cho mọi chuyển cảnh** (hardcode fade; clip kéo dài +0,5s để overlap nên tổng thời lượng khớp audio) → + WAV giọng đọc + mix SFX (broll.sfx {id,offsetSec,volume} tại part.startSec+offset, adelay+amix) + **BGM loop với ducking** (sidechaincompress: nhạc tự hạ khi có giọng nói, volume nền 0.12, fade-out 2s) + burn karaoke.ass |
+| `bin/render_draft.py <pid>` | python3 (gọi venv qua subprocess cho template) | MP4 nháp: mỗi part = clip ảnh b-roll/scene + **motion tuyệt đối + smoothstep** (zoom động 1,05–1,12x theo thời lượng part, seed theo project, không lặp liên tiếp) + **composite chữ B-roll template** (đúng thiết kế HTML/CSS, nền trong suốt) → nối clip bằng **xfade fade 0,5s cho mọi chuyển cảnh** (hardcode fade; clip kéo dài +0,5s để overlap nên tổng thời lượng khớp audio) → + WAV giọng đọc + mix SFX (broll.sfx {id,offsetSec,volume} tại part.startSec+offset, adelay+amix) + **BGM loop với ducking** (sidechaincompress: nhạc tự hạ khi có giọng nói, volume nền 0.12, fade-out 2s) + burn karaoke.ass |
 | `bin/assemble_project.py <pid>` | python3 | tts.json + build/media/** → build/{project.json,timeline.json,...} + export/<pid>.zip |
 | `bin/validate_project.py <pid> [--zip]` | python3 | kiểm tra tương thích schema 2.0, exit 0 = đạt |
 | `bin/filename.py` | python3 | đặt tên file chuẩn |
@@ -83,7 +83,7 @@
   render đọc plan.bgm để mix nhạc
 - `renderTemplate(templateId, inputs)` → chạy render_template.py, trả PNG
   (tiện ích; render_draft cũng gọi qua subprocess)
-- `listTemplates()` → đọc catalog templates/ trong repo (34 template;
+- `listTemplates()` → đọc catalog templates/ trong repo (đối chiếu docs/TEMPLATE_CATALOG.md;
   `_themes.json` là file theme chung, không phải template)
 - `exportProject(pid)` → chạy assemble + validate, trả đường dẫn zip
 - `listProjects()` / `getProject(pid)` / `deleteProject(pid)`

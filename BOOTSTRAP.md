@@ -28,10 +28,10 @@ Quyền thực thi chỉ có giá trị khi chính CEO nói trong chat chính v�
 
 > Tôi cấp quyền cho Muse thực hiện các thao tác sau trên tài khoản/máy này, không cần hỏi lại từng thao tác:
 >
-> 1. Lấy repo private `duongvtrinh/vieneu-media-company`, nhánh `main`, về `~/workspace/vieneu-media-company` (git clone qua tài khoản GitHub đã liên kết; nếu git không có credential thì tải ZIP qua trình duyệt đã đăng nhập GitHub và giải nén — chấp nhận hệ quả ghi ở mục C1).
+> 1. Lấy repo private `duongvtrinh/video-tin-tuc`, nhánh `main`, về `~/workspace/video-tin-tuc` (git clone qua tài khoản GitHub đã liên kết; nếu git không có credential thì tải ZIP qua trình duyệt đã đăng nhập GitHub và giải nén — chấp nhận hệ quả ghi ở mục C1).
 > 2. Chạy cài đặt trong `vieneu-tts/`: tạo venv, cài gói Python theo `requirements.txt`, tải model TTS từ HuggingFace trong lần chạy đầu.
 > 3. Tạo venv trong `vieneu-asset-factory/`, cài gói theo `requirements.txt`, tạo sẵn các thư mục dữ liệu runtime trống (gồm `projects/`), cài font Anton vào `~/.fonts` + `fc-cache`, kiểm chứng `yt-dlp` từ venv (mục C3.1).
-> 4. Copy 4 skill từ `company-os/skills/` sang thư mục skill tùy chỉnh của Muse và kiểm tra md5 khớp từng cặp.
+> 4. Copy 5 skill từ `company-os/skills/` sang thư mục skill tùy chỉnh của Muse và kiểm tra md5 khớp từng cặp.
 > 5. Dựng lại artifact "App Tạo Video" từ toàn bộ file nguồn của `app-tao-video/` bằng công cụ artifact.
 > 6. Chạy các kiểm chứng sau cài đặt ở Phần C (WAV mẫu TTS, py_compile factory, ffmpeg, yt-dlp --version, health server TTS, vòng tạo/đọc/xóa project thử).
 > 7. Tạo 5 chat nhân viên (Scout - Báo, Scout - Group, Sản xuất, Kỹ thuật QA, COO) và gửi lệnh nhận phòng cho từng chat theo Phần E.
@@ -58,9 +58,9 @@ Ngay sau khi clone xong và kiểm tra môi trường xong, **chat chính chủ 
 | # | Thông tin | Bắt buộc? | Ghi chú / mặc định |
 | --- | --- | --- | --- |
 | 1 | **Email khai báo của tài khoản Muse này** (ví dụ `006@vuachim.com`) | **Bắt buộc để vận hành** | Chữ ký định danh duy nhất của chi nhánh: đối chiếu cột B tab COO_TASKS, là email người sản xuất ghi vào TASKS.L QUOTA, và tên COO chính là email này. Không dùng email Drive/GitHub/Facebook thay thế. Chưa có thì ghi "chưa xác định" và chưa nhận dòng COO_TASKS nào |
-| 2 | **Workbook vận hành** — xác nhận dùng workbook đang chạy "Video HQ — Tin Tức" (ID `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`) | **Bắt buộc để vận hành** | Không tạo mới, không ghi đè. Đủ 7 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN. Công ty khác hẳn thì mới tạo workbook mới từ `company-os/google-sheet-spec.md`, bắt đầu trống |
+| 2 | **Workbook vận hành** — xác nhận dùng workbook đang chạy "Video HQ — Tin Tức" (ID `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`) | **Bắt buộc để vận hành** | Không tạo mới, không ghi đè. Đủ 8 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN, SHIFT_CHECKIN. Công ty khác hẳn thì mới tạo workbook mới từ `company-os/google-sheet-spec.md`, bắt đầu trống |
 | 3 | **Thư mục Drive bàn giao** — xác nhận thư mục "Video Muse" (ID `1bA21n3Y3YiY6HSjLUEFmxnJXLnjtSJGc`) và quyền hiện tại | **Bắt buộc để vận hành** | Chỉ bàn giao lên đúng thư mục này. Không tự tạo thư mục khác, không tự thay đổi quyền; quyền anyone-with-link là do CEO cấp |
-| 4 | **Repo GitHub** — xác nhận `duongvtrinh/vieneu-media-company`, nhánh `main`, private | **Bắt buộc** | Đọc BOOTSTRAP + 4 skill trước khi làm việc. Repo không bao giờ chuyển public để tiện clone |
+| 4 | **Repo GitHub** — xác nhận `duongvtrinh/video-tin-tuc`, nhánh `main`, private | **Bắt buộc** | Đọc BOOTSTRAP + 5 skill trước khi làm việc. Repo không bao giờ chuyển public để tiện clone |
 | 5 | **Cấp phép toàn quyền cho QA hoàn tất bàn giao** (có/không) | Cần trước lần upload Drive đầu tiên | Đã cấp: QA tự chạy lại upload và hoàn tất bàn giao không hỏi lại trong chat — nhưng thẻ phê duyệt hệ thống vẫn hiện mỗi lần và phải bấm trong 30 phút; cấp phép không tắt được thẻ. Chưa cấp: lúc bàn giao phải chắc CEO đang có mặt để bấm thẻ |
 | 6 | **Lịch bot có bật không** | Không bắt buộc | Mặc định **tắt** — chỉ tạo khi CEO duyệt riêng (xem Phần E4). Bộ lịch hiện hành nằm ở Phần E4, không liệt kê lại ở đây |
 | 7 | **Facebook** — đăng nhập qua Secure Vault + liên kết Accounts Center khi cần làm việc Facebook | Tùy chọn | Không bắt buộc cho sản xuất video. Quy trình ở Phần D5 |
@@ -122,22 +122,22 @@ Làm đúng thứ tự C0 đến C5. Mỗi bước có thư mục làm việc, l
 
 ### C1. Lấy repo về máy
 
-- **Thư mục:** `~/workspace/`. **Đường chính:** `git clone` repo `duongvtrinh/vieneu-media-company` nhánh `main` qua tài khoản GitHub đã liên kết (đăng nhập GitHub xem Phần D1 — làm trước hoặc ngay tại bước này; nếu GitHub đòi mã email, đọc từ Gmail đã kết nối hoặc nhờ CEO gửi mã).
-- **Đường dự phòng đã dùng thật 11/11/2026:** nếu git trên máy không có credential cho repo private (clone ẩn danh chắc chắn thất bại), đăng nhập GitHub bằng trình duyệt (thông tin đăng nhập lấy từ Secure Vault) rồi tải ZIP của nhánh `main` và giải nén vào `~/workspace/vieneu-media-company`. Hệ quả phải chấp nhận và ghi vào bộ nhớ: bản ZIP **không có `.git`** — về sau mọi thay đổi lên repo phải đi qua giao diện web GitHub, và quy tắc một nguồn (đầu tài liệu) áp dụng nghiêm ngặt cho mọi file trùng tên.
+- **Thư mục:** `~/workspace/`. **Đường chính:** `git clone` repo `duongvtrinh/video-tin-tuc` nhánh `main` qua tài khoản GitHub đã liên kết (đăng nhập GitHub xem Phần D1 — làm trước hoặc ngay tại bước này; nếu GitHub đòi mã email, đọc từ Gmail đã kết nối hoặc nhờ CEO gửi mã).
+- **Đường dự phòng đã dùng thật 11/11/2026:** nếu git trên máy không có credential cho repo private (clone ẩn danh chắc chắn thất bại), đăng nhập GitHub bằng trình duyệt (thông tin đăng nhập lấy từ Secure Vault) rồi tải ZIP của nhánh `main` và giải nén vào `~/workspace/video-tin-tuc`. Hệ quả phải chấp nhận và ghi vào bộ nhớ: bản ZIP **không có `.git`** — về sau mọi thay đổi lên repo phải đi qua giao diện web GitHub, và quy tắc một nguồn (đầu tài liệu) áp dụng nghiêm ngặt cho mọi file trùng tên.
 - **Kết quả mong đợi:** thư mục đích có đủ 4 thư mục cấp cao nhất — `app-tao-video/`, `company-os/`, `vieneu-asset-factory/`, `vieneu-tts/` — cùng `README.md` và `BOOTSTRAP.md`. **Thời lượng:** vài phút tùy mạng (repo ~300 MB).
 
 ### C2. VieNeu TTS
 
 Script `vieneu-tts/start.sh` gộp tạo venv + cài thư viện + chạy server foreground vào một lệnh — chạy nó sẽ không biết cài xong hay chưa. Cách làm đã kiểm chứng: cài đặt và chạy server là hai việc riêng (đề xuất script chỉ-cài-đặt `install.sh` — ĐỀ XUẤT chờ duyệt, chưa có trong repo).
 
-- **Thư mục:** `~/workspace/vieneu-media-company/vieneu-tts/`
+- **Thư mục:** `~/workspace/video-tin-tuc/vieneu-tts/`
 - **Kết quả mong đợi (kiểm chứng thật 11/11/2026):** venv ~912 MB; model tải từ HuggingFace lần đầu ~85 giây (đứt kết nối giữa chừng rồi tự thử lại thành công là bình thường — ghi nhận, không coi là lỗi dừng); health ở cổng 8000 trả ok, 11 giọng, sample rate 24 kHz.
 - **Kiểm chứng âm thanh:** `.venv/bin/python tts_cli.py --text "Xin chào cả nhà!" --voice "Hữu Quân" --speed 1.0 --out out.wav` → WAV 24 kHz nghe được (phiên thật: 1,10 giây).
 - **Lưu ý vận hành:** server chạy nền bằng nohup sẽ không tự sống lại sau khi máy ảo thay mới — trước ca sản xuất đầu tiên mỗi ngày phải kiểm tra health cổng 8000, chết thì khởi động lại. **Thời lượng:** 3–6 phút.
 
 ### C3. Asset Factory — venv, font Anton, thư mục runtime
 
-- **Thư mục:** `~/workspace/vieneu-media-company/vieneu-asset-factory/`
+- **Thư mục:** `~/workspace/video-tin-tuc/vieneu-asset-factory/`
 - **Lệnh:** `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`, rồi `mkdir -p projects`; cài font Anton từ Google Fonts vào `~/.fonts` và chạy `fc-cache`.
 - **Kết quả mong đợi:** gói cài đủ (Pillow, numpy, weasyprint, underthesea, websocket-client, yt-dlp — phiên bản đã kiểm chứng: Pillow 13.0.0, numpy 2.5.4, weasyprint 70.0, underthesea 9.5.0, websocket-client 1.9.0+, yt-dlp 2026.10.26); `fc-list` thấy Anton; thư mục `projects/` tồn tại.
 - **Kiểm chứng:** `.venv/bin/python -m py_compile bin/*.py` không lỗi; `ffmpeg -version` chạy được. **Thời lượng:** 2–4 phút.
@@ -151,15 +151,15 @@ Script `vieneu-tts/start.sh` gộp tạo venv + cài thư viện + chạy server
 - Điều kiện dùng: không cookies thì chỉ tải video công khai; video riêng tư cần file cookies do CEO xuất, **không commit vào repo**. Trước khi tải phải kiểm tra tính nguyên gốc bằng trình duyệt thực (luật trong skill `media-video-production`). Script cần `ffmpeg`/`ffprobe` (đã có ở C0) và dùng sẵn `--no-check-certificates` vì proxy của máy dùng chứng chỉ tự ký.
 - Bảo trì: yt-dlp hay hỏng khi Facebook thay đổi — cập nhật số phiên bản chốt trong `requirements.txt`, cài lại vào venv, kiểm chứng lại `--version` + một lần tải thử video công khai. (Đề xuất sửa script tự tìm yt-dlp theo `sys.executable` — ĐỀ XUẤT chờ CEO duyệt, chưa làm.)
 
-### C4. Skills — copy đúng 4 skill, kiểm md5 đúng 4 cặp
+### C4. Skills — copy đúng 5 skill, kiểm md5 đúng 5 cặp
 
-- **Thư mục:** `~/workspace/vieneu-media-company/company-os/skills/` → copy sang `~/workspace/custom-skills/`, rồi `md5sum` file `SKILL.md` từng cặp và đối chiếu.
-- **Đúng 4 skill:** `media-coo`, `media-scout`, `media-video-production`, `media-video-tech-qa`. Skill `media-topic-scoring` đã đóng (điểm đã chuyển vào `media-scout`), không copy. Mọi con số trong mục này là **4** — bản cũ từng tự mâu thuẫn 4/5, bản này chốt một chỗ duy nhất.
-- Sau khi copy, đọc kỹ cả 4 skill cùng `company-os/media-search/LOGIC.md` trước ca làm việc đầu tiên. **Thời lượng:** dưới 1 phút.
+- **Thư mục:** `~/workspace/video-tin-tuc/company-os/skills/` → copy sang `~/workspace/custom-skills/`, rồi `md5sum` file `SKILL.md` từng cặp và đối chiếu.
+- **Đúng 5 skill:** `media-coo`, `media-scout`, `media-video-production`, `media-video-tech-qa`, `thumbnail-xep-lop`. Skill `media-topic-scoring` đã đóng (điểm đã chuyển vào `media-scout`), không copy. Mọi con số trong mục này là **5** — bản cũ từng tự mâu thuẫn 4/5, bản này chốt một chỗ duy nhất.
+- Sau khi copy, đọc kỹ cả 5 skill cùng `company-os/media-search/LOGIC.md` trước ca làm việc đầu tiên. **Thời lượng:** dưới 1 phút.
 
 ### C5. App Tạo Video — dựng lại theo manifest, không đếm số cứng
 
-- **Thư mục:** `~/workspace/vieneu-media-company/app-tao-video/`. **Lệnh:** dựng lại artifact "App Tạo Video" (slug `app-tao-video`) bằng công cụ artifact, chép nguyên toàn bộ cây nguồn — không viết lại giao diện từ mô tả. Quy tắc của app (trong `app-tao-video/AGENTS.md`): không tự build từ thư mục, không chạy `bun run build`, không sửa tay file bundle hay `.generated` — chỉ dùng công cụ artifact.
+- **Thư mục:** `~/workspace/video-tin-tuc/app-tao-video/`. **Lệnh:** dựng lại artifact "App Tạo Video" (slug `app-tao-video`) bằng công cụ artifact, chép nguyên toàn bộ cây nguồn — không viết lại giao diện từ mô tả. Quy tắc của app (trong `app-tao-video/AGENTS.md`): không tự build từ thư mục, không chạy `bun run build`, không sửa tay file bundle hay `.generated` — chỉ dùng công cụ artifact.
 - **Đối chiếu theo manifest:** file nguồn phải khớp danh sách chuẩn của repo (đề xuất file manifest trong repo — ĐỀ XUẤT chờ duyệt); file migration mới chỉ hợp lệ khi đã đăng ký trong `drizzle/meta/_journal.json`. **Không dùng số đếm file cứng làm điều kiện dừng** — bài học thật: hướng dẫn cũ ghi cứng 47 file, repo có 48 (thêm migration `0004_drop_snapshots_table.sql` hợp lệ), và con số sai đó đã chặn cả phiên cài đặt.
 - File trong `server/.generated/` do hệ thống tự sinh khi dựng: không thuộc manifest, không đối chiếu, không sửa tay.
 - **Kết quả mong đợi trên máy mới:** app mở được, quy trình 6 bước (Kịch bản → Phân cảnh → Media → TTS & Karaoke → Preview → Render) hiển thị đúng, danh sách project **trống** (đúng — project đọc từ factory của chính máy này). Kiểm chứng bằng một vòng thật: tạo project thử → đọc lại (mặc định 9:16, tiếng Việt) → xóa; xong thì danh sách sạch lại. **Thời lượng:** 5–10 phút.
@@ -182,7 +182,7 @@ Thứ tự khuyến nghị: D1 GitHub (trước C1) → D2 Drive → D3 Sheets �
 
 - Kết nối qua luồng chính thức (độc lập với Drive — Drive thông không có nghĩa Sheets đã thông; phiên 11/11/2026 phải kết nối Sheets riêng ở bước sau).
 - **Kích hoạt quyền sửa (một lần):** tạo một bảng tính thử **riêng**, ghi vài ô, đọc lại đối chiếu, rồi chuyển bảng thử vào thùng rác. Tuyệt đối không ghi thử lên workbook vận hành.
-- **Đối chiếu workbook với spec** (`company-os/google-sheet-spec.md`): đủ 7 tab (TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN); số cột theo thứ tự tab là 13/15/6/7/7/9/3. Lưu ý đã kiểm chứng 11/11/2026: tab COO_TASKS trên workbook thật dùng **khóa tiếng Anh** (ID, ASSIGNEE_EMAIL, TASK, DETAIL, STATUS, COMPLETED_AT, RESULT) — đúng thứ tự và ý nghĩa 7 cột của spec dù nhãn chữ khác văn bản spec; vận hành theo khóa thật trên workbook.
+- **Đối chiếu workbook với spec** (`company-os/google-sheet-spec.md`): đủ 8 tab (TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN, SHIFT_CHECKIN); số cột theo thứ tự tab là 13/15/6/7/7/9/3/4. Lưu ý đã kiểm chứng 11/11/2026: tab COO_TASKS trên workbook thật dùng **khóa tiếng Anh** (ID, ASSIGNEE_EMAIL, TASK, DETAIL, STATUS, COMPLETED_AT, RESULT) — đúng thứ tự và ý nghĩa 7 cột của spec dù nhãn chữ khác văn bản spec; vận hành theo khóa thật trên workbook.
 
 ### D4. API key Pixabay + Pexels qua Secure Vault
 
@@ -231,35 +231,25 @@ Nếu CEO đã cấp ở Bảng A mục 5, ghi Bước 4 của B2 vào bộ nh�
 
 ### E4. Bộ lịch bot — tạo đủ bộ và kiểm chứng trạng thái thật
 
-**Bộ lịch hiện hành** (chốt ngày 11/11/2026 — đây là chỗ duy nhất trong tài liệu liệt kê bộ lịch; nơi khác chỉ trỏ về đây). Tất cả chạy hằng ngày, múi giờ `Asia/Saigon`, kết quả báo về chat COO, owner là goal bootstrap của chính tài khoản này:
+**Bộ lịch hiện hành** (chốt ngày 11/11/2026, bổ sung tts-watchdog ngày 13/11/2026 — chi tiết đầy đủ ở `company-os/scheduled-tasks-setup.md`, tài liệu đó là chuẩn cho riêng việc lịch; mục này chỉ tóm các điểm không được sai). Tất cả chạy hằng ngày, múi giờ `Asia/Saigon`, kết quả báo về chat COO (trừ tts-watchdog báo về chat chính), owner là goal bootstrap của chính tài khoản này:
 
 | ID lịch | Giờ chạy | Việc chính |
 | --- | --- | --- |
-| scout-scan-0600 | 06:00 | Scout quét chủ đề + chấm điểm ngay trong cùng lượt quét |
-| prod-pipeline-0600 | 06:00 | Pipeline nhận 1 lô tối đa 3 chủ đề READY mỗi ca, sản xuất tuần tự Production → QA → bàn giao Drive |
-| coo-scan-0600 | 06:00 | COO điểm danh tại tab COO_CHECKIN rồi quét tab COO_TASKS; không có dòng của mình thì im lặng |
+| coo-scan-0300 | 03:00 | COO điểm danh tại tab COO_CHECKIN rồi quét tab COO_TASKS; không có dòng của mình thì im lặng |
+| scout-scan-0600 | 04:00 | Scout quét chủ đề + chấm điểm ngay trong cùng lượt quét (ca sáng; ID giữ nguyên, giờ dời từ 06:00 theo quyết CEO 13/11/2026) |
+| prod-pipeline-0500 | 05:00 | Pipeline nhận 1 lô tối đa 3 chủ đề READY mỗi ca, sản xuất tuần tự Production → QA → bàn giao Drive |
+| scout-scan-1300 | 13:00 | Scout quét chủ đề + chấm điểm ngay trong cùng lượt quét (ca chiều) |
+| prod-pipeline-1400 | 14:00 | Pipeline nhận 1 lô tối đa 3 chủ đề READY mỗi ca, sản xuất tuần tự Production → QA → bàn giao Drive |
 | bot-hoc-hoi-2000 | 20:00 | Học-hỏi: rút bài học từ lỗi lặp lại có bằng chứng, cải tiến template/skill/SOP (đổi chuẩn chỉ đề xuất để CEO quyết) |
-
-**Cách tạo** (chi tiết đầy đủ ở `company-os/scheduled-tasks-setup.md` — tài liệu đó là chuẩn cho riêng việc lịch; mục này chỉ tóm các điểm không được sai):
-
-1. Mặc định **không tạo lịch nào**; chỉ tạo khi CEO duyệt (Bảng A mục 6). Duyệt một lần cho cả bộ hoặc duyệt từng lịch đều được — ghi rõ phạm vi đã duyệt.
-2. Body lấy từ file mẫu trong `company-os/crons/daily/`, thay toàn bộ placeholder `{{CHAT_ID_...}}` bằng ID chat thật của tài khoản này (tra bằng danh sách chat), và thay owner bằng slug goal bootstrap thật của tài khoản này (file mẫu ghi slug chung — hai slug này có thể khác nhau, đã gặp thật). Kiểm trước khi tạo: grep `{{` trong body phải bằng 0; không có email khai báo hay UUID của chi nhánh khác bị hardcode trong body (email đọc từ bộ nhớ lúc chạy).
-3. Trần và giới hạn trong body chỉ theo ca (quy tắc 3) — nếu file mẫu còn con số suy ra theo ngày thì dừng và báo CEO sửa mẫu trước, không tự sửa tại chỗ.
-
-**Kiểm chứng sau tạo — bắt buộc, sinh ra từ sự cố thật ngày 11/11/2026:** ở phiên đó, bộ lịch được báo là "đã tạo đủ, đã bật", nhưng khi kiểm tra lại trạng thái thật thì các ca phụ đã không còn tồn tại và lịch Scout chính ở trạng thái tắt/lưu trữ, chưa từng chạy. Vì vậy, sau khi tạo xong phải:
-
-1. Liệt kê lại toàn bộ lịch của tài khoản và đối chiếu đủ bộ theo bảng trên.
-2. Với **từng** lịch: đọc trạng thái — phải `enabled`, đúng giờ + múi giờ, và có **lần chạy kế tiếp** cụ thể (ngày giờ). Lịch nào thiếu một trong ba thì coi như chưa tạo xong.
-3. Sáng hôm sau, kiểm tra lịch sử chạy của các ca 06:00 đầu tiên: đã chạy thật chưa, kết quả báo về chat COO chưa. Chưa chạy thì xử lý ngay trong ngày, không để trôi.
-4. Khi CEO đổi bộ lịch (thêm/bớt ca), làm lại đủ ba bước kiểm chứng trên cho bộ mới, và sửa file mẫu trong repo theo quy trình ở mục E6.
+| tts-watchdog | mỗi 30 phút | Giám sát server TTS: kiểm tra /health (cổng 8000); lỗi thì cài lại unit systemd từ bản chuẩn + restart tối đa 2 lần; khỏe thì im lặng, chỉ báo chat chính khi đã phải restart hoặc vẫn không lên |
 
 ### E5. Kiểm chứng trước ca quét COO_TASKS đầu tiên — đủ 7 điểm
 
 Thiếu 1 điểm bắt buộc thì dừng ca quét, báo CEO:
 
-1. **Repo + tài liệu:** đúng repo/nhánh/private; đã đọc BOOTSTRAP, spec Sheet, bot-sop, LOGIC và 4 skill; App Tạo Video đối chiếu manifest đạt (mục C5).
+1. **Repo + tài liệu:** đúng repo/nhánh/private; đã đọc BOOTSTRAP, spec Sheet, bot-sop, LOGIC và 5 skill; App Tạo Video đối chiếu manifest đạt (mục C5).
 2. **Bộ nhớ:** đã qua Bước 6 của B2 (có email khai báo, tên COO, quy tắc TASKS.L).
-3. **Workbook:** đúng workbook ở Bảng A, đủ 7 tab, số cột 13/15/6/7/7/9/3 (chi tiết khóa cột xem mục D3). Không tạo mới, không đổi tên tab, không xóa dòng cũ.
+3. **Workbook:** đúng workbook ở Bảng A, đủ 8 tab, số cột 13/15/6/7/7/9/3/4 (chi tiết khóa cột xem mục D3). Không tạo mới, không đổi tên tab, không xóa dòng cũ.
 4. **Drive:** đúng thư mục ở Bảng A, mở được; quyền tải lên đã kích hoạt (mục D2).
 5. **Tài sản nhị phân:** sfx đủ 8 file `.mp3`; bgm đủ 24 track + `README.md` + `bgm_catalog.json` (đã nằm trong git — clone là có, chỉ đếm kiểm chứng).
 6. **Lịch:** trạng thái thật đúng như E4 đã kiểm chứng; ca quét COO_TASKS được miễn cửa chặn hạn mức tuần (Bảng B mục 12).
@@ -296,7 +286,7 @@ Thiếu 1 điểm bắt buộc thì dừng ca quét, báo CEO:
 1. C0: đủ ffmpeg, Python, bun, libsndfile, đĩa trống, mạng HuggingFace.
 2. C1: repo đã về đúng đường dẫn, đúng nhánh `main`, vẫn private.
 3. C2: server TTS khỏe ở cổng 8000 (ok, 11 giọng, 24 kHz) và WAV mẫu giọng Hữu Quân nghe được.
-4. C3 + C3.1 + C4: factory biên dịch không lỗi, font Anton đã nhận, `projects/` tồn tại, yt-dlp trong venv đúng phiên bản chốt; 4 skill đã copy, 4 cặp md5 khớp.
+4. C3 + C3.1 + C4: factory biên dịch không lỗi, font Anton đã nhận, `projects/` tồn tại, yt-dlp trong venv đúng phiên bản chốt; 5 skill đã copy, 5 cặp md5 khớp.
 5. C5: App Tạo Video dựng xong, đối chiếu manifest đạt, vòng tạo → đọc → xóa project thử đi qua hết, danh sách cuối cùng trống đúng như máy mới.
 
 **Vận hành sẵn sàng** khi thêm đủ các mục sau (báo riêng với kết luận cài máy):

@@ -1,4 +1,4 @@
-.broll-market{display:flex;flex-direction:column;gap:.5em;padding:1em 1.4em;border-radius:4px;background:rgba(8,10,16,.92);border:1px solid rgba(255,255,255,.12);min-width:560px;width:80%}
+.broll-market{display:flex;flex-direction:column;gap:.5em;padding:1em 1.4em;border-radius:4px;background:rgba(8,10,16,.68);border:1px solid rgba(255,255,255,.12);min-width:560px;width:80%}
 .broll-market-title{font:800 clamp(15px,4.3vmin,32px)/1.2 var(--vst-font-family,'Anton',sans-serif);color:var(--broll-accent,#22c55e);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid rgba(255,255,255,.14);padding-bottom:.5em}
 .broll-market-rows{display:flex;flex-direction:column}
 .broll-market-row{display:flex;align-items:baseline;gap:.8em;padding:.35em 0;border-bottom:1px dashed rgba(255,255,255,.08)}

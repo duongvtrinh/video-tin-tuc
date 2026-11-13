@@ -9,7 +9,7 @@ HẰNG SỐ ĐÃ CHỐT (Giai đoạn 4, 05/11/2026 — xem PIPELINE.md mục
 "9:16" (video dọc); khung 9:16 -> 720x1280, còn lại -> 1280x720. Phụ đề
 MarginV = 20% chiều cao khi dọc, 7% khi ngang (cùng công thức
 karaoke.py và lib/render-engine.js); font phụ đề duy nhất Anton; motion
-zoom tối đa 1.05, chuyển cảnh fade 0.5s.
+zoom động 1,05–1,12x theo thời lượng part, chuyển cảnh fade 0.5s.
 
     python3 render_draft.py <project_id>
 

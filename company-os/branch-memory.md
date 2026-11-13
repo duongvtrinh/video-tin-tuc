@@ -2,13 +2,13 @@
 
 Bản sao lưu có chọn lọc từ bộ nhớ của chi nhánh gốc, để tài khoản Muse mới
 clone repo về đọc và học lại cách vận hành công ty — không phải tự mò lại
-từ đầu. Snapshot ngày **09/11/2026** (quyết định mới nhất ghi trong file:
-DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
+từ đầu. Snapshot ngày **13/11/2026** (quyết định mới nhất ghi trong file:
+DEC-269 — cập nhật ngày 13/11/2026 theo lệnh CEO).
 
 - Đây là **bản tóm tắt đã đúc kết**, không thay thế tài liệu chuẩn. Luật đầy
   đủ nằm ở `BOOTSTRAP.md`, `company-os/google-sheet-spec.md`,
   `company-os/bot-sop.md`, 4 skill trong `company-os/skills/` (Production,
-  QA, Scout, COO) và body 4 lịch cron trong `company-os/crons/daily/`.
+  QA, Scout, COO) và body 6 lịch cron trong `company-os/crons/daily/`.
   Khi hai bên lệch nhau, tài liệu chuẩn thắng; khi luật đổi, cập nhật file
   này trong cùng lần đổi.
 - Lịch sử quyết định đầy đủ nằm ở tab **DECISIONS** trong workbook dùng
@@ -61,13 +61,13 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 
 ## 2. Tài nguyên dùng chung (mọi chi nhánh dùng chung)
 
-- Repo (private, giữ private): `duongvtrinh/vieneu-media-company`,
+- Repo (private, giữ private): `duongvtrinh/video-tin-tuc`,
   nhánh `main`. Đẩy lên GitHub chỉ sau khi CEO đọc phân tích và duyệt riêng
   (mục 9).
 - Workbook vận hành: **"Video HQ — Tin Tức"**,
   spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`, múi giờ
-  Asia/Saigon, 7 tab: TOPICS / TASKS / QA_LOG / DECISIONS / COO_TASKS /
-  CEO_REPORTS / COO_CHECKIN.
+  Asia/Saigon, 8 tab: TOPICS / TASKS / QA_LOG / DECISIONS / COO_TASKS /
+  CEO_REPORTS / COO_CHECKIN / SHIFT_CHECKIN.
 - Thư mục Drive: **"Video Muse"**,
   folderId `1bA21n3Y3YiY6HSjLUEFmxnJXLnjtSJGc`, đã cấp quyền anyone with
   link (writer, allowFileDiscovery=false) từ 05/11/2026. Không tự tạo thư
@@ -178,7 +178,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
   trong K theo luật resume). Chỉ xét video ngày hôm nay; video ngày cũ chỉ
   xử lý ở bước cứu lô cũ 06:00 (DEC-117).
 - **REVIEW cũ (DEC-106):** pipeline đầu ca đọc giờ nộp REVIEW trong K;
-  qua 1 ca (khoảng 4 giờ) không có verdict trong QA_LOG thì hỏi QA, QA
+  qua 1 ca (05:00→14:00 là 9 giờ; 14:00→05:00 hôm sau là 15 giờ) không có verdict trong QA_LOG thì hỏi QA, QA
   trả lời trong 1 ca (đang chấm tới đâu, verdict khi nào); Production khi
   chuyển REVIEW phải nhắn chat QA kèm ID video + DRAFT_LINK. Nếu QA trả
   lại video đang chờ thì Production tạm dừng video đang làm (ghi điểm dừng
@@ -217,9 +217,7 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 - 2 phòng (Báo, Group) quét theo ca; mỗi phòng TỰ CHẤM chủ đề của mình
   trong cùng lượt quét (chat Scoring đã đóng 07/11/2026, C3).
 - Thang 100: HOT 30 / AUDIENCE 20 / FRESH 20 / FEASIBLE 15 / SOURCED 15.
-  TOTAL (cột J) luôn là công thức `=SUM(E:I)`. APPROVED khi tổng ≥70 VÀ
-  quan tâm (HOT+AUDIENCE) ≥30; HOLD khi 50–69 hoặc tổng ≥70 nhưng quan tâm
-  <30; REJECTED khi <50; DUPLICATE khi trùng sự kiện. Điểm quan tâm bắt
+  TOTAL (cột J) luôn là công thức `=SUM(E:I)`. APPROVED khi quan tâm (HOT + AUDIENCE) ≥ 30/50 xét TRƯỚC tổng và tổng ≥70; HOLD khi 50–69 hoặc tổng ≥70 nhưng quan tâm <30; REJECTED khi <50; DUPLICATE khi trùng sự kiện. Điểm quan tâm bắt
   buộc có số liệu bằng chứng trong NOTES.
 - Scout KHÔNG BAO GIỜ ghi READY. TOPIC_ID để trống khi ghi mới; khử trùng
   theo tiêu đề/sự kiện. Mỗi ca báo cáo về chat COO (ca trống cũng báo 1
@@ -403,14 +401,13 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
 - CEO_REPORTS 9 cột A–I: G = CEO_REPLY, H = APPLIED_BY, I = DATE (mục 8).
 - Múi giờ workbook: Asia/Saigon. Mọi dropdown strict.
 
-## 13. Lịch bot (4 lịch công ty)
+## 13. Lịch bot (6 lịch công ty)
 
-- 1 Scout (06:00) + 1 Pipeline (06:00) + hoc-hoi 20:00 (đọc Sheet + improvement-log.md, xuất mục log ĐỀ XUẤT về chat COO; không tự sửa file chuẩn, không push — quyết CEO 11/11/2026) + coo-scan 06:00 (mục 8). Tất cả daily, múi giờ Asia/Saigon, báo
-  cáo về chat COO (delivery về chat COO).
-- ID lịch: prod-pipeline-0600, scout-scan-0600, coo-scan-0600,
+- 1 coo-scan (03:00) + 2 Scout (04:00 và 13:00) + 2 Pipeline (05:00 và 14:00) + hoc-hoi 20:00 (đọc Sheet + improvement-log.md, xuất mục log ĐỀ XUẤT về chat COO; không tự sửa file chuẩn, không push — quyết CEO 11/11/2026). Tất cả daily, múi giờ Asia/Saigon, báo cáo về chat COO (delivery về chat COO). Mô hình ca theo quyết CEO 13/11/2026, DEC-257–264 (điểm danh SHIFT_CHECKIN, cổng hạn mức đọc trực tiếp, REPORT_ID dùng email đầy đủ).
+- ID lịch: coo-scan-0300, scout-scan-0600 (chạy 04:00, ID giữ nguyên), prod-pipeline-0500, scout-scan-1300, prod-pipeline-1400,
   bot-hoc-hoi-2000.
   Owner goal trong file mẫu (mặc định chung): vieneu-media-company-bootstrap.
-  Owner goal thật của chi nhánh này: vieneu-media-company-repo-setup — cả 4 lịch đang chạy đều thuộc goal này.
+  Owner goal thật của chi nhánh này: vieneu-media-company-repo-setup — cả 6 lịch đang chạy đều thuộc goal này.
 - Bộ mẫu trong `company-os/crons/daily/` + hướng dẫn
   `company-os/scheduled-tasks-setup.md`: body mẫu giống body lịch đang chạy
   trừ 5 placeholder `{{CHAT_ID_SCOUT_BAO}}`, `{{CHAT_ID_SCOUT_GROUP}}`,
@@ -422,23 +419,13 @@ DEC-200 — viết lại toàn bộ file này theo lệnh CEO).
   `workspace/goals/<goal>/crons/` là bản sao chỉ đọc — sửa file đó không
   đổi lịch đang chạy.
 
-## 14. Trạng thái hiện tại (09/11/2026 ~02:30 +07)
+## 14. Trạng thái hiện tại (13/11/2026 ~09:30 +07)
 
-- TASKS: 45 dòng dữ liệu (44 DELIVERED + 1 CANCELLED), **0 dòng đang làm
-  dở**. Tối 08/11/2026 CEO đã xóa 9 dòng cuối (TOPIC-277 BUILDING + 278,
-  279, 283, 284, 287, 291, 292, 294 CLAIMED) vì Production không làm việc
-  dù ở trạng thái CLAIMED/BUILDING — KHÔNG khôi phục. Các chủ đề vẫn READY
-  trong TOPICS.
-- Ca pipeline 06:00 09/11 dừng theo DEC-202 (token tuần 100% > 95%, claim 0; Scout không quét); claim lại từ ca 18:00 sau reset 14:14.
-- Hạn mức (đọc lần cuối lúc upload TOPIC-273, 15:12 08/11/2026): tuần Muse
-  đã dùng 100%, còn 0%, reset 09/11 lúc 14:14 +07; token thêm còn ~892M.
-  Đọc lại hạn mức tại mỗi lần upload (TASKS.L QUOTA).
-- DECISIONS đã ghi tới DEC-200 (dòng 201) — snapshot tại thời điểm viết lại file này (09/11/2026). Rà soát lần 7 đã xong toàn bộ
-  37 mục (DEC-161→DEC-197) + DEC-198 (đính chính phát hiện sai về cột G)
-  + DEC-199 (trần 3). Rà soát lần 6 (42 mục) đang chờ CEO quyết từng cái.
-- Chủ đề chờ CEO: Kraków (83đ, APPROVED, TOPIC_ID còn trống — 09/11 là
-  ngày cuối quốc tang Ba Lan 8–9/11, hết mới thì khó làm) và TOPIC-295
-  (bánh mì Quảng Ngãi, 74đ, APPROVED — cần flip READY mới sản xuất được).
+- TASKS: 60 dòng dữ liệu (58 DELIVERED + 1 CANCELLED + 1 RETURNED), **0 dòng đang làm dở**.
+- Ca pipeline 05:00 13/11 ký EMPTY (57/57 READY đã có TASKS — D8 chưa quyết, chưa lật READY mới cho ca 14:00); ca scout 04:00 13/11 ghi 10 chủ đề mới (hàng 152–161, TOPIC_ID còn trống).
+- Hạn mức (đọc trực tiếp theo DEC-263): 54% lúc scout 04:00, 49% lúc pipeline 05:00 ngày 13/11/2026.
+- DECISIONS đã ghi tới DEC-269 — snapshot tại thời điểm cập nhật file này (13/11/2026). DEC-265..269 quyết 13/11 (cột G DATE còn trống); DEC-245 chưa ký (cột F/G trống); DEC-254..256 còn trống. Rà soát toàn bộ 13/11: 66 mục còn mở (báo cáo ra-soat-toan-bo-20261113.md).
+- Chủ đề chờ CEO: lật READY 3 chủ đề cho ca pipeline 14:00 13/11 (đã trình 2 phương án, hạn 14:05 13/11).
 - TOPIC-233: Drive có bản nháp 348s từ 05/11/2026 trong khi hồ sơ nói chưa
   từng sản xuất — chờ CEO quyết, không tự sản xuất.
 - TOPIC-219: CANCELLED 07/11/2026 theo quy tắc ngày hiện tại; không sửa,
@@ -497,7 +484,7 @@ xác định" và dừng đúng bước cần nó, không đoán.
 5. Cấp phép toàn quyền cho QA (để QA hoàn tất bàn giao Drive mà không hỏi
    lại trong chat; thẻ hệ thống vẫn hiện mỗi lần upload và cần bấm trong
    30 phút).
-6. Lịch bot (4 lịch mục 13 — chỉ cài khi CEO nói "cài bộ lịch mẫu").
+6. Lịch bot (6 lịch mục 13 — chỉ cài khi CEO nói "cài bộ lịch mẫu").
 7. Facebook (chỉ khi công ty có nhu cầu — tài khoản/mục đích do CEO nói).
 8. Ngưỡng inline voice — ĐÃ QUYẾT: 10.000.000 byte (file trên 10 MB đi
    đường chunked download; chỉ thông báo, không hỏi). Đã kiểm chứng 09/11/2026: code getMediaUrl = 10.000.000 byte, khớp quyết định.
@@ -511,7 +498,6 @@ xác định" và dừng đúng bước cần nó, không đoán.
 
 ---
 
-_Snapshot 09/11/2026 — chi nhánh gốc. Khi luật đổi, cập nhật file này trong
-cùng lần đổi. Quyết định mới nhất trong file: DEC-200 (viết lại toàn bộ file
-này theo lệnh CEO 09/11/2026).
+_Snapshot 13/11/2026 — chi nhánh gốc. Khi luật đổi, cập nhật file này trong
+cùng lần đổi. Quyết định mới nhất trong file: DEC-269 (cập nhật file này ngày 13/11/2026 theo lệnh CEO).
 Tra cứu đầy đủ: tab DECISIONS trong workbook dùng chung._

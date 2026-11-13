@@ -1,4 +1,4 @@
-.broll-typewriter-reveal{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:0 22vmin 256px;background:rgba(8,10,16,0.70);backdrop-filter:blur(3px);box-sizing:border-box;pointer-events:none}
+.broll-typewriter-reveal{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:0 22vmin 256px;background:rgba(8,10,16,.68);backdrop-filter:blur(3px);box-sizing:border-box;pointer-events:none}
 .broll-typewriter-box{display:flex;flex-direction:column;gap:12px;max-width:152.9vmin;box-sizing:border-box}
 .broll-typewriter-label{font-family:'Anton',sans-serif;font-size:clamp(14px,3.4vmin,22px);font-weight:700;color:var(--broll-accent,#22d3ee);text-transform:uppercase;letter-spacing:0.12em;} /* NO-ANIM 31/10/2026: CSS animation removed per CEO decision - video render is static-only */
 .broll-typewriter-label:empty{display:none}

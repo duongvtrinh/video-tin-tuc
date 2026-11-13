@@ -1,4 +1,4 @@
-.broll-stat{display:flex;flex-direction:column;align-items:center;gap:.25em;padding:.7em 1.3em .8em;border-radius:8px;background:rgba(8,10,16,.82);border-top:.14em solid var(--broll-accent);text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);box-sizing:border-box;width:100%;max-width:528px}
+.broll-stat{display:flex;flex-direction:column;align-items:center;gap:.25em;padding:.7em 1.3em .8em;border-radius:8px;background:rgba(8,10,16,.68);border-top:.14em solid var(--broll-accent);text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);box-sizing:border-box;width:100%;max-width:528px}
 .broll-stat-row{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;max-width:100%}
 .broll-stat-value{font:900 clamp(54px,15.0vmin,140px)/1 'Anton',Arial,sans-serif;color:var(--broll-accent);text-shadow:0 4px 18px rgba(0,0,0,.6)}
 .broll-stat-unit{font:800 clamp(20px,5.0vmin,48px)/1 'Anton',Arial,sans-serif;color:#fff;margin-left:.25em}

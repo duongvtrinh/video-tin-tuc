@@ -123,10 +123,15 @@
     "science",
     "crime"
   ],
-  "version": "1.8.0",
+  "version": "1.9.0",
   "whenToUse": [
     "Trích xuất hồ sơ, tài liệu giải mật, chỉ dụ hoặc văn kiện",
     "Ghi chú tình báo, dòng suy ngẫm, mật mã hoặc câu hỏi điều tra",
     "Tạo nhịp gõ chữ kịch tính, hé lộ dần thông điệp"
-  ]
+  ],
+  "changelog": {
+    "version": "1.9.0",
+    "date": "2026-11-13",
+    "note": "Chuẩn nền thẻ mực trong (CEO 13/11/2026): nền thẻ rgba(8,10,16,0.70) → rgba(8,10,16,.68), chung mức với compare-bars/strike-verdict."
+  }
 }

@@ -16,7 +16,7 @@ Danh sách template: `docs/TEMPLATE_CATALOG.md` (tự sinh).
 | `schemaVersion` (=1), `specVersion` (=2) | ✔ | specVersion 2 = có `placement`, `neutralBgEligible`, input có `values/min/max/pattern` |
 | `mode` overlay/fullscreen/cutaway · `background` transparent/opaque | ✔ | |
 | `placement` | v2 | `subtitle-bottom` mặc định · `flush-bottom` · `edge-bottom` · `full-stage` (bắt buộc cho mode fullscreen) · `none` (cutaway). Thay các tập ID hardcode trong `render_draft.py` |
-| `neutralBgEligible` | v2 | `true` ⇔ template không có input ảnh (luật Production). Thay câu chữ trong skill |
+| `neutralBgEligible` | v2 | `true` ⇔ template không có input ảnh, trừ template bị loại trừ (cutaway-standard DEC-268, preview-banner DEC-274 — luôn cần ảnh/video thật). |
 | `category`, `capability`, `description`, `whenToUse`, `notFor` | ✔ | `notFor` trỏ template khác dạng `(dùng <id>)` — id phải tồn tại (M09) |
 | `themes` | ✔ | tập con id trong `_themes.json`; `general` = dùng được cho mọi video |
 | `supportedAspectRatios`, `hidesSubs`(bool), `maxStage` | ✔ | `hidesSubs` luôn `true` trên thực tế (karaoke.py ẩn phụ đề mọi template từ 31/10/2026) |

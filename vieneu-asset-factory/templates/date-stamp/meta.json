@@ -107,7 +107,14 @@
     "history",
     "crime"
   ],
-  "version": "1.6.0",
+  "version": "1.7.0",
+  "changelog": [
+    {
+      "version": "1.7.0",
+      "date": "2026-11-13",
+      "note": "Chuẩn nền thẻ mực trong (CEO 13/11/2026): nền thẻ rgba(8,10,16,.8) → rgba(8,10,16,.68), chung mức với compare-bars/strike-verdict."
+    }
+  ],
   "whenToUse": [
     "Chuyển mốc thời gian trong câu chuyện",
     "Nhấn mạnh năm của một sự kiện"

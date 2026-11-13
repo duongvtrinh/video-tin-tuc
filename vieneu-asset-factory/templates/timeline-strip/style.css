@@ -1,4 +1,4 @@
-.broll-timeline-strip{display:flex;flex-direction:column;gap:.5em;max-width:92%;padding:.9em 1.1em .9em 1.4em;border-radius:4px;background:rgba(8,10,16,.86);border:1px solid rgba(251,191,36,.28);box-shadow:0 10px 34px rgba(0,0,0,.55)}
+.broll-timeline-strip{display:flex;flex-direction:column;gap:.5em;max-width:92%;padding:.9em 1.1em .9em 1.4em;border-radius:4px;background:rgba(8,10,16,.68);border:1px solid rgba(251,191,36,.28);box-shadow:0 10px 34px rgba(0,0,0,.55)}
 .broll-timeline-strip-label{font:800 clamp(12px,2.8vmin,20px)/1.2 var(--vst-font-family, 'Anton', sans-serif);letter-spacing:.22em;text-transform:uppercase;color:var(--broll-accent,#fbbf24)}
 .broll-timeline-strip-list{list-style:none;margin:0;padding:0 0 0 1.1em;border-left:2px solid rgba(251,191,36,.45)}
 .broll-timeline-strip .broll-item{position:relative;margin:0;padding:.42em 0 .42em .9em;font:600 clamp(14px,3.4vmin,26px)/1.35 var(--vst-font-family, 'Anton', sans-serif);color:#fff}

@@ -208,6 +208,10 @@ Ngoài lớp: **bộ ba trừu tượng** ("A, B và C" toàn danh từ trừu t
 2. **Dựng xương:** hook / preview / các luận điểm (mỗi cái 1 câu chủ ý + 1 con số chính) / chỗ móc 50% / diễn biến kết. Đánh dấu chỗ treo và chỗ trả mỗi vòng mở.
 3. **Viết** một mạch theo giọng người kể, theo mục 3-4.
 4. **Chạy `script_lint.py --facts <dữ kiện>`.** Còn LỖI thì viết lại câu đó (không thay từ đồng nghĩa) rồi chạy lại. CẢNH BÁO: đọc từng cái, sửa hoặc ghi lý do giữ.
+   Lint kiểm cơ học: mẫu cấm (§5), xưng hô (§1: cấm "tôi"/"các bạn"/"quý vị", "mình" tối đa 3, "bạn" tối đa 2),
+   có đoạn preview sau hook (§3.2), câu chốt cuối ≤ 12 tiếng (§3.6), số/ngày lệch dữ kiện. Lint KHÔNG kiểm:
+   chất lượng lời hứa trong preview (có phải lời hứa thật hay chỉ là mục lục), nhịp treo/trả vòng mở (§3.3),
+   xưng hô trong lời trích nguyên văn (được miễn). Ba thứ đó chỉ rà bằng tai (mục 8) và QA.
 5. **Rà tai** (không thay được bằng lint): ba bài kiểm tra ở mục 8.
 6. **Đối chiếu nguồn** (luật cũ, vẫn bắt buộc): từng ngày tháng, từng phát ngôn gắn tên người, từng "nhất". Sau đó mới chạy TTS.
 

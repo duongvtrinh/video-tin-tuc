@@ -1,4 +1,4 @@
-.broll-date{display:flex;flex-direction:column;align-items:flex-start;gap:.1em;padding:.5em 1em .6em;border-radius:8px;background:rgba(8,10,16,.8);border-bottom:.16em solid var(--broll-accent);box-sizing:border-box;width:100%;max-width:528px}
+.broll-date{display:flex;flex-direction:column;align-items:flex-start;gap:.1em;padding:.5em 1em .6em;border-radius:8px;background:rgba(8,10,16,.68);border-bottom:.16em solid var(--broll-accent);box-sizing:border-box;width:100%;max-width:528px}
 .broll-date-label{font:800 clamp(12px,2.8vmin,22px)/1.2 'Anton',Arial,sans-serif;color:#cbd5e1;letter-spacing:.14em;text-transform:uppercase}
 .broll-date-value{font:900 clamp(40px,15.0vmin,120px)/1 'Anton',Arial,sans-serif;color:var(--broll-accent);text-shadow:0 4px 14px rgba(0,0,0,.6)}
 .broll-date-text{font:700 clamp(15px,3.9vmin,32px)/1.25 'Anton',Arial,sans-serif;color:#fff}

@@ -75,9 +75,21 @@
   "themes": [
     "general"
   ],
-  "version": "1.8.0",
+  "version": "1.10.0",
   "whenToUse": [
     "Liệt kê 2-3 từ khóa song song trong một beat (lĩnh vực, đối tượng, hệ quả)",
     "Cần người xem nhớ một nhóm khái niệm cùng lúc"
+  ],
+  "changelog": [
+    {
+      "version": "1.9.0",
+      "date": "2026-11-13",
+      "note": "Chuẩn nền thẻ mực trong (CEO 13/11/2026): nền thẻ rgba(8,10,16,.8) → rgba(8,10,16,.68), chung mức với compare-bars/strike-verdict."
+    },
+    {
+      "version": "1.10.0",
+      "date": "2026-11-13",
+      "note": "Bỏ viền: xóa border vàng rgba(251,191,36,.55) ở các ô từ khóa (CEO 13/11/2026)."
+    }
   ]
 }

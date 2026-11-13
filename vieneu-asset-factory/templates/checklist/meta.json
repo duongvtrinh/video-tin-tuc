@@ -102,7 +102,14 @@
     "general",
     "economy"
   ],
-  "version": "1.4.0",
+  "version": "1.5.0",
+  "changelog": [
+    {
+      "version": "1.5.0",
+      "date": "2026-11-13",
+      "note": "Chuẩn nền thẻ mực trong (CEO 13/11/2026): nền thẻ rgba(8,10,16,.84) → rgba(8,10,16,.68), chung mức với compare-bars/strike-verdict."
+    }
+  ],
   "whenToUse": [
     "Liệt kê nguyên nhân, kết quả, điều kiện",
     "Tóm tắt ý chính sau một đoạn dài"

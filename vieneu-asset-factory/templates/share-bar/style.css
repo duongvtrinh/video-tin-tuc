@@ -1,4 +1,4 @@
-.broll-sb{display:flex;flex-direction:column;gap:.55em;padding:.8em 1.3em .9em;border-radius:8px;background:rgba(28,55,42,.85);border-top:.14em solid var(--broll-accent);text-align:left;box-sizing:border-box;width:100%;max-width:528px}
+.broll-sb{display:flex;flex-direction:column;gap:.55em;padding:.8em 1.3em .9em;border-radius:8px;background:rgba(8,10,16,.68);border-top:.14em solid var(--broll-accent);text-align:left;box-sizing:border-box;width:100%;max-width:528px}
 .broll-sb-title{font:800 clamp(18px,4.3vmin,36px)/1.25 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.04em;overflow-wrap:anywhere}
 .broll-sb-bar{display:flex;height:1.5em;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.14);font-size:clamp(14px,3.4vmin,26px)}
 .broll-sb-seg{height:100%}

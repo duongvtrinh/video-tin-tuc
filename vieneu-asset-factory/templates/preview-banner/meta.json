@@ -32,7 +32,7 @@
   },
   "mode": "overlay",
   "name": "Banner preview / Preview Banner",
-  "neutralBgEligible": true,
+  "neutralBgEligible": false,
   "notFor": [
     "Liệt kê nhiều ý (mỗi beat phân tích dùng keyword-block riêng)",
     "Câu quá dài quá 160 ký tự"

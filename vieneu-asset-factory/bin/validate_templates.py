@@ -33,6 +33,11 @@ MODES = {"overlay", "fullscreen", "cutaway"}
 BACKGROUNDS = {"transparent", "opaque"}
 RATIOS = {"9:16", "16:9", "1:1", "4:3"}
 PLACEMENTS = {"full-stage", "flush-bottom", "edge-bottom", "subtitle-bottom", "none"}
+# Ngoại lệ M12 cho neutralBgEligible (DEC-268, CEO 13/11/2026): template
+# mode=cutaway luôn phải có ảnh/video phù hợp với lời đọc nên
+# neutralBgEligible=false là đúng luật dù không có input ảnh — M12 mặc
+# định (đủ điều kiện = không có input ảnh) không áp cho các template này.
+M12_NEUTRAL_BG_EXCEPTIONS = {"cutaway-standard": "DEC-268", "preview-banner": "DEC-274"}
 SYSTEM_INPUTS = {"accent", "position", "animation"}  # khóa hệ thống, không xuất hiện trong HTML
 INPUT_TYPES = {"string", "enum", "image"}
 LEGACY_CLASS_PREFIX = {"clip-caption", "comment-frame", "source-footer-safe", "story-title"}
@@ -278,7 +283,10 @@ def validate(only=None, scan_docs=True):
             if m.get("neutralBgEligible") is None:
                 E("M12", "thiếu neutralBgEligible (luật Production: đủ điều kiện = không có input ảnh)")
             elif m["neutralBgEligible"] == has_img:
-                E("M12", f"neutralBgEligible={m['neutralBgEligible']} mâu thuẫn với input ảnh ({'có' if has_img else 'không có'})")
+                if tid in M12_NEUTRAL_BG_EXCEPTIONS:
+                    rep.add("INFO", tid, "M12", f"neutralBgEligible={m['neutralBgEligible']} trái quy tắc mặc định nhưng là ngoại lệ {M12_NEUTRAL_BG_EXCEPTIONS[tid]}")
+                else:
+                    E("M12", f"neutralBgEligible={m['neutralBgEligible']} mâu thuẫn với input ảnh ({'có' if has_img else 'không có'})")
         else:
             W("M12", "chưa có specVersion 2 (placement/neutralBgEligible) — chạy tools/migrate_meta_v2.py")
 

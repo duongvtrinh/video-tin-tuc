@@ -77,9 +77,14 @@
   "themes": [
     "general"
   ],
-  "version": "1.4.0",
+  "version": "1.5.0",
   "whenToUse": [
     "Ghi nguồn cuối mỗi cảnh video tin tức dọc 720x1280",
     "Nguồn dài gồm nhiều báo, ngày tháng"
-  ]
+  ],
+  "changelog": {
+    "version": "1.5.0",
+    "date": "2026-11-13",
+    "note": "Chuẩn nền thẻ mực trong (CEO 13/11/2026): nền thẻ rgba(8,10,16,.65) → rgba(8,10,16,.68), chung mức với compare-bars/strike-verdict."
+  }
 }

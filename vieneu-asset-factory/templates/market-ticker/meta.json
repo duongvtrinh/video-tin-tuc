@@ -144,9 +144,14 @@
     "general",
     "economy"
   ],
-  "version": "1.5.0",
+  "version": "1.6.0",
   "whenToUse": [
     "Chỉ số VN-Index, HNX, giá vàng, dầu, tỷ giá",
     "So sánh tăng/giảm trong ngày"
-  ]
+  ],
+  "changelog": {
+    "version": "1.6.0",
+    "date": "2026-11-13",
+    "note": "Chuẩn nền thẻ mực trong (CEO 13/11/2026): nền thẻ rgba(8,10,16,.92) → rgba(8,10,16,.68), chung mức với compare-bars/strike-verdict."
+  }
 }

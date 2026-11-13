@@ -1,4 +1,4 @@
-.broll-section-caption{display:flex;align-items:stretch;max-width:528px;border-radius:4px;background:rgba(8,10,16,.92);box-shadow:0 10px 30px rgba(0,0,0,.5);box-sizing:border-box;overflow:hidden}
+.broll-section-caption{display:flex;align-items:stretch;max-width:528px;border-radius:4px;background:rgba(8,10,16,.68);box-shadow:0 10px 30px rgba(0,0,0,.5);box-sizing:border-box;overflow:hidden}
 .broll-section-caption-seg{width:34px;flex-shrink:0;background:#ef4444}
 .broll-section-caption-text{font:700 clamp(15px,4.3vmin,32px)/1.3 'Anton',Arial,sans-serif;color:#fff;padding:.55em .8em;overflow-wrap:break-word}
 .broll-section-caption-text:empty{display:none}

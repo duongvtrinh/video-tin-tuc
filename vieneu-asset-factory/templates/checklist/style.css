@@ -1,4 +1,4 @@
-.broll-check{display:flex;flex-direction:column;gap:.5em;min-width:44%;max-width:84%;padding:.9em 1.2em;border-radius:4px;background:rgba(8,10,16,.84);border-top:.14em solid var(--broll-accent);box-shadow:0 10px 32px rgba(0,0,0,.45)}
+.broll-check{display:flex;flex-direction:column;gap:.5em;min-width:44%;max-width:84%;padding:.9em 1.2em;border-radius:4px;background:rgba(8,10,16,.68);border-top:.14em solid var(--broll-accent);box-shadow:0 10px 32px rgba(0,0,0,.45)}
 .broll-check-title{font:900 clamp(16px,4.3vmin,34px)/1.2 'Anton',Arial,sans-serif;color:var(--broll-accent);text-transform:uppercase;letter-spacing:.06em}
 .broll-check-title:empty{display:none}
 .broll-check-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4em;color:#fff}

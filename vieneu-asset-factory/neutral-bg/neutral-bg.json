@@ -30,7 +30,7 @@
    "loai": "anh",
    "mo_ta": "Gradient doc muot: tren cung xanh ngoc (cyan) sang, chuyen dan xuong duoi thanh xanh navy dam. Khong co vat the, khong hoa tiet, be mat tron nhan. Nua tren sang, nua duoi toi.",
    "nguon": "Pixabay — https://pixabay.com/photos/gradient-pattern-design-template-8174930/",
-   "phu_hop": "Dung cho moi chu de can nen sach, hien dai, thoang (cong nghe, giao duc, y te, thoi tiet). Hop section-title, preview-banner, section-header. Mood: sach se, binh yen, hien dai. Chu trang dat o nua duoi toi (xanh navy); tranh dat chu len vung cyan sang o tren cung.",
+   "phu_hop": "Dung cho moi chu de can nen sach, hien dai, thoang (cong nghe, giao duc, y te, thoi tiet). Hop section-title, section-header. Mood: sach se, binh yen, hien dai. Chu trang dat o nua duoi toi (xanh navy); tranh dat chu len vung cyan sang o tren cung.",
    "tu_khoa": [
     "xanh duong",
     "gradient",
@@ -113,7 +113,7 @@
    "kich_thuoc": "1080x1920 (dung 9:16)",
    "mo_ta": "Dong xu vang rai tren ban go nau: dong xu vang co hoa van, xep thanh dai cheo tu goc tren xuong, co chiec noi den nho o goc duoi trai. Ban go nau am, van go ro. Khong nguoi, khong chu doc duoc.",
    "nguon": "Pexels — https://www.pexels.com/photo/gold-coins-on-wooden-surface-7080480/",
-   "phu_hop": "Chu de TAI CHINH / VANG / TIET KIEM: gia vang, dau tu, tiet kiem, lam phat. Hop section-header, preview-banner. Mood: am ap, giau co, truyen thong. Chu trang doc tot tren nen ban go nau o moi vi tri.",
+   "phu_hop": "Chu de TAI CHINH / VANG / TIET KIEM: gia vang, dau tu, tiet kiem, lam phat. Hop section-header. Mood: am ap, giau co, truyen thong. Chu trang doc tot tren nen ban go nau o moi vi tri.",
    "ghi_chu": "Ung vien sach (khong caveat).",
    "tu_khoa": [
     "dong xu vang",
@@ -135,7 +135,7 @@
    "kich_thuoc": "1080x1920 (dung 9:16)",
    "mo_ta": "May bay chien dau F-16 dang bay nghieng, lua dong co phat sang, ve khoi trang phia sau, nen troi may xam trang. May bay la chu the ro rang o giua khung, mau xam kim loai. Troi may sang, khong co co/quoc ky hay chu doc duoc.",
    "nguon": "Pexels — https://www.pexels.com/photo/a-fighter-jet-flying-through-the-air-with-smoke-coming-out-of-it-28242316/",
-   "phu_hop": "Chu de QUOC PHONG / QUAN SU / HANG KHONG: tin may bay chien dau, tap tran, khong quan, cong nghe quan su. Hop section-header, preview-banner. Mood: manh me, toc do, quyen luc. Chu trang dat o vung may xam toi; tranh dat chu len vung may trang sang.",
+   "phu_hop": "Chu de QUOC PHONG / QUAN SU / HANG KHONG: tin may bay chien dau, tap tran, khong quan, cong nghe quan su. Hop section-header. Mood: manh me, toc do, quyen luc. Chu trang dat o vung may xam toi; tranh dat chu len vung may trang sang.",
    "ghi_chu": "May bay la kieu F-16 (My) nhung khong co co/huy hieu doc duoc — CEO quyet co chap nhan kieu may bay cu the khong.",
    "tu_khoa": [
     "may bay",
@@ -179,7 +179,7 @@
    "kich_thuoc": "1080x1920 (dung 9:16)",
    "mo_ta": "Micro chuyen nghiep phong thu co tam loc pop, nen toi voi tam cach am o phia sau. Micro nam o ben phai khung, than micro den, luoi kim loai. Nen den, tam cach am xam toi. Khong nguoi, khong chu.",
    "nguon": "Pexels — https://www.pexels.com/photo/close-up-of-studio-microphone-14195566/",
-   "phu_hop": "Chu de TIN TUC / TRUYEN THONG / PHONG VAN: hop bao, phong van, phat thanh, podcast. Hop section-header, preview-banner. Mood: chuyen nghiep, tram, tin tuc. Chu trang dat o vung den ben trai (rong); tranh dat chu de len micro o ben phai.",
+   "phu_hop": "Chu de TIN TUC / TRUYEN THONG / PHONG VAN: hop bao, phong van, phat thanh, podcast. Hop section-header. Mood: chuyen nghiep, tram, tin tuc. Chu trang dat o vung den ben trai (rong); tranh dat chu de len micro o ben phai.",
    "ghi_chu": "Ung vien sach (khong caveat).",
    "tu_khoa": [
     "micro",
@@ -201,7 +201,7 @@
    "kich_thuoc": "1080x1920 (dung 9:16)",
    "mo_ta": "Khoi hinh hoc 3D den tren nen den: cac khoi goc canh, mat phang kim loai phan chieu anh sang mo tren cac canh. Tong mau den tuyen, rat toi, chi co diem sang mo tren mep khoi. Truu tuong, khong co vat the cu the.",
    "nguon": "Pexels — https://www.pexels.com/photo/sleek-black-metallic-geometric-abstract-design-40849272/",
-   "phu_hop": "Chu de CONG NGHE / AI / SO HOA: cong nghe, tri tue nhan tao, chuyen doi so, an ninh mang. Hop section-title, section-header, preview-banner. Mood: hien dai, tuong lai, bi an. Chu trang/vang doc rat tot o moi vi tri vi nen rat toi.",
+   "phu_hop": "Chu de CONG NGHE / AI / SO HOA: cong nghe, tri tue nhan tao, chuyen doi so, an ninh mang. Hop section-title, section-header. Mood: hien dai, tuong lai, bi an. Chu trang/vang doc rat tot o moi vi tri vi nen rat toi.",
    "ghi_chu": "Ung vien sach (khong caveat).",
    "tu_khoa": [
     "cong nghe",
@@ -224,7 +224,7 @@
    "thoi_luong_giay": 10.0,
    "mo_ta": "VIDEO: Mang neural truu tuong: cac nut sang noi voi nhau bang duong ke, hat sang chuyen dong, nen xanh den rat toi. Cac nut xanh/tim phat sang. Rat toi, tuong lai. Khong chu, khong nguoi.",
    "nguon": "Pexels — https://www.pexels.com/video/futuristic-neural-network-visualization-35163081/",
-   "phu_hop": "Chu de CONG NGHE / AI / SO HOA: tri tue nhan tao, mang neural, du lieu, chuyen doi so. Hop section-title, section-header, preview-banner. Mood: hien dai, tuong lai, bi an. Chu trang/vang doc rat tot o moi vi tri vi nen rat toi.",
+   "phu_hop": "Chu de CONG NGHE / AI / SO HOA: tri tue nhan tao, mang neural, du lieu, chuyen doi so. Hop section-title, section-header. Mood: hien dai, tuong lai, bi an. Chu trang/vang doc rat tot o moi vi tri vi nen rat toi.",
    "ghi_chu": "Ung vien sach (khong caveat).",
    "tu_khoa": [
     "mang neural",
@@ -246,7 +246,7 @@
    "kich_thuoc": "1080x1920 (dung 9:16)",
    "mo_ta": "Nen den xanh dam voi ve sang trang hinh trai tim (ve sang kieu phoi sang dai): cac trai tim sang nam o ben trai khung, ben phai la vung den trong. Tong mau den/xanh la cay rat toi. Khong nguoi, khong chu.",
    "nguon": "Pexels — https://www.pexels.com/photo/abstract-illuminations-in-dark-background-14297553/",
-   "phu_hop": "Chu de Y TE / SUC KHOE: tim mach, suc khoe, benh vien, ngay tim mach. Hop section-header, preview-banner. Mood: am ap, hy vong, y te. Chu trang dat o vung den trong ben phai (rong, toi); tranh dat chu de len ve sang trai tim o ben trai.",
+   "phu_hop": "Chu de Y TE / SUC KHOE: tim mach, suc khoe, benh vien, ngay tim mach. Hop section-header. Mood: am ap, hy vong, y te. Chu trang dat o vung den trong ben phai (rong, toi); tranh dat chu de len ve sang trai tim o ben trai.",
    "ghi_chu": "Ung vien sach (khong caveat). Vet sang trai tim nam ben trai — dat chu vung phai.",
    "tu_khoa": [
     "trai tim",
@@ -267,7 +267,7 @@
    "thoi_luong_giay": 7.1,
    "mo_ta": "VIDEO: Song bien lon do vao, nuoc ngoc lam, bot trang, tia nuoc tung. Rat dong, manh me. Nuoc ngoc lam sang, bot trang sang. Chuyen dong song manh, lien tuc. Da nen tu 4K 60fps xuong 1080p 30fps ngay 09/11/2026.",
    "nguon": "Pexels — https://www.pexels.com/video/dynamic-ocean-waves-captured-from-above-29285421/",
-   "phu_hop": "Chu de MOI TRUONG / BIEN: song bien, bao, bien doi khi hau. Hop section-header, preview-banner. Mood: manh me, hoang da, thien nhien. Chu trang dat o vung nuoc ngoc lam toi; tranh dat chu len vung bot trang sang. Video phu hop part ngan, cao trao.",
+   "phu_hop": "Chu de MOI TRUONG / BIEN: song bien, bao, bien doi khi hau. Hop section-header. Mood: manh me, hoang da, thien nhien. Chu trang dat o vung nuoc ngoc lam toi; tranh dat chu len vung bot trang sang. Video phu hop part ngan, cao trao.",
    "ghi_chu": "File nang 98 MB (4K 60fps) — neu CEO giu thi nen nen xuong 1080p truoc khi dung de nhe render.",
    "tu_khoa": [
     "bien",
@@ -374,7 +374,7 @@
    "kich_thuoc": "2250x4000 (dung 9:16)",
    "mo_ta": "Song bien nhin tu tren cao do vao bai cat sam toi: nuoc ngoc lam voi bot trang o nua duoi, bai cat xam den o nua tren. Duong song uon cong cheo khung. Khong nguoi, khong chu. Nua tren (bai sam) toi, nuoc ngoc lam sang hon o duoi.",
    "nguon": "Pexels — https://images.pexels.com/photos/27263841/pexels-photo-27263841.jpeg (CEO gui link truc tiep 09/11/2026)",
-   "phu_hop": "Chu de MOI TRUONG / BIEN: bao, song bien, bien doi khi hau, du lich bien. Hop section-header, preview-banner. Mood: manh me, hoang so, thien nhien. Chu trang dat o vung bai sam toi nua tren; tranh dat chu len vung nuoc ngoc lam sang.",
+   "phu_hop": "Chu de MOI TRUONG / BIEN: bao, song bien, bien doi khi hau, du lich bien. Hop section-header. Mood: manh me, hoang so, thien nhien. Chu trang dat o vung bai sam toi nua tren; tranh dat chu len vung nuoc ngoc lam sang.",
    "ghi_chu": "CEO them (gui link 09/11/2026). Ung vien sach (khong caveat).",
    "tu_khoa": [
     "bien",
@@ -459,7 +459,7 @@
    "kich_thuoc": "2268x4032 (dung 9:16)",
    "mo_ta": "Hoang hon tren bien: troi chuyen mau tu xanh duong dam o tren xuong cam o chan troi, mat troi lan o giua chan troi, bien lang o duoi. Co dao nho toi o chan troi phai. Khong nguoi, khong chu. Troi xanh tren cung toi, dai cam o chan troi sang.",
    "nguon": "Pexels — https://images.pexels.com/photos/19206458/pexels-photo-19206458.jpeg (CEO gui link truc tiep 09/11/2026)",
-   "phu_hop": "Chu de MOI TRUONG / BIEN: hoang hon bien, thoi tiet, du lich. Hop preview-banner, section-header. Mood: lang man, mo rong, binh yen. Chu trang dat o vung troi xanh tren cung hoac vung bien toi; tranh dat chu len dai cam sang o chan troi.",
+   "phu_hop": "Chu de MOI TRUONG / BIEN: hoang hon bien, thoi tiet, du lich. Hop section-header. Mood: lang man, mo rong, binh yen. Chu trang dat o vung troi xanh tren cung hoac vung bien toi; tranh dat chu len dai cam sang o chan troi.",
    "ghi_chu": "CEO them (gui link 09/11/2026). Dai cam o chan troi sang — tranh dat chu len do.",
    "tu_khoa": [
     "bien",
@@ -667,6 +667,6 @@
    ]
   }
  ],
- "ghi_chu_chung": "Thu vien nen trung tinh dung cho part template KHONG co input anh (section-title, section-header, stat-counter, typewriter-reveal, date-stamp, dual-stat, checklist, preview-banner, source-citation...). Moi scene toi da 1 part dung nen (DEC-244). Anh nam trong thu muc image/, video nam trong thu muc video/. Anh ti le 2:3 can crop giua ve 9:16 (720x1280) truoc khi dung; anh dung 9:16 va video da dung 9:16. MO TA CHI TIET (09/11/2026): moi muc co mo_ta chi tiet (noi dung, mau sac, bo cuc, anh sang, vung sang/toi de dat chu) + phu_hop chi tiet (chu de, loai template, mood, vi tri dat chu) + tu_khoa (tu khoa tieng Viet + tieng Anh) — de AI chon anh nhanh va chinh xac theo chu de/kich ban. CEO dang loc thu vien: da xoa 3 anh dot 3 (sport-01, trans-01, space-01), 7 anh (08, 10, 15, 17, edu-01-blackboard, energy-02-turbines-dusk, env-01-forest-fog), 5 video (25, 26, health-02, news-02, space-02) va 2 video (21-bokeh, energy-02-solar-rooftop) — da xoa khoi JSON nay. File nao CEO bo thi xoa khoi thu muc va khoi JSON nay.",
+ "ghi_chu_chung": "Thu vien nen trung tinh dung cho part template KHONG co input anh (section-title, section-header, stat-counter, typewriter-reveal, date-stamp, dual-stat, checklist, source-citation...). Loai tru: cutaway-standard (DEC-268) va preview-banner (DEC-274) du khong co input anh — hai template nay bat buoc anh/video that. Moi scene toi da 1 part dung nen (DEC-244). Anh nam trong thu muc image/, video nam trong thu muc video/. Anh ti le 2:3 can crop giua ve 9:16 (720x1280) truoc khi dung; anh dung 9:16 va video da dung 9:16. MO TA CHI TIET (09/11/2026): moi muc co mo_ta chi tiet (noi dung, mau sac, bo cuc, anh sang, vung sang/toi de dat chu) + phu_hop chi tiet (chu de, loai template, mood, vi tri dat chu) + tu_khoa (tu khoa tieng Viet + tieng Anh) — de AI chon anh nhanh va chinh xac theo chu de/kich ban. CEO dang loc thu vien: da xoa 3 anh dot 3 (sport-01, trans-01, space-01), 7 anh (08, 10, 15, 17, edu-01-blackboard, energy-02-turbines-dusk, env-01-forest-fog), 5 video (25, 26, health-02, news-02, space-02) va 2 video (21-bokeh, energy-02-solar-rooftop) — da xoa khoi JSON nay. File nao CEO bo thi xoa khoi thu muc va khoi JSON nay.",
  "thu_muc": "vieneu-asset-factory/neutral-bg/"
 }

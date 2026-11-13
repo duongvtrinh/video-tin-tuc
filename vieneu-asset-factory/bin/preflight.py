@@ -39,14 +39,22 @@ cảnh báo không tính vào exit code):
   danh sách parts, classification "trung-tinh"; A1 10/11/2026); mỗi
   scene tối đa 1 part dùng nền trung tính (DEC-244). Mỗi file visual
   nội dung chỉ xuất hiện
-  tối đa 2 lần trong toàn video (đếm theo nội dung md5, không đếm theo
-  tên file; trừ ảnh/video trung tính; fill-in tính vào trần; bookend
-  tính là 2 lần) — trần xuất hiện, lệnh CEO 09/11/2026 (DEC-245):
-  chặn trước render. Trần AI ≤ thật theo scene (DEC-244): mỗi scene
+  tối đa 2 lần trong toàn video (đếm theo nội dung dhash, Hamming ≤ 10,
+  không đếm theo tên file hay md5; trừ ảnh/video trung tính; fill-in tính
+  vào trần; bookend tính là 2 lần) — trần xuất hiện, lệnh CEO 09/11/2026
+  (DEC-272), chuyển sang dhash theo quyết CEO 13/11/2026 (L8):
+  chặn trước render. Ảnh bằng chứng từ PDF bài báo (v1 thí điểm
+  13/11/2026, quyết CEO): tối đa 1 part/video; log của part đó
+  (classification "chup-man-hinh") phải đủ URL bài + tên báo + ngày
+  đăng + trang PDF đã lấy; tỉ lệ ảnh bằng chứng theo 3 trường hợp
+  (13/11/2026): trong khoảng 3:4–4:3 thì nguyên trang; dài hơn 3:4
+  thì giữ lại, cắt ảnh 3:4; rộng hơn 4:3 (trang quá ngắn) thì loại
+  nguồn, tìm nguồn báo khác — chặn trước render. Trần AI ≤ thật theo scene (DEC-244): mỗi scene
   số file AI không được vượt số file thật (đếm theo file khác nhau,
-  md5; nền trung tính và ảnh giải thích tính vào vế thật; crop chi
-  tiết và fill-in không cộng vào vế thật) — C1 rà soát lần 9, quyết
-  CEO 10/11/2026 (phương án C1-A): chặn trước render. (Ghi chú đối soát 09/11/2026: miễn trừ qua biên scene là phòng thủ — tên file b-roll của mỗi part là duy nhất theo (order, partIdx) nên 2 part khác scene không bao giờ resolve về cùng 1 file; việc dùng lại file nền qua các scene thực chất là copy cùng file nguồn vào 2 tên b-roll khác nhau nên preflight thấy 2 file khác nhau, không vi phạm.) Miễn cho project test như cửa A20.
+  md5; nền trung tính, ảnh giải thích và ảnh bằng chứng từ PDF bài
+  báo (chup-man-hinh) tính vào vế thật; crop chi tiết và fill-in không
+  cộng vào vế thật) — C1 rà soát lần 9, quyết CEO 10/11/2026
+  (phương án C1-A): chặn trước render. (Ghi chú đối soát 09/11/2026: miễn trừ qua biên scene là phòng thủ — tên file b-roll của mỗi part là duy nhất theo (order, partIdx) nên 2 part khác scene không bao giờ resolve về cùng 1 file; việc dùng lại file nền qua các scene thực chất là copy cùng file nguồn vào 2 tên b-roll khác nhau nên preflight thấy 2 file khác nhau, không vi phạm.) Miễn cho project test như cửa A20.
   R4-57 (08/11/2026, DEC-066 A', port từ validate_project.py — chỉ
   hợp lệ SAU assemble nên không gọi nó trước render): thứ tự scene
   không tăng dần; part startSec không nối tiếp part trước (tiling,
@@ -964,7 +972,7 @@ def main() -> int:
                     "media-log rồi chạy lại preflight (preflight nhận biết "
                     "part nền theo partId)")
         # A1 (10/11/2026): hàm md5 dùng chung cho cả bước mở rộng
-        # _neutral_parts (dưới đây) và khối trần DEC-245 (cuối khối).
+        # _neutral_parts (dưới đây) và khối trần DEC-272 (cuối khối).
         _md5_cache = {}
 
         def _file_md5(_p):
@@ -1047,38 +1055,101 @@ def main() -> int:
                           f"neutral-bg/")
 
         def _n9(_e):
-            if not isinstance(_e, dict):
+            # L9 (13/11/2026, rà soát; thu hẹp 13/11/2026 theo quyết CEO,
+            # L9 phương án A): chỉ quét ĐỆ QUY trong mục `chosen` của log
+            # scene (ứng viên ĐƯỢC CHỌN) — KHÔNG quét `candidates` đã loại
+            # (ứng viên bị loại mang nhãn trung tính không được gắn cờ cả
+            # scene; hồ sơ loại giữ nguyên làm bằng chứng) — và
+            # mediaSource.source trong plan. Nhận cả chuỗi trần.
+            def _scan(_o):
+                if isinstance(_o, str):
+                    return "trung-tinh" in _o or "nền trung tính" in _o
+                if isinstance(_o, dict):
+                    return any(_scan(_v) for _v in _o.values())
+                if isinstance(_o, (list, tuple)):
+                    return any(_scan(_v) for _v in _o)
                 return False
-            _t = []
-            for _k in ("classification", "note", "ghi_chu"):
-                if isinstance(_e.get(_k), str):
-                    _t.append(_e[_k])
-            _c = _e.get("chosen")
-            if isinstance(_c, dict):
-                for _k in ("classification", "note", "ghi_chu"):
-                    if isinstance(_c.get(_k), str):
-                        _t.append(_c[_k])
-            _j = " ".join(_t)
-            return "trung-tinh" in _j or "nền trung tính" in _j
+            return _scan(_e)
 
+        _neu_by_order = {}
         for _sc9 in plan["scenes"]:
             _o9 = _sc9["order"]
-            _simg9 = next((q for ext in ("jpg", "png", "webp")
+            # L9: ảnh cảnh chung dạng video (mp4) cũng phải kiểm md5 với
+            # thư viện neutral-bg/, không chỉ jpg/png/webp.
+            _simg9 = next((q for ext in ("jpg", "png", "webp", "mp4")
                            for q in [build / "media" / "images" /
                                      f"seg_{_o9}_{rand6(pid, 'img', str(_o9))}.{ext}"]
                            if q.exists()), None)
-            _neu9 = _n9(_log_scenes.get(_sc9.get("id")))
+            _neu9 = _n9((_log_scenes.get(_sc9.get("id")) or {}).get("chosen"))
+            if not _neu9:
+                # L9: nhãn trung tính có thể nằm ở mediaSource.source trong plan.
+                # mediaSource ở project cũ có thể là chuỗi thẳng (vd "VFF") —
+                # chuỗi thì chính nó là tên nguồn, không gọi .get (tránh crash
+                # AttributeError như trên topic274001/251001/250001).
+                _ms9 = _sc9.get("mediaSource")
+                _neu9 = _n9(_ms9.get("source") if isinstance(_ms9, dict) else _ms9)
             if _simg9 is not None and not _neu9 and _neutral_lib_md5s:
                 try:
                     _neu9 = _file_md5(_simg9) in _neutral_lib_md5s
                 except OSError:
                     _neu9 = False
+            _neu_by_order[_o9] = _neu9
             if _neu9:
                 errors.append(f"Scene {_o9}: ảnh/video cảnh chung là nền "
                               f"trung tính — luật 12/11/2026 cấm: ảnh cảnh "
                               f"chung phải là ảnh thật đúng chủ đề (báo "
                               f"chí, mạng xã hội, Google ảnh), không phải "
                               f"nền thư viện neutral-bg/")
+        # L10 (13/11/2026, rà soát): s1p1 không có b-roll riêng thì
+        # resolve về ảnh scene — khi ảnh scene 1 là nền trung tính (kết
+        # quả _neu9 của scene 1 ở trên) thì s1p1 cũng là nền trung tính.
+        if _first_pid and _first_pid not in _neutral_parts:
+            _first_vis = next((_v for _pid5, _v, _o5 in _resolved
+                               if _pid5 == _first_pid), None)
+            _first_is_scene_img = (
+                _first_vis is not None
+                and not _first_vis.name.startswith("broll_seg_"))
+            _first_order = plan["scenes"][0]["order"]
+            if _first_is_scene_img and _neu_by_order.get(_first_order):
+                _neutral_parts.add(_first_pid)
+                errors.append(f"Part {_first_pid} (part đầu tiên của video) dùng "
+                              f"ảnh/video trung tính — luật 12/11/2026 cấm: part "
+                              f"đầu phải là ảnh/video thật đúng chủ đề (báo chí, "
+                              f"mạng xã hội, Google ảnh), không lấy từ thư viện "
+                              f"neutral-bg/")
+        # N9(c) (13/11/2026, rà soát — DEC-268; mở rộng DEC-274): part dùng template có
+        # neutralBgEligible=false nhưng visual là nền trung tính thì chặn.
+        # Đọc neutralBgEligible từ meta.json của template (preflight trước
+        # đây không đọc trường này — grep = 0 tham chiếu).
+        # DEC + lý do riêng cho từng template bị loại trừ khỏi diện nền:
+        _NEUTRAL_EXCL = {
+            "cutaway-standard": ("DEC-268", "luôn phải có ảnh/video phù hợp với lời đọc"),
+            "preview-banner": ("DEC-274", "bắt buộc ảnh/video thật từ internet/báo chí/mạng xã hội/Google ảnh"),
+        }
+        _tpl_meta_cache: dict = {}
+
+        def _tpl_allows_neutral(_tid):
+            if _tid in _tpl_meta_cache:
+                return _tpl_meta_cache[_tid]
+            _ok = True
+            try:
+                _m = json.loads((FACTORY / "templates" / _tid / "meta.json").read_text(encoding="utf-8"))
+                _ok = _m.get("neutralBgEligible", True) is not False
+            except (OSError, json.JSONDecodeError):
+                _ok = True  # không đọc được meta thì không chặn oan; validator M01/M12 lo phần đó
+            _tpl_meta_cache[_tid] = _ok
+            return _ok
+
+        for _scn in plan["scenes"]:
+            for _pn in _scn["parts"]:
+                _tidn = ((_pn.get("broll") or {}).get("templateId"))
+                if (_pn.get("id") in _neutral_parts and _tidn
+                        and not _tpl_allows_neutral(_tidn)):
+                    _dec, _why = _NEUTRAL_EXCL.get(_tidn, ("DEC-268", "luôn phải có ảnh/video phù hợp với lời đọc"))
+                    errors.append(f"Part {_pn['id']} dùng template {_tidn} "
+                                  f"(neutralBgEligible=false theo {_dec}: {_why}) nhưng "
+                                  f"visual là nền trung tính — thay visual nội "
+                                  f"dung phù hợp rồi chạy lại preflight")
         for (_id1, _v1, _o1), (_id2, _v2, _o2) in zip(_resolved, _resolved[1:]):
             if _v1 is None or _v2 is None or _v1 != _v2:
                 continue
@@ -1117,26 +1188,136 @@ def main() -> int:
                               f"cho các part còn lại (visual nội dung trong "
                               f"pool) rồi chạy lại preflight")
 
+        # Ảnh bằng chứng từ PDF bài báo (v1 thí điểm 13/11/2026, quyết
+        # CEO — ke-hoach-chup-man-hinh-bao-20261113.md §14; sửa 13/11
+        # theo lệnh CEO: LOẠI chụp ảnh màn hình khỏi logic (chỉ cho
+        # 16:9, phương án tồi) — chỉ còn đường PDF; ảnh bằng chứng là
+        # NGUYÊN TRANG PDF render thành ảnh (bin/pdf_crop.py
+        # --whole-page), KHÔNG cắt 3:4 nữa): tối đa 1 part trong toàn
+        # video; dòng log của part đó (classification "chup-man-hinh",
+        # ở entry hoặc chosen) phải đủ 4 trường: link (URL bài báo),
+        # source (tên báo), articleDate (ngày đăng bài), pdfPage (số
+        # trang PDF đã lấy). Tỉ lệ ảnh bằng chứng theo 3 trường hợp
+        # (lệnh CEO 13/11/2026, sửa cùng ngày): trong khoảng 3:4–4:3
+        # thì nguyên trang; dài hơn 3:4 thì giữ lại, cắt ảnh 3:4; rộng
+        # hơn 4:3 (trang quá ngắn) thì loại nguồn, tìm nguồn báo khác
+        # — chỉ bỏ trang quá ngắn. Ảnh bằng chứng tính là ảnh thật
+        # (vế thật của trần AI ≤ thật — xem _c1_classify_entry) và tính
+        # 1 lần vào trần DEC-272 như mọi visual nội dung.
+        _ev_parts = []
+        for _e in (_parts_list or []):
+            if not isinstance(_e, dict) or not _e.get("partId"):
+                continue
+            _ech = _e.get("chosen") if isinstance(_e.get("chosen"), dict) else {}
+            _ecls = _ech.get("classification") or _e.get("classification")
+            if _ecls != "chup-man-hinh":
+                continue
+            _ev_parts.append(_e["partId"])
+            _missing = []
+            _link = _ech.get("link")
+            if not (isinstance(_link, str) and _link.strip().startswith("http")):
+                _missing.append("link (URL bài báo, bắt đầu bằng http)")
+            if not (isinstance(_ech.get("source"), str) and _ech["source"].strip()):
+                _missing.append("source (tên báo)")
+            if not (isinstance(_ech.get("articleDate"), str) and _ech["articleDate"].strip()):
+                _missing.append("articleDate (ngày đăng bài)")
+            if not (isinstance(_ech.get("pdfPage"), int) and _ech["pdfPage"] >= 1):
+                _missing.append("pdfPage (số trang PDF đã lấy, >= 1)")
+            if _missing:
+                errors.append(f"Part {_e['partId']} dùng ảnh bằng chứng từ "
+                              f"PDF bài báo (classification 'chup-man-hinh') "
+                              f"nhưng media-log thiếu: {', '.join(_missing)} — "
+                              f"bổ sung đủ 4 trường rồi chạy lại preflight")
+        if len(_ev_parts) > 1:
+            errors.append(f"Video có {len(_ev_parts)} part dùng ảnh bằng chứng "
+                          f"({', '.join(_ev_parts)}) — luật 13/11/2026: tối đa "
+                          f"1 ảnh bằng chứng/video, cho đúng 1 part luận chứng. "
+                          f"Bỏ ảnh bằng chứng ở các part còn lại rồi chạy lại "
+                          f"preflight")
+        # Tỉ lệ ảnh bằng chứng (lệnh CEO 13/11/2026, sửa cùng ngày — 3
+        # trường hợp): trang trong khoảng 3:4–4:3 thì dùng nguyên trang,
+        # KHÔNG cảnh báo gì; trang DAI HON 3:4 (tỉ lệ < 0,75) thì GIỮ
+        # LẠI, cắt ảnh 3:4 — file bằng chứng chưa cắt (cả trang dài) thì
+        # CHẶN, báo cắt lại; trang RONG HON 4:3 (tỉ lệ > 1,33, trang quá
+        # ngắn) thì CHẶN, loại nguồn, tìm nguồn báo khác. Chỉ bỏ trang
+        # quá ngắn.
+        for _pid6, _v6, _o6 in _resolved:
+            if _pid6 in _ev_parts and _v6 is not None and _v6.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp"):
+                try:
+                    from PIL import Image
+                    with Image.open(_v6) as _im6:
+                        _w6, _h6 = _im6.size
+                    _r6 = _w6 / _h6
+                    if _r6 < 0.75 - 0.01:
+                        errors.append(f"Part {_pid6} dùng ảnh bằng chứng {_v6.name} "
+                                      f"({_w6}x{_h6}, tỉ lệ rộng/cao {_r6:.2f} dài hơn 3:4) — "
+                                      f"giữ lại trang này, cắt ảnh 3:4 bằng "
+                                      f"bin/pdf_crop.py --full-page rồi chạy lại preflight")
+                    elif _r6 > 4 / 3 + 0.01:
+                        errors.append(f"Part {_pid6} dùng ảnh bằng chứng {_v6.name} "
+                                      f"({_w6}x{_h6}, tỉ lệ rộng/cao {_r6:.2f} rộng hơn 4:3, "
+                                      f"trang quá ngắn) — loại nguồn này, tìm nguồn "
+                                      f"báo khác rồi chạy lại preflight")
+                except Exception:
+                    pass
+
         # Trần xuất hiện tối đa 2 lần/video (quy tắc CEO 09/11/2026,
-        # DEC-245): mỗi file visual nội dung chỉ xuất hiện tối đa 2 lần
-        # trong toàn video. Đếm theo nội dung file (md5), không đếm theo
-        # tên file — cùng 1 nguồn copy thành 2 tên b-roll khác nhau thì
-        # vẫn tính là 1 file (người xem thấy cùng 1 hình). Trừ part nền
-        # trung tính (nền được miễn — dùng lại qua các scene không giới
-        # hạn). Fill-in tính vào trần như visual nội dung. Bookend (mở
-        # và đóng bằng cùng 1 file) tính là 2 lần — được phép, không vi
-        # phạm nếu file đó không xuất hiện thêm lần nào nữa. Vi phạm thì
-        # CHẶN render (exit 1) như luật kề nhau.
-        _appear = {}  # md5 -> [(partId, Path)]
+        # DEC-272): mỗi file visual nội dung chỉ xuất hiện tối đa 2 lần
+        # trong toàn video. Đếm theo NỘI DUNG (dhash, Hamming ≤ 10 —
+        # chuyển từ md5 theo quyết CEO 13/11/2026, L8), không đếm theo
+        # tên file hay md5 — cùng 1 ảnh qua 2 nguồn khác nhau (vd VFF
+        # vs Dân trí), re-encode hay crop nhẹ thì md5 khác nhau nhưng
+        # dhash gần nhau nên vẫn tính là 1 nội dung (người xem thấy cùng
+        # 1 hình; tiền lệ TOPIC-345). Video mp4 giữ đếm theo md5 (không
+        # hash frame). Trừ part nền trung tính (nền được miễn — dùng lại
+        # qua các scene không giới hạn). Fill-in tính vào trần như visual
+        # nội dung. Bookend (mở và đóng bằng cùng 1 file) tính là 2 lần
+        # — được phép, không vi phạm nếu file đó không xuất hiện thêm lần
+        # nào nữa. Vi phạm thì CHẶN render (exit 1) như luật kề nhau.
+        _dhash_cache = {}
+
+        def _file_dhash(_p):
+            # Trả (kind, key): ("dhash", ImageHash) nếu hash được,
+            # ("md5", hex) nếu PIL không đọc được ảnh (rơi về md5 để
+            # preflight vẫn báo lỗi ở các cửa khác thay vì crash).
+            _k = str(_p)
+            if _k not in _dhash_cache:
+                try:
+                    import imagehash
+                    from PIL import Image
+                    _im = Image.open(_p)
+                    # Giải mã ở cỡ nhỏ (draft) trước khi hash — đỡ RAM
+                    # (đo 13/11/2026: 21 ảnh đỉnh 67MB, vừa 100MB).
+                    _im.draft("RGB", (720, 1280))
+                    _dhash_cache[_k] = ("dhash", imagehash.dhash(_im))
+                except Exception:
+                    _dhash_cache[_k] = ("md5", _file_md5(_p))
+            return _dhash_cache[_k]
+
+        _appear = []  # [(kind, key, [(partId, Path)])] theo thứ tự part
         for _pid3, _v3, _o3 in _resolved:
             if _v3 is None or _pid3 in _neutral_parts:
                 continue
-            _appear.setdefault(_file_md5(_v3), []).append((_pid3, _v3))
-        for _m, _items in sorted(_appear.items()):
+            if _v3.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp"):
+                _kind3, _key3 = _file_dhash(_v3)
+            else:  # mp4/video: giữ đếm theo md5
+                _kind3, _key3 = "md5", _file_md5(_v3)
+            if _kind3 == "dhash":
+                _grp = next((_g for _g in _appear
+                             if _g[0] == "dhash" and (_key3 - _g[1]) <= 10),
+                            None)
+            else:
+                _grp = next((_g for _g in _appear
+                             if _g[0] == "md5" and _g[1] == _key3), None)
+            if _grp is None:
+                _appear.append([_kind3, _key3, [(_pid3, _v3)]])
+            else:
+                _grp[2].append((_pid3, _v3))
+        for _kind, _key, _items in _appear:
             if len(_items) > 2:
                 _names = ", ".join(_pid for _pid, _ in _items)
-                errors.append(f"Trần xuất hiện tối đa 2 lần/video (DEC-245): "
-                              f"file {_items[0][1].name} xuất hiện "
+                errors.append(f"Trần xuất hiện tối đa 2 lần/video (DEC-272): "
+                              f"nội dung của file {_items[0][1].name} xuất hiện "
                               f"{len(_items)} lần ở các part {_names} — mỗi "
                               f"file visual nội dung chỉ được xuất hiện tối "
                               f"đa 2 lần trong 1 video (trừ ảnh/video trung "
@@ -1154,8 +1335,9 @@ def main() -> int:
         # KHÔNG cộng vào vế thật (DEC-242); fill-in KHÔNG cộng vào vế
         # thật (F5). Phân loại theo media-log danh sách `parts`
         # (classification "ai"/"ai-tu-prompt" hoặc promptRecord = AI;
-        # "trung-tinh" = nền; ghi chú có "crop chi tiết" = crop;
-        # ghi chú có "fill-in" = fill-in; còn lại = thật); part không
+        # "trung-tinh" = nền; "chup-man-hinh" = ảnh bằng chứng từ
+        # PDF bài báo, tính thật (v1 13/11/2026); ghi chú có "crop chi
+        # tiết" = crop; ghi chú có "fill-in" = fill-in; còn lại = thật); part không
         # có dòng parts thì lấy phân loại ảnh scene từ media-log danh
         # sách `scenes` (chosen.classification), và b-roll riêng không
         # có dòng parts thì lấy theo broll.prompt trong plan (có prompt
@@ -1181,6 +1363,12 @@ def main() -> int:
             if _cls in ("ai", "ai-tu-prompt") or _e.get("promptRecord") or (
                     isinstance(_ch, dict) and _ch.get("promptRecord")):
                 return "ai"
+            # Ảnh bằng chứng từ PDF bài báo (v1 13/11/2026, quyết CEO):
+            # là ảnh thật — tính vào vế thật của trần AI ≤ thật (như nền
+            # trung tính và ảnh giải thích). Ghi rõ nhánh này thay vì dựa
+            # vào fallback `if _cls: return "real"` ở dưới.
+            if _cls == "chup-man-hinh":
+                return "real"
             _joined = " ".join(_txts)
             if "trung-tinh" in _joined or "nền trung tính" in _joined:
                 return "neutral"
@@ -1241,7 +1429,7 @@ def main() -> int:
             _na = len(_ai_by_scene.get(_o6, set()))
             _nr = len(_real_by_scene.get(_o6, set()))
             if _na > _nr:
-                errors.append(f"Trần AI ≤ thật theo scene (DEC-244): Scene {_o6} có {_na} file AI nhưng chỉ {_nr} file thật — mỗi scene số file AI không được vượt số file thật (ảnh giải thích Vector/Infographic/Concept Art và nền trung tính tính vào vế thật; crop chi tiết và fill-in không cộng vào vế thật). Thay 1 file AI bằng visual thật trong pool (ảnh thật, ảnh giải thích, hoặc nền trung tính nếu scene chưa dùng nền) rồi chạy lại preflight")
+                errors.append(f"Trần AI ≤ thật theo scene (DEC-244): Scene {_o6} có {_na} file AI nhưng chỉ {_nr} file thật — mỗi scene số file AI không được vượt số file thật (ảnh giải thích Vector/Infographic/Concept Art, nền trung tính và ảnh bằng chứng từ PDF bài báo tính vào vế thật; crop chi tiết và fill-in không cộng vào vế thật). Thay 1 file AI bằng visual thật trong pool (ảnh thật, ảnh giải thích, hoặc nền trung tính nếu scene chưa dùng nền) rồi chạy lại preflight")
 
     # karaoke
     kj = build / "subtitles" / "karaoke.json"

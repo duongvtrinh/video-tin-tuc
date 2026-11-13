@@ -133,9 +133,14 @@
     "tech",
     "science"
   ],
-  "version": "1.9.0",
+  "version": "1.10.0",
   "whenToUse": [
     "Có một con số then chốt cần người xem nhớ",
     "So sánh quy mô, tỷ lệ, thời gian"
-  ]
+  ],
+  "changelog": {
+    "version": "1.10.0",
+    "date": "2026-11-13",
+    "note": "Chuẩn nền thẻ mực trong (CEO 13/11/2026): nền thẻ rgba(8,10,16,.82) → rgba(8,10,16,.68), chung mức với compare-bars/strike-verdict."
+  }
 }

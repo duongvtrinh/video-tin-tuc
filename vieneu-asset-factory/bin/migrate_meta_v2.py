@@ -33,9 +33,10 @@ ANIMATION_VALUES = ["none", "fade", "flash", "slide-up", "slide-left", "slide-ri
 FLUSH_BOTTOM = {"preview-banner", "keyword-block"}
 EDGE_BOTTOM = {"clip-caption"}
 
-# Template KHÔNG được dùng nền trung tính dù không có input ảnh (CEO 13/11/2026, DEC-268):
-# cutaway-standard là cảnh cắt chuyển mạch — phải có ảnh thật, không được chạy nền trơn.
-NEUTRAL_BG_EXCLUDE = {"cutaway-standard"}
+# Template KHÔNG được dùng nền trung tính dù không có input ảnh:
+# cutaway-standard (CEO 13/11/2026, DEC-268): cảnh cắt chuyển mạch — phải có ảnh thật, không được chạy nền trơn.
+# preview-banner (CEO 13/11/2026, DEC-274): beat preview — bắt buộc ảnh/video thật từ internet/báo chí/mạng xã hội/Google ảnh.
+NEUTRAL_BG_EXCLUDE = {"cutaway-standard", "preview-banner"}
 
 # Giá trị khởi điểm cho maxLength MỖI MỤC của input danh sách (chưa từng có giới hạn).
 ITEM_MAXLEN = {"map-route": 24, "podium-rank": 40, "timeline-horizontal": 36, "timeline-strip": 64}

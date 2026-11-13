@@ -71,9 +71,14 @@
     "general",
     "war"
   ],
-  "version": "1.5.0",
+  "version": "1.6.0",
   "whenToUse": [
     "Tin vừa xảy ra, cần gây chú ý ngay",
     "Tuyên bố khẩn cấp"
-  ]
+  ],
+  "changelog": {
+    "version": "1.6.0",
+    "date": "2026-11-13",
+    "note": "Bỏ viền đỏ: xóa border 2px accent ở thẻ ngoài (CEO 13/11/2026); chip TIN NÓNG nền đỏ giữ nguyên."
+  }
 }

@@ -14,10 +14,9 @@ Học thuyết: xem `EDITORIAL_DOCTRINE.md`.
 
 1. **Lossless:** nối voiceText ≠ 100% kịch bản gốc → `fail` toàn bài.
 2. **Template không active:** templateId không có trong catalog `active` (draft/retired/lạ) → blocker từng beat.
-3. **Asset missing:** beat yêu cầu footage thật (`sourceType` archival/stock) mà `status: missing` và không có fallback → blocker. Beat chỉ có nền xanh rêu kẻ ô, không chữ (thay card chữ cũ), thì tính là thiếu ảnh, không tính là đã có ảnh → blocker. Lưu ý phân nhánh công ty (luật chuẩn tại `company-os/media-search/LOGIC.md`): `sourceType` stock chỉ hợp lệ cho kịch bản về nước ngoài; ảnh cho kịch bản Việt Nam mà ghi nguồn Wikipedia/Stock thì → blocker, phải thay bằng ảnh nguồn gốc qua tìm kiếm tiếng Việt (ngoại lệ Wikipedia/Stock chỉ áp cho video qua cửa bối cảnh).
+3. **Asset missing:** beat yêu cầu footage thật (`sourceType` archival/stock) mà `status: missing` và không có fallback → blocker.
 4. **SFX không tồn tại** trong thư viện → blocker từng beat (gợi ý bỏ SFX).
-5. **Query đánh dấu sai:** query/prompt bị ghi `status: found/existing` nhưng thực chất chưa có file → blocker (gian dối dữ liệu). Beat ghi nguồn là ảnh thật trong khi file thực chất là AI từ prompt cũng thuộc lỗi này → blocker.
-6. **Provenance thiếu (cửa chặn media thật, Giai đoạn 3, 05/11/2026 — video mới):** beat dùng AI từ prompt mà không kèm nhật ký tìm ảnh per-scene (từ khóa tiếng Việt đã thử, ứng viên link + nguồn, phân loại, lý do loại) thì → blocker, vì AI chỉ là fallback sau khi đã thử hết. Beat thiếu `mediaSource.source` (chuỗi tên nguồn không rỗng), thiếu prompt record với AI, hoặc thiếu licence/risk note thì → blocker. Nhân vật có tên dùng AI thì prompt phải tuân ranh giới hai nhóm của LOGIC.md (sửa 05/11/2026): nhóm A là nhân vật công chúng có nhiều thông tin công khai đã kiểm chứng thì được tạo chân dung AI nếu cần thiết; nhóm B là nhân vật thiếu thông tin thì chỉ góc rộng/sau lưng/bóng mờ/vật chứng, không cận mặt, không dùng tên làm chỉ dẫn ngoại hình — vi phạm ranh giới của đúng nhóm đó thì → blocker. Không áp câu cấm chân dung của nhóm B cho nhóm A.
+5. **Query đánh dấu sai:** query/prompt bị ghi `status: found/existing` nhưng thực chất chưa có file → blocker (gian dối dữ liệu).
 
 ## 3. Scored checks (0–10 mỗi mục, trọng số bằng nhau)
 

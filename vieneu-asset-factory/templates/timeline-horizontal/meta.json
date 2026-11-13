@@ -73,9 +73,14 @@
     "economy",
     "science"
   ],
-  "version": "1.5.0",
+  "version": "1.6.0",
   "whenToUse": [
     "Diễn biến theo thời gian với 2-5 mốc ngắn (tiến độ dự án, lộ trình, lịch trình)",
     "Cần người xem thấy trình tự ngang thay vì liệt kê dọc"
-  ]
+  ],
+  "changelog": {
+    "version": "1.6.0",
+    "date": "2026-11-13",
+    "note": "Chuẩn nền thẻ mực trong (CEO 13/11/2026): nền thẻ rgba(8,10,16,.86) → rgba(8,10,16,.68), chung mức với compare-bars/strike-verdict."
+  }
 }

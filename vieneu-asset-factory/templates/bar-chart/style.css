@@ -1,4 +1,4 @@
-.broll-barchart{display:flex;flex-direction:column;gap:.5em;width:100%;max-width:528px;padding:.8em 1em .9em;border-radius:8px;background:rgba(8,10,16,.86);border:1px solid rgba(251,191,36,.28);box-shadow:0 10px 34px rgba(0,0,0,.55);box-sizing:border-box}
+.broll-barchart{display:flex;flex-direction:column;gap:.5em;width:100%;max-width:528px;padding:.8em 1em .9em;border-radius:8px;background:rgba(8,10,16,.68);border:1px solid rgba(251,191,36,.28);box-shadow:0 10px 34px rgba(0,0,0,.55);box-sizing:border-box}
 .broll-barchart-title{font:800 clamp(14px,3.9vmin,28px)/1.25 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.03em;overflow-wrap:break-word}
 .broll-barchart-plot{display:flex;gap:.7em;height:11em}
 .broll-barchart-col{flex:1;position:relative;min-width:0}

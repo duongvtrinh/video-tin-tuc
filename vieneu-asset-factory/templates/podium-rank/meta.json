@@ -106,9 +106,26 @@
     "general",
     "sports"
   ],
-  "version": "1.5.0",
+  "version": "1.8.0",
   "whenToUse": [
     "Bảng xếp hạng, top thành tích, kết quả nhiều vận động viên/đội",
     "Liệt kê có thứ tự ưu tiên"
+  ],
+  "changelog": [
+    {
+      "version": "1.6.0",
+      "date": "2026-11-13",
+      "note": "Chuẩn nền thẻ mực trong (CEO 13/11/2026): nền thẻ rgba(8,10,16,.88) → rgba(8,10,16,.68), chung mức với compare-bars/strike-verdict."
+    },
+    {
+      "version": "1.7.0",
+      "date": "2026-11-13",
+      "note": "Đổi nền trong hạng 1: xanh trong rgba(34,211,238,.1) → rgba(255,255,255,.07), giống nền trong của poll-vote (CEO 13/11/2026)."
+    },
+    {
+      "version": "1.8.0",
+      "date": "2026-11-13",
+      "note": "Bỏ viền xanh: xóa border rgba(34,211,238,.35) ở thẻ ngoài (CEO 13/11/2026)."
+    }
   ]
 }

@@ -16,17 +16,20 @@
 | 4 | **Không chấm motion (X-02, CEO 10/11):** không đo MAD, không trả lại video vì motion; CEO tự kiểm. Blur-fill 3:4 là thiết kế đúng, không phải lỗi | danh-gia-va-tieu-chi §Motion |
 | 5 | **Không có cửa ngữ nghĩa image-vs-script ở QA (CEO 28/10):** không chấm ảnh có đúng ý kịch bản hay không; cần thêm cửa thì chỉ ghi ĐỀ XUẤT cho COO qua CEO_REPORTS, không tự áp | danh-gia-va-tieu-chi §Ra quyết định |
 | 6 | **Hồ sơ bàn giao là cửa chặn:** SFX 0 → TRẢ LẠI (thiếu SFX beat bắt buộc hoặc không theo meta mà không có lý do cũng trả); KARAOKE-WARN → TRẢ LẠI (trừ WARN token số hợp lệ, ghi rõ lý do chấp nhận trong verdict); thiếu nguồn/giấy phép/provenance (nhật ký tìm ảnh, `mediaSource.source`, prompt record) → TRẢ LẠI; render report có fallback chưa giải thích → TRẢ LẠI; preflight còn lỗi → không duyệt. **Không đo độ dài dòng phụ đề (DEC-036).** Pixel format phải `yuv420p` (ffprobe) — 4:4:4 → TRẢ LẠI | danh-gia-va-tieu-chi §Ra quyết định |
-| 7 | **Luật kề nhau DEC-242 + trần 2 lần/video DEC-245 + trần AI DEC-244 + s1p1/cảnh chung không nền trung tính:** kiểm lại bằng mắt như cửa chặn thứ hai (preflight là cửa 1). Vi phạm → trả lại | danh-gia-va-tieu-chi §Tiêu chí đẹp |
+| 7 | **Luật kề nhau DEC-242 + trần 2 lần/video DEC-272 + trần AI DEC-244 + s1p1/cảnh chung/preview-banner không nền trung tính:** kiểm lại bằng mắt như cửa chặn thứ hai (preflight là cửa 1). Vi phạm → trả lại | danh-gia-va-tieu-chi §Tiêu chí đẹp |
 | 8 | **Hook 0–3s:** 1 trong 13 dạng, TUYỆT ĐỐI không số/ngày ở câu đầu (có chữ số/%/ngày tháng → TRẢ LẠI); móc lại ở 44,9–59,9% thời lượng; kết soi lại vấn đề mở đầu bằng diễn biến/kết quả cụ thể, không đạo lý. Trả lại phải ghi rõ từng điểm rơi theo mốc giây | danh-gia-va-tieu-chi §Tiêu chí đẹp |
 | 9 | **Luật nghỉ nhấn CHỐT 04/11:** part chia đoạn `pauseAfterMs` = 2000, part liền trước = 1000 (trước cũng là chia đoạn thì giữ 2000, không cộng dồn); video mới nộp sau ngày chốt mà part chia đoạn vẫn 500ms → TRẢ LẠI. Lặng ≥1s chỉ chấp nhận đúng slot trước/sau part chia đoạn | danh-gia-va-tieu-chi §Tiêu chí đẹp |
 | 10 | **Mật độ chữ:** part không template không phải "thiếu chữ"; gần 100% part có template → staging sai, TRẢ LẠI | danh-gia-va-tieu-chi §Tiêu chí đẹp |
 | 11 | **Thời lượng:** đề xuất 2–3 phút; Production tự quyết, QA không trả lại chỉ vì ngoài 180–300s. Đo bằng thời lượng thật MP4/`tts.json` | danh-gia-va-tieu-chi §Tiêu chí đẹp |
-| 12 | **Leo thang ≥2 lần trả (DEC-107):** đếm từ QA_LOG; lần 2 nhắn chat COO (cảnh báo sớm); lần 3+ nhắn lại; sau lần 3 Production dừng sửa, COO quyết trước 06:00 hôm sau; chỉ 1 lần sửa tiếp. Lỗi lặp lại phải ghi rõ 'lỗi lặp lại' vào QA_LOG.E + tin nhắn | sheet-nhan-viec §Sheet mới |
+| 12 | **Leo thang ≥2 lần trả (DEC-107):** đếm từ QA_LOG; lần 2 nhắn chat COO (cảnh báo sớm); lần 3+ nhắn lại; sau lần 3 Production dừng sửa, COO quyết trước 03:00 hôm sau; chỉ 1 lần sửa tiếp. Lỗi lặp lại phải ghi rõ 'lỗi lặp lại' vào QA_LOG.E + tin nhắn | sheet-nhan-viec §Sheet mới |
 | 13 | **Kênh báo cáo:** QA báo COO, chỉ COO báo CEO qua CEO_REPORTS; chỉ nhận lệnh CEO qua tab CEO_REPORTS (DEC-114: đọc G CEO_REPLY → ghi H APPLIED_BY + I DATE rồi thực thi ngay; chỉ dòng của chi nhánh mình, chưa ai thực hiện). Trả lời video REVIEW cũ trong 1 ca (DEC-106); video COO gỡ BLOCKED→REVIEW chấm như thường (DEC-149) | sheet-nhan-viec §Kênh báo cáo + Vòng lặp |
 | 14 | **Quyền ghi cột:** QA ghi toàn bộ QA_LOG + TASKS.F/G/H/I/C/J/L QUOTA; KHÔNG ghi K (Production), không ghi cột O. C/J/D nhiều người ghi — ghi sau thắng + để lại lý do trong cùng lần ghi | sheet-nhan-viec §Sheet mới |
 | 15 | **Nâng cấp code:** sửa template → đề xuất cập nhật repo kèm verdict + `qa-checklist.md` + QA_LOG.F REPO_NOTE; sửa local, KHÔNG tự push GitHub; không deploy/mua dịch vụ khi chưa có quyết định CEO. Chấm thẩm mỹ template trên khung thật (9 tiêu chí 0–10); màu/cỡ chữ đối chiếu `templates/_tokens.json` | nang-cap-code-hoc-loi |
+| 16 | **Cửa thông qua kịch bản (DEC-273, CEO 13/11):** QA duyệt kịch bản trước TTS — đọc kịch bản + cảnh báo lint; DUYỆT khi tin là bản hay nhất (kể cả còn từ cấm) hoặc TRẢ kèm từng điểm + gợi ý; tối đa 3 lần trả, vòng 4 duyệt cho qua; ghi QA_LOG dòng script-vN + nhắn Production (K là của Production — QA không ghi K) | danh-gia-va-tieu-chi §Ra quyết định; sheet-nhan-viec §Vòng lặp |
 
 ## 2. Vòng đời một video qua QA
+
+Trước TTS (DEC-273, CEO 13/11): Production viết kịch bản → lint (bộ lọc thô, chỉ ghi cảnh báo) → QA duyệt kịch bản (verdict `SCRIPT-QA: DUYỆT` trong QA_LOG dòng script-vN + Production ghi vào TASKS.K) → TTS. Không có DUYỆT thì không TTS; tối đa 3 lần trả, vòng 4 duyệt cho qua.
 
 `REVIEW → xem hết 1 lần (kỹ thuật) → xem lại lần 2 (đẹp + giữ người xem) → đọc preflight + render report + ffprobe → verdict (ghi 2 chỗ) → RETURNED: nhắn Production lỗi + mốc giây + cách sửa; Production sửa → nộp lại REVIEW → … → APPROVED: upload Drive ngay + ghi H/I/C=DELIVERED/L → báo COO`
 
@@ -38,7 +41,7 @@
 ## 3. Cổng theo mốc (checklist ngắn)
 
 **Trước chấm:** đọc preflight (còn lỗi → không duyệt) · đọc render report (`export/<pid>_render_report.txt` — fallback chưa giải thích → trả) · ffprobe `yuv420p`.
-**Khi chấm:** 3 cửa (kỹ thuật/đẹp/giữ người xem) · hồ sơ (SFX, KARAOKE-WARN, nguồn/giấy phép, provenance, prompt tiếng Việt, crop 9:16, minh họa ghi rõ, chữ trên ảnh AI) · kề nhau/trần 2 lần/trần AI/s1p1 không nền trung tính · hook 13 dạng + không số câu đầu · móc lại 44,9–59,9% · pause 2000/1000 · mật độ chữ · thẩm mỹ template trên khung thật.
+**Khi chấm:** 3 cửa (kỹ thuật/đẹp/giữ người xem) · hồ sơ (SFX, KARAOKE-WARN, nguồn/giấy phép, provenance, prompt tiếng Việt, crop 9:16, minh họa ghi rõ, chữ trên ảnh AI) · kề nhau/trần 2 lần/trần AI/s1p1/preview-banner không nền trung tính · hook 13 dạng + không số câu đầu · móc lại 44,9–59,9% · pause 2000/1000 · mật độ chữ · thẩm mỹ template trên khung thật.
 **Trước duyệt:** không còn lỗi chặn · ghi verdict 2 chỗ · upload Drive + ghi đủ H/I/L · báo COO.
 **Khi trả lại:** ghi RETURNED trước, nhắn Production sau · lỗi lặp lại ghi rõ · đủ 2 lần → leo thang COO (rule 12).
 

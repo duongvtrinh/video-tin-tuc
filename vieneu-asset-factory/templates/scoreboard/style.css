@@ -1,4 +1,4 @@
-.broll-scoreboard{display:flex;flex-direction:column;align-items:center;gap:.3em;padding:.9em 1.6em 1em;border-radius:4px;background:rgba(8,10,16,.9);border:1px solid rgba(34,211,238,.4);box-shadow:0 0 34px rgba(34,211,238,.22),0 14px 44px rgba(0,0,0,.6);text-align:center}
+.broll-scoreboard{display:flex;flex-direction:column;align-items:center;gap:.3em;padding:.9em 1.6em 1em;border-radius:4px;background:rgba(8,10,16,.68);border:1px solid rgba(34,211,238,.4);box-shadow:0 0 34px rgba(34,211,238,.22),0 14px 44px rgba(0,0,0,.6);text-align:center}
 .broll-scoreboard-league{font:800 clamp(11px,2.8vmin,18px)/1.2 var(--vst-font-family, 'Anton', sans-serif);letter-spacing:.28em;text-transform:uppercase;color:var(--broll-accent,#22d3ee)}
 .broll-scoreboard-teams{margin:0;font:800 clamp(17px,5.0vmin,40px)/1.25 var(--vst-font-family, 'Anton', sans-serif);text-transform:uppercase;letter-spacing:.06em;color:#fff}
 .broll-scoreboard-score{margin:.1em 0 0;font:900 clamp(60px,23.1vmin,190px)/1 var(--vst-font-family, 'Anton', sans-serif);color:var(--broll-accent,#22d3ee);text-shadow:0 0 26px var(--broll-accent,#22d3ee)}

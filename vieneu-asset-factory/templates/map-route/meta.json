@@ -108,9 +108,14 @@
     "war",
     "science"
   ],
-  "version": "1.5.0",
+  "version": "1.6.0",
   "whenToUse": [
     "Diễn biến hành quân, di chuyển của quân đội/nhân vật qua nhiều địa danh",
     "Hành trình theo thứ tự địa điểm"
-  ]
+  ],
+  "changelog": {
+    "version": "1.6.0",
+    "date": "2026-11-13",
+    "note": "Chuẩn nền thẻ mực trong (CEO 13/11/2026): nền thẻ rgba(8,10,16,.84) → rgba(8,10,16,.68), chung mức với compare-bars/strike-verdict."
+  }
 }

@@ -1,9 +1,9 @@
-.broll-dual{display:flex;flex-direction:column;align-items:stretch;gap:.4em;padding:.7em 1.2em .8em;border-radius:8px;background:rgba(8,10,16,.85);border-top:.14em solid var(--broll-accent);text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);box-sizing:border-box;width:100%;max-width:528px}
+.broll-dual{display:flex;flex-direction:column;align-items:stretch;gap:.4em;padding:.7em 1.2em .8em;border-radius:8px;background:rgba(8,10,16,.68);border-top:.14em solid var(--broll-accent);text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);box-sizing:border-box;width:100%;max-width:528px}
 .broll-dual-row{display:flex;align-items:stretch;justify-content:center}
-.broll-dual-side{flex:1;display:flex;flex-direction:column;align-items:center;gap:.15em;min-width:0}
-.broll-dual-value-a{font:900 clamp(36px,11.0vmin,96px)/1 'Anton',Arial,sans-serif;color:var(--broll-accent);text-shadow:0 4px 14px rgba(0,0,0,.6);white-space:nowrap}
-.broll-dual-value-b{font:900 clamp(36px,11.0vmin,96px)/1 'Anton',Arial,sans-serif;color:#fff;text-shadow:0 4px 14px rgba(0,0,0,.6);white-space:nowrap}
-.broll-dual-label{font:800 clamp(14px,3.9vmin,30px)/1.25 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.03em}
+.broll-dual-side{flex:1;min-width:0;text-align:center}
+.broll-dual-value-a{display:block;font:900 clamp(36px,11.0vmin,96px)/1 'Anton',Arial,sans-serif;color:var(--broll-accent);text-shadow:0 4px 14px rgba(0,0,0,.6);white-space:nowrap}
+.broll-dual-value-b{display:block;font:900 clamp(36px,11.0vmin,96px)/1 'Anton',Arial,sans-serif;color:#fff;text-shadow:0 4px 14px rgba(0,0,0,.6);white-space:nowrap}
+.broll-dual-label{display:block;font:800 clamp(14px,3.9vmin,30px)/1.25 'Anton',Arial,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.03em;margin-top:.15em;text-align:center;overflow-wrap:break-word}
 .broll-dual-divider{width:1px;background:rgba(255,255,255,.28);margin:0 16px;flex-shrink:0}
 .broll-dual-sub{font:600 clamp(13px,3.4vmin,26px)/1.25 'Anton',Arial,sans-serif;color:#cbd5e1}
 .broll-dual-value-a:empty,.broll-dual-value-b:empty,.broll-dual-label:empty,.broll-dual-sub:empty{display:none}

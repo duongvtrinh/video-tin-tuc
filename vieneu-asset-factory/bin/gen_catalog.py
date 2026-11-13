@@ -88,6 +88,11 @@ def build() -> str:
                 (f"tổng = {c['equals']}" if c["type"] == "sum" else f"bắt buộc thêm theo {c['countKey']}")
                 for c in m["constraints"]))
         L.append(f"- Ảnh nội dung: {'CÓ (không dùng nền trung tính)' if not m.get('neutralBgEligible') else 'không → đủ điều kiện nền trung tính'}")
+        cl = m.get("changelog")
+        if isinstance(cl, dict):
+            cl = [cl]
+        if cl:
+            L.append("- **Lịch sử**: " + "; ".join(f"v{c.get('version')} ({c.get('date')}): {c.get('note')}" for c in cl))
         L.append("")
     return "\n".join(L).rstrip() + "\n"
 

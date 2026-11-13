@@ -1,4 +1,4 @@
-.broll-tb{display:flex;flex-direction:column;align-items:flex-start;gap:.35em;padding:.8em 1.3em .9em;border-radius:8px;background:rgba(28,55,42,.85);border-top:.14em solid #fbbf24;text-align:left;box-sizing:border-box;width:100%;max-width:528px}
+.broll-tb{display:flex;flex-direction:column;align-items:flex-start;gap:.35em;padding:.8em 1.3em .9em;border-radius:8px;background:rgba(8,10,16,.68);border-top:.14em solid #fbbf24;text-align:left;box-sizing:border-box;width:100%;max-width:528px}
 .broll-tb-up{border-top-color:#22c55e}
 .broll-tb-down{border-top-color:#ef4444}
 .broll-tb-flat{border-top-color:#fbbf24}
