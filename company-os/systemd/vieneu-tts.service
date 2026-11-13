@@ -1,0 +1,25 @@
+# VieNeu TTS API — systemd service (bản chuẩn, lưu trong ~ để sống qua thay máy)
+# Cài đặt: cp ~/workspace/company-os/systemd/vieneu-tts.service /etc/systemd/system/ && systemctl daemon-reload && systemctl enable --now vieneu-tts
+# Lý do dùng system manager + default.target: máy khách boot target tối thiểu default.target, không có user bus (xem docs/chat/scheduling-and-watching.md).
+# Sau khi thay máy, /etc bị xóa nên unit phải được cài lại — cron tts-watchdog (30 phút) làm việc này.
+[Unit]
+Description=VieNeu TTS API (port 8000)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/hatch/workspace/vieneu-tts-api
+Environment=VIENEU_MODE=v3nano
+Environment=HOME=/home/hatch
+Environment=HF_HOME=/home/hatch/.cache/huggingface
+Environment=HF_HUB_OFFLINE=1
+ExecStart=/home/hatch/workspace/vieneu-tts-api/.venv/bin/uvicorn server:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=10
+KillMode=control-group
+TimeoutStopSec=30
+StandardOutput=append:/home/hatch/workspace/company-os/tts-service.log
+StandardError=append:/home/hatch/workspace/company-os/tts-service.log
+
+[Install]
+WantedBy=default.target

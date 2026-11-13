@@ -23,16 +23,18 @@ export const HOME = homedir();
 // trong cùng file (quyết CEO 05/11/2026, mục A25 — ghi vào repo sau khi
 // rebuild §6 đã kiểm chứng app đọc đúng factory trên máy thật):
 //   1. Biến môi trường VIENEU_FACTORY_DIR (nếu đặt)
-//   2. ~/workspace/vieneu-media-company/vieneu-asset-factory nếu tồn tại (layout repo)
-//   3. ~/workspace/vieneu-asset-factory nếu tồn tại (layout cũ)
-//   4. ~/workspace/asset-factory nếu tồn tại (layout cũ nhất)
-//   5. Mặc định ~/workspace/vieneu-media-company/vieneu-asset-factory (layout repo)
+//   2. ~/workspace/video-tin-tuc/vieneu-asset-factory nếu tồn tại (layout repo hiện tại — BOOTSTRAP C1 clone vào video-tin-tuc/)
+//   3. ~/workspace/vieneu-media-company/vieneu-asset-factory nếu tồn tại (layout repo cũ — repo đã đổi tên thành video-tin-tuc)
+//   4. ~/workspace/vieneu-asset-factory nếu tồn tại (layout cũ)
+//   5. ~/workspace/asset-factory nếu tồn tại (layout cũ nhất)
+//   6. Mặc định ~/workspace/video-tin-tuc/vieneu-asset-factory (layout repo hiện tại)
 function resolveFactory(): string {
   const envDir = process.env.VIENEU_FACTORY_DIR?.trim();
   // B41 (06/11/2026, lệnh CEO, lựa chọn A): env trỏ sai thì bỏ qua, rơi
   // xuống ứng viên tiếp theo — trước đây trả thẳng đường chết.
   if (envDir && existsSync(envDir)) return envDir;
   for (const cand of [
+    "video-tin-tuc/vieneu-asset-factory",
     "vieneu-media-company/vieneu-asset-factory",
     "vieneu-asset-factory",
     "asset-factory",
@@ -40,7 +42,7 @@ function resolveFactory(): string {
     const p = join(HOME, "workspace", cand);
     if (existsSync(p)) return p;
   }
-  return join(HOME, "workspace/vieneu-media-company/vieneu-asset-factory");
+  return join(HOME, "workspace/video-tin-tuc/vieneu-asset-factory");
 }
 export const FACTORY = resolveFactory();
 export const PROJECTS = join(FACTORY, "projects");
@@ -48,17 +50,20 @@ export const BIN = join(FACTORY, "bin");
 export const VENV_PY = join(FACTORY, ".venv/bin/python");
 // Resolve đường dẫn Python của venv TTS theo thứ tự ưu tiên để app chạy
 // được cả trên máy hiện tại (TTS ở ~/workspace/vieneu-tts-api) lẫn trên
-// bản clone mới của monorepo (TTS ở vieneu-tts):
+// bản clone mới của monorepo (TTS ở video-tin-tuc/vieneu-tts):
 //   1. Biến môi trường VIENEU_TTS_DIR (nếu đặt): $VIENEU_TTS_DIR/.venv/bin/python
-//   2. ~/workspace/vieneu-tts/.venv/bin/python nếu tồn tại (layout repo)
-//   3. ~/workspace/vieneu-tts-api/.venv/bin/python nếu tồn tại (máy hiện tại)
-//   4. Mặc định ~/workspace/vieneu-tts/.venv/bin/python (layout repo)
+//   2. ~/workspace/video-tin-tuc/vieneu-tts/.venv/bin/python nếu tồn tại (layout repo hiện tại — BOOTSTRAP C1)
+//   3. ~/workspace/vieneu-tts/.venv/bin/python nếu tồn tại (layout repo — repo đặt trực tiếp dưới workspace)
+//   4. ~/workspace/vieneu-tts-api/.venv/bin/python nếu tồn tại (máy hiện tại)
+//   5. Mặc định ~/workspace/video-tin-tuc/vieneu-tts/.venv/bin/python (layout repo hiện tại)
 function resolveTtsPy(): string {
   const envDir = process.env.VIENEU_TTS_DIR?.trim();
   // B41: như resolveFactory — env sai thì bỏ qua thay vì trả đường chết.
   if (envDir && existsSync(join(envDir, ".venv/bin/python"))) return join(envDir, ".venv/bin/python");
-  const repoPath = join(HOME, "workspace/vieneu-tts/.venv/bin/python");
+  const repoPath = join(HOME, "workspace/video-tin-tuc/vieneu-tts/.venv/bin/python");
   if (existsSync(repoPath)) return repoPath;
+  const directPath = join(HOME, "workspace/vieneu-tts/.venv/bin/python");
+  if (existsSync(directPath)) return directPath;
   const legacyPath = join(HOME, "workspace/vieneu-tts-api/.venv/bin/python");
   if (existsSync(legacyPath)) return legacyPath;
   return repoPath;

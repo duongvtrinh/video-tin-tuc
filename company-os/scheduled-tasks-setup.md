@@ -3,10 +3,12 @@
 Bộ lịch mẫu của công ty: 7 lịch chạy thật (xem bảng dưới). Scout chạy 2 ca/ngày: 04:00 và 13:00; COO chạy ca 03:00 hàng ngày (dời từ 06:00 theo quyết CEO 13/11/2026, DEC-262); Sản xuất (pipeline) chạy 2 ca/ngày: 05:00 và 14:00 (mỗi ca đăng ký ở Bước 0 rồi nhận ca ở Bước 4, lệch 5 phút — gộp chung 1 lịch/ca theo quyết CEO 13/11/2026, DEC-259/DEC-260/DEC-261); **giám sát TTS (tts-watchdog) chạy mỗi 30 phút (thêm 13/11/2026 — kiểm tra /health, tự cài lại unit + restart khi lỗi, chỉ báo chat chính khi đã restart hoặc vẫn không lên)**. File này + thư mục
 `company-os/crons/daily/` là **bản mẫu dùng chung**, nằm trong repo để mọi chi nhánh
 (tài khoản Muse) đều cài được cùng một chuẩn. Cấu hình lịch đang chạy là của từng
-tài khoản, không tự sinh ra khi clone repo. Lưu ý: 6 file mẫu ca ngày trong
-`company-os/crons/daily/` chỉ tồn tại trên repo, không có ở local — riêng file mẫu
-`tts-watchdog.md` đã thêm ở local ngày 13/11/2026, đi cùng đợt đẩy đã duyệt tiếp
-theo; bản live (body lịch đang chạy) nằm ở `goals/one-person-media-company/crons/daily/`
+tài khoản, không tự sinh ra khi clone repo. Lưu ý: 7 file mẫu trong
+`company-os/crons/daily/` (6 file ca ngày + `tts-watchdog.md`) nằm trên repo; ở
+local chỉ có `tts-watchdog.md`, 6 file còn lại chỉ tồn tại trên repo. File mẫu đã
+đồng bộ với lịch live ngày 14/11/2026 (diff body = 0 trừ frontmatter, xem
+`company-os/crons/daily/`). Bản live (body lịch đang chạy) nằm ở
+`goals/one-person-media-company/crons/daily/`
 của từng tài khoản (riêng tts-watchdog nằm ở `crons/minutely/` vì là lịch interval);
 đối chiếu mẫu với lịch đang chạy thì lấy mẫu từ repo, đối chiếu với bản live đó.
 
@@ -54,6 +56,10 @@ systemctl daemon-reload
 systemctl enable --now vieneu-tts
 ```
 
+Đường dẫn `~/workspace/company-os/` trong 3 lệnh trên hoạt động nhờ 3 symlink
+đã tạo ở BOOTSTRAP C1 (nối layout clone `video-tin-tuc/` với đường dẫn vận hành).
+Nếu symlink chưa có, tạo trước rồi mới chạy 3 lệnh này.
+
 **Kiểm chứng ngay sau khi cài:**
 
 ```bash
@@ -89,6 +95,7 @@ curl -s http://127.0.0.1:8000/health   # phải có "status":"ok"
 
 Với mỗi file mẫu trong `company-os/crons/daily/<id>.md`:
 
+0. Tạo goal bootstrap của tài khoản này trước (chỉ làm 1 lần): goal slug `vieneu-media-company-bootstrap`, tên "VieNeu Media Company Bootstrap" — goal này làm `owner` cho cả 7 lịch. Chưa có goal thì chưa tạo lịch.
 1. Đọc frontmatter của file mẫu để lấy `id`, `title`, `schedule` (kind/timezone/
    time — hoặc `every` với lịch interval như tts-watchdog) và `timeout_secs` (nếu có).
 2. Lấy phần body của file mẫu (sau dòng `---` thứ hai) làm body cho `cron.add`.

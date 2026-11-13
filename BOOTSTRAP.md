@@ -117,7 +117,7 @@ Làm đúng thứ tự C0 đến C5. Mỗi bước có thư mục làm việc, l
 
 ### C0. Kiểm tra tiên quyết — báo thiếu tất cả trong một lần
 
-- **Thư mục:** `~`. **Lệnh:** một lượt kiểm tra duy nhất (đề xuất script `check-prereqs.sh` trong repo — ĐỀ XUẤT chờ duyệt, chưa có trong repo): `ffmpeg -version`, `python3 --version`, `bun --version`, thư viện hệ thống `libsndfile`, `df -h`, mạng tới HuggingFace. In bảng đạt/thiếu cho **toàn bộ** mục rồi mới kết thúc; thiếu thì liệt kê hết một lần, không dừng ở mục đầu tiên.
+- **Thư mục:** `~`. **Lệnh:** một lượt kiểm tra duy nhất bằng script `check-prereqs.sh` ở gốc repo (`bash ~/workspace/video-tin-tuc/check-prereqs.sh`): kiểm tra `ffmpeg -version`, `python3 --version`, `bun --version`, thư viện hệ thống `libsndfile`, `df -h`, mạng tới HuggingFace. In bảng đạt/thiếu cho **toàn bộ** mục rồi mới kết thúc; thiếu thì liệt kê hết một lần, không dừng ở mục đầu tiên.
 - **Kết quả mong đợi:** mọi mục đạt. Đã kiểm chứng thật 11/11/2026: ffmpeg 8.1.2, Python 3.12.3, bun 1.4.4, đĩa trống ~148 GB (repo ~313 MB sau giải nén, hai venv + model vẫn dư). Font Anton chưa có ở bước này là bình thường (cài ở C3). **Thời lượng:** dưới 1 phút.
 
 ### C1. Lấy repo về máy
@@ -125,10 +125,17 @@ Làm đúng thứ tự C0 đến C5. Mỗi bước có thư mục làm việc, l
 - **Thư mục:** `~/workspace/`. **Đường chính:** `git clone` repo `duongvtrinh/video-tin-tuc` nhánh `main` qua tài khoản GitHub đã liên kết (đăng nhập GitHub xem Phần D1 — làm trước hoặc ngay tại bước này; nếu GitHub đòi mã email, đọc từ Gmail đã kết nối hoặc nhờ CEO gửi mã).
 - **Đường dự phòng đã dùng thật 11/11/2026:** nếu git trên máy không có credential cho repo private (clone ẩn danh chắc chắn thất bại), đăng nhập GitHub bằng trình duyệt (thông tin đăng nhập lấy từ Secure Vault) rồi tải ZIP của nhánh `main` và giải nén vào `~/workspace/video-tin-tuc`. Hệ quả phải chấp nhận và ghi vào bộ nhớ: bản ZIP **không có `.git`** — về sau mọi thay đổi lên repo phải đi qua giao diện web GitHub, và quy tắc một nguồn (đầu tài liệu) áp dụng nghiêm ngặt cho mọi file trùng tên.
 - **Kết quả mong đợi:** thư mục đích có đủ 4 thư mục cấp cao nhất — `app-tao-video/`, `company-os/`, `vieneu-asset-factory/`, `vieneu-tts/` — cùng `README.md` và `BOOTSTRAP.md`. **Thời lượng:** vài phút tùy mạng (repo ~300 MB).
+- **Nối layout clone với đường dẫn vận hành (bắt buộc, làm ngay sau clone):** nhiều file vận hành trong repo (unit systemd TTS, script watchdog, body lịch watchdog, app core.ts) dùng đường dẫn `~/workspace/company-os/`, `~/workspace/asset-factory/`, `~/workspace/vieneu-tts-api/` (layout máy gốc). Tạo 3 symlink để các đường đó trỏ đúng vào bản clone — không có 3 symlink này, dịch vụ TTS, watchdog và app đều không tìm thấy file:
+  ```bash
+  ln -s ~/workspace/video-tin-tuc/vieneu-asset-factory ~/workspace/asset-factory
+  ln -s ~/workspace/video-tin-tuc/company-os ~/workspace/company-os
+  ln -s ~/workspace/video-tin-tuc/vieneu-tts ~/workspace/vieneu-tts-api
+  ```
+  Kiểm chứng: `ls -l ~/workspace/asset-factory ~/workspace/company-os ~/workspace/vieneu-tts-api` đều hiện symlink trỏ vào `video-tin-tuc/`. (App core.ts từ 14/11/2026 đã tự nhận thêm đường clone `video-tin-tuc/` nên app chạy được cả khi thiếu symlink — nhưng unit systemd và script watchdog vẫn cần symlink, nên vẫn phải tạo đủ 3.)
 
 ### C2. VieNeu TTS
 
-Script `vieneu-tts/start.sh` gộp tạo venv + cài thư viện + chạy server foreground vào một lệnh — chạy nó sẽ không biết cài xong hay chưa. Cách làm đã kiểm chứng: cài đặt và chạy server là hai việc riêng (đề xuất script chỉ-cài-đặt `install.sh` — ĐỀ XUẤT chờ duyệt, chưa có trong repo).
+Script `vieneu-tts/start.sh` gộp tạo venv + cài thư viện + chạy server foreground vào một lệnh — chạy nó sẽ không biết cài xong hay chưa. Cách làm đã kiểm chứng: cài đặt và chạy server là hai việc riêng — chạy script chỉ-cài-đặt `vieneu-tts/install.sh` trước (tạo venv + cài gói theo `requirements.txt` + kiểm tra import soundfile, không chạy server), rồi mới chạy server riêng khi cần.
 
 - **Thư mục:** `~/workspace/video-tin-tuc/vieneu-tts/`
 - **Kết quả mong đợi (kiểm chứng thật 11/11/2026):** venv ~912 MB; model tải từ HuggingFace lần đầu ~85 giây (đứt kết nối giữa chừng rồi tự thử lại thành công là bình thường — ghi nhận, không coi là lỗi dừng); health ở cổng 8000 trả ok, 11 giọng, sample rate 24 kHz.
@@ -138,7 +145,13 @@ Script `vieneu-tts/start.sh` gộp tạo venv + cài thư viện + chạy server
 ### C3. Asset Factory — venv, font Anton, thư mục runtime
 
 - **Thư mục:** `~/workspace/video-tin-tuc/vieneu-asset-factory/`
-- **Lệnh:** `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`, rồi `mkdir -p projects`; cài font Anton từ Google Fonts vào `~/.fonts` và chạy `fc-cache`.
+- **Lệnh:** `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`, rồi `mkdir -p projects`; cài font Anton vào `~/.fonts` và chạy `fc-cache`:
+  ```bash
+  mkdir -p ~/.fonts
+  curl -L -o ~/.fonts/Anton-Regular.ttf https://raw.githubusercontent.com/google/fonts/main/ofl/anton/Anton-Regular.ttf
+  fc-cache -f
+  ```
+  Kiểm chứng: `fc-list | grep -i anton` phải hiện `Anton-Regular.ttf: Anton:style=Regular`.
 - **Kết quả mong đợi:** gói cài đủ (Pillow, numpy, weasyprint, underthesea, websocket-client, yt-dlp — phiên bản đã kiểm chứng: Pillow 13.0.0, numpy 2.5.4, weasyprint 70.0, underthesea 9.5.0, websocket-client 1.9.0+, yt-dlp 2026.10.26); `fc-list` thấy Anton; thư mục `projects/` tồn tại.
 - **Kiểm chứng:** `.venv/bin/python -m py_compile bin/*.py` không lỗi; `ffmpeg -version` chạy được. **Thời lượng:** 2–4 phút.
 - Thư mục `projects/` là **bắt buộc**: nó chứa dữ liệu runtime nên không nằm trong git; thiếu nó, App Tạo Video lỗi ngay khi liệt kê project ở lần kiểm tra đầu (đã gặp thật). Mọi thư mục runtime khác factory cần mà không nằm trong git cũng phải tạo trống tại bước này và liệt kê tại đây.
@@ -160,7 +173,7 @@ Script `vieneu-tts/start.sh` gộp tạo venv + cài thư viện + chạy server
 ### C5. App Tạo Video — dựng lại theo manifest, không đếm số cứng
 
 - **Thư mục:** `~/workspace/video-tin-tuc/app-tao-video/`. **Lệnh:** dựng lại artifact "App Tạo Video" (slug `app-tao-video`) bằng công cụ artifact, chép nguyên toàn bộ cây nguồn — không viết lại giao diện từ mô tả. Quy tắc của app (trong `app-tao-video/AGENTS.md`): không tự build từ thư mục, không chạy `bun run build`, không sửa tay file bundle hay `.generated` — chỉ dùng công cụ artifact.
-- **Đối chiếu theo manifest:** file nguồn phải khớp danh sách chuẩn của repo (đề xuất file manifest trong repo — ĐỀ XUẤT chờ duyệt); file migration mới chỉ hợp lệ khi đã đăng ký trong `drizzle/meta/_journal.json`. **Không dùng số đếm file cứng làm điều kiện dừng** — bài học thật: hướng dẫn cũ ghi cứng 47 file, repo có 48 (thêm migration `0004_drop_snapshots_table.sql` hợp lệ), và con số sai đó đã chặn cả phiên cài đặt.
+- **Đối chiếu theo manifest:** file nguồn phải khớp danh sách chuẩn trong `app-tao-video/MANIFEST.md` (danh sách đường dẫn + số lượng file, sinh từ cây repo; khi thêm/bớt file nguồn thì cập nhật manifest trong cùng đợt); file migration mới chỉ hợp lệ khi đã đăng ký trong `drizzle/meta/_journal.json`. **Không dùng số đếm file cứng làm điều kiện dừng** — bài học thật: hướng dẫn cũ ghi cứng 47 file, repo có 48 (thêm migration `0004_drop_snapshots_table.sql` hợp lệ), và con số sai đó đã chặn cả phiên cài đặt.
 - File trong `server/.generated/` do hệ thống tự sinh khi dựng: không thuộc manifest, không đối chiếu, không sửa tay.
 - **Kết quả mong đợi trên máy mới:** app mở được, quy trình 6 bước (Kịch bản → Phân cảnh → Media → TTS & Karaoke → Preview → Render) hiển thị đúng, danh sách project **trống** (đúng — project đọc từ factory của chính máy này). Kiểm chứng bằng một vòng thật: tạo project thử → đọc lại (mặc định 9:16, tiếng Việt) → xóa; xong thì danh sách sạch lại. **Thời lượng:** 5–10 phút.
 
@@ -231,7 +244,7 @@ Nếu CEO đã cấp ở Bảng A mục 5, ghi Bước 4 của B2 vào bộ nh�
 
 ### E4. Bộ lịch bot — tạo đủ bộ và kiểm chứng trạng thái thật
 
-**Bộ lịch hiện hành** (chốt ngày 11/11/2026, bổ sung tts-watchdog ngày 13/11/2026 — chi tiết đầy đủ ở `company-os/scheduled-tasks-setup.md`, tài liệu đó là chuẩn cho riêng việc lịch; mục này chỉ tóm các điểm không được sai). Tất cả chạy hằng ngày, múi giờ `Asia/Saigon`, kết quả báo về chat COO (trừ tts-watchdog báo về chat chính), owner là goal bootstrap của chính tài khoản này:
+**Bộ lịch hiện hành** (chốt ngày 11/11/2026, bổ sung tts-watchdog ngày 13/11/2026 — chi tiết đầy đủ ở `company-os/scheduled-tasks-setup.md`, tài liệu đó là chuẩn cho riêng việc lịch; mục này chỉ tóm các điểm không được sai). Tất cả chạy hằng ngày, múi giờ `Asia/Saigon`, kết quả báo về chat COO (trừ tts-watchdog báo về chat chính), owner là goal bootstrap của chính tài khoản này. Trước khi tạo lịch, tạo goal bootstrap của tài khoản này (slug `vieneu-media-company-bootstrap`, tên "VieNeu Media Company Bootstrap") — goal này làm owner cho cả 7 lịch (xem `scheduled-tasks-setup.md` mục "Cách tạo từng lịch", bước 0). Chưa có goal thì chưa tạo lịch.
 
 | ID lịch | Giờ chạy | Việc chính |
 | --- | --- | --- |
@@ -301,4 +314,4 @@ Thiếu mục nào thì báo đúng mục đó chưa đạt, kèm lệnh và k�
 
 ---
 
-*Ghi chú soạn bản: v3 đã tích hợp 15 quyết định kiểm toán ngày 11/11/2026 (nguồn hạn mức chuẩn COO_CHECKIN, mốc leo thang TASKS.N, mốc 2 buổi sáng cho lô cũ, file improvement-log dùng chung, health TTS đầu ca). v3 hợp nhất bản gốc (501 dòng, lưu tại BOOTSTRAP-legacy-2026-11-11.md), bản v2 (214 dòng, đã duyệt 11/11/2026) và các quyết định + sự cố ngày 11/11/2026. Bản này là BOOTSTRAP.md trong repo kể từ đợt thay ngày 11/11/2026; các đề xuất chờ duyệt nằm rải trong bản (script check-prereqs.sh, install.sh cho TTS, file manifest, sửa dl_facebook_video.py theo sys.executable) vẫn giữ nguyên trạng thái ĐỀ XUẤT cho tới khi CEO duyệt riêng từng mục.*
+*Ghi chú soạn bản: v3 đã tích hợp 15 quyết định kiểm toán ngày 11/11/2026 (nguồn hạn mức chuẩn COO_CHECKIN, mốc leo thang TASKS.N, mốc 2 buổi sáng cho lô cũ, file improvement-log dùng chung, health TTS đầu ca). v3 hợp nhất bản gốc (501 dòng, lưu tại BOOTSTRAP-legacy-2026-11-11.md), bản v2 (214 dòng, đã duyệt 11/11/2026) và các quyết định + sự cố ngày 11/11/2026. Bản này là BOOTSTRAP.md trong repo kể từ đợt thay ngày 11/11/2026. Đợt sửa 14/11/2026 (kiểm tra cài mới): đã làm xong script check-prereqs.sh, install.sh cho TTS và file manifest của app (không còn là đề xuất); đề xuất còn chờ duyệt duy nhất là sửa dl_facebook_video.py tự tìm yt-dlp theo sys.executable.*

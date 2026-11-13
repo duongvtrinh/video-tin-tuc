@@ -6,4 +6,6 @@ numpy==2.5.4            # karaoke, render_template
 weasyprint==70.0        # render_template (render tĩnh template -> PNG)
 underthesea==9.5.0      # lib/vi_sub (tách từ tiếng Việt cho karaoke)
 websocket-client==1.9.2 # chỉ render_template_anim.py (đường Chrome đã nghỉ hưu, không dùng cho render mới)
+yt-dlp==2026.10.26      # bin/dl_facebook_video.py (tìm qua PATH của venv; xem BOOTSTRAP C3.1)
 # Hệ thống (không nằm trong pip): ffmpeg, font Anton (templates dùng Anton).
+imagehash==4.3.2         # bin/preflight.py (dhash, trần xuất hiện DEC-272/L8). Ghi chú: L8 dặn cài --no-deps (chỉ cần numpy + pillow đã có) nhưng pip không nhận --no-deps trong requirements.txt — cài kèm scipy cũng được, không ảnh hưởng gì.
