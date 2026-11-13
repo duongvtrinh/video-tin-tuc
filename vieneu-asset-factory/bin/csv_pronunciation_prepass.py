@@ -10,8 +10,9 @@ rà soát 6 nhóm, trong đó có soát lại cả các hit CSV -> sửa/thêm e
 cần -> normalize lại -> tts_batch. Agent vẫn là cửa cuối; lớp CSV không
 bypass agent.
 
-File CSV chung (bản gốc duy nhất nằm trên GitHub, repo private
-vieneu-media-company, đường dẫn `vieneu-asset-factory/data/`):
+Từ điển chung (bản gốc duy nhất là Google Sheet "Từ điển - Phiên âm tiếng Việt",
+tab `pronunciation_dict`, từ 14/11/2026 thay file CSV trên GitHub; file CSV trên
+GitHub chỉ còn là backup định kỳ):
     term,reading
     MB,em bê
     "mạng xã hội X","mạng xã hội ích"
@@ -22,17 +23,19 @@ rỗng, cách đọc không rỗng, cách đọc không chứa dấu kết câu 
 xuống dòng, khớp đúng chữ hoa/thường như trong kịch bản, cụm dài ưu tiên
 trước, ranh giới từ hai đầu, thay một lượt duy nhất.
 
-Đồng bộ (CHỈ có điều kiện, theo lệnh CEO 04/11/2026): script này KHÔNG gọi
-GitHub và KHÔNG tự tải CSV. Bước đồng bộ do agent làm bằng GitHub
-connector TRƯỚC khi chạy script này, và chỉ đồng bộ khi có phiên bản mới:
-agent lấy mã SHA của file CSV trên GitHub, so với mã đã lưu trong file
+Đồng bộ (CHỈ có điều kiện, theo lệnh CEO 04/11/2026, nguồn đổi sang Google Sheet
+14/11/2026): script này KHÔNG gọi Sheets và KHÔNG tự tải từ điển. Bước đồng bộ
+do agent làm bằng Google Sheets connector TRƯỚC khi chạy script này, và chỉ
+đồng bộ khi có phiên bản mới: agent đọc toàn bộ tab `pronunciation_dict`, tính
+hash nội dung (SHA-256 của các dòng term + reading), so với mã đã lưu trong file
 phiên bản local (`pronunciation_dict.version.json`, cạnh file cache, chỉ
-nằm ở máy này, không đẩy lên repo); mã trùng và cache còn nguyên thì BỎ
-QUA đồng bộ, ghi log CSV-SKIP; mã khác, hoặc chạy lần đầu, hoặc cache mất
-hay hỏng thì mới tải nội dung, kiểm tra hợp lệ rồi ghi đè cache kiểu
-atomic và cập nhật file phiên bản. Nếu bước hỏi GitHub lỗi thì giữ cache
+nằm ở máy này, không đẩy lên repo; trường `sheet_id` + `sheet_hash` +
+`synced_at`); hash trùng và cache còn nguyên thì BỎ
+QUA đồng bộ, ghi log SHEET-SKIP; hash khác, hoặc chạy lần đầu, hoặc cache mất
+hay hỏng thì mới ghi nội dung Sheet về cache, kiểm tra hợp lệ rồi ghi đè cache
+kiểu atomic và cập nhật file phiên bản. Nếu bước hỏi Sheets lỗi thì giữ cache
 cũ, ghi cảnh báo và chạy tiếp (fail-open), vì lớp agent phía sau vẫn còn.
-Tuyệt đối không sửa cache local bằng tay: mọi sửa CSV đều sửa trên GitHub,
+Tuyệt đối không sửa cache local bằng tay: mọi sửa từ điển đều sửa trên Sheet,
 lần đồng bộ sau sẽ lấy bản mới. Script này chỉ đọc cache local.
 
 Luật merge vào `abbr_dict.json`:
@@ -65,7 +68,7 @@ chặn/cảnh báo của preflight ở Giai đoạn 4):
 - CHẶN (exit 1): plan không đọc được/hỏng cấu trúc; từ điển project
   sẵn có bị hỏng (không ghi đè, không merge mù); CSV có dòng dữ liệu
   nhưng KHÔNG có entry hợp lệ nào (mọi dòng đều lỗi — CSV hỏng, phải
-  sửa trên GitHub rồi đồng bộ lại, không chạy tiếp với từ điển trống).
+  sửa trên Sheet rồi đồng bộ lại, không chạy tiếp với từ điển trống).
 - CẢNH BÁO (exit 0, có thể kiểm tra trong hits file): cache CSV thiếu
   (giữ hành vi cũ — lớp agent rà soát phía sau vẫn còn nên không chặn,
   và hits file ghi csv_found=false để kiểm tra được); dòng CSV lẻ lỗi
@@ -228,7 +231,8 @@ def main() -> int:
             "already_present": {},
             "new_entries_added": {},
             "skipped_rows": [],
-            "github_sha": version_info.get("github_sha"),
+            "sheet_id": version_info.get("sheet_id"),
+            "sheet_hash": version_info.get("sheet_hash"),
             "csv_sha256": None,
             "synced_at": version_info.get("synced_at"),
             "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -248,7 +252,8 @@ def main() -> int:
                 "project_id": pid, "csv_path": str(csv_path), "csv_found": True,
                 "csv_rows_total": rows_total, "csv_rows_valid": 0,
                 "csv_sha256": sha256_file(csv_path),
-                "github_sha": version_info.get("github_sha"),
+                "sheet_id": version_info.get("sheet_id"),
+                "sheet_hash": version_info.get("sheet_hash"),
                 "synced_at": version_info.get("synced_at"),
                 "hits": {}, "conflicts": {}, "already_present": {},
                 "new_entries_added": {}, "skipped_rows": skipped,
@@ -259,7 +264,7 @@ def main() -> int:
             print(f"CSV-ERROR {pid}: CSV tại {csv_path} có {rows_total} dòng "
                   f"dữ liệu nhưng không có entry hợp lệ nào "
                   f"(xem skipped_rows trong {hits_path}) — sửa CSV trên "
-                  f"GitHub rồi đồng bộ lại, không chạy tiếp với từ điển trống",
+                  f"Sheet rồi đồng bộ lại, không chạy tiếp với từ điển trống",
                   file=sys.stderr)
             return 1
         # rows_total == 0: CSV chỉ có header -> hợp lệ, chưa dùng từ điển.
@@ -321,7 +326,8 @@ def main() -> int:
         "csv_rows_total": rows_total,
         "csv_rows_valid": len(entries),
         "csv_sha256": sha256_file(csv_path),
-        "github_sha": version_info.get("github_sha"),
+        "sheet_id": version_info.get("sheet_id"),
+        "sheet_hash": version_info.get("sheet_hash"),
         "synced_at": version_info.get("synced_at"),
         "hits": hits,
         "conflicts": conflicts,
