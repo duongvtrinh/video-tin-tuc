@@ -396,7 +396,7 @@ DEC-269 — cập nhật ngày 13/11/2026 theo lệnh CEO).
 
 ## 13. Lịch bot (6 lịch công ty)
 
-- 1 coo-scan (03:00) + 2 Scout (04:00 và 13:00) + 2 Pipeline (05:00 và 14:00) + hoc-hoi 20:00 (đọc Sheet + improvement-log.md, xuất mục log ĐỀ XUẤT về chat COO; không tự sửa file chuẩn, không push — quyết CEO 11/11/2026). Tất cả daily, múi giờ Asia/Saigon, báo cáo về chat COO (delivery về chat COO). Mô hình ca theo quyết CEO 13/11/2026, DEC-257–264 (điểm danh SHIFT_CHECKIN, cổng hạn mức đọc trực tiếp, REPORT_ID dùng email đầy đủ).
+- 1 coo-scan (03:00) + 2 Scout (04:00 và 13:00) + 2 Pipeline (05:00 và 14:00) + hoc-hoi 20:00 (đọc tab LEARNINGS, ghi bài học vào bộ nhớ chi nhánh + chia sẻ lên tab; không tự sửa file chuẩn, không push — quyết CEO 14/11/2026; log improvement-log.md đã xóa).Tất cả daily, múi giờ Asia/Saigon, báo cáo về chat COO (delivery về chat COO). Mô hình ca theo quyết CEO 13/11/2026, DEC-257–264 (điểm danh SHIFT_CHECKIN, cổng hạn mức đọc trực tiếp, REPORT_ID dùng email đầy đủ).
 - ID lịch: coo-scan-0300, scout-scan-0600 (chạy 04:00, ID giữ nguyên), prod-pipeline-0500, scout-scan-1300, prod-pipeline-1400,
   bot-hoc-hoi-2000.
   Owner goal trong file mẫu (mặc định chung): vieneu-media-company-bootstrap.
@@ -494,3 +494,8 @@ xác định" và dừng đúng bước cần nó, không đoán.
 _Snapshot 13/11/2026 — chi nhánh gốc. Khi luật đổi, cập nhật file này trong
 cùng lần đổi. Quyết định mới nhất trong file: DEC-269 (cập nhật file này ngày 13/11/2026 theo lệnh CEO).
 Tra cứu đầy đủ: tab DECISIONS trong workbook dùng chung._
+
+## 17. Bài học (tổng hợp 20:00)
+
+Mục này do ca học-hỏi 20:00 (COO) ghi — xem lịch bot-hoc-hoi-2000 bước 5 và 5c. Hai luồng ghi vào đây: (a) bài học của chi nhánh mình (tổng hợp từ mẫu lặp ≥2 video, có bằng chứng) — ghi vào đây rồi chia sẻ thêm lên tab LEARNINGS; (b) bài học mới của chi nhánh khác trên tab LEARNINGS — ghi vào đây để chi nhánh mình học (kiểm trùng bằng ID dòng LRN đã ghi ở đây; dòng đã có thì bỏ qua, không ghi lại). Mỗi mục: ID dòng LEARNINGS + ngày + chi nhánh + vấn đề + đề xuất + bằng chứng (+ ngày học với bài học chi nhánh khác). Tab LEARNINGS là nguồn duy nhất chia sẻ bài học giữa các chi nhánh; mục này là bộ nhớ của chi nhánh mình (các phòng đọc trước khi làm video để tránh lặp lại lỗi đã biết). Không còn log improvement-log.md (đã xóa 14/11/2026) và không còn cache.
+(Chưa có bài học nào — mục trống cho tới ca 20:00 đầu tiên chạy logic mới.)

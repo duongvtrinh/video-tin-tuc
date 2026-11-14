@@ -110,11 +110,10 @@ không nới lỏng chuẩn.
 Skill và quy trình: media-scout, media-video-production,
 media-video-tech-qa (phòng Scoring đã đóng ngày 07/11/2026 theo quyết
 C3; skill media-topic-scoring đã ngừng dùng), spec
-(company-os/google-sheet-spec.md) và bot-sop này. Workbook "Video HQ — Tin Tức" (8 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN, SHIFT_CHECKIN). Luật kề nhau + trần AI + nền trung tính (DEC-242/243/244, quy tắc CEO 09/11/2026): xem skill media-video-production, mục 'Luật kề nhau', và LOGIC.md (nguyên tắc 6, 7) — không nhắc lại ở đây.
-Cron này CHỈ ĐỌC Sheet + skill + nhật ký, KHÔNG ghi vào Sheet (không
-ghi TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS/COO_CHECKIN); mọi vấn đề/cải tiến ghi vào company-os/improvement-log.md theo bước 5–6; KHÔNG tự sửa file chuẩn, KHÔNG push GitHub.
+(company-os/google-sheet-spec.md) và bot-sop này. Workbook "Video HQ — Tin Tức" (10 tab: TOPICS, TASKS, QA_LOG, DECISIONS, COO_TASKS, CEO_REPORTS, COO_CHECKIN, SHIFT_CHECKIN, PROPOSALS, LEARNINGS). Luật kề nhau + trần AI + nền trung tính (DEC-242/243/244, quy tắc CEO 09/11/2026): xem skill media-video-production, mục 'Luật kề nhau', và LOGIC.md (nguyên tắc 6, 7) — không nhắc lại ở đây.
+Cron này đọc Sheet + skill + nhật ký; CHỈ ghi vào tab LEARNINGS của Sheet (append dòng mới, không sửa/xóa dòng đã có) và ghi file local (company-os/branch-memory.md, nhật ký ngày); KHÔNG ghi vào các tab khác (TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS/COO_CHECKIN/SHIFT_CHECKIN/PROPOSALS). Mọi bài học tổng hợp được ghi vào bộ nhớ chi nhánh (bước 5) và chia sẻ thêm lên tab LEARNINGS (bước 5b); KHÔNG tự sửa file chuẩn, KHÔNG push GitHub. Không còn file improvement-log.md (đã xóa 14/11/2026) và không còn cache — tab LEARNINGS là nguồn duy nhất, branch-memory.md là bộ nhớ của chi nhánh.
 
-0. Đồng bộ log học hỏi chéo (quyết CEO 13/11/2026 — học hỏi chéo): đầu ca, kéo bản company-os/improvement-log.md trên repo (GitHub API get_file_contents, repo duongvtrinh/video-tin-tuc, nhánh main) và hợp nhất mọi dòng IMP chưa có trong bản local vào bản local (chỉ thêm, không sửa/xóa dòng đã có). Sau đó mới đọc log local để đề xuất (bước 3) — để thấy được bài học của các chi nhánh khác và không đề xuất trùng mục đã có. Nếu không kéo được log repo (lỗi mạng/API) thì ghi blocker và dùng bản local tiếp, không dừng ca.
+0. Đọc tab LEARNINGS (nguồn duy nhất, quyết CEO 14/11/2026): đầu ca, đọc toàn bộ tab LEARNINGS để biết bài học của các chi nhánh khác và kiểm trùng khi ghi (bước 5–5c). Không còn log improvement-log.md để kéo (đã xóa 14/11/2026) — học hỏi chéo chỉ qua tab LEARNINGS.
 
 1. Kiểm tra toàn vẹn đầu ca (R7): chỉ đọc số dòng + ID lớn nhất (chỉ
    tính các dòng ĐÃ CÓ ID) của TOPICS và TASKS để nắm trạng thái hiện
@@ -132,7 +131,7 @@ ghi TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS/COO_CHECKIN); mọi vấ
    mới được chấm" và bỏ qua bước kiểm mẫu.
 3. Vòng học-hỏi — thu thập: đọc QA_LOG và TASKS trong 7 ngày gần nhất
    (verdict Duyệt/Trả lại, lý do trả, số lần trả mỗi video), DECISIONS,
-   nhật ký ngày trong 7 ngày gần nhất, và các skill + spec hiện tại, cùng company-os/improvement-log.md (để không đề xuất trùng mục đã có).
+   nhật ký ngày trong 7 ngày gần nhất, và các skill + spec hiện tại, cùng tab LEARNINGS và branch-memory.md mục 17 (để không ghi trùng bài học đã có).
 4. Vòng học-hỏi — tìm mẫu lặp: chỉ tính mẫu có bằng chứng từ 2 video
    trở lên, ví dụ: cùng một lỗi QA/preflight lặp lại, cùng một mẫu câu
    kịch bản bị trả, cùng một khái niệm media hay bị tìm lệch hoặc rơi về
@@ -140,8 +139,10 @@ ghi TOPICS/TASKS/QA_LOG/DECISIONS/COO_TASKS/CEO_REPORTS/COO_CHECKIN); mọi vấ
    kém (hoặc ngược lại), chu kỳ sản xuất dài bất thường ở cùng một khâu.
    Ghi rõ mỗi mẫu: tên mẫu, số video ảnh hưởng, bằng chứng (tên video,
    mốc thời gian, file, dòng QA log).
-5. Vòng học-hỏi — ghi mục log cải tiến (quyết CEO 11/11/2026, thay mô hình tự áp dụng vào repo local): mỗi mẫu lặp đủ bằng chứng thành một mục trong company-os/improvement-log.md (ID dạng IMP-<YYYYMMDD>-<chi nhánh>-<số thứ tự>; đủ các trường: ngày, chi nhánh, loại vấn đề/cải tiến, mô tả, bằng chứng, thay đổi đề xuất ghi rõ file + nội dung trước/sau), ghi nối thêm vào bản local của file log với trạng thái ĐỀ XUẤT và gửi nguyên văn mục đó về chat COO. Bot KHÔNG tự sửa template/skill/spec như một cải tiến đã xong, KHÔNG push GitHub — thay đổi chỉ vào file chuẩn sau khi CEO duyệt, do chat chính áp dụng và đẩy lên repo, rồi trạng thái mục log chuyển ĐÃ ÁP DỤNG kèm mã commit.
-6. Ghi log: các mục log đã tạo ở bước 5 cũng ghi tóm tắt vào nhật ký ngày (kèm ID mục) để tra cứu; nhật ký ngày không thay thế improvement-log.md — file log trên repo mới là nơi chuẩn duy nhất để các chi nhánh xem được mục của nhau. Không ghi đè hay xóa mục đã có.
+5. Vòng học-hỏi — tổng hợp bài học của chi nhánh mình (quyết CEO 14/11/2026): mỗi mẫu lặp đủ bằng chứng thành 1 mục trong company-os/branch-memory.md, mục '## 17. Bài học (tổng hợp 20:00)' (ghi nối thêm: ID dòng LEARNINGS tương ứng + ngày + vấn đề + đề xuất + bằng chứng) VÀ thành 1 dòng trên tab LEARNINGS (bước 5b). Không còn mục IMP, không ghi improvement-log.md (đã xóa). Bot KHÔNG tự sửa template/skill/spec như một cải tiến đã xong, KHÔNG push GitHub — thay đổi chỉ vào file chuẩn sau khi CEO duyệt, do chat chính áp dụng và đẩy lên repo.
+5b. Chia sẻ bài học của chi nhánh mình lên tab LEARNINGS (quyết CEO 14/11/2026 — tab là nguồn duy nhất): mỗi bài học đã ghi vào bộ nhớ ở bước 5 thành 1 dòng trên tab LEARNINGS (append, không sửa/xóa dòng đã có): A ID dạng LRN-<YYYYMMDD>-<mã chi nhánh>-<số thứ tự> (số thứ tự tăng dần trong ngày), B DATE = hôm nay, C BRANCH = email khai báo của mình, D TYPE = loại bài học, E ISSUE = mô tả, F PROPOSAL = cách sửa đề xuất, G EVIDENCE = bằng chứng, H STATUS = MỚI. Kiểm trùng trong tab trước khi ghi (cùng ISSUE đã có dòng thì không ghi dòng mới). Không có bài học mới thì không ghi dòng LEARNINGS mới.
+5c. Học bài học mới của chi nhánh khác — ghi vào bộ nhớ (quyết CEO 14/11/2026): đọc toàn bộ tab LEARNINGS (đã đọc ở bước 0); với mỗi dòng mà cột C BRANCH khác email khai báo của mình và ID (cột A) chưa có trong branch-memory.md mục 17: ghi bài học đó vào branch-memory.md, mục '## 17. Bài học (tổng hợp 20:00)' (ghi nối thêm, 1 mục/dòng: ID + ngày + chi nhánh + vấn đề + đề xuất + bằng chứng + ngày học). Dòng đã có trong branch-memory thì bỏ qua, không ghi lại. Không dùng cache — kiểm trùng bằng ID đã ghi trong branch-memory. Dòng của chính chi nhánh mình không ghi lại vào bộ nhớ (đã ghi ở bước 5).
+6. Ghi log: các bài học đã tổng hợp của chi nhánh mình (bước 5, kèm ID dòng LEARNINGS) và các bài học chi nhánh khác đã học vào bộ nhớ (bước 5c, kèm ID dòng) ghi tóm tắt vào nhật ký ngày để tra cứu. Không ghi đè hay xóa mục đã có. Không còn improvement-log.md.
 7. Đề xuất cần COO quyết (chỉ ghi lại, KHÔNG tự áp dụng): mọi ý tưởng
    đụng tới giới hạn cứng hoặc chuẩn đã chốt — đổi lệnh tự quyết độ dài
    (đề xuất 2–3 phút, Production tự quyết; chuẩn 180-300s đã bãi theo
@@ -161,7 +162,6 @@ hay xóa dòng đã có, không sửa MEMORY.md. Gặp 429/403/rate-limit thì d
 Báo cáo: nhắn về chat COO: (a) kết quả kiểm mẫu — kể cả khi tất cả
 đều khớp thì báo ngắn 1 dòng (số chủ đề đã kiểm, đều khớp); khi lệch
 thì báo chi tiết từng chủ đề (điểm gốc, điểm kiểm lại, lệch cột nào,
-nguồn có đúng vụ việc không) + đề xuất; (b) liệt kê từng cải tiến đã áp
-dụng kèm bằng chứng và file đổi, nếu có; (c) đề xuất cần COO quyết, nếu
-có; (d) blocker MỚI, nếu có. Ca không có gì mới ngoài kiểm mẫu đều khớp
+nguồn có đúng vụ việc không) + đề xuất; (b) liệt kê từng bài học đã tổng hợp của chi nhánh mình (ID dòng LEARNINGS + tóm tắt), nếu có; (c) đề xuất cần COO quyết, nếu
+có; (d) blocker MỚI, nếu có; (e) các bài học của chi nhánh khác đã học (ID dòng + tóm tắt) và đã ghi vào bộ nhớ, nếu có. Ca không có gì mới ngoài kiểm mẫu đều khớp
 thì chỉ báo 1 dòng kiểm mẫu, không báo thêm phần học-hỏi.
