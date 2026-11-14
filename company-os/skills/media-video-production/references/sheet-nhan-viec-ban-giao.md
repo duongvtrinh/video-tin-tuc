@@ -77,6 +77,8 @@ bại; đổi cách rồi vẫn bị trả lại cùng lỗi thì báo COO, khô
 
 - **Luật DRAFT_LINK (quyết CEO 14/11/2026, DEC-275):** TASKS.E chỉ chứa đường dẫn file/thư mục nội bộ của video nháp (vd `export/topic373_u23_vietnam_qatar_14_11_preview.mp4` hoặc đường dẫn đầy đủ trong workspace). KHÔNG BAO GIỜ ghi URL vào E — không muse.ai/files, không drive.google.com, không bất kỳ link http/https nào. Tuyệt đối không upload file lên chức năng chia sẻ file có sẵn của Muse dạng https://muse.ai/files/... **Tự kiểm trước khi nộp:** đọc lại TASKS.E — nếu E chứa "http" thì ghi lại đường dẫn nội bộ, không nộp REVIEW.
 
+- **KHÔNG chép bản nháp sang company-os/ (quyết CEO 14/11/2026 — sửa 3 lỗ hổng rò rĩ logic):** bản nháp chỉ nằm 1 nơi duy nhất là `projects/<pid>/export/` trong factory (tên `topic<NNN>001_preview.mp4`); TUYỆT ĐỐI KHÔNG chép thêm bản copy sang `company-os/` hay bất cứ đâu, dù đặt tên dễ đọc (`TOPIC..._draft_...s.mp4`). Việc chép tay (thói quen các phiên trước) tạo ra 2 bản không đồng bộ: render lại thì factory cập nhật nhưng bản copy ở company-os thành bản cũ, QA có thể chấm nhầm (tiền lệ TOPIC-274: factory giữ bản 348s cũ 07/11, bản 313s mới 13/11 chỉ có ở company-os); bản copy cũng khiến ca dọn rác 03:00 có thể xóa mất bản duy nhất (tiền lệ TOPIC-271: project factory không còn, chỉ còn bản ở company-os). Bàn giao chỉ dùng đường dẫn factory trong TASKS.E (DEC-275).
+
 - **Cấm chia sẻ file qua cloud Muse (quyết CEO 14/11/2026, DEC-276):** không phòng chức năng nào được chia sẻ file ra bên ngoài bằng chức năng upload và chia sẻ file qua cloud của Muse dạng https://muse.ai/files/... Mọi file bàn giao/chia sẻ chỉ qua các kênh của công ty: đường dẫn nội bộ trong workspace, Sheet, thư mục Drive "Video Muse". (Mở rộng luật DRAFT_LINK DEC-275 — không chỉ cột E mà mọi file.)
 
 - Ảnh thumbnail: sau khi xuất video xong, tạo 1 ảnh thumbnail 9:16 bằng skill `thumbnail-xep-lop` từ chủ đề của video (nhân vật tự phán đoán, không hỏi CEO; 1/4 dưới nền trơn để chèn tiêu đề); ghi tên file thumbnail vào `TASKS.K` cùng tóm tắt bàn giao.
@@ -98,6 +100,12 @@ bại; đổi cách rồi vẫn bị trả lại cùng lỗi thì báo COO, khô
 - Script chỉ xóa: ảnh ứng cử viên bị loại + ảnh gốc sau khi đã cắt (build/media/images/, build/media/raw/), ảnh chụp khung hình kiểm tra của QA (build/media/checks/), bản preview cũ trong export/ (chỉ giữ mp4 mới nhất). Chuẩn "file đang dùng" = tên file xuất hiện trong media-log.json (chosen.file từng part) hoặc broll-plan.json.
 - KHÔNG BAO GIỜ xóa: toàn bộ build/media/broll/ (đoạn b-roll đã cắt + video stock — đầu vào render theo quy ước; plan không lưu tên file local của video b-roll nên không xác minh được bằng tên file), mp4 đã duyệt trong export/, script.json, broll-plan.json, media-log.json, input.json, build/audio/, build/subtitles/, render report. Script tự bảo vệ các mục này — không xóa tay thêm.
 - Ngoài lần dọn này, COO tự động xóa CẢ THƯ MỤC project cũ quá 7 ngày (tính từ thời điểm sinh thư mục) trong ca quét 03:00 (quyết CEO 14/11/2026, COO toàn quyền, không hỏi lại — skill COO rule 15). Production không cần dọn thư mục cũ.
+
+<!-- nguồn: SKILL.md cũ dòng 363-372 -->
+## File làm việc của video nằm trong project, KHÔNG nằm ở company-os/ (quyết CEO 14/11/2026)
+
+- Mọi file làm việc theo từng video — ảnh ứng cử viên tải về, ảnh crop, contact-sheet, ảnh chụp kiểm tra, log render/TTS, script/facts, file kiểm tra của QA — đều ghi vào thư mục project `projects/<pid>/` trong factory, KHÔNG ghi vào `company-os/`. Cụ thể: ảnh ứng cử viên + ảnh đã chọn vào `build/media/images/` (theo tên `seg_<order>_<rand6>.jpg`); ảnh/video gốc sau xử lý vào `build/media/raw/`; ảnh chụp khung hình kiểm tra vào `build/media/checks/`; log render/TTS + file làm việc khác vào thư mục project. `company-os/` chỉ chứa tài liệu chung (spec, skill, hướng dẫn) — không chứa file theo từng video.
+- Lý do: file làm việc ở `company-os/` không có vòng đời (tiền lệ 14/11/2026: tích 7,1 GB gồm 4,8 GB thư mục media + 2,1 GB bản nháp mp4, phải dọn tay rồi dọn bằng ca 03:00); file trong project được dọn tự động — sau DELIVERED, `cleanup_project.py` xóa ảnh ứng cử viên + ảnh chụp kiểm tra; sau 7 ngày, prune xóa cả thư mục project. Vì vậy ca 03:00 không còn bước dọn company-os (Bước 11 đã bỏ 14/11/2026 — xem skill COO).
 
 <!-- nguồn: SKILL.md cũ dòng 363-372 -->
 ## Kênh báo cáo: chỉ báo cáo cho COO, không báo cáo CEO (lệnh CEO 14/11/2026)

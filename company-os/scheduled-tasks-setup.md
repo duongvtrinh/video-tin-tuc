@@ -45,7 +45,9 @@ của từng tài khoản (riêng tts-watchdog nằm ở `crons/minutely/` vì l
 
 **Lịch + mẫu:** Bước 10 nằm trong body lịch `coo-scan-0300` (live) và trong file mẫu `company-os/crons/daily/coo-scan-0300.md` — hai bên phải khớp nhau theo quy tắc "Bảo trì bản mẫu" dưới đây (chỉ khác placeholder). Lần xóa thật đầu tiên: ca 03:00 ngày 15/11/2026 (dry-run 14/11: 102 project quá hạn, ~5.018 MB; giữ lại 8 project sinh trong 7 ngày).
 
-**Khác với dọn rác sau DELIVERED:** Production dọn rác từng video ngay sau khi TASKS.C = DELIVERED (chỉ xóa ảnh ứng cử viên/file gốc/ảnh chụp QA/preview cũ, KHÔNG xóa thư mục — xem skill Sản xuất rule 14). Việc xóa cả thư mục cũ này là của COO ở ca 03:00, Production không tự xóa thư mục.
+**File làm việc trong project (quyết CEO 14/11/2026 — bỏ Bước 11 dọn company-os):** từ 14/11, mọi file làm việc theo từng video (ảnh ứng cử viên/crop, ảnh chụp kiểm tra, log) đều ghi vào thư mục project trong factory, KHÔNG ghi vào `company-os/` (skill Sản xuất rule 15, skill QA rule 17). `company-os/` chỉ còn tài liệu chung nên không còn rác sinh ra, không cần dọn riêng — Bước 11 (dọn company-os) đã bỏ khỏi ca 03:00 ngày 14/11/2026; script `bin/cleanup_company_os.py` chỉ còn để dọn tay khi cần (chặn xóa bản duy nhất: mp4 chỉ xóa khi factory export cùng md5, media/qa chỉ xóa khi có factory project).
+
+**Khác với dọn rác sau DELIVERED:** Production dọn rác từng video ngay sau khi TASKS.C = DELIVERED (chỉ xóa ảnh ứng cử viên/file gốc/ảnh chụp QA/preview cũ, KHÔNG xóa thư mục — xem skill Sản xuất rule 14). Việc xóa cả thư mục cũ (Bước 10) là của COO ở ca 03:00, Production không tự xóa thư mục. Việc dọn rác company-os (Bước 11 cũ) đã bỏ từ 14/11/2026 vì file làm việc đã chuyển vào project (xem ngay trên).
 
 ## Cài dịch vụ TTS để tự chạy lại khi Muse khởi động lại
 
@@ -132,8 +134,7 @@ phòng của chi nhánh khác (hoặc gọi lỗi).
 | --- | --- |
 | Trong file mẫu là `{{CHAT_ID_SCOUT_BAO}}` và `{{CHAT_ID_SCOUT_GROUP}}` (file scout-scan-0600 / scout-scan-1300) | ID chat Scout - Báo / Scout - Group của tài khoản mới (xem bằng `chat.list`) |
 | Trong file mẫu là `{{CHAT_ID_SAN_XUAT}}`, `{{CHAT_ID_QA}}` và `{{CHAT_ID_COO}}` (file prod-pipeline-0500 / prod-pipeline-1400) | ID chat Sản xuất / Kỹ thuật QA / COO của tài khoản mới (xem bằng `chat.list`) |
-| Trong file mẫu là `{{EMAIL_KHAI_BAO}}` (file coo-scan-0300, 2 chỗ — ví dụ REPORT_ID `RPT-YYYYMMDD-{{EMAIL_KHAI_BAO}}-NN`) | Email khai báo của tài khoản mới (xem MEMORY.md của tài khoản đó) |
-| Trong file mẫu là `{{MA_CHI_NHANH}}` (file bot-hoc-hoi-2000, 1 chỗ — ví dụ ID mục `IMP-...-{{MA_CHI_NHANH}}-...`) | Mã chi nhánh = phần trước @ của email khai báo của tài khoản mới |
+| Trong file mẫu là `{{EMAIL_KHAI_BAO}}` (file coo-scan-0300, 1 chỗ — ví dụ trích dẫn ID `COO-YYYYMMDD-NN ({{EMAIL_KHAI_BAO}})` ở Bước 3; REPORT_ID cũng dùng email đầy đủ dạng `RPT-YYYYMMDD-mail@domain.com-NN` theo DEC-264) | Email khai báo của tài khoản mới (xem MEMORY.md của tài khoản đó) |
 | `owner: goal:vieneu-media-company-bootstrap` | Goal bootstrap của chính tài khoản mới (cùng slug nếu tài khoản đó theo đúng chuẩn này) |
 | `delivery` (chat COO) | Chat COO của tài khoản mới (lấy ID qua `chat.list`, KHÔNG copy UUID {{CHAT_ID_COO}} của chi nhánh này) |
 | `delivery` của tts-watchdog (không nằm trong file mẫu — file mẫu bỏ delivery theo lệ chung) | ID chat COO của tài khoản mới (xem bằng `chat.list`), như 6 lịch còn lại |
@@ -149,8 +150,8 @@ không có placeholder nào (không chứa ID chat hay email) — chỉ cần đ
 
 ## Bảo trì bản mẫu (để khỏi lệch)
 
-- **Body trong file mẫu phải giống hệt body của lịch đang chạy, trừ 7 placeholder
-  (5 ID chat phòng + email khai báo + mã chi nhánh)** (xem bảng trên): khi diff, chỉ các dòng chứa placeholder ở mỗi
+- **Body trong file mẫu phải giống hệt body của lịch đang chạy, trừ 6 placeholder
+  (5 ID chat phòng + email khai báo)** (xem bảng trên): khi diff, chỉ các dòng chứa placeholder ở mỗi
   file được phép khác; mọi dòng khác phải giống hệt.
   Frontmatter thì khác — bản mẫu bỏ `delivery` và `metadata` vốn là của riêng
   từng tài khoản, và đổi `owner` thành `goal:vieneu-media-company-bootstrap`.

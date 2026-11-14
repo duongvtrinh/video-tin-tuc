@@ -28,6 +28,7 @@
 | 14 | **Quyền ghi cột:** QA ghi toàn bộ QA_LOG + TASKS.F/G/H/I/C/J/L QUOTA; KHÔNG ghi K (Production), không ghi cột O. C/J/D nhiều người ghi — ghi sau thắng + để lại lý do trong cùng lần ghi | sheet-nhan-viec §Sheet mới |
 | 15 | **Nâng cấp code:** sửa template → đề xuất cập nhật repo kèm verdict + `qa-checklist.md` + QA_LOG.F REPO_NOTE; sửa local, KHÔNG tự push GitHub; không deploy/mua dịch vụ khi chưa có quyết định CEO. Chấm thẩm mỹ template trên khung thật (9 tiêu chí 0–10); màu/cỡ chữ đối chiếu `templates/_tokens.json` | nang-cap-code-hoc-loi |
 | 16 | **Cửa thông qua kịch bản (DEC-273, CEO 13/11):** QA duyệt kịch bản trước TTS — đọc kịch bản + cảnh báo lint; DUYỆT khi tin là bản hay nhất (kể cả còn từ cấm) hoặc TRẢ kèm từng điểm + gợi ý; tối đa 3 lần trả, vòng 4 duyệt cho qua; ghi QA_LOG dòng script-vN + nhắn Production (K là của Production — QA không ghi K) | danh-gia-va-tieu-chi §Ra quyết định; sheet-nhan-viec §Vòng lặp |
+| 17 | **File kiểm tra của QA nằm trong project, KHÔNG ở company-os/ (CEO 14/11/2026):** ảnh chụp khung hình kiểm tra vào `projects/<pid>/build/media/checks/`; script kiểm tra (qa*_check.py, qa*_media.py...) + file xuất kiểm tra vào thư mục project. `company-os/` chỉ chứa tài liệu chung, không chứa file theo từng video. Sau DELIVERED, `cleanup_project.py` xóa `build/media/checks/` | danh-gia-va-tieu-chi §Cách chấm |
 
 ## 2. Vòng đời một video qua QA
 

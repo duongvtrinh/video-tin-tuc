@@ -49,6 +49,7 @@ Video chỉ được duyệt khi vừa sạch lỗi kỹ thuật, vừa đẹp, 
 - Duyệt chỉ khi cả 3 cửa đều qua: (1) kỹ thuật sạch, (2) đẹp, (3) giữ người xem.
 - Trả lại khi bất kỳ cửa nào rớt, kèm danh sách lỗi cụ thể theo mốc thời gian và cách sửa cho từng lỗi.
 - Xem thử không có tiếng: nếu tắt tiếng mà vẫn hiểu được ý chính qua hình và chữ thì video mới đạt về mặt hình ảnh.
+- **File kiểm tra nằm trong project, KHÔNG ở company-os/ (quyết CEO 14/11/2026):** ảnh chụp khung hình kiểm tra vào `projects/<pid>/build/media/checks/`; script kiểm tra (qa*_check.py, qa*_media.py...) + file xuất kiểm tra vào thư mục project. `company-os/` chỉ chứa tài liệu chung, không chứa file theo từng video. Sau DELIVERED, `cleanup_project.py` xóa `build/media/checks/`.
 
 ### Motion — không còn chấm motion (CEO 10/11/2026)
 - Không còn đo MAD, không còn chấm motion bằng mắt: CEO quyết xóa phần kiểm tra motion (đo PNG 2fps, MAD <1,0, chuỗi >5s), rồi bỏ luôn luật QA chấm motion bằng mắt (22:46 10/11/2026) — QA không trả lại video vì motion; CEO tự kiểm tra video. Motion (Ken Burns) vẫn áp khi render.
