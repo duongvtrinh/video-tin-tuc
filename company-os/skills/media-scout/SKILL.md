@@ -105,6 +105,8 @@
 - Giữ nguyên dòng đã ghi và không sửa điểm số hay kết quả chấm điểm (trừ trường hợp sửa có dữ kiện mới ở mục trên).
 - **Khi nhắc tới cửa quan tâm (trong báo cáo ca, NOTES, hoặc bàn giao), ghi đúng nguyên văn:** "Cửa quan tâm (lệnh CEO 29/10/2026): Hot + Khán giả ≥ 30/50, xét TRƯỚC tổng ≥ 70; tổng ≥ 70 nhưng quan tâm < 30 → Hold." KHÔNG viết "Khán giả ≥ 30/50" — Khán giả tối đa chỉ 20 điểm nên không thể tự nó ≥ 30. (Bổ sung chi nhánh live 12/11/2026 — ca học hỏi 11/11/2026: tin giao việc của Scout đã ghi sai cửa này ở các lô 191–196 (03/11), ca 15:00 06/11, ca 03:00 và 19:00 09/11, lô 339–344 (10/11) và lô 345–350 (11/11); Scoring đều đính chính và áp đúng luật nên chưa điểm nào sai. Chat Scoring nay đã đóng — Scout tự chấm trong cùng lượt, chỉ cần chép nguyên văn trên, không diễn đạt lại.)
 
+- **Cấm chia sẻ file qua cloud Muse (quyết CEO 14/11/2026, DEC-276):** không phòng chức năng nào được chia sẻ file ra bên ngoài bằng chức năng upload và chia sẻ file qua cloud của Muse dạng https://muse.ai/files/... Mọi file bàn giao/chia sẻ chỉ qua các kênh của công ty: đường dẫn nội bộ trong workspace, Sheet, thư mục Drive "Video Muse". (Mở rộng luật DRAFT_LINK DEC-275 — không chỉ cột E mà mọi file.)
+
 
 ## Available connectors
 

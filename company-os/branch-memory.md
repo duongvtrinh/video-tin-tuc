@@ -178,10 +178,10 @@ DEC-269 — cập nhật ngày 13/11/2026 theo lệnh CEO).
 - **REVIEW cũ (DEC-106):** pipeline đầu ca đọc giờ nộp REVIEW trong K;
   qua 1 ca (05:00→14:00 là 9 giờ; 14:00→05:00 hôm sau là 15 giờ) không có verdict trong QA_LOG thì hỏi QA, QA
   trả lời trong 1 ca (đang chấm tới đâu, verdict khi nào); Production khi
-  chuyển REVIEW phải nhắn chat QA kèm ID video + DRAFT_LINK. Nếu QA trả
+  chuyển REVIEW phải nhắn chat QA kèm ID video + đường dẫn file trong E. Nếu QA trả
   lại video đang chờ thì Production tạm dừng video đang làm (ghi điểm dừng
   vào K), sửa video bị trả trước, nộp lại, rồi quay lại theo luật resume.
-  QA không trả lời tới đầu ca sau thì COO giao lại cho QA (ID + DRAFT_LINK);
+  QA không trả lời tới đầu ca sau thì COO giao lại cho QA (ID + đường dẫn file trong E);
   giao lại thêm 1 ca vẫn im thì báo cáo COO (DEC-111).
 - **Vòng lặp RETURNED (DEC-107):** leo thang lại mỗi khi số lần trả tăng
   sau lần đầu (leo thang gửi về chat COO; mốc lần trả thứ 2 do PIPELINE
