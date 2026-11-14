@@ -1,0 +1,24 @@
+name: template_render_assertion
+title: Assert a template change on a real rendered image
+description: Verify a template change with an automated assertion test on a real rendered image before confirming it works, when a template file changes.
+category: Work and knowledge
+include_in_prompt: false
+skill_improvement:
+  managed: true
+  status: active
+  evidence_handles:
+  - user msg 2b043285 2026-11-01T23:12 keyword-strip 1.6.0 missing keyword block backgrounds
+  - assistant msg 64aafc84 keyword-strip 1.7.0 with tests/check_keyword_strip.py 8 checks
+  - assistant msg de80ec52 keyword-strip 1.8.0 with 11 checks
+  - check_templates 34 samples 0 errors on keyword-strip 1.6.0
+  - wave-D D1-code preview clip-caption fix verified node check plus selftest only with no eye check
+  - ~/workspace/custom-skills/media-video-tech-qa/SKILL.md render trial section
+  measurement:
+    proxy_metric_id: template_change_assertion_pass_rate
+    success_criterion: In the 30 day window, every template change covered by this skill is confirmed only after a passing assert-on-render test, and no confirmed template change is reopened for a required background, border, position, or colour element that an assertion should have caught.
+    window_days: 30
+  needs_review: false
+  rationale: Keyword-strip 1.6.0 was reported complete after an eye check plus check_templates with 34 samples and 0 errors, yet the 2026-11-01T23:12 user report found its keyword blocks missing their background, because neither check asserted the required background on a real rendered image. The 1.7.0 fix added an 8-check rendered-image test and 1.8.0 extended it to 11 checks, which is the method this new skill codifies. The existing QA skill requires a render trial and frame comparison but does not require an automated pixel assertion before confirmation, and the QA skill is a pre-existing custom file with learning null, so this loop cannot update it directly. A separate managed skill therefore closes the gap without duplicating the QA skill or restating the app webview lesson, which the system app-creation skill already covers by requiring confirmation from the running app.
+  review_after: 2026-12-02T05:46:13.216823+00:00
+  reviewed_at: 2026-11-02T05:46:13.216823+00:00
+  run_id: sirun_84467befb0eb4895a17cd44294439046

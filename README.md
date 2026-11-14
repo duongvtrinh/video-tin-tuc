@@ -7,6 +7,8 @@ Repo RIÊNG TƯ — chỉ Muse của cùng tài khoản mới có quyền đọc
 
 Đọc `BOOTSTRAP.md` trước, làm đúng thứ tự trong đó. Mỗi bước có kiểm
 chứng; bước nào fail thì dừng và báo, không tự chế, không bỏ qua.
+Chi nhánh mới clone repo về thì làm theo hướng dẫn từng bước ở
+`BOOTSTRAP.md` §C1 (lấy repo về máy, layout clone + 3 symlink).
 
 ## Cấu trúc
 
@@ -16,9 +18,11 @@ chứng; bước nào fail thì dừng và báo, không tự chế, không bỏ 
   `lib/`, `templates/`, `skills/`, `prompts/`, `docs/`,
   `PIPELINE.md`, `ABBR_DICT.md`) + `sfx/` (8 file `.mp3`) + `bgm/` (24 track).
 - `app-tao-video/` — source App Tạo Video (client/src: `App.tsx` + `lib.ts` + 11 component theo tab; server/src: `priv/` 9 module + `privileged.ts` + `actions.ts` + `schema.ts` + `script-prompt.ts` kèm test `bun:test`; migration drizzle 0001–0003). Khi chạy thật là artifact — tạo lại bằng artifact tools theo `BOOTSTRAP.md` §6; bản build `dist/` không nằm trong repo (build lại khi tạo artifact).
-- `company-os/` — logic vận hành: 5 skill trong `skills/`
-  (`media-coo`, `media-scout`, `media-topic-scoring`,
-  `media-video-production`, `media-video-tech-qa`) + tài liệu
+- `company-os/` — logic vận hành: 7 skill trong `skills/`
+  (`media-coo`, `media-scout`, `media-video-production`,
+  `media-video-tech-qa`, `thumbnail-xep-lop`,
+  `template_render_assertion`, `measure_motion_on_lossless_frames`)
+  + tài liệu
   (`media-search/LOGIC.md`, `google-sheet-spec.md`, checklist,
   `code-fix-20261029/REPORT.md`).
 

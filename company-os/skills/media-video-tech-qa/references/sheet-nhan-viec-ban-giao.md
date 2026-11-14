@@ -2,7 +2,7 @@
 
 <!-- nguồn: SKILL.md cũ dòng 2-4 -->
 
-> **Email khai báo:** mỗi chi nhánh ghi email khai báo của mình vào TASKS.D ASSIGNEE; nguồn chuẩn là MEMORY.md của tài khoản đó, không suy ra từ Sheet.
+> **Email khai báo:** mỗi chi nhánh dùng email khai báo của chính mình (nguồn chuẩn là MEMORY.md của tài khoản đó) — ghi đúng email này vào TASKS.L QUOTA (dạng "`<email khai báo>; …`") CHỈ KHI TASKS.D ASSIGNEE của dòng đó đã có giá trị; nếu TASKS.D còn trống thì ghi "chưa xác định — hỏi CEO" vào TASKS.L (R4-09: không tự lấy email khai báo trong bộ nhớ thay thế), và mọi chỗ khác cần email chi nhánh. KHÔNG dùng email khác thấy trong Sheet: workbook dùng chung nhiều chi nhánh, các dòng mang email đó là của chi nhánh khác. Tiền lệ: Production ghi nhầm email rút gọn vào TASKS dòng 127 (TOPIC-345) vì chỉ thấy các dòng của chi nhánh khác ở đầu tab TASKS — đã sửa lại đúng email đầy đủ.
 
 <!-- nguồn: SKILL.md cũ dòng 5-30 -->
 ## Sheet mới — đọc trước khi chấm (Đang áp dụng từ 07/11/2026 — GĐ2)

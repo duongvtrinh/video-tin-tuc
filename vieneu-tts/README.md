@@ -94,7 +94,7 @@ Tham số:
 |---|---|---|---|
 | `text` | string | _(bắt buộc)_ | Văn bản tiếng Việt (tối đa `TTS_MAX_CHARS` ký tự) |
 | `voice` | string | giọng mặc định | Tên/id giọng trong `/voices` |
-| `speed` | float | `1.0` | Tốc độ 0.5 – 2.0 — chỉ có tác dụng với v3nano; v3turbo bỏ qua speed (V3Turbo.infer không nhận speed, nuốt lặng qua `**kwargs`; xem DEC-035, 07/11/2026) |
+| `speed` | float | `1.0` | Tốc độ 0.5 – 2.0 |
 
 Response header có thêm `X-Audio-Seconds` (độ dài audio) và `X-Voice`.
 

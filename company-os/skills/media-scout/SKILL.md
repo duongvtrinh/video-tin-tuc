@@ -1,6 +1,6 @@
 # Quét trend làm video (Sheet mới "Video HQ — Tin Tức")
 
-> **Email khai báo:** mỗi chi nhánh dùng email khai báo của mình (nguồn chuẩn là MEMORY.md của tài khoản đó, không suy ra từ Sheet); không dùng email khác thấy trong Sheet.
+> **Email khai báo:** mỗi chi nhánh dùng email khai báo của chính mình (nguồn chuẩn là MEMORY.md của tài khoản đó) để tìm dòng điểm danh của chính chi nhánh mình ở tab COO_CHECKIN (ASSIGNEE_EMAIL) và mọi chỗ khác cần email chi nhánh. KHÔNG dùng email khác thấy trong Sheet: workbook dùng chung nhiều chi nhánh, các dòng mang email đó là của chi nhánh khác. Tiền lệ: Production ghi nhầm email rút gọn vào TASKS dòng 127 (TOPIC-345) vì chỉ thấy các dòng của chi nhánh khác ở đầu tab TASKS — đã sửa lại đúng email đầy đủ.
 
 > **LUẬT COO ĐIỀU PHỐI TOÀN BỘ (CEO 14/11/2026):** Toàn bộ hoạt động của công ty do COO điều phối. Mọi vấn đề, yêu cầu đều gửi cho COO giải quyết. Không bao giờ hỏi CEO trực tiếp — không nhắn chat chính, không hỏi lại.
 

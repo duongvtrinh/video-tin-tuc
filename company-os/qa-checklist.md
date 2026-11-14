@@ -115,3 +115,6 @@ Không deploy production, không đăng video, không mua dịch vụ.
 
 ## Báo cáo về chủ đề khác — đọc live TASKS trước khi viết (13/11/2026)
 - Khi báo cáo COO/Production về một chủ đề khác với video đang chấm, đọc live TASKS (dòng, STATUS, K, J) trước khi viết — không suy từ trạng thái lô READY, từ trí nhớ ca trước, hay từ việc "chưa thấy dòng". Tiền lệ: báo cáo QA 357 ghi "358/359 chưa có TASKS row" trong khi cả hai đã có dòng từ lúc claim 14:06 (358 BUILDING từ 17:28, 359 CLAIMED) — COO phải đính chính. Lỗi này không ảnh hưởng verdict video đang chấm, nhưng làm sai quyết định ca sau.
+
+## Không đính kèm file vào tin nhắn chat (DEC-276, 14/11/2026)
+- Từ 14/11: tin nhắn verdict/báo cáo KHÔNG đính kèm file (MP4 hay bất kỳ file nào) trong chat — chỉ ghi đường dẫn nội bộ (dạng text) + link Drive "Video Muse" ở cột H. Cấm chia sẻ file qua cloud Muse (muse.ai/files) — mở rộng DEC-275 ra mọi file. Các verdict 357/358 ngày 13/11 có đính kèm MP4 — xảy ra trước luật nên không vi phạm hồi tố; từ video tới (359) không đính kèm nữa.

@@ -1,29 +1,298 @@
 term,reading
-"BATDONGSAN","bất động sản"
-"mạng xã hội X","mạng xã hội ích"
-"AT&T","ây ti en ti"
-"Vietcombank","việt côm banh"
-"VPBank","vi pi banh"
-"Techcombank","téc côm banh"
-"BIDV","bi ây đi vi"
-"MBBank","em bi banh"
-"VietinBank","việt tin banh"
-"HDBank","hát đê banh"
-"LPBank","eo pi banh"
-"SeABank","sia banh"
-"TPBank","ti pi banh"
-"Sacombank","sa côm banh"
-"Eximbank","éc xim banh"
-"Nam A Bank","nam á banh"
-"ABBANK","ây bi banh"
-"Bac A Bank","bắc á banh"
-"PVCombank","pi vi côm banh"
-"VietBank","việt banh"
-"BVBank","bi vi banh"
-"Viet A Bank","việt á banh"
-"PGBank","pi gi banh"
-"Kienlongbank","kiên long banh"
-"Saigonbank","sài gòn banh"
-"Baoviet Bank","bảo việt banh"
-"Vikki Bank","vi ki banh"
-"Citibank","xi ti banh"
+BATDONGSAN,bất động sản
+mạng xã hội X,mạng xã hội ích
+AT&T,ây ti en ti
+Vietcombank,việt côm banh
+VPBank,vi pi banh
+Techcombank,téc côm banh
+BIDV,bi ai đi vi
+MBBank,em bi banh
+VietinBank,việt tin banh
+HDBank,hát đê banh
+LPBank,eo pi banh
+SeABank,si a banh
+TPBank,ti pi banh
+Sacombank,sa côm banh
+Eximbank,éc xim banh
+Nam A Bank,nam á banh
+ABBANK,ây bi banh
+Bac A Bank,bắc á banh
+PVCombank,pi vi côm banh
+VietBank,việt banh
+BVBank,bi vi banh
+Viet A Bank,việt á banh
+PGBank,pi gi banh
+Kienlongbank,kiên long banh
+Saigonbank,sài gòn banh
+Baoviet Bank,bảo việt banh
+Vikki Bank,vi ki banh
+Citibank,xi ti banh
+USD,
+SJC,ét giây xê
+U17,
+III,ba
+E10,E mười
+OTP,ô tê pê
+SCB,ét xi bi
+HDPE,hát đê pê e
+UAE,u a e
+E5,e năm
+B2,bê hai
+BMC,bê em xê
+VF3,vê ép ba
+B1,bê một
+VOV,vê o vê
+DOJI,đê o giê i
+GDP,giê đê pê
+U23,u hai mươi ba
+RON92,rôn chín hai
+WTI,đúp-li-u tê i
+HCDC,hát xê đê xê
+C12,xê mười hai
+VTV,vê tê vê
+KDC,ca đê xê
+NASA,na sa
+PNJ,pi en gi
+AI,a i
+PVF,pê vê ép
+HLV,
+CT6B,xê tê sáu bê
+FIFA,phi pha
+HOSE,hát o ét e
+USDT,u ét đê tê
+CT6,xê tê sáu
+VN-A227,vê en a hai hai bảy
+PCE,pê xê e
+AMADO,a em a đê o
+FDI,ép đê i
+CT6A,xê tê sáu a
+CT6C,xê tê sáu xê
+A2,a hai
+VTC,vê tê xê
+RON95-III,
+RON95,
+VN,
+TP,
+EV71,e vê bảy mốt
+T3,tê ba
+VTV1,vê tê vê một
+BNEWS,bê niu
+QR,quy rờ
+QATAR,qua ta
+EU,e u
+MSB,em ét bê
+RON,ron
+GSM,giê ét em
+SM,ét em
+TOD,tê o đê
+VTV24,vê tê vê hai bốn
+VNDIRECT,vê en đi rết
+CFA,xê ép a
+OPEC,ô pết
+VN30,vê en ba mươi
+PVP,pê vê pê
+PVT,pê vê tê
+BSR,bê ét ờ
+PLX,pê lờ ích
+GAS,giê a ét
+PVD,pê vê đê
+VHM,vê hát em
+HPG,hát pê giê
+VPL,vê pê lờ
+GVR,giê vê rờ
+ASEAN,a si an
+COD,xê o đê
+OKX,o ca ích
+CT5,xê tê năm
+VP,vê pê
+HH,hát hát
+CT8,xê tê tám
+CT10,xê tê mười
+CT11,xê tê mười một
+CT12,xê tê mười hai
+SMS,ét em ét
+PIN,pin
+QH9585,quy hát chín năm tám năm
+A321-200,a ba hai một hai trăm
+EC-AIFS,e xê a i ép ét
+TNHH,
+APEC,a pết
+PA05,pê a không năm
+VEN,vê e en
+PC03,pê xê không ba
+WORLD,
+CUP,
+U20,u hai mươi
+FILE,
+APK,a pê ca
+ATM,a tê em
+BANKING,banh king
+APP,ắp
+II,hai
+BOT,bót
+VIP,víp
+NCB,en xê bê
+MB,em bê
+VCBS,vê xê bê ét
+HCT,hát xê tê
+COVID-19,cô vít 19
+CPI,xê pê i
+SGC,ét giê xê
+ODA,o đê a
+VTV4,vê tê vê bốn
+DGO,đê giê o
+SIM,sim
+U22,u hai hai
+SEA,sia
+CEO,xi i âu
+CUDA,cu đa
+PLEIKU,
+TP.HCM,thành phố hồ chí minh
+VIDEO,video
+AP,a pê
+VTV3,vê tê vê ba
+IV,bốn
+World Cup,
+New Zealand,
+Prinberk Academy,
+Bamboo Airways,
+Vietnam Airlines,
+New York Times,
+Nations League,
+Team China,
+Alice Huang,
+Jennifer Wicks,
+Matt Anderson,
+Soil Moisture Active Passive,
+Champa Island,
+Vinpearl Resort,
+Google Play,
+App Store,
+Fertility Academy,
+Eileen Manalo,
+Super Truss,
+Ring Beam,
+Gianni Infantino,
+Vinhomes Ocean Park,
+Vinhomes Global Gate,
+James Talarico,
+Ken Paxton,
+Joni Ernst,
+Josh Turek,
+Susan Collins,
+Stephen Olson,
+Masoud Pezeshkian,
+Petr Milan,
+Ampacs International,
+Cristiano Ronaldo,
+Buenos Aires,
+Jorge Jesus,
+High Density Polyethylene,
+Sahoo Garv,
+Jensen Huang,
+Joon Kim,
+Wachtell Lipton,
+Kimberly Powell,
+Colette Kress,
+Harvey Jones,
+Ian Buck,
+Rene Haas,
+Tim Cook,
+Al Jazeera,
+Financial Express,
+Firdaus Kassim,
+Vinhomes Green Paradise,
+Troy Jackson,
+Abbas Araghchi,
+Ukraine,
+El Niño,
+Qatar,
+Singapore,
+Facebook,<en>Facebook</en>
+Nvidia,
+Brent,
+Iran,
+Fed,
+Ronaldo,
+Huang,
+Mali,
+Mobile,
+Vinhomes,
+Alaska,
+Shinpyeong,
+Cheonan,
+Artemis,
+Pasteur,
+Trump,
+Texas,
+Tehran,
+Wales,
+Messi,
+Jesus,
+Reuters,
+Roland,
+News,
+Saigontourist,
+Canada,
+Enterovirus,
+Vietjet,
+Zalo,
+Amsterdam,
+Mississippi,
+Carolina,
+Hormuz,
+Depot,
+Euro,
+Argentina,
+Sansa,
+Sirassawut,
+Vietnam,
+Yemen,
+Mexico,
+Binance,
+Telegram,
+Planespotters,
+Embraer,
+Airbus,
+Gelsemium,
+Fiji,
+Android,
+Kido,
+Azithromycin,
+Stockbiz,
+Ohio,
+Iowa,
+Georgia,
+Kansas,
+Petrotimes,
+Washington,
+Cycletech,
+Kazakhstan,
+Lisbon,
+Copenhagen,
+Cup,
+Williams,
+Siamsport,
+Games,
+Arm,
+Apple,
+Cook,
+Kress,
+Wall,
+Yazid,
+Maine,
+Michigan,
+héc-ta,
+hecta,
+ki-lô-oát,
+héc,
+mi-li-mét,
+ki-lô-gam,
+kilôgam,
+VTVgo,vê tê vê gô
+teaser,<en>teaser</en>
+viral,<en>viral</en>
+single,<en>single</en>
+YouTube,<en>YouTube</en>
+Music Gallery,<en>Music Gallery</en>
+Triple D,<en>Triple D</en>

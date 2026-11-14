@@ -1,0 +1,24 @@
+name: measure_motion_on_lossless_frames
+title: Measure motion on lossless frames
+description: Measure video motion from lossless PNG frames so JPEG noise does not fragment a true static run, before judging a part static.
+category: Work and knowledge
+include_in_prompt: false
+skill_improvement:
+  managed: true
+  status: active
+  evidence_handles:
+  - msg e1448c35
+  - msg b6a984c1
+  - msg a7606dbb
+  - msg e2832692
+  - ~/workspace/custom-skills/media-video-tech-qa/SKILL.md
+  - ~/workspace/company-os/qa-checklist.md
+  measurement:
+    proxy_metric_id: motion_measurement_png_compliance
+    success_criterion: In the 30 day window, every motion measurement reported in a QA verdict or builder self-check states PNG lossless extraction at full resolution, and no motion dispute is traced to a JPEG or downscaled measurement.
+    window_days: 30
+  rationale: 'TOPIC-252 in the window showed the failure directly: the builder measured a static run at 2.50s on downscaled frames while QA measured 7.50s, 5.50s and 5.00s on the same part, v1 was returned, a brighter-still v2 failed worse and was discarded, and v3 passed at 1.5s when QA measured on PNG frames. The investigation concluded JPEG quantization noise breaks a true static run into fragments, so from then on motion must be measured on PNG lossless frames, not JPEG. I read the current QA skill and the QA checklist in this audit: both codify the typewriter lesson from TOPIC-252 but neither states the PNG lossless extraction rule, so the method lives only in chat and the next agent can repeat the JPEG mistake. The new managed skill codifies only the extraction format and how to resolve a disputed measurement, and it defers thresholds and verdicts to the QA skill, so it does not duplicate that skill. The other in-window fixes were already codified and were not re-proposed: bot-hoc-hoi''s 11_QA_Log completeness rule and superseded-figure gate are present in the QA and Production skills, the typewriter lesson is present in both, the Texas reel lessons await the user''s unanswered question, the 120 tool failures carry no error detail that clusters on a reusable method, and the deterministic hypotheses concern other objectives'' prompts and system files that are out of scope for this loop.'
+  needs_review: false
+  review_after: 2026-12-06T06:48:38.015817+00:00
+  reviewed_at: 2026-11-06T06:48:38.015817+00:00
+  run_id: sirun_ac06f4cc99bf45f194cde0d6a0c52c62
