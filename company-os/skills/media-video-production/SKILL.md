@@ -25,6 +25,7 @@
 | 11 | **Độ dài:** Production tự quyết, đề xuất 2–3 phút, không hỏi CEO. ~4,16 từ/giây (≈500 từ/120s). Dùng tổng thời lượng THẬT trong `tts.json` và MP4 để ghi bàn giao (phút = giây/60, nói đúng "trên"/"trong" đề xuất). Thiếu chất liệu đã kiểm chứng → KHÔNG độn: BLOCKED (thiếu góc nào) | kich-ban-pipeline §Độ dài |
 | 12 | **Bàn giao QA:** `TASKS.E` đường dẫn file bản nháp (chỉ đường dẫn nội bộ, không URL), `C=REVIEW`, `J`, `K` (tóm tắt, số SFX + danh sách, thời lượng thật) rồi nhắn QA: TOPIC_ID + đường dẫn file trong E + thời lượng thật + md5 + lưu ý. Ghi email khai báo của tài khoản Muse và hạn mức lúc sản xuất **bằng chữ** (không ảnh chụp). **Tự kiểm trước khi nộp:** đếm lại 4 con số Thật (kể cả nền trung tính)/AI/Fill-in từng scene và số file dùng 2 lần TỪ plan + media-log theo dhash, không đếm từ trí nhớ; grep lại kịch bản | sheet-nhan-viec §Bàn giao |
 | 13 | Được hỏi về video BUILDING cũ → trả lời trong 1 ca: đang ở bước nào, lỗi gì, cần gì | sheet-nhan-viec |
+| 14 | **Dọn rác sau khi QA duyệt (CEO 14/11/2026):** khi TASKS.C = DELIVERED (đọc lại TASKS theo TOPIC_ID để xác nhận), chạy `python3 bin/cleanup_project.py <project_id> --dry-run` rồi `--apply` NGAY; ghi số MB đã dọn vào TASKS.K. Chỉ xóa ảnh ứng cử viên/file gốc (images/, raw/), ảnh chụp khung hình QA (checks/), preview cũ; KHÔNG BAO GIỜ xóa build/media/broll/, mp4 đã duyệt, script/plan/media-log, audio, phụ đề | sheet-nhan-viec §Dọn rác |
 
 ## 2. Vòng đời một video (đường chính = script trong `vieneu-asset-factory/bin/`)
 

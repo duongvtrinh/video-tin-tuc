@@ -90,6 +90,16 @@ bại; đổi cách rồi vẫn bị trả lại cùng lỗi thì báo COO, khô
 - Không tự đăng video và không tự sửa điểm chấm của chủ đề.
 
 <!-- nguồn: SKILL.md cũ dòng 363-372 -->
+## Dọn rác sau khi QA duyệt (DELIVERED) — quyết CEO 14/11/2026
+
+- Khi TASKS.C của video đã thành DELIVERED (QA duyệt + upload Drive xong, đọc lại TASKS theo TOPIC_ID để xác nhận), Production chạy dọn rác cho project đó NGAY, không để tồn:
+  `python3 bin/cleanup_project.py <project_id> --dry-run` xem trước danh sách + số MB, rồi `--apply` để xóa thật. Ghi số MB đã dọn vào TASKS.K cùng lượt báo cáo.
+- Chỉ chạy SAU khi DELIVERED — không chạy trước (Production/QA còn có thể render lại). Không chạy khi video còn REVIEW/RETURNED/BUILDING.
+- Script chỉ xóa: ảnh ứng cử viên bị loại + ảnh gốc sau khi đã cắt (build/media/images/, build/media/raw/), ảnh chụp khung hình kiểm tra của QA (build/media/checks/), bản preview cũ trong export/ (chỉ giữ mp4 mới nhất). Chuẩn "file đang dùng" = tên file xuất hiện trong media-log.json (chosen.file từng part) hoặc broll-plan.json.
+- KHÔNG BAO GIỜ xóa: toàn bộ build/media/broll/ (đoạn b-roll đã cắt + video stock — đầu vào render theo quy ước; plan không lưu tên file local của video b-roll nên không xác minh được bằng tên file), mp4 đã duyệt trong export/, script.json, broll-plan.json, media-log.json, input.json, build/audio/, build/subtitles/, render report. Script tự bảo vệ các mục này — không xóa tay thêm.
+- Ngoài lần dọn này, COO tự động xóa CẢ THƯ MỤC project cũ quá 7 ngày (tính từ thời điểm sinh thư mục) trong ca quét 03:00 (quyết CEO 14/11/2026, COO toàn quyền, không hỏi lại — skill COO rule 15). Production không cần dọn thư mục cũ.
+
+<!-- nguồn: SKILL.md cũ dòng 363-372 -->
 ## Kênh báo cáo: chỉ báo cáo cho COO, không báo cáo CEO (lệnh CEO 14/11/2026)
 
 - **Luật COO là đầu mối duy nhất (CEO 14/11/2026):** Mọi vấn đề, yêu cầu đều gửi cho COO giải quyết. COO là người duy nhất điều phối hoạt động của công ty. Không bao giờ hỏi CEO trực tiếp — không nhắn chat chính, không hỏi lại.

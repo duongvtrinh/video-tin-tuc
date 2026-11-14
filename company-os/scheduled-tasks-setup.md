@@ -1,6 +1,6 @@
 # Cài bộ lịch mẫu (scheduled tasks) cho tài khoản Muse mới
 
-Bộ lịch mẫu của công ty: 7 lịch chạy thật (xem bảng dưới). Scout chạy 2 ca/ngày: 04:00 và 13:00; COO chạy ca 03:00 hàng ngày (dời từ 06:00 theo quyết CEO 13/11/2026, DEC-262); Sản xuất (pipeline) chạy 2 ca/ngày: 05:00 và 14:00 (mỗi ca đăng ký ở Bước 0 rồi nhận ca ở Bước 4, lệch 5 phút — gộp chung 1 lịch/ca theo quyết CEO 13/11/2026, DEC-259/DEC-260/DEC-261); **giám sát TTS (tts-watchdog) chạy mỗi 30 phút (thêm 13/11/2026 — kiểm tra /health, tự cài lại unit + restart khi lỗi, chỉ báo chat COO khi đã restart hoặc vẫn không lên)**. File này + thư mục
+Bộ lịch mẫu của công ty: 7 lịch chạy thật (xem bảng dưới). Scout chạy 2 ca/ngày: 04:00 và 13:00; COO chạy ca 03:00 hàng ngày (dời từ 06:00 theo quyết CEO 13/11/2026, DEC-262; từ 14/11/2026 ca này cuối ca còn tự xóa thư mục project sinh quá 7 ngày — Bước 10, COO toàn quyền, không hỏi lại, xem mục "Xóa thư mục project cũ tự động" dưới đây); Sản xuất (pipeline) chạy 2 ca/ngày: 05:00 và 14:00 (mỗi ca đăng ký ở Bước 0 rồi nhận ca ở Bước 4, lệch 5 phút — gộp chung 1 lịch/ca theo quyết CEO 13/11/2026, DEC-259/DEC-260/DEC-261); **giám sát TTS (tts-watchdog) chạy mỗi 30 phút (thêm 13/11/2026 — kiểm tra /health, tự cài lại unit + restart khi lỗi, chỉ báo chat COO khi đã restart hoặc vẫn không lên)**. File này + thư mục
 `company-os/crons/daily/` là **bản mẫu dùng chung**, nằm trong repo để mọi chi nhánh
 (tài khoản Muse) đều cài được cùng một chuẩn. Cấu hình lịch đang chạy là của từng
 tài khoản, không tự sinh ra khi clone repo. Lưu ý: 7 file mẫu trong
@@ -34,8 +34,18 @@ của từng tài khoản (riêng tts-watchdog nằm ở `crons/minutely/` vì l
 | prod-pipeline-0500 | 05:00 hàng ngày | Pipeline ca đầu ngày: đăng ký ca 05:00 (Bước 0) rồi nhận ca 05:05 (Bước 4), nhận lô tối đa 3 chủ đề READY theo thứ tự đăng ký ca (tab SHIFT_CHECKIN), sản xuất tuần tự Production → QA → Drive |
 | prod-pipeline-1400 | 14:00 hàng ngày | Pipeline ca chiều: đăng ký ca 14:00 (Bước 0) rồi nhận ca 14:05 (Bước 4), nhận lô tối đa 3 chủ đề READY theo thứ tự đăng ký ca trong cửa sổ chiều (REG_TIME ≥ 12:00), sản xuất tuần tự Production → QA → Drive |
 | bot-hoc-hoi-2000 | 20:00 hàng ngày | Học-hỏi: rút bài học từ lỗi lặp lại có bằng chứng, cải tiến template/skill/SOP (đổi chuẩn thì chỉ đề xuất để CEO quyết) |
-| coo-scan-0300 | 03:00 hàng ngày | COO điểm danh tại tab COO_CHECKIN (Bước 0), rồi quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng, không thông báo |
+| coo-scan-0300 | 03:00 hàng ngày | COO điểm danh tại tab COO_CHECKIN (Bước 0), rồi quét tab COO_TASKS, nhận dòng của chi nhánh mình, giao phòng, xác nhận E–G; không có dòng thì im lặng, không thông báo; cuối ca xóa thư mục project sinh quá 7 ngày (Bước 10, COO toàn quyền, không hỏi lại) |
 | tts-watchdog | mỗi 30 phút | Giám sát server TTS: kiểm tra /health (cổng 8000); lỗi thì cài lại unit systemd từ bản chuẩn + restart tối đa 2 lần (lần 2 dọn tiến trình chiếm cổng 8000); khỏe thì im lặng, chỉ báo chat COO khi đã phải restart hoặc vẫn không lên |
+
+## Xóa thư mục project cũ tự động (Bước 10 của ca COO 03:00 — quyết CEO 14/11/2026)
+
+**Luật:** thư mục project nào có **thời điểm sinh (birth time) quá 7 ngày** thì xóa **cả thư mục** — mp4 đã xuất, kịch bản, plan, media, audio đều mất, không khôi phục được. Video đã duyệt chỉ còn sống trên Drive "Video Muse" (QA đã upload). Sau khi xóa không render lại hay đối chiếu được nữa. Tuổi tính từ thời điểm sinh thư mục, KHÔNG tính từ ngày sửa cuối hay ngày xuất video (hai mốc đó dễ lệch — tiền lệ 14/11: lần dọn rác ghi thêm file vào mọi project nên ngày sửa cuối đều là hôm đó).
+
+**Ai xóa:** COO — CEO cấp **toàn quyền, KHÔNG hỏi lại**, không cần xin duyệt trước. Chạy trong ca quét 03:00 (Bước 10, 1 lần/ca), không chạy bằng tay trừ khi cần thiết. Script: `vieneu-asset-factory/bin/prune_projects.py` (`--dry-run` mặc định chỉ báo cáo, `--apply` xóa thật; log ghi thêm vào `prune_log.txt` ở gốc factory). Tuổi tính bằng birth time của thư mục (`stat %W`); nếu hệ thống không trả được birth time thì dùng file cũ nhất trong project (đã kiểm chứng birth == file cũ nhất).
+
+**Lịch + mẫu:** Bước 10 nằm trong body lịch `coo-scan-0300` (live) và trong file mẫu `company-os/crons/daily/coo-scan-0300.md` — hai bên phải khớp nhau theo quy tắc "Bảo trì bản mẫu" dưới đây (chỉ khác placeholder). Lần xóa thật đầu tiên: ca 03:00 ngày 15/11/2026 (dry-run 14/11: 102 project quá hạn, ~5.018 MB; giữ lại 8 project sinh trong 7 ngày).
+
+**Khác với dọn rác sau DELIVERED:** Production dọn rác từng video ngay sau khi TASKS.C = DELIVERED (chỉ xóa ảnh ứng cử viên/file gốc/ảnh chụp QA/preview cũ, KHÔNG xóa thư mục — xem skill Sản xuất rule 14). Việc xóa cả thư mục cũ này là của COO ở ca 03:00, Production không tự xóa thư mục.
 
 ## Cài dịch vụ TTS để tự chạy lại khi Muse khởi động lại
 
