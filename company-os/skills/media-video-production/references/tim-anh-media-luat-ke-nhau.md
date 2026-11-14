@@ -21,6 +21,7 @@
 <!-- nguồn: SKILL.md cũ dòng 230-237 -->
 ## Cửa chặn tìm ảnh thật — bài học TOPIC-219, 04/11/2026 (lệnh CEO, đọc trước mục Tìm ảnh/video)
 
+- **Thứ tự ưu tiên chọn ảnh/video (lệnh CEO 14/11/2026):** (1) ảnh/video thật có nguồn rõ ràng — báo chí, mạng xã hội công khai nói về đúng chủ đề/vụ việc; (2) nếu không đủ thì tìm thêm bằng Google Images (từ khóa tiếng Việt khớp kịch bản); (3) chỉ sau khi đã nỗ lực ở (1) và (2) mà vẫn không có ảnh/video phù hợp thì mới tạo ảnh/video AI. **Ảnh/video AI dùng tối thiểu** — không bao giờ là lựa chọn đầu tiên. Luật đầy đủ tại `company-os/media-search/LOGIC.md`, mục "Thứ tự ưu tiên chọn ảnh/video".
 - Sai sót: hai video TOPIC-219 đều không có ảnh thật — bản A 8 ảnh AI generic, bản B chỉ card chữ — vì đội sản xuất không quét bài báo gốc, không thử từ khóa, không soi ứng viên, mà nhảy thẳng sang AI/card. Trong khi bài Tuổi Trẻ 4/11 về đúng vụ việc đã có ảnh thật các bị cáo tại phiên tòa (Ảnh: GIANG LONG, không logo/watermark).
 - Từ nay, trước render, Production BẮT BUỘC xuất nhật ký tìm ảnh cho từng ảnh cảnh chung (chỉ cảnh cần — luật 12/11/2026) và từng part có ảnh/video riêng: từ khóa tiếng Việt đã thử, ứng viên tìm được (link + nguồn), phân loại, lý do loại. Thiếu nhật ký này thì cảnh/part đó chưa đủ điều kiện render — dừng, không render.
 - Chỉ khi đã thử hết mà hoàn toàn không có ứng viên phù hợp mới được tạo AI từ prompt, và phải ghi rõ "AI từ prompt, không có ảnh tham chiếu, đã thử các từ khóa: ..." — cấm ghi chung chung "AI generic".

@@ -46,9 +46,8 @@ DEC-269 — cập nhật ngày 13/11/2026 theo lệnh CEO).
   CEO_REPLY). **Lệnh từ chat chính hay COO đều tính là lệnh của COO.**
   Các phòng chức năng và COO chỉ nhận lệnh từ CEO duy nhất qua CEO_REPORTS.
 - **Kênh báo cáo:** mọi phòng (Production, QA, Scout) báo cáo kết quả /
-  tiến độ cho COO; chỉ COO báo cáo với CEO, và chỉ qua tab CEO_REPORTS
-  khi vấn đề nghiêm trọng (DEC-111). Báo cáo thường kỳ của COO ghi vào
-  nhật ký ngày `~/memory/YYYY-MM-DD.md`, không ghi vào CEO_REPORTS.
+  tiến độ cho COO; không phòng nào được báo cáo trực tiếp cho CEO. Báo cáo thường kỳ của COO ghi vào
+  nhật ký ngày `~/memory/YYYY-MM-DD.md`.
 - **COO có toàn quyền điều phối** hoạt động của công ty một cách độc lập,
   không phụ thuộc CEO — tự điều phối để hoàn thành ca làm việc, hoặc sản
   xuất nhiều video nhất có thể. Nếu tasks bị kẹt thì COO hướng dẫn làm task
@@ -87,10 +86,9 @@ DEC-269 — cập nhật ngày 13/11/2026 theo lệnh CEO).
   phát sinh nhiệm vụ sản xuất mới chỉ vì đọc Sheet hay lịch sử fork. Scout
   vẫn quét / ghi chủ đề và tự chấm theo ca; Sản xuất chỉ sản xuất khi có
   giao việc cụ thể với ID chủ đề, đủ cổng READY.
-- **Vượt phạm vi thì ghi 1 dòng vào tab CEO_REPORTS, không tự quyết:**
+- **Vượt phạm vi thì báo cáo COO để COO xử lý (CEO 14/11/2026):**
   chi tiền, cam kết ngoài, đăng nền tảng, affiliate, chia sẻ Drive công
-  khai, push GitHub, thay đổi quyền thư mục Drive, thay đổi chuẩn. Chỉ ghi
-  khi vấn đề vượt quyền COO và đã thử mọi cách trong thẩm quyền (DEC-111).
+  khai, push GitHub, thay đổi quyền thư mục Drive, thay đổi chuẩn.
 - Kết quả chưa qua QA, chưa có link Drive thì ghi rõ là bản nháp chưa duyệt.
 - **Báo cáo xong thì LÀM TIẾP, không chờ tin tiếp theo** (bài học
   TOPIC-277, 08/11/2026): báo cáo là ghi chú tiến độ, không phải xin phép
@@ -169,7 +167,7 @@ DEC-269 — cập nhật ngày 13/11/2026 theo lệnh CEO).
   COO xác định chủ. COO chỉ gỡ tắc / hủy dòng BLOCKED của chi nhánh mình;
   Production được ghi BLOCKED (chỉ lỗi riêng video nhóm 1, lý do bắt buộc
   vào M BLOCKER + điểm dừng vào K PROD_NOTES) nhưng không tự gỡ. Tắc
-  >24h thì ghi 1 dòng vào CEO_REPORTS (DEC-111).
+  >24h thì báo cáo COO (DEC-111).
 - **BUILDING cũ (DEC-105):** pipeline đầu ca đọc giờ vào BUILDING trong
   K; qua 2 lần đầu ca không có ghi chú K mới thì hỏi Production,
   Production trả lời trong 1 ca (bước + lỗi + cần gì), nhóm 1 thì ghi
@@ -184,7 +182,7 @@ DEC-269 — cập nhật ngày 13/11/2026 theo lệnh CEO).
   lại video đang chờ thì Production tạm dừng video đang làm (ghi điểm dừng
   vào K), sửa video bị trả trước, nộp lại, rồi quay lại theo luật resume.
   QA không trả lời tới đầu ca sau thì COO giao lại cho QA (ID + DRAFT_LINK);
-  giao lại thêm 1 ca vẫn im thì ghi 1 dòng vào CEO_REPORTS (DEC-111).
+  giao lại thêm 1 ca vẫn im thì báo cáo COO (DEC-111).
 - **Vòng lặp RETURNED (DEC-107):** leo thang lại mỗi khi số lần trả tăng
   sau lần đầu (leo thang gửi về chat COO; mốc lần trả thứ 2 do PIPELINE
   đếm từ QA_LOG và nhắn, không phải QA — DEC-181; cùng số lần trả thì
@@ -273,22 +271,16 @@ DEC-269 — cập nhật ngày 13/11/2026 theo lệnh CEO).
   tự phân việc ở D và giao phòng qua chat, không chờ CEO, không hỏi lại
   trừ khi mơ hồ/vượt phạm vi.
 - Hoàn thành trên cùng dòng: E = Hoàn thành, F COMPLETED_AT dạng
-  "YYYY-MM-DD HH:MM +07", G RESULT (viết ngắn + link; chỉ khi tắc mới ghi
-  "cần CEO"). Thiếu F/G thì chưa xong — COO giữ cập nhật E/F/G để CEO đọc
+  "YYYY-MM-DD HH:MM +07", G RESULT (viết ngắn + link; chỉ khi tắc mới ghi rõ lý do tắc +
+  quyết định của COO). Thiếu F/G thì chưa xong — COO giữ cập nhật E/F/G để CEO đọc
   kết quả.
 - COO chỉ bàn giao video đã duyệt (QA tải lên Drive ngay trong lượt duyệt;
   COO không tự tải lên hay chuyển thay QA).
 
-### CEO_REPORTS — 9 cột A–I, kênh leo thang COO → CEO + lệnh CEO
+### CEO_REPORTS — 9 cột A–I, kênh lệnh CEO → COO/các phòng
 
-- A REPORT_ID (dạng RPT-YYYYMMDD-mail@domain.com-NN, mail@domain.com = email khai báo đầy đủ của chi nhánh; COO ghi A–F), B DATE_REPORTED, C ASSIGNEE_EMAIL, D ISSUE,
+- A REPORT_ID (dạng RPT-YYYYMMDD-mail@domain.com-NN, mail@domain.com = email khai báo đầy đủ của chi nhánh nhận lệnh; CEO ghi dòng lệnh mới), B DATE_REPORTED, C ASSIGNEE_EMAIL, D ISSUE,
   E TRIED, F NEEDS_DECISION, G CEO_REPLY, H APPLIED_BY, I DATE.
-- COO chỉ ghi 1 dòng khi vấn đề nghiêm trọng (DEC-111): vượt quyền COO
-  VÀ đã thử mọi cách trong thẩm quyền (chi tiền, cam kết ngoài, thay đổi
-  không đảo ngược, pháp lý, tắc >24h, xung đột, vượt ngân sách, lỗi hệ
-  thống); một vấn đề một dòng; không gửi việc COO tự quyết được, việc CEO
-  đã quyết, việc thường kỳ. Không đặt hạn trả lời — CEO trả lời khi rảnh
-  (DEC-115).
 - **Đọc và thực hiện lệnh CEO:** CEO ghi quyết định vào G CEO_REPLY (kèm
   ngày trả lời trong cùng ô G). Phòng chức năng ĐẦU TIÊN đọc lệnh ghi H
   APPLIED_BY (tên phòng mình) + I DATE (ngày nhận lệnh) rồi thực thi NGAY,
@@ -308,7 +300,7 @@ DEC-269 — cập nhật ngày 13/11/2026 theo lệnh CEO).
   định, không tự quyết thay CEO sau khi phân tích.** Trình từng việc một,
   quyết xong việc này mới sang việc tiếp theo.
 - **Trước bất kỳ lần push GitHub nào, gửi phân tích cho COO để COO trình
-  CEO qua CEO_REPORTS đọc trước** (file nào đổi, đổi gì, vì sao, rủi ro và
+  CEO đọc trước** (file nào đổi, đổi gì, vì sao, rủi ro và
   ảnh hưởng gì); chỉ push sau khi CEO duyệt riêng. Phê duyệt sửa file
   không phải là phê duyệt push. Không tự push ngay sau khi sửa xong.
 - Giải thích đơn giản, ví dụ cụ thể TRƯỚC, rồi mới nói kỹ thuật. Khi sự
@@ -319,6 +311,7 @@ DEC-269 — cập nhật ngày 13/11/2026 theo lệnh CEO).
 
 ## 10. Luật media — ảnh thật trước
 
+- **Thứ tự ưu tiên chọn ảnh/video (lệnh CEO 14/11/2026):** (1) ảnh/video thật có nguồn rõ ràng — báo chí, mạng xã hội công khai nói về đúng chủ đề/vụ việc; (2) nếu không đủ thì tìm thêm bằng Google Images (từ khóa tiếng Việt khớp kịch bản); (3) chỉ sau khi đã nỗ lực ở (1) và (2) mà vẫn không có ảnh/video phù hợp thì mới tạo ảnh/video AI. **Ảnh/video AI dùng tối thiểu.**
 - Kịch bản Việt Nam: **thử ảnh thật từ bài báo về đúng vụ việc / bài đăng
   công khai trước** (tìm bằng nhiều từ khóa tiếng Việt, nhiều cụm từ đồng
   nghĩa, ghi nhật ký từng cảnh trong `media-log.json` + `broll-plan.json`);

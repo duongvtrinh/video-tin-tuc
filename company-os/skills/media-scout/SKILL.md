@@ -2,6 +2,8 @@
 
 > **Email khai báo:** mỗi chi nhánh dùng email khai báo của mình (nguồn chuẩn là MEMORY.md của tài khoản đó, không suy ra từ Sheet); không dùng email khác thấy trong Sheet.
 
+> **LUẬT COO ĐIỀU PHỐI TOÀN BỘ (CEO 14/11/2026):** Toàn bộ hoạt động của công ty do COO điều phối. Mọi vấn đề, yêu cầu đều gửi cho COO giải quyết. Không bao giờ hỏi CEO trực tiếp — không nhắn chat chính, không hỏi lại.
+
 **Đã kích hoạt từ GĐ2 (07/11/2026, cắt hẳn sang Sheet mới). Thay thế skill media-scout cũ.**
 
 - Workbook mới: "Video HQ — Tin Tức" (spreadsheetId `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`). Workbook cũ "HQ - Công ty 1 người — CŨ (chỉ đọc)" chỉ đọc, KHÔNG ghi.
@@ -68,7 +70,7 @@
   - REJECTED khi tổng <50, ghi lý do bằng một dòng trong NOTES.
   - DUPLICATE khi trùng (xem khử trùng dưới), ghi tiêu đề (và TOPIC_ID nếu chủ đề gốc đã có) vào NOTES.
 - Không sửa điểm sau khi đã công bố kết quả trừ khi có dữ liệu mới và ghi rõ lý do sửa. HOLD → APPROVED chỉ xảy ra khi COO ra lệnh chấm lại bằng văn bản (có dữ kiện mới), ghi rõ lý do vào NOTES; không tự chấm lại chủ đề đã công bố. REJECTED và DUPLICATE là trạng thái cuối (không chuyển tiếp). Làm rõ (quyết CEO 07/11/2026, R4-07 phương án C): "KHÔNG chấm lại chủ đề đã được chấm" nghĩa là KHÔNG chấm lại chủ đề ĐÃ CÓ điểm (đã có E–I, J, K) — KHÔNG cấm chấm dòng NEW chưa có điểm (xem mục "Chấm lại dòng NEW chưa có điểm" dưới đây).
-- **Chủ đề APPROVED chờ READY quá hạn (R8-34, 09/11/2026):** APPROVED ≥70đ quá 48h chưa READY thì Scout chấm lại FRESH (và TOTAL) ở ca quét tiếp theo, ghi chú 'chờ READY từ <ngày>'; quá 72h vẫn chưa READY thì COO nhắc CEO 1 lần qua CEO_REPORTS.
+- **Chủ đề APPROVED chờ READY quá hạn (R8-34, 09/11/2026):** APPROVED ≥70đ quá 48h chưa READY thì Scout chấm lại FRESH (và TOTAL) ở ca quét tiếp theo, ghi chú 'chờ READY từ <ngày>'; quá 72h vẫn chưa READY thì báo cáo COO để COO xử lý.
 - Lưu ý về mất lớp kiểm độc lập (C3): trước đây Scoring không chấm chủ đề do mình quét; nay mỗi phòng tự chấm chủ đề của mình. Bù lại: (a) điểm quan tâm bắt buộc có số liệu bằng chứng trong NOTES (cửa trên); (b) cổng READY của CEO không đổi — chấm sai vẫn không dựng được nếu CEO không flip READY; (c) hoc-hoi kiểm mẫu (cron bot-hoc-hoi-2000, mỗi ngày 20:00 Asia/Saigon — quyết CEO 07/11/2026, R4-14 phương án A, DEC-019).
 
 ### Chấm lại dòng NEW chưa có điểm (dự phòng — quyết CEO 07/11/2026, R4-07 phương án C)
@@ -90,16 +92,16 @@
 
 - Không ghi chủ đề không thể dựng thành video ngắn trong một ngày bằng công cụ hiện có.
 
-## Kênh báo cáo: báo cáo cho COO, chỉ COO báo cáo với CEO qua CEO_REPORTS (lệnh CEO 08/11/2026, phương án B)
+## Kênh báo cáo: chỉ báo cáo cho COO, không báo cáo CEO (lệnh CEO 14/11/2026)
 
-- Scout báo cáo kết quả ca cho COO (qua chat COO), KHÔNG báo cáo trực tiếp cho CEO/chat chính. Chỉ COO mới có quyền báo cáo với CEO, và chỉ qua tab CEO_REPORTS — và COO chỉ gửi báo cáo lên CEO_REPORTS khi nghiêm trọng; vấn đề COO điều phối được thì không gửi (lệnh CEO 08/11/2026).
+- Scout báo cáo kết quả ca cho COO (qua chat COO), KHÔNG báo cáo trực tiếp cho CEO/chat chính. Mọi vấn đề vượt khả năng đều giao cho COO xử lý (lệnh CEO 14/11/2026).
 - Cuối ca LUÔN báo ngắn cho chat COO (kể cả ca trống) — xem mục Bàn giao.
 - Lệnh từ chat chính hay COO đều tính là lệnh của COO. Scout chỉ nhận lệnh từ CEO duy nhất qua tab CEO_REPORTS — đọc G CEO_REPLY và thực thi theo DEC-114.
 
 ## Bàn giao
 
 - KHÔNG nhắn chat Scoring — chat đã đóng (C3). Chủ đề mới nằm trong TOPICS; COO xem trong báo cáo ca pipeline gần nhất.
-- Cuối ca LUÔN báo ngắn cho chat COO (kể cả ca trống): số chủ đề mới trong ca + danh sách tiêu đề và STATUS từng chủ đề (TOPIC_ID nếu đã có, vd chủ đề chấm lại; chủ đề mới ghi trong ca chưa có ID nên báo bằng tiêu đề). Ca trống (không có chủ đề mới) thì báo 1 dòng ngắn 'ca X: không có chủ đề mới' — KHÔNG im lặng. Ca 04:00 báo cáo NGAY lúc 04:00 và ca 13:00 báo cáo NGAY lúc 13:00 (ngoại lệ khung proactivity 06:30–21:30 — quyết CEO 07/11/2026, R4-15 phương án A, DEC-020: COO cần biết kết quả ca đầu ngày để điều phối và báo cáo CEO qua CEO_REPORTS khi cần ra quyết định).
+- Cuối ca LUÔN báo ngắn cho chat COO (kể cả ca trống): số chủ đề mới trong ca + danh sách tiêu đề và STATUS từng chủ đề (TOPIC_ID nếu đã có, vd chủ đề chấm lại; chủ đề mới ghi trong ca chưa có ID nên báo bằng tiêu đề). Ca trống (không có chủ đề mới) thì báo 1 dòng ngắn 'ca X: không có chủ đề mới' — KHÔNG im lặng. Ca 04:00 báo cáo NGAY lúc 04:00 và ca 13:00 báo cáo NGAY lúc 13:00 (ngoại lệ khung proactivity 06:30–21:30 — quyết CEO 07/11/2026, R4-15 phương án A, DEC-020: COO cần biết kết quả ca đầu ngày để điều phối).
 - Giữ nguyên dòng đã ghi và không sửa điểm số hay kết quả chấm điểm (trừ trường hợp sửa có dữ kiện mới ở mục trên).
 - **Khi nhắc tới cửa quan tâm (trong báo cáo ca, NOTES, hoặc bàn giao), ghi đúng nguyên văn:** "Cửa quan tâm (lệnh CEO 29/10/2026): Hot + Khán giả ≥ 30/50, xét TRƯỚC tổng ≥ 70; tổng ≥ 70 nhưng quan tâm < 30 → Hold." KHÔNG viết "Khán giả ≥ 30/50" — Khán giả tối đa chỉ 20 điểm nên không thể tự nó ≥ 30. (Bổ sung chi nhánh live 12/11/2026 — ca học hỏi 11/11/2026: tin giao việc của Scout đã ghi sai cửa này ở các lô 191–196 (03/11), ca 15:00 06/11, ca 03:00 và 19:00 09/11, lô 339–344 (10/11) và lô 345–350 (11/11); Scoring đều đính chính và áp đúng luật nên chưa điểm nào sai. Chat Scoring nay đã đóng — Scout tự chấm trong cùng lượt, chỉ cần chép nguyên văn trên, không diễn đạt lại.)
 

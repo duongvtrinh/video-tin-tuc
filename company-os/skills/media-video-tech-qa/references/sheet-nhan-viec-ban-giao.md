@@ -47,9 +47,10 @@ Kịch bản đi qua cửa QA trước TTS (xem danh-gia-va-tieu-chi §Ra quyế
 - **Đếm trần 3 lần trả:** đếm dòng QA_LOG của TOPIC_ID đó có RESULT = `SCRIPT-TRẢ`. Đủ 3 dòng TRẢ thì vòng sau QA phải DUYỆT (ghi rõ từ còn lại + vì sao không thay được) — không trả lần 4, không tự ý thêm vòng.
 
 <!-- nguồn: SKILL.md cũ dòng 137-143 -->
-## Kênh báo cáo: báo cáo cho COO, chỉ COO báo cáo với CEO qua CEO_REPORTS (lệnh CEO 08/11/2026, phương án B)
+## Kênh báo cáo: chỉ báo cáo cho COO, không báo cáo CEO (lệnh CEO 14/11/2026)
 
-- QA báo cáo kết quả/tiến độ cho COO (qua chat COO), KHÔNG báo cáo trực tiếp cho CEO. Chỉ COO mới có quyền báo cáo với CEO, và chỉ qua tab CEO_REPORTS — và COO chỉ gửi báo cáo lên CEO_REPORTS khi nghiêm trọng; vấn đề COO điều phối được thì không gửi (lệnh CEO 08/11/2026).
+- **Luật COO là đầu mối duy nhất (CEO 14/11/2026):** Mọi vấn đề, yêu cầu đều gửi cho COO giải quyết. COO là người duy nhất điều phối hoạt động của công ty. Không bao giờ hỏi CEO trực tiếp — không nhắn chat chính, không hỏi lại.
+- QA báo cáo kết quả/tiến độ cho COO (qua chat COO), KHÔNG báo cáo trực tiếp cho CEO. Mọi vấn đề vượt khả năng đều giao cho COO xử lý (lệnh CEO 14/11/2026).
 - Tin leo thang khi đủ 2 lần trả (DEC-107) nhắn cho chat COO, không nhắn chat chính (xem dòng DEC-107).
 - Báo cáo bàn giao Drive/Sheet (đủ hay chưa đủ, lỗi upload) báo cho COO, không báo CEO/chat chính.
 - Lệnh từ chat chính hay COO đều tính là lệnh của COO. QA chỉ nhận lệnh từ CEO duy nhất qua tab CEO_REPORTS — đọc G CEO_REPLY và thực thi theo DEC-114.

@@ -1,5 +1,15 @@
 # Logic tìm ảnh/video — từ khóa tiếng Việt khớp kịch bản, ảnh tự do dùng thẳng, ảnh có chữ/watermark xử lý bằng AI giữ nguyên ảnh gốc
 
+## Thứ tự ưu tiên chọn ảnh/video (lệnh CEO 14/11/2026)
+
+Thứ tự bắt buộc khi chọn ảnh/video cho từng cảnh/part, áp cho mọi video mới:
+
+1. **Ảnh/video thật có nguồn rõ ràng:** báo chí, mạng xã hội công khai nói về đúng chủ đề/vụ việc — ưu tiên bài báo về đúng vụ việc trước, rồi bài đăng mạng xã hội công khai.
+2. **Nếu không đủ thì tìm thêm bằng Google Images:** tìm kiếm hình ảnh Google bằng từ khóa tiếng Việt khớp kịch bản (xem mục 8 — mở rộng qua Google ảnh).
+3. **Chỉ sau khi đã nỗ lực ở bước 1 và 2 mà vẫn không có ảnh/video phù hợp thì mới tạo ảnh/video AI.** Ảnh/video AI dùng tối thiểu — chỉ tạo khi không tìm được ảnh phù hợp sau các nỗ lực tìm ở các nguồn khác; AI không bao giờ là lựa chọn đầu tiên.
+
+Chi tiết thi hành: cửa chặn TOPIC-219 dưới đây (nhật ký tìm ảnh bắt buộc, QA chặn khi AI không kèm nhật ký), mục "Nguyên tắc" 1–2 (từ khóa tiếng Việt, nguồn tìm công khai), mục 8 (mở rộng Google ảnh), trần AI ≤ thật theo scene (mục 6). Luật này củng cố luật đã có (cửa chặn TOPIC-219 04/11, mở rộng Google ảnh 10/11) thành một thứ tự duy nhất — không đổi nội dung các mục đó.
+
 ## Bài học bắt buộc TOPIC-219 — 04/11/2026 (lệnh CEO, áp dụng cho mọi tài khoản Muse clone repo này)
 
 Sai sót đã xảy ra, không được lặp lại: hai video TOPIC-219 (vụ VKS đề nghị tù chung thân cho Mr Pips và Mr Hunter, sáng 4/11/2026) đều không có ảnh thật. Bản A dùng 8 ảnh AI generic minh họa phòng xử án. Bản B chỉ dùng card chữ, không có ảnh nào. Cả hai đội sản xuất đều không quét bài báo gốc, không thử từ khóa, không soi ứng viên, mà nhảy thẳng sang AI/card.

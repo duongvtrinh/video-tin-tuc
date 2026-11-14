@@ -6,6 +6,8 @@
 > Workbook: "Video HQ — Tin Tức" (ID `1neKGADUDWMmhRiOITFOuEeUSiaINgUVUqH6fR3ZrJLE`), chỉ chạm tab TOPICS (CHỈ ĐỌC), TASKS và
 > SHIFT_CHECKIN (điểm danh nhận ca — chỉ ghi cột D HANDOVER_SIGNOFF dòng của mình).
 
+> **LUẬT COO ĐIỀU PHỐI TOÀN BỘ (CEO 14/11/2026):** Toàn bộ hoạt động của công ty do COO điều phối. Mọi vấn đề, yêu cầu đều gửi cho COO giải quyết. Không bao giờ hỏi CEO trực tiếp — không nhắn chat chính, không hỏi lại.
+
 ## 1. Bất biến — vi phạm là lỗi, không có ngoại lệ tự suy
 
 | # | Luật | Chi tiết ở |
